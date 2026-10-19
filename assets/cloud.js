@@ -10,7 +10,7 @@
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const qs = new URLSearchParams(location.search);
   const isLogin = page === "login.html";
-  const isPublicReport = (page === "reporte.html" && qs.has("r")) || (page === "progress.html" && qs.has("d"));
+  const isPublicReport = (page === "reporte.html" && qs.has("r")) || ((page === "progress.html" || page === "plan.html") && qs.has("d"));
 
   const show = () => document.documentElement.classList.remove("auth-pending");
   const lsGet = (k) => { try { return JSON.parse(localStorage.getItem("lingua." + k)); } catch (e) { return null; } };

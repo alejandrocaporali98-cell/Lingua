@@ -23,6 +23,7 @@ English learning platform for one-to-one online classes. Static site (HTML, CSS 
 | `practice.html` | **Practice games**: dictation (listen and write), speaking with the microphone, speed match against the clock |
 | `notes.html` | **Class notes**: the student's classes, attendance, notes and new words |
 | `progress.html` | **Monthly parent report** (opens from a link, no sign-in, Spanish/English) |
+| `plan.html` | **Learning plan for parents** (made from the teacher panel; opens from a link, no sign-in, Spanish/English, printable) |
 
 Every page has a **menu** (☰, left of the logo) with links to all of the above, a dark mode switch, "Install the app" and sign out.
 
