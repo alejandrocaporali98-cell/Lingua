@@ -26,8 +26,8 @@
 .toc button:hover { background: var(--bg); }
 .toc button:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
 .toc .box { width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--line-2); margin-top: 2px; display: grid; place-items: center; }
-.toc .done .box { background: var(--ink); border-color: var(--ink); }
-.toc .done .box::after { content: ""; width: 8px; height: 4px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.toc .done .box { background: var(--inverse); border-color: var(--inverse); }
+.toc .done .box::after { content: ""; width: 8px; height: 4px; border: 2px solid var(--on-inverse); border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
 .toc .t { font-weight: 600; font-size: .95em; }
 .toc .m { color: var(--mute); font-size: .82em; display: flex; gap: 6px; align-items: center; }
 .toc .active { background: var(--brand-soft); }
@@ -68,7 +68,7 @@
 .msg { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 12px; max-width: 640px; }
 .msg.you { grid-template-columns: minmax(0, 1fr) 36px; margin-left: auto; }
 .msg .av { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .78em; background: var(--bg); color: var(--ink-2); border: 1px solid var(--line); }
-.msg.you .av { background: var(--brand); color: #fff; border-color: var(--brand); order: 2; }
+.msg.you .av { background: var(--fill-brand); color: var(--on-fill); border-color: var(--fill-brand); order: 2; }
 .bub { padding: 12px 16px; border-radius: 14px; background: var(--bg); }
 .msg.you .bub { background: var(--surface); border: 1px dashed var(--brand); }
 .bub .who { font-size: .75em; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); margin-bottom: 2px; }
@@ -92,5 +92,5 @@ body.clase .player { grid-template-columns: 1fr; }
 .obj { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: .9em; color: var(--ink-2); }
 .obj li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; }
 .obj li::before { content: ""; width: 14px; height: 8px; margin-top: 5px; border: 2px solid var(--brand); border-top: 0; border-right: 0; transform: rotate(-45deg) scale(.8); }
-.badge-earned { display: flex; align-items: center; gap: 12px; margin-top: 6px; padding: 10px 14px; border-radius: var(--r-m); background: #fff8dc; border: 1px solid #f1df9a; font-size: .9em; }
+.badge-earned { display: flex; align-items: center; gap: 12px; margin-top: 6px; padding: 10px 14px; border-radius: var(--r-m); background: var(--badge-soft); border: 1px solid var(--badge-line); font-size: .9em; }
 .pbar .ltitle a:hover { color: var(--ink); }

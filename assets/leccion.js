@@ -24,7 +24,7 @@
         <button class="btn ghost sm hide-in-class" id="szDown" aria-label="Smaller text">A−</button>
         <button class="btn ghost sm hide-in-class" id="szUp" aria-label="Larger text">A+</button>
         <button class="toggle" id="classBtn" aria-pressed="false"><span class="sw"></span>Class mode <span class="kbd">C</span></button>
-        <a class="avatar hide-in-class hide-sm" data-avatar href="../perfil.html" aria-label="Your profile" style="width:32px;height:32px"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a>
+        <a class="avatar hide-in-class hide-sm" data-avatar href="../perfil.html" aria-label="Your profile" style="width:32px;height:32px"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a>
       </div>
     </div>
   </header>
@@ -250,4 +250,5 @@
   });
   drawToc(); draw();
   if (G.decorate) G.decorate();
+  if (G.theme && G.theme.mount) G.theme.mount();
 })();

@@ -16,7 +16,6 @@
 <script src="assets/cloud.js"></script>
 <script src="assets/placement-data.js"></script>
 <style>
-  :root { --dev: #a35f00; --dev-soft: #fff4e0; }
   .wrap { max-width: 980px; margin: 0 auto; padding-block: 28px 64px; display: grid; gap: 20px; }
   .wrap > * { min-width: 0; }
   .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 26px; min-width: 0; }
@@ -25,18 +24,18 @@
   .sub { color: var(--mute); font-size: .9em; margin-top: 2px; }
   .seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: var(--r-s); overflow: hidden; }
   .seg button { border: 0; background: var(--surface); padding: 7px 12px; font-weight: 700; font-size: .82em; }
-  .seg button.on { background: var(--ink); color: #fff; }
+  .seg button.on { background: var(--inverse); color: var(--on-inverse); }
 
   .cert { position: relative; overflow: hidden; border-top: 4px solid var(--brand); display: grid; gap: 22px; }
   .cert::after { content: ""; position: absolute; right: -50px; top: -50px; width: 240px; height: 240px; border-radius: 50%; pointer-events: none; background-image: radial-gradient(color-mix(in srgb, var(--brand) 18%, transparent) 1.2px, transparent 1.5px); background-size: 14px 14px; }
   .cert-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px dashed var(--line-2); position: relative; z-index: 1; }
   .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: center; position: relative; z-index: 1; }
   @media (max-width: 560px) { .hero { grid-template-columns: 1fr; } }
-  .lvl { width: 116px; height: 116px; border-radius: 20px; background: var(--brand); color: #fff; display: grid; place-items: center; font-size: 2.9em; font-weight: 800; letter-spacing: -.04em; }
+  .lvl { width: 116px; height: 116px; border-radius: 20px; background: var(--fill-brand); color: var(--on-fill); display: grid; place-items: center; font-size: 2.9em; font-weight: 800; letter-spacing: -.04em; }
   .hero h1 { font-size: 1.45em; font-weight: 800; }
   .cefr { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; position: relative; z-index: 1; }
   .cefr span { text-align: center; padding: 7px 0; border-radius: 5px; background: var(--bg); color: var(--mute); font-weight: 700; font-size: .8em; }
-  .cefr span.on { background: var(--brand); color: #fff; }
+  .cefr span.on { background: var(--fill-brand); color: var(--on-fill); }
   .cefr span.past { background: var(--brand-soft); color: var(--brand-dark); }
 
   .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
@@ -61,7 +60,7 @@
   .axis div { display: flex; justify-content: space-between; }
   @media (max-width: 600px) { .axis { display: none; } }
   .tip { position: relative; }
-  .tip:hover::after, .tip:focus-visible::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); background: var(--ink); color: #fff; font-size: .8em; font-weight: 600; padding: 6px 10px; border-radius: 6px; white-space: nowrap; z-index: 5; pointer-events: none; }
+  .tip:hover::after, .tip:focus-visible::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); background: var(--inverse); color: var(--on-inverse); font-size: .8em; font-weight: 600; padding: 6px 10px; border-radius: 6px; white-space: nowrap; z-index: 5; pointer-events: none; }
   .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: .82em; color: var(--ink-2); margin-top: 10px; }
   .legend span { display: inline-flex; align-items: center; gap: 6px; }
   .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
@@ -105,7 +104,7 @@
     <nav class="nav-links"><a href="index.html" data-t="navHome"></a><a href="examen.html" data-t="navTest"></a></nav>
     <span class="spacer"></span>
     <div class="seg" role="group" aria-label="Language"><button id="lEN">EN</button><button id="lES">ES</button></div>
-    <span class="noprint" id="avWrap"><a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a></span>
+    <span class="noprint" id="avWrap"><a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a></span>
   </div>
 </header>
 <main class="gutter"><div class="wrap" id="app"></div></main>

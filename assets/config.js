@@ -65,3 +65,44 @@ window.LINGUA.mark = function (s) {
 };
 window.LINGUA.logo = window.LINGUA.mark(30) + '<span class="wordmark">lingua</span>';
 document.documentElement.style.setProperty("--scale", window.LINGUA.store.get("textSize", 1));
+
+// ── Theme: "system" (follows the device), "light" or "dark". Saved per device. ──
+(function () {
+  const L = window.LINGUA, root = document.documentElement;
+  const mq = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const SUN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  const MOON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+  const T = L.theme = {
+    get: () => L.store.get("theme", "system"),
+    isDark: () => { const v = T.get(); return v === "dark" || (v === "system" && !!(mq && mq.matches)); },
+    set: (v) => { L.store.set("theme", v); apply(); },
+    toggle: () => T.set(T.isDark() ? "light" : "dark")
+  };
+  function apply() {
+    const v = T.get();
+    if (v === "system") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", v);
+    document.querySelectorAll(".theme-btn").forEach(b => {
+      const d = T.isDark();
+      b.innerHTML = d ? SUN : MOON;
+      b.setAttribute("aria-label", d ? "Switch to light mode" : "Switch to dark mode");
+      b.title = d ? "Light mode" : "Dark mode";
+    });
+    document.dispatchEvent(new CustomEvent("lingua:theme"));
+  }
+  apply();
+  if (mq && mq.addEventListener) mq.addEventListener("change", () => { if (T.get() === "system") apply(); });
+  // Add the sun / moon button next to the profile avatar in every top bar
+  T.mount = () => {
+    document.querySelectorAll(".nav-in, .pbar .tools").forEach(bar => {
+      if (bar.querySelector(".theme-btn")) return;
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "theme-btn";
+      b.onclick = T.toggle;
+      let ref = bar.querySelector("[data-avatar]");
+      while (ref && ref.parentElement !== bar) ref = ref.parentElement;
+      if (ref) bar.insertBefore(b, ref); else bar.appendChild(b);
+    });
+    apply();
+  };
+  document.addEventListener("DOMContentLoaded", T.mount);
+})();

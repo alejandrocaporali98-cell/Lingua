@@ -5,7 +5,7 @@
 // - Each saved key carries its change time, so the newest value always wins.
 (function () {
   const L = window.LINGUA, cfg = L.cloud || {};
-  const LOCAL_ONLY = ["textSize", "modoClase", "reportLang"];
+  const LOCAL_ONLY = ["textSize", "modoClase", "reportLang", "theme"];
   const root = /\/clases\//.test(location.pathname) ? "../" : "";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const qs = new URLSearchParams(location.search);
