@@ -135,8 +135,8 @@ function render() {
   <form class="panel" id="pform" novalidate>
     <div><h2>${setup ? "Tell us about you" : "Profile"}</h2><p class="muted" style="font-size:.9em">Your teacher uses this to make lessons about the things you like.</p></div>
     <div class="grid2">
-      <div class="field"><label for="dn">Your name</label><input id="dn" maxlength="40" autocomplete="given-name" value="${esc(name)}" placeholder="e.g. Diego"></div>
-      <div class="field"><label for="age">Age</label><input id="age" type="number" min="5" max="99" inputmode="numeric" value="${p.age || ""}" placeholder="e.g. 15"></div>
+      <div class="field"><label for="dn">Your name</label><input id="dn" maxlength="40" autocomplete="given-name" value="${esc(name)}"></div>
+      <div class="field"><label for="age">Age</label><input id="age" type="number" min="5" max="99" inputmode="numeric" value="${p.age || ""}"></div>
     </div>
     <div class="field"><label>Things you love</label><span class="help">Choose as many as you want.</span>
       <div class="chips" id="chips">${INTERESTS.map(i => `<button type="button" aria-pressed="${picked.has(i)}">${i}</button>`).join("")}</div></div>
