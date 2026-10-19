@@ -11,7 +11,12 @@ English learning platform for one-to-one online classes. Static site (HTML, CSS 
 | `reporte.html` | **Placement report**: section and skill-area charts, speaking, strengths, focus areas, plan and question review. EN / ES toggle for parents |
 | `clases/leccion-01.html` | **Lesson 01 · Driver Profile** (A1–A2) |
 | `login.html` | **Sign in** with username and password |
-| `perfil.html` | **Profile**: name, age, interests, color, stats, change password, sign out |
+| `perfil.html` | **Profile**: helmet avatar builder, name, age, interests, settings (`#settings`: text size, dark mode), change password, sign out |
+| `grades.html` | **Grades**: final quiz results per lesson (best, last, attempts, history) and the placement level |
+| `diplomas.html` | **Diplomas**: one certificate per lesson passed with 80% or more; `#d01` opens it ready to print or save as PDF |
+| `resources.html` | **Study resources**: free websites to practice between classes, grouped by skill |
+
+Every page has a **menu** (☰, left of the logo) with links to all of the above, a dark mode switch and sign out.
 
 ## Structure
 
@@ -23,6 +28,8 @@ assets/
   leccion.css        lesson player styles
   leccion.js         lesson player engine
   cloud.js           accounts + sync (Supabase)
+  avatar.js          helmet avatar builder and renderer
+  menu.js            side menu (☰)
   vendor/            Supabase browser client (bundled, v2.45.4)
   favicon.svg
 supabase/
@@ -36,7 +43,7 @@ clases/
 1. Copy `clases/leccion-01.html` to `clases/leccion-02.html` and replace the `window.CLASE` data.
 2. In `assets/config.js`, set that lesson's `archivo` and change `estado` from `"pronto"` to `"lista"`.
 
-Each lesson has 5 sections: vocabulary, sound natural, fill in the gaps, role-play and a 20-question final quiz. Correct answers rotate A, B, C, D.
+Each lesson has 5 sections: vocabulary, sound natural, fill in the gaps, role-play and a 20-question final quiz. Correct answers rotate A, B, C, D. Every final quiz attempt is saved for **Grades**, and a score of 80% or more unlocks the lesson's **diploma** (signed with `maestroNombre` from `config.js`).
 
 ## Class mode (live, screen-shared)
 

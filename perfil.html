@@ -14,6 +14,7 @@
 <script src="assets/avatar.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
+<script src="assets/menu.js"></script>
 <style>
   .wrap { max-width: 860px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 20px; }
   .wrap > * { min-width: 0; }
@@ -143,7 +144,7 @@ function render() {
     <div class="actions"><button class="btn primary" type="submit" id="psave">${setup ? "Save and start" : "Save profile and avatar"}</button></div>
   </form>
 
-  ${setup ? "" : `<div class="panel" style="grid-template-columns:minmax(0,1fr) auto;align-items:center">
+  ${setup ? "" : `<div class="panel" id="settings" style="grid-template-columns:minmax(0,1fr) auto;align-items:center;scroll-margin-top:80px">
     <div><h2>Appearance</h2><p class="muted" style="font-size:.9em">System follows your phone or computer setting.</p></div>
     <div class="seg" role="group" aria-label="Theme">${["light", "dark", "system"].map(v => `<button type="button" data-theme-opt="${v}" aria-pressed="${G.theme.get() === v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div>
   </div>`}
@@ -239,7 +240,7 @@ function render() {
   const out = document.getElementById("out");
   if (out) out.onclick = () => G.signOut();
 }
-G.ready.then(render);
+G.ready.then(() => { render(); if (location.hash) { const t = document.querySelector(location.hash); if (t) setTimeout(() => t.scrollIntoView({ behavior: "smooth", block: "start" }), 80); } });
 document.addEventListener("lingua:sync", () => {
   const s = document.querySelector(".sync"); if (!s) return;
   const ok = G.lastSync && G.lastSync.ok;

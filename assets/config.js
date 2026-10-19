@@ -4,6 +4,7 @@
 window.LINGUA = {
   curso: "English with the things you love",
   maestro: "Alejandro",
+  maestroNombre: "Alejandro Caporali",   // nombre que firma los diplomas
 
   // Cada lección nueva se agrega aquí. estado: "lista" o "pronto"
   modulos: [

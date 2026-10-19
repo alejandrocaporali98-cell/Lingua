@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Study resources</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<script src="assets/menu.js"></script>
+<style>
+  .wrap { max-width: 1040px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 26px; }
+  .wrap > * { min-width: 0; }
+  .page-head h1 { font-size: 2em; font-weight: 800; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filters button { border: 1px solid var(--line-2); background: var(--surface); border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: .88em; color: var(--ink-2); }
+  .filters button[aria-pressed="true"] { background: var(--inverse); color: var(--on-inverse); border-color: var(--inverse); }
+  .group h2 { font-size: 1.1em; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+  .group h2 .ic { width: 32px; height: 32px; border-radius: 8px; background: var(--brand-soft); color: var(--brand-dark); display: grid; place-items: center; }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 12px; }
+  @media (max-width: 720px) { .cards { grid-template-columns: 1fr; } }
+  .res { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding: 18px; border-radius: var(--r-l); border: 1px solid var(--line); background: var(--surface); text-decoration: none; color: var(--ink); }
+  .res:hover { border-color: var(--line-2); box-shadow: var(--shadow); }
+  .res .lg { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font-weight: 800; font-size: .95em; color: #fff; }
+  .res b { font-size: 1.02em; }
+  .res p { color: var(--ink-2); font-size: .9em; margin-top: 3px; }
+  .res .tip { margin-top: 8px; font-size: .82em; color: var(--brand-dark); background: var(--brand-soft); padding: 6px 10px; border-radius: 8px; }
+  .res .meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .res .url { color: var(--mute); font-size: .8em; }
+  .note { font-size: .85em; color: var(--mute); }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="index.html">My learning</a><a href="grades.html">Grades</a><a class="on" href="resources.html">Resources</a></nav>
+    <span class="spacer"></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"></div></main>
+<script>
+const G = window.LINGUA;
+document.getElementById("logo").innerHTML = G.logo;
+const GROUPS = [
+  { id: "grammar", name: "Grammar & practice", icon: '<path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2z"/><path d="M22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"/>', items: [
+    { n: "LearnEnglish Teens", by: "British Council", url: "https://learnenglishteens.britishcouncil.org/", c: "#23085a", ab: "LT", lvl: "A1–B2", d: "Grammar explanations with short exercises, plus reading, listening and games made for teenagers.", tip: "After each lesson, do the grammar page for the topic we saw." },
+    { n: "BBC Learning English", by: "BBC", url: "https://www.bbc.co.uk/learningenglish", c: "#b80000", ab: "BBC", lvl: "A1–C1", d: "Free courses by level, short videos and quizzes about grammar, vocabulary and real news.", tip: "Start with the “Lower intermediate” course." }
+  ]},
+  { id: "listening", name: "Listening", icon: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="5" height="7" rx="2"/><rect x="16" y="14" width="5" height="7" rx="2"/>', items: [
+    { n: "LyricsTraining", by: "Music videos", url: "https://lyricstraining.com/", c: "#e0362c", ab: "LT", lvl: "A1–C2", d: "Fill in the missing words of songs while the music video plays. Choose the difficulty yourself.", tip: "Pick your favorite songs on Beginner mode. Great for music fans." },
+    { n: "ELLLO", by: "English Listening Lesson Library", url: "https://elllo.org/", c: "#0f766e", ab: "EL", lvl: "A1–C1", d: "Thousands of short conversations with real speakers from many countries, organized by level, with quizzes.", tip: "Filter by level A2 and listen to one a day." }
+  ]},
+  { id: "speaking", name: "Pronunciation", icon: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>', items: [
+    { n: "YouGlish", by: "Real YouTube clips", url: "https://youglish.com/", c: "#c4302b", ab: "YG", lvl: "All levels", d: "Type any word and hear it said by real people in YouTube videos, with subtitles.", tip: "Search “teammate”, “track” or “nickname” from Lesson 01." }
+  ]},
+  { id: "writing", name: "Writing", icon: '<path d="M4 20h4l11-11-4-4L4 16z"/><path d="M14 6l4 4"/>', items: [
+    { n: "Write & Improve", by: "Cambridge", url: "https://writeandimprove.com/", c: "#004a8f", ab: "W&I", lvl: "A1–C2", d: "Write a short text and get instant feedback on your mistakes and your level.", tip: "Write 5 sentences about yourself, like your Driver Profile." }
+  ]},
+  { id: "vocabulary", name: "Vocabulary", icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h6"/>', items: [
+    { n: "Quizlet", by: "Flashcards", url: "https://quizlet.com/", c: "#4255ff", ab: "Q", lvl: "All levels", d: "Make flashcard sets and practice them with games. Works great on the phone.", tip: "Make a set with the 16 words from Lesson 01." },
+    { n: "Cambridge Dictionary", by: "Cambridge", url: "https://dictionary.cambridge.org/", c: "#1d2b4f", ab: "CD", lvl: "All levels", d: "Simple definitions, example sentences and audio in British and American English.", tip: "Use the “English” dictionary, not the translator, to keep thinking in English." }
+  ]}
+];
+let filter = "all";
+function render() {
+  const groups = GROUPS.filter(g => filter === "all" || g.id === filter);
+  document.getElementById("app").innerHTML = `
+    <div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Practice</span><h1>Study resources</h1>
+      <p class="muted">Free websites to practice between classes. Ten or fifteen minutes a day makes a big difference.</p></div>
+    <div class="filters" role="group" aria-label="Filter by skill">${[["all", "All"], ...GROUPS.map(g => [g.id, g.name])].map(([id, n]) => `<button type="button" data-f="${id}" aria-pressed="${filter === id}">${n}</button>`).join("")}</div>
+    ${groups.map(g => `<section class="group"><h2><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g.icon}</svg></span>${g.name}</h2>
+      <div class="cards">${g.items.map(i => `<a class="res" href="${i.url}" target="_blank" rel="noopener">
+        <span class="lg" style="background:${i.c}">${i.ab}</span>
+        <span style="min-width:0"><b>${i.n}</b> <span class="muted" style="font-size:.85em">· ${i.by}</span>
+          <p>${i.d}</p>
+          <span class="meta"><span class="chip">${i.lvl}</span><span class="url">${i.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")} ↗</span></span>
+          <span class="tip" style="display:block">${i.tip}</span></span></a>`).join("")}</div></section>`).join("")}
+    <p class="note">These sites are free and not part of Lingua. Some ask you to make an account to save your progress.</p>`;
+  document.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { filter = b.dataset.f; render(); });
+}
+G.ready.then(render);
+</script>
+</body>
+</html>

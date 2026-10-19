@@ -157,7 +157,7 @@
         <div class="result">
           <div class="score-ring" style="background:conic-gradient(${p >= 80 ? "var(--ok)" : "var(--brand)"} ${p}%, var(--line) 0)"><div><span><b class="num">${ok}/${qs.length}</b><br><span class="muted" style="font-size:.8em">${p}%</span></span></div></div>
           <div style="display:grid;gap:6px"><span class="eyebrow">${o.label}</span><h3 style="font-size:1.35em;font-weight:800">${msg}</h3>
-            ${o.badge && p >= 80 ? `<div class="badge-earned"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="17" r="13" fill="#f5c518"/><circle cx="20" cy="17" r="9" fill="none" stroke="#3a2c00" stroke-width="1.6" stroke-dasharray="2 2.2"/><path d="M14.5 17.5l3.6 3.4 7.4-7.4" fill="none" stroke="#3a2c00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 27l-3 9 5-2 3 4 2-8M27 27l3 9-5-2-3 4-2-8" fill="#2346d0"/></svg><span><b>Badge unlocked</b><br><span class="muted">Lesson ${C.id} · ${C.titulo}</span></span></div>` : ""}</div>
+            ${o.badge && p >= 80 ? `<div class="badge-earned"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="17" r="13" fill="#f5c518"/><circle cx="20" cy="17" r="9" fill="none" stroke="#3a2c00" stroke-width="1.6" stroke-dasharray="2 2.2"/><path d="M14.5 17.5l3.6 3.4 7.4-7.4" fill="none" stroke="#3a2c00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 27l-3 9 5-2 3 4 2-8M27 27l3 9-5-2-3 4-2-8" fill="#2346d0"/></svg><span><b>Diploma unlocked</b><br><span class="muted">Lesson ${C.id} · ${C.titulo} · <a href="../diplomas.html#d${C.id}">View your diploma</a></span></span></div>` : ""}</div>
         </div>
         ${wrong.length ? `<div style="display:grid;gap:8px"><span class="eyebrow">Correct answers to review</span>${wrong.map(q => `<div class="feedback bad" style="padding:10px 14px"><div>${q.p.replace("___", "<b style='display:inline'>" + q.a + "</b>")}</div></div>`).join("")}</div>` : ""}
         <div class="actions"><button class="btn" data-a="again">Try again</button></div></div>`;
@@ -219,7 +219,15 @@
     stage.innerHTML = head("Final quiz", `${C.final.length} questions from the whole lesson. Save the hard ones for review.`) + `<div id="qz"></div>` + pager();
     quiz = makeQuiz(stage.querySelector("#qz"), C.final, {
       label: "Final quiz result", badge: true,
-      onDone: (ok, n) => { markDone(4); G.store.set("score." + C.id, { ok, n }); }
+      onDone: (ok, n) => {
+        markDone(4);
+        const at = new Date().toISOString();
+        G.store.set("score." + C.id, { ok, n, at });
+        const tries = G.store.get("attempts." + C.id, []); tries.push({ ok, n, at }); G.store.set("attempts." + C.id, tries.slice(-50));
+        const d = G.store.get("diploma." + C.id, null);
+        if (ok / n >= .8 && !d) G.store.set("diploma." + C.id, { ok, n, at });
+        else if (d && ok > d.ok) G.store.set("diploma." + C.id, { ...d, ok, n });
+      }
     });
   }
 
@@ -251,4 +259,5 @@
   drawToc(); draw();
   if (G.decorate) G.decorate();
   if (G.theme && G.theme.mount) G.theme.mount();
+  if (G.menu && G.menu.mount) G.menu.mount();
 })();

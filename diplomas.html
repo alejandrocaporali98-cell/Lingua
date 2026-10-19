@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Diplomas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Caveat:wght@600&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<script src="assets/menu.js"></script>
+<style>
+  .wrap { max-width: 1040px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 22px; }
+  .wrap > * { min-width: 0; }
+  .page-head h1 { font-size: 2em; font-weight: 800; }
+  .gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  @media (max-width: 860px) { .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .gallery { grid-template-columns: 1fr; } }
+  .dcard { display: grid; gap: 10px; text-decoration: none; color: var(--ink); border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-l); padding: 12px; text-align: left; font: inherit; cursor: pointer; }
+  .dcard:hover { border-color: var(--line-2); box-shadow: var(--shadow); }
+  .dcard .mini { aspect-ratio: 1.414; border-radius: 8px; overflow: hidden; position: relative; background: #fbfaf6; }
+  .dcard .mini .paper { position: absolute; left: 0; top: 0; width: 1000px; transform-origin: 0 0; }
+  .dcard.locked { cursor: default; background: transparent; border-style: dashed; }
+  .dcard.locked .mini { background: var(--bg); display: grid; place-items: center; }
+  .dcard b { font-size: .98em; }
+  .dcard .muted { font-size: .85em; }
+
+  /* The certificate: always printed on light paper */
+  .paper { --ink-c: #1d2230; --mute-c: #5f6676; --gold: #b8860b; --c: #2346d0;
+    position: relative; width: 100%; aspect-ratio: 1.414; background: #fbfaf6; color: var(--ink-c); font-family: "Plus Jakarta Sans", system-ui, sans-serif; overflow: hidden; container-type: inline-size; border-radius: 4px; }
+  .paper .frame { position: absolute; inset: 2.6cqw; border: .25cqw solid var(--ink-c); }
+  .paper .frame::after { content: ""; position: absolute; inset: .9cqw; border: .12cqw solid color-mix(in srgb, var(--gold) 70%, transparent); }
+  .paper .band { position: absolute; left: 0; top: 0; bottom: 0; width: 2.6cqw; background: var(--c); }
+  .paper .dots { position: absolute; right: -6cqw; top: -6cqw; width: 30cqw; height: 30cqw; border-radius: 50%; background-image: radial-gradient(color-mix(in srgb, var(--c) 22%, transparent) .18cqw, transparent .22cqw); background-size: 1.6cqw 1.6cqw; }
+  .paper .in { position: absolute; inset: 6.5cqw 8cqw 6cqw 9cqw; display: flex; flex-direction: column; }
+  .paper .row1 { display: flex; justify-content: space-between; align-items: center; }
+  .paper .brand { display: flex; align-items: center; gap: 1.2cqw; font-weight: 800; font-size: 2.6cqw; letter-spacing: -.04em; }
+  .paper .brand svg { width: 4.2cqw; height: 4.2cqw; }
+  .paper .no { font-size: 1.15cqw; color: var(--mute-c); letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+  .paper .kicker { margin-top: 5.2cqw; font-size: 1.5cqw; letter-spacing: .38em; font-weight: 800; color: var(--c); text-transform: uppercase; }
+  .paper .t1 { margin-top: 2.6cqw; font-size: 1.8cqw; color: var(--mute-c); }
+  .paper .name { margin-top: .8cqw; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 6.4cqw; line-height: 1.05; letter-spacing: -.02em; }
+  .paper .rule { width: 46cqw; height: .14cqw; background: var(--gold); margin-top: 1.8cqw; }
+  .paper .t2 { margin-top: 2.2cqw; font-size: 1.8cqw; color: var(--mute-c); }
+  .paper .lesson { margin-top: .6cqw; font-size: 3.1cqw; font-weight: 800; letter-spacing: -.02em; }
+  .paper .meta { margin-top: 1cqw; font-size: 1.55cqw; color: var(--mute-c); }
+  .paper .bottom { margin-top: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 3cqw; }
+  .paper .sig { display: grid; gap: .5cqw; }
+  .paper .sig .line { border-top: .14cqw solid var(--ink-c); padding-top: .8cqw; font-size: 1.35cqw; font-weight: 700; }
+  .paper .sig .line span { display: block; color: var(--mute-c); font-weight: 500; font-size: 1.15cqw; }
+  .paper .script { font-family: "Caveat", "Segoe Script", cursive; font-size: 4.6cqw; line-height: 1; color: #1f3aa8; padding-left: .5cqw; }
+  .paper .date { font-size: 2.2cqw; font-weight: 700; padding-left: .3cqw; }
+  .paper .seal { width: 14cqw; height: 14cqw; }
+  .paper .right { text-align: right; }
+
+  .viewer { display: grid; gap: 14px; }
+  .viewer .paper { box-shadow: 0 18px 50px rgba(10, 12, 20, .22); }
+  .vbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .empty { padding: 28px; text-align: center; border: 1px dashed var(--line-2); border-radius: var(--r-l); color: var(--mute); }
+
+  @media print {
+    @page { size: A4 landscape; margin: 0; }
+    html, body { background: #fff !important; }
+    body * { visibility: hidden !important; }
+    .viewer .paper, .viewer .paper * { visibility: visible !important; }
+    .viewer .paper { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; aspect-ratio: auto; box-shadow: none; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="index.html">My learning</a><a href="grades.html">Grades</a><a class="on" href="diplomas.html">Diplomas</a></nav>
+    <span class="spacer"></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"></div></main>
+<script>
+const G = window.LINGUA;
+document.getElementById("logo").innerHTML = G.logo;
+const lessons = G.modulos.flatMap(m => m.lecciones);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+// A result that passed before diplomas existed still earns one
+lessons.forEach(l => {
+  const s = G.store.get("score." + l.id, null);
+  if (s && s.ok / s.n >= .8 && !G.store.get("diploma." + l.id, null)) G.store.set("diploma." + l.id, { ok: s.ok, n: s.n, at: s.at || new Date().toISOString() });
+});
+
+function certNo(id) {
+  const seed = (G.user && G.user.id) || ((G.profile || {}).display_name || "student");
+  let h = 0; for (const ch of seed + id) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return "LNG-" + id + "-" + h.toString(36).toUpperCase().slice(-5).padStart(5, "0");
+}
+function seal(color) {
+  return `<svg class="seal" viewBox="0 0 120 120" aria-hidden="true">
+    <defs><path id="sp" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs>
+    <circle cx="60" cy="60" r="57" fill="#e9b949"/><circle cx="60" cy="60" r="57" fill="none" stroke="#b8860b" stroke-width="2" stroke-dasharray="3 3"/>
+    <circle cx="60" cy="60" r="50" fill="#f4cd62" stroke="#b8860b" stroke-width="1.2"/>
+    <text font-family="Plus Jakarta Sans, sans-serif" font-size="9.2" font-weight="800" fill="#6b4a00"><textPath href="#sp" textLength="268" lengthAdjust="spacing">LINGUA · ENGLISH · COMPLETED · </textPath></text>
+    <circle cx="60" cy="60" r="31" fill="${color}"/>
+    <path d="M45 47h30a4 4 0 0 1 4 4v14a4 4 0 0 1-4 4H62l-8 7v-7h-9a4 4 0 0 1-4-4V51a4 4 0 0 1 4-4z" fill="#fff"/>
+    <circle cx="68" cy="58" r="4.2" fill="#f5c518"/>
+  </svg>`;
+}
+function paper(l, d) {
+  const p = G.profile || G.store.get("profileLocal", {}) || {};
+  const name = (p.display_name || "Student").trim();
+  const date = new Date(d.at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  return `<div class="paper" style="--c:${l.color}">
+    <div class="band"></div><div class="dots"></div><div class="frame"></div>
+    <div class="in">
+      <div class="row1"><div class="brand">${G.mark(30)}<span>lingua</span></div><div class="no">Certificate No. ${certNo(l.id)}</div></div>
+      <div class="kicker">Certificate of completion</div>
+      <div class="t1">This certifies that</div>
+      <div class="name">${esc(name)}</div>
+      <div class="rule"></div>
+      <div class="t2">has successfully completed</div>
+      <div class="lesson">Lesson ${l.id} · ${l.titulo}</div>
+      <div class="meta">${esc(G.curso)} · Level ${l.nivel} · Final quiz score ${Math.round(d.ok / d.n * 100)}%</div>
+      <div class="bottom">
+        <div class="sig"><div class="date">${date}</div><div class="line">Date of completion<span>Online, live class</span></div></div>
+        ${seal(l.color)}
+        <div class="sig right"><div class="script">${esc(G.maestro)}</div><div class="line">${esc(G.maestroNombre || G.maestro)}<span>English instructor</span></div></div>
+      </div>
+    </div>
+  </div>`;
+}
+function render() {
+  const app = document.getElementById("app");
+  const earned = lessons.map(l => ({ l, d: G.store.get("diploma." + l.id, null) }));
+  const got = earned.filter(x => x.d), sel = (location.hash.match(/^#d(\d+)$/) || [])[1];
+  const cur = got.find(x => x.l.id === sel);
+
+  if (cur) {
+    app.innerHTML = `<div class="viewer">
+      <div class="vbar"><a class="btn ghost" href="diplomas.html">← All diplomas</a>
+        <div class="actions">${/claude\.ai|claudeusercontent/.test(location.hostname) ? "" : `<button class="btn primary" id="print">Print or save as PDF</button>`}</div></div>
+      ${paper(cur.l, cur.d)}
+      <p class="muted" style="font-size:.85em">Tip: in the print window choose “Save as PDF” and landscape to keep a copy or send it.</p></div>`;
+    const pr = document.getElementById("print"); if (pr) pr.onclick = () => window.print();
+    return;
+  }
+  app.innerHTML = `
+    <div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Progress</span><h1>Diplomas</h1>
+      <p class="muted">Pass a lesson’s final quiz with 80% or more and you get its diploma. You have <b style="color:var(--ink)">${got.length}</b> of ${lessons.length}.</p></div>
+    ${got.length ? "" : `<div class="empty">Your first diploma is waiting in <b>Lesson 01 · Driver Profile</b>. Get 16 of 20 on the final quiz to unlock it.</div>`}
+    <div class="gallery">${earned.map(({ l, d }) => d
+      ? `<a class="dcard" href="#d${l.id}"><div class="mini" data-mini>${paper(l, d)}</div><b>Lesson ${l.id} · ${l.titulo}</b><span class="muted">Earned ${new Date(d.at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · ${Math.round(d.ok / d.n * 100)}%</span></a>`
+      : `<div class="dcard locked"><div class="mini"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><b style="color:var(--mute)">Lesson ${l.id} · ${l.titulo}</b><span class="muted">${l.estado === "lista" ? "Pass the final quiz with 80% to unlock" : "Coming soon"}</span></div>`).join("")}</div>`;
+  scaleMinis();
+}
+function scaleMinis() {
+  document.querySelectorAll("[data-mini]").forEach(m => {
+    const p = m.querySelector(".paper"); p.style.width = "1000px"; p.style.position = "absolute"; p.style.transformOrigin = "0 0";
+    p.style.transform = `scale(${m.clientWidth / 1000})`;
+  });
+}
+window.addEventListener("resize", scaleMinis);
+window.addEventListener("hashchange", () => { render(); window.scrollTo({ top: 0 }); });
+G.ready.then(render);
+</script>
+</body>
+</html>
