@@ -63,20 +63,12 @@
   .ico svg { width: 22px; height: 22px; }
   .card b { display: block; margin-bottom: 2px; }
   .card p { color: var(--ink-2); font-size: .92em; }
-  .commit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  @media (max-width: 700px) { .commit { grid-template-columns: 1fr; } }
-  .col { border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 10px; align-content: start; }
-  .col .hd { display: flex; gap: 10px; align-items: center; font-weight: 800; }
-  .col .hd .ico { width: 36px; height: 36px; border-radius: 10px; } .col .hd .ico svg { width: 18px; height: 18px; }
-  .col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-  .col li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; font-size: .92em; color: var(--ink-2); }
-  .col li svg { width: 18px; height: 18px; color: var(--ok); margin-top: 2px; }
   .comment { background: var(--brand-soft); color: var(--brand-dark); border-radius: 12px; padding: 16px 18px; white-space: pre-wrap; }
   .sign { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; padding-top: 8px; }
   .sign .line { min-width: 260px; border-top: 1.5px solid var(--ink); padding-top: 8px; display: grid; }
   .sign .line b { font-weight: 800; } .sign .line span { color: var(--mute); font-size: .88em; }
   .foot { color: var(--mute); font-size: .82em; text-align: center; }
-  @media print { header.nav, .noprint, .menu-btn, .theme-btn { display: none !important; } html, body { background: #fff; } .card, .col, .kpis, .hero, .sign { break-inside: avoid; } .panel h2 { break-after: avoid; } .wrap { padding-block: 0; } }
+  @media print { header.nav, .noprint, .menu-btn, .theme-btn { display: none !important; } html, body { background: #fff; } .card, .kpis, .hero, .sign { break-inside: avoid; } .panel h2 { break-after: avoid; } .wrap { padding-block: 0; } }
 </style>
 </head>
 <body>
@@ -101,9 +93,6 @@ const I = {
   award: '<circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/>',
   target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
   cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
-  teach: '<path d="M2 3h20v13H2z"/><path d="M8 21h8M12 16v5"/>',
-  cap: '<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
-  home: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
   check: '<path d="M20 6 9 17l-5-5"/>'
 };
 const svg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
@@ -151,10 +140,6 @@ const T = {
       ["award", "Quizzes y diplomas", "Cada lección termina con un quiz de 20 preguntas. Con 80% o más obtiene su diploma de la lección."],
       ["target", "Examen de colocación", "Lo vuelve a presentar cada cierto tiempo para comparar con su punto de partida."],
       ["cal", "Asistencia y notas", "Cada clase queda registrada con lo que vimos y el vocabulario nuevo."]],
-    commitT: "Compromisos", who: [["teach", "Instructor"], ["cap", "Alumno"], ["home", "Familia"]],
-    commits: (f) => [["Preparar cada clase con material a su medida.", "Dejar tarea y retroalimentación después de cada clase.", "Enviar un reporte de avance cada mes."],
-      [`Asistir a sus ${f} clases por semana.`, "Hacer las tareas antes de la siguiente clase.", "Practicar en la plataforma al menos 4 días por semana."],
-      ["Revisar el reporte mensual.", "Motivarlo a practicar entre clases.", "Avisar con anticipación si no puede asistir a una clase."]],
     commentT: "Mensaje del instructor", role: "Instructor de inglés", gen: "Plan generado el", made: "Lingua · Plataforma de aprendizaje de inglés.",
     missing: "Este enlace no tiene los datos del plan.", days: ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"], and: "y", at: "a las", sched: "Horario" },
   en: { eyebrow: "English learning plan", teacher: "Instructor", start: "Start", print: "Print or save as PDF",
@@ -173,10 +158,6 @@ const T = {
       ["award", "Quizzes and diplomas", "Each lesson ends with a 20-question quiz. With 80% or more he earns that lesson’s diploma."],
       ["target", "Placement test", "He retakes it from time to time to compare with his starting point."],
       ["cal", "Attendance and notes", "Every class is recorded with what we covered and the new vocabulary."]],
-    commitT: "Commitments", who: [["teach", "Instructor"], ["cap", "Student"], ["home", "Family"]],
-    commits: (f) => [["Prepare every class with tailored material.", "Give homework and feedback after every class.", "Send a progress report every month."],
-      [`Attend his ${f} classes a week.`, "Do the homework before the next class.", "Practice on the platform at least 4 days a week."],
-      ["Read the monthly report.", "Encourage him to practice between classes.", "Give notice in advance if he can’t make a class."]],
     commentT: "A note from the instructor", role: "English instructor", gen: "Plan generated on", made: "Lingua · English learning platform.",
     missing: "This link has no plan data.", days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], and: "and", at: "at", sched: "Schedule" }
 };
@@ -218,8 +199,6 @@ function render() {
       <div class="chips">${ls.map(l => `<span class="chip ${l[2] ? "ok" : ""}">${t.lesson} ${esc(l[0])} · ${esc(l[1])}${l[2] ? " · " + t.passedL : ""}</span>`).join("")}<span class="chip">${t.more}</span></div></div>` : ""}
     <div class="panel"><h2>${t.howT}</h2><div class="cards">${t.how.map(h => `<div class="card"><span class="ico">${svg(h[0])}</span><div><b>${h[1]}</b><p>${esc(h[2](D.f, D.mn, it))}</p></div></div>`).join("")}</div></div>
     <div class="panel"><h2>${t.measureT}</h2><div class="cards">${t.measure.map(h => `<div class="card"><span class="ico">${svg(h[0])}</span><div><b>${h[1]}</b><p>${h[2]}</p></div></div>`).join("")}</div></div>
-    <div class="panel"><h2>${t.commitT}</h2><div class="commit">${t.who.map((w, i) => `<div class="col"><div class="hd"><span class="ico">${svg(w[0])}</span>${w[1]}</div>
-      <ul>${t.commits(D.f)[i].map(x => `<li>${svg("check")}<span>${x}</span></li>`).join("")}</ul></div>`).join("")}</div></div>
     ${D.c ? `<div class="panel"><h2>${t.commentT}</h2><div class="comment">${esc(D.c)}</div></div>` : ""}
     <div class="panel"><div class="sign"><div class="line"><b>${esc(G.maestroNombre || G.maestro)}</b><span>${t.role}</span></div>
       <span class="muted" style="font-size:.88em">${t.gen} ${new Date(D.g).toLocaleDateString(loc, { year: "numeric", month: "long", day: "numeric" })}</span></div></div>

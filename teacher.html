@@ -275,7 +275,7 @@ function planPanel(s) {
   const tops = [["pron", "Pronunciation"], ["verbs", "Verbs and tenses"], ["phr", "Phrasal verbs"], ["vocab", "Vocabulary"], ["conv", "Conversation"], ["listen", "Listening"]];
   return `<div class="panel">
     <h2>Learning plan for parents</h2>
-    <p class="muted" style="font-size:.9em">A formal plan for the family, in Spanish (with an English button), that opens without signing in. It is organized by topics, with no deadlines or level promises: starting point from the placement test, what you will work on, how classes work, how progress is measured and commitments. ${s.placement ? "" : "<b>Tip:</b> generate it after the placement test so it shows his starting point."}</p>
+    <p class="muted" style="font-size:.9em">A formal plan for the family, in Spanish (with an English button), that opens without signing in. It is organized by topics, with no deadlines or level promises: starting point from the placement test, what you will work on, how classes work and how progress is measured. ${s.placement ? "" : "<b>Tip:</b> generate it after the placement test so it shows his starting point."}</p>
     <div class="grid2" style="grid-template-columns:repeat(3,minmax(0,1fr))">
       <div class="field"><label for="pS">Start date</label><input id="pS" type="date" value="${day(new Date())}"></div>
       <div class="field"><label for="pF">Classes per week</label><select id="pF">${[1, 2, 3, 4, 5].map(n => `<option ${n === 2 ? "selected" : ""}>${n}</option>`).join("")}</select></div>
