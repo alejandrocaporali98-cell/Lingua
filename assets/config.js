@@ -23,8 +23,8 @@ window.LINGUA = {
   // Pega aquí el Project URL y la Publishable key (Settings → API Keys).
   // Si se dejan vacíos, la plataforma funciona sin cuentas y guarda solo en el navegador.
   cloud: {
-    url: "",
-    key: "",
+    url: "https://vtvfltiadubdphkunshr.supabase.co",
+    key: "sb_publishable_5O3MsX0-tvWFq2M65wTUEQ_veRijaYN",
     // Si el alumno escribe un usuario sin "@", se convierte en usuario@este-dominio
     usernameDomain: "student.lingua.app"
   }
