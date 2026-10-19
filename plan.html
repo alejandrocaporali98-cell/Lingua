@@ -49,31 +49,9 @@
   .kpi { padding: 14px 16px; display: grid; gap: 2px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
   .kpi .v { font-size: 1.6em; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
   .kpi .l { font-size: .8em; color: var(--mute); font-weight: 600; }
-  .kpi.goal { background: var(--brand); border-color: var(--brand); color: #fff; }
-  .kpi.goal .l { color: rgba(255,255,255,.82); }
-  .ladder { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
-  .rung { display: grid; gap: 6px; justify-items: center; }
-  .rung .bar { width: 100%; height: 10px; border-radius: 999px; background: var(--bg); }
-  .rung.done .bar { background: var(--brand-soft); }
-  .rung.now .bar { background: var(--ink-2); }
-  .rung.path .bar { background: repeating-linear-gradient(90deg, var(--brand) 0 8px, var(--brand-soft) 8px 14px); }
-  .rung.goal .bar { background: var(--brand); }
-  .rung b { font-size: .95em; }
-  .rung small { font-size: .7em; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); min-height: 1.2em; }
-  .rung.now small { color: var(--ink); } .rung.goal small { color: var(--brand); }
   .secs { display: flex; gap: 8px; flex-wrap: wrap; }
   .sec { display: inline-flex; gap: 8px; align-items: center; padding: 8px 12px; border-radius: 10px; background: var(--bg); font-weight: 700; font-size: .9em; }
   .sec.ok { background: var(--ok-soft); color: var(--ok-ink); }
-  .route { display: grid; gap: 0; }
-  .ph { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; }
-  .ph .dot { display: grid; justify-items: center; grid-template-rows: 44px 1fr; }
-  .ph .dot span { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand-dark); font-weight: 800; }
-  .ph .dot i { width: 2px; background: var(--line-2); }
-  .ph:last-child .dot i { background: none; }
-  .ph .body { min-width: 0; padding: 8px 0 26px; display: grid; gap: 8px; }
-  .ph .when { font-size: .75em; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--brand); }
-  .ph h3 { font-size: 1.08em; font-weight: 800; }
-  .ph p { color: var(--ink-2); }
   .chips { display: flex; gap: 6px; flex-wrap: wrap; }
   .chip { white-space: normal; max-width: 100%; font-size: .8em; font-weight: 700; padding: 5px 10px; border-radius: 999px; background: var(--bg); color: var(--ink-2); }
   .chip.ok { background: var(--ok-soft); color: var(--ok-ink); }
@@ -98,7 +76,7 @@
   .sign .line { min-width: 260px; border-top: 1.5px solid var(--ink); padding-top: 8px; display: grid; }
   .sign .line b { font-weight: 800; } .sign .line span { color: var(--mute); font-size: .88em; }
   .foot { color: var(--mute); font-size: .82em; text-align: center; }
-  @media print { header.nav, .noprint, .menu-btn, .theme-btn { display: none !important; } html, body { background: #fff; } .ph, .card, .col, .kpis, .hero, .sign { break-inside: avoid; } .panel h2 { break-after: avoid; } .wrap { padding-block: 0; } }
+  @media print { header.nav, .noprint, .menu-btn, .theme-btn { display: none !important; } html, body { background: #fff; } .card, .col, .kpis, .hero, .sign { break-inside: avoid; } .panel h2 { break-after: avoid; } .wrap { padding-block: 0; } }
 </style>
 </head>
 <body>
@@ -129,38 +107,49 @@ const I = {
   check: '<path d="M20 6 9 17l-5-5"/>'
 };
 const svg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
-const CEFR = ["A1", "A2", "B1", "B2", "C1", "C2"];
-const LV = {
-  es: { A1: "Principiante", A2: "Elemental", B1: "Intermedio", B2: "Intermedio alto", C1: "Avanzado", C2: "Dominio" },
-  en: { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", C1: "Advanced", C2: "Proficient" }
+// Focus areas. Each: icon, title, description, examples (verbs depend on the starting level), how he practices it
+const VERBS = {
+  es: { A1: ["to be", "presente simple", "can / can’t", "there is / there are"], A2: ["pasado simple", "going to y will", "presente continuo", "comparativos"], B1: ["present perfect", "condicionales", "voz pasiva", "used to"], B2: ["tiempos perfectos", "modales de deducción", "reported speech", "condicionales mixtos"] },
+  en: { A1: ["to be", "present simple", "can / can’t", "there is / there are"], A2: ["past simple", "going to and will", "present continuous", "comparatives"], B1: ["present perfect", "conditionals", "the passive", "used to"], B2: ["perfect tenses", "modals of deduction", "reported speech", "mixed conditionals"] }
 };
-// Three phases per starting level: [title, description] in each language
-const PH = {
-  A1: { es: [["Bases sólidas", "Presentarse, hablar de sus gustos, describir cosas y su rutina diaria con seguridad."], ["Contar y opinar", "Hablar del pasado, dar su opinión con razones y hacer preguntas sencillas."], ["Conversación con confianza", "Comparar, hablar de planes y sostener conversaciones cortas sin traducir mentalmente."]],
-        en: [["Solid foundations", "Introduce himself, talk about his likes, describe things and his daily routine with confidence."], ["Tell and give opinions", "Talk about the past, give reasons for his opinions and ask simple questions."], ["Confident conversation", "Compare, talk about plans and hold short conversations without translating in his head."]] },
-  A2: { es: [["Consolidar lo básico", "Reforzar el presente, el pasado y el vocabulario de todos los días hasta usarlos sin errores."], ["Pasado y futuro", "Contar historias completas, hablar de planes y comparar con precisión."], ["Hacia la fluidez", "Present perfect, condicionales y phrasal verbs; opinar y argumentar con ideas propias."]],
-        en: [["Consolidate the basics", "Strengthen the present, the past and everyday vocabulary until he uses them accurately."], ["Past and future", "Tell complete stories, talk about plans and compare precisely."], ["Towards fluency", "Present perfect, conditionals and phrasal verbs; give and defend his own opinions."]] },
-  B1: { es: [["Fluidez", "Hablar más y traducir menos: experiencias, historias y opiniones con detalle."], ["Precisión", "Condicionales, voz pasiva, reported speech y los phrasal verbs más comunes."], ["Inglés natural", "Expresiones, debates y temas actuales con un vocabulario más amplio."]],
-        en: [["Fluency", "Speak more and translate less: experiences, stories and detailed opinions."], ["Accuracy", "Conditionals, the passive, reported speech and the most common phrasal verbs."], ["Natural English", "Expressions, debates and current topics with a wider vocabulary."]] },
-  B2: { es: [["Precisión avanzada", "Estructuras complejas y matices para expresarse con exactitud."], ["Inglés natural", "Expresiones idiomáticas, registro formal e informal y pronunciación."], ["Dominio", "Debates, presentaciones y comprensión de contenido real: series, podcasts y entrevistas."]],
-        en: [["Advanced accuracy", "Complex structures and nuance to express himself precisely."], ["Natural English", "Idioms, formal and informal register, and pronunciation."], ["Mastery", "Debates, presentations and understanding real content: series, podcasts and interviews."]] }
+const TOPICS = {
+  pron: { i: "mic", es: ["Pronunciación y dicción", "Hablar claro y con seguridad: los sonidos que más cuestan a quien habla español, el ritmo y la entonación.", ["th", "v y b", "terminación -ed", "vocales largas y cortas", "entonación"], "Práctica con micrófono en la plataforma, que le marca cada palabra."],
+          en: ["Pronunciation and diction", "Speak clearly and confidently: the sounds Spanish speakers find hardest, rhythm and intonation.", ["th", "v and b", "-ed endings", "long and short vowels", "intonation"], "Microphone practice on the platform, which checks every word."] },
+  verbs: { i: "layers", es: ["Verbos y tiempos verbales", "Usar los tiempos con naturalidad para hablar del presente, el pasado y el futuro sin traducir.", null, "Ejercicios de completar y quizzes en cada lección."],
+           en: ["Verbs and tenses", "Use tenses naturally to talk about the present, the past and the future without translating.", null, "Fill-in exercises and quizzes in every lesson."] },
+  phr: { i: "link", es: ["Phrasal verbs", "Los verbos de dos palabras que se usan todo el tiempo en el inglés real y casi no se enseñan en la escuela.", ["get up", "find out", "look for", "give up", "come back"], "Tarjetas con audio y repaso de sus errores."],
+         en: ["Phrasal verbs", "The two-word verbs used all the time in real English and rarely taught at school.", ["get up", "find out", "look for", "give up", "come back"], "Flashcards with audio and mistake review."] },
+  vocab: { i: "book", es: ["Vocabulario", "Palabras y frases útiles organizadas por tema, empezando por lo que le gusta.", null, "Su lista de palabras con audio y buscador."],
+           en: ["Vocabulary", "Useful words and phrases organized by topic, starting with what he likes.", null, "His word list with audio and search."] },
+  conv: { i: "chat", es: ["Conversación y fluidez", "Hablar más y con menos pausas: dar su opinión, contar historias y hacer preguntas.", ["dar su opinión", "contar una historia", "hacer preguntas", "comparar"], "Role-plays en clase y en la plataforma."],
+          en: ["Conversation and fluency", "Speak more with fewer pauses: give opinions, tell stories and ask questions.", ["giving opinions", "telling a story", "asking questions", "comparing"], "Role-plays in class and on the platform."] },
+  listen: { i: "head", es: ["Comprensión auditiva", "Entender inglés real a velocidad normal: videos, series y canciones.", ["dictados", "canciones", "videos y series"], "Dictados en la plataforma y material de sus temas favoritos."],
+            en: ["Listening", "Understand real English at normal speed: videos, series and songs.", ["dictations", "songs", "videos and series"], "Dictations on the platform and material on his favorite topics."] }
 };
+Object.assign(I, {
+  mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8"/>',
+  layers: '<path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
+  chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  head: '<path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/>'
+});
 const T = {
   es: { eyebrow: "Plan de aprendizaje de inglés", teacher: "Instructor", start: "Inicio", print: "Imprimir o guardar PDF",
-    now: "Nivel actual", goal: "Meta", length: "Duración", months: n => n + (n === 1 ? " mes" : " meses"), classes: "Clases", perWeek: (f, m) => `${f} por semana · ${m} min`,
-    totals: (c, h) => `Aproximadamente <b>${c} clases</b> y <b>${h} horas</b> de clase en vivo durante el plan, más su práctica en la plataforma.`,
-    ladderT: "De dónde parte y a dónde vamos", today: "Hoy", target: "Meta", cefr: "Niveles del Marco Común Europeo de Referencia (MCER), el estándar internacional para medir el dominio de un idioma.",
-    startT: "Punto de partida", placed: d => `Examen de colocación presentado el ${d}.`, partial: "El examen sigue en curso; el nivel puede subir al terminar las secciones restantes.",
-    pending: "Pendiente: el examen de colocación se presenta en la primera clase y define el nivel de inicio.", sec: "Sección", passed: "aprobada", notPassed: "por reforzar",
-    routeT: "Ruta de aprendizaje", routeS: "El plan se divide en tres etapas. Cada una tiene objetivos claros y lecciones de la plataforma.", month: "Mes", monthsR: (a, b) => a === b ? `Mes ${a}` : `Meses ${a} a ${b}`,
-    lesson: "Lección", extra: "Clases de conversación y lecciones nuevas según su avance", finalTest: "Examen de colocación final", passedL: "aprobada",
+    kStart: "Fecha de inicio", kCls: "Clases por semana", kLen: "Minutos por clase", kPr: "Días de práctica a la semana",
+    startT: "Punto de partida", placed: (d, l, n) => `En el examen de colocación del ${d} obtuvo nivel <b>${l} · ${n}</b>. Es nuestra referencia para elegir por dónde empezar y para ver su avance más adelante.`,
+    partial: "El examen sigue en curso; el resultado puede cambiar al terminar las secciones restantes.",
+    pending: "El examen de colocación se presenta en la primera clase y nos dice por dónde empezar.", passed: "aprobada", notPassed: "por reforzar",
+    topicsT: "Lo que vamos a trabajar", topicsS: "Avanzamos a su ritmo. En cada clase combinamos estos temas según lo que necesite en ese momento.", ex: "Por ejemplo", practice: "Cómo lo practica",
+    vocabEx: it => it ? it.split(", ") : ["la escuela", "deportes", "videojuegos", "música"],
+    lessonsT: "Lecciones de la plataforma", lessonsS: "Cada lección combina vocabulario, verbos, conversación y un quiz final con diploma.", lesson: "Lección", passedL: "aprobada", more: "y más lecciones nuevas conforme avanza",
     howT: "Cómo trabajamos", how: [["users", "Clases en vivo, uno a uno", (f, m) => `${f} clases por semana de ${m} minutos, enfocadas en que hable desde el primer día.`],
       ["phone", "Práctica entre clases", () => "Lingua, su plataforma personal: vocabulario con audio, ejercicios, pronunciación con micrófono y repaso de errores. Meta: 4 días por semana."],
       ["task", "Tareas después de cada clase", () => "Actividades cortas para reforzar lo visto. Las entrega en la plataforma y quedan registradas."],
       ["star", "Material a su medida", (f, m, it) => it ? `Las lecciones giran alrededor de lo que le gusta (${it}) para que aprenda con temas que le interesan.` : "Las lecciones giran alrededor de sus intereses para que aprenda con temas que le motivan."]],
     measureT: "Cómo medimos su avance", measure: [["chart", "Reporte mensual", "Cada mes la familia recibe un reporte con asistencia, días de práctica, lecciones aprobadas y notas de clase."],
       ["award", "Quizzes y diplomas", "Cada lección termina con un quiz de 20 preguntas. Con 80% o más obtiene su diploma de la lección."],
-      ["target", "Examen de colocación", "Al final del plan vuelve a presentar el examen para confirmar el nivel alcanzado."],
+      ["target", "Examen de colocación", "Lo vuelve a presentar cada cierto tiempo para comparar con su punto de partida."],
       ["cal", "Asistencia y notas", "Cada clase queda registrada con lo que vimos y el vocabulario nuevo."]],
     commitT: "Compromisos", who: [["teach", "Instructor"], ["cap", "Alumno"], ["home", "Familia"]],
     commits: (f) => [["Preparar cada clase con material a su medida.", "Dejar tarea y retroalimentación después de cada clase.", "Enviar un reporte de avance cada mes."],
@@ -169,20 +158,20 @@ const T = {
     commentT: "Mensaje del instructor", role: "Instructor de inglés", gen: "Plan generado el", made: "Lingua · Plataforma de aprendizaje de inglés.",
     missing: "Este enlace no tiene los datos del plan.", days: ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"], and: "y", at: "a las", sched: "Horario" },
   en: { eyebrow: "English learning plan", teacher: "Instructor", start: "Start", print: "Print or save as PDF",
-    now: "Current level", goal: "Goal", length: "Length", months: n => n + (n === 1 ? " month" : " months"), classes: "Classes", perWeek: (f, m) => `${f} a week · ${m} min`,
-    totals: (c, h) => `About <b>${c} classes</b> and <b>${h} hours</b> of live classes during the plan, plus his practice on the platform.`,
-    ladderT: "Where he starts and where we’re going", today: "Today", target: "Goal", cefr: "Levels of the Common European Framework of Reference (CEFR), the international standard for language proficiency.",
-    startT: "Starting point", placed: d => `Placement test taken on ${d}.`, partial: "The test is still in progress; the level may go up after the remaining sections.",
-    pending: "Pending: the placement test is taken in the first class and sets the starting level.", sec: "Section", passed: "passed", notPassed: "to strengthen",
-    routeT: "Learning route", routeS: "The plan has three stages. Each one has clear goals and lessons on the platform.", month: "Month", monthsR: (a, b) => a === b ? `Month ${a}` : `Months ${a} to ${b}`,
-    lesson: "Lesson", extra: "Conversation classes and new lessons based on his progress", finalTest: "Final placement test", passedL: "passed",
+    kStart: "Start date", kCls: "Classes per week", kLen: "Minutes per class", kPr: "Practice days per week",
+    startT: "Starting point", placed: (d, l, n) => `In the placement test on ${d} he placed at <b>${l} · ${n}</b>. It is our reference to choose where to begin and to see his progress later on.`,
+    partial: "The test is still in progress; the result may change after the remaining sections.",
+    pending: "The placement test is taken in the first class and tells us where to begin.", passed: "passed", notPassed: "to strengthen",
+    topicsT: "What we will work on", topicsS: "We move at his pace. Every class combines these topics based on what he needs at that moment.", ex: "For example", practice: "How he practices",
+    vocabEx: it => it ? it.split(", ") : ["school", "sports", "video games", "music"],
+    lessonsT: "Platform lessons", lessonsS: "Each lesson combines vocabulary, verbs, conversation and a final quiz with a diploma.", lesson: "Lesson", passedL: "passed", more: "and new lessons as he progresses",
     howT: "How we work", how: [["users", "Live one-to-one classes", (f, m) => `${f} classes a week, ${m} minutes each, focused on speaking from day one.`],
       ["phone", "Practice between classes", () => "Lingua, his personal platform: vocabulary with audio, exercises, pronunciation with the microphone and mistake review. Goal: 4 days a week."],
       ["task", "Homework after every class", () => "Short activities to reinforce each class. He hands them in on the platform and they are recorded."],
       ["star", "Tailored material", (f, m, it) => it ? `Lessons are built around what he likes (${it}) so he learns with topics he cares about.` : "Lessons are built around his interests so he learns with topics that motivate him."]],
     measureT: "How we measure progress", measure: [["chart", "Monthly report", "Every month the family gets a report with attendance, practice days, lessons passed and class notes."],
       ["award", "Quizzes and diplomas", "Each lesson ends with a 20-question quiz. With 80% or more he earns that lesson’s diploma."],
-      ["target", "Placement test", "At the end of the plan he retakes the test to confirm the level reached."],
+      ["target", "Placement test", "He retakes it from time to time to compare with his starting point."],
       ["cal", "Attendance and notes", "Every class is recorded with what we covered and the new vocabulary."]],
     commitT: "Commitments", who: [["teach", "Instructor"], ["cap", "Student"], ["home", "Family"]],
     commits: (f) => [["Prepare every class with tailored material.", "Give homework and feedback after every class.", "Send a progress report every month."],
@@ -191,47 +180,43 @@ const T = {
     commentT: "A note from the instructor", role: "English instructor", gen: "Plan generated on", made: "Lingua · English learning platform.",
     missing: "This link has no plan data.", days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], and: "and", at: "at", sched: "Schedule" }
 };
+const LV = { es: { A1: "Principiante", A2: "Elemental", B1: "Intermedio", B2: "Intermedio alto" }, en: { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate" } };
 function decode(s) { try { const b = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return null; } }
 const D = decode(qp.get("d") || "");
 function render() {
   const t = T[lang], loc = lang === "es" ? "es-MX" : "en-US";
   document.documentElement.lang = lang;
   if (!D) { app.innerHTML = `<div class="panel"><p>${t.missing}</p></div>`; return; }
-  const fd = d => new Date(d + "T12:00").toLocaleDateString(loc, { year: "numeric", month: "long", day: "numeric" });
-  const cur = D.lv && CEFR.includes(D.lv) ? D.lv : null, base = cur || "A1", goal = D.gl || CEFR[CEFR.indexOf(base) + 1];
-  const ci = cur ? CEFR.indexOf(cur) : -1, gi = CEFR.indexOf(goal);
-  const weeks = Math.round(D.mo * 4.33), total = D.f * weeks, hours = Math.round(total * D.mn / 60);
+  const fd = (d, o) => new Date(d + "T12:00").toLocaleDateString(loc, o || { year: "numeric", month: "long", day: "numeric" });
+  const cur = D.lv && LV.en[D.lv] ? D.lv : null, it = (D.it || []).join(", ");
   const list = (arr) => arr.length < 2 ? arr.join("") : arr.slice(0, -1).join(", ") + " " + t.and + " " + arr[arr.length - 1];
   const sched = (D.dy || []).length ? `${list(D.dy.map(d => t.days[d]))}${D.tm ? ` ${t.at} ${new Date("2000-01-01T" + D.tm).toLocaleTimeString(loc, { hour: "numeric", minute: "2-digit" })}` : ""}` : "";
-  // Phases: month ranges and lessons
-  const ph = (PH[base] || PH.A1)[lang], cut = [0, Math.round(D.mo / 3), Math.round(D.mo * 2 / 3), D.mo];
-  const ls = D.ls || [], per = Math.ceil(ls.length / 3) || 0;
-  const phases = ph.map((p, i) => ({ t: p[0], d: p[1], a: cut[i] + 1, b: Math.max(cut[i + 1], cut[i] + 1), ls: ls.slice(i * per, (i + 1) * per) }));
+  const tops = (D.tp && D.tp.length ? D.tp : Object.keys(TOPICS)).filter(k => TOPICS[k]);
+  const ex = k => k === "verbs" ? VERBS[lang][cur || "A1"] : k === "vocab" ? t.vocabEx(it) : TOPICS[k][lang][2];
+  const ls = D.ls || [];
   app.innerHTML = `
     <div class="panel hero">
       <div style="display:grid;gap:6px"><span class="eyebrow">${t.eyebrow}</span><h1>${esc(D.n)}</h1>
-        <span class="muted">${t.teacher}: ${esc(G.maestroNombre || G.maestro)} · ${t.start}: ${fd(D.st)}${sched ? ` · ${t.sched}: ${esc(sched)}` : ""}</span></div>
+        <span class="muted">${t.teacher}: ${esc(G.maestroNombre || G.maestro)}${sched ? ` · ${t.sched}: ${esc(sched)}` : ""}</span></div>
       <div class="noprint" style="display:grid;gap:8px;justify-items:end"><div class="lang"><button data-lang="es" class="${lang === "es" ? "on" : ""}">ES</button><button data-lang="en" class="${lang === "en" ? "on" : ""}">EN</button></div>
         <button class="btn sm" id="pr">${t.print}</button></div>
     </div>
     <div class="kpis">
-      <div class="kpi"><span class="v">${cur || "—"}</span><span class="l">${t.now}${cur ? " · " + LV[lang][cur] : ""}</span></div>
-      <div class="kpi goal"><span class="v">${goal}</span><span class="l">${t.goal} · ${LV[lang][goal]}</span></div>
-      <div class="kpi"><span class="v">${t.months(D.mo)}</span><span class="l">${t.length}</span></div>
-      <div class="kpi"><span class="v">${D.f}×</span><span class="l">${t.classes} · ${t.perWeek(D.f, D.mn)}</span></div>
+      <div class="kpi"><span class="v" style="font-size:1.25em;padding-top:4px">${fd(D.st, { month: "short", day: "numeric" })}</span><span class="l">${t.kStart}</span></div>
+      <div class="kpi"><span class="v">${D.f}</span><span class="l">${t.kCls}</span></div>
+      <div class="kpi"><span class="v">${D.mn}</span><span class="l">${t.kLen}</span></div>
+      <div class="kpi"><span class="v">4</span><span class="l">${t.kPr}</span></div>
     </div>
-    <div class="panel"><h2>${t.ladderT}</h2>
-      <div class="ladder">${CEFR.map((c, i) => { const k = i === ci ? "now" : i === gi ? "goal" : i < ci ? "done" : (i > ci && i < gi ? "path" : ""); return `<div class="rung ${k}"><div class="bar"></div><b>${c}</b><small>${i === ci ? t.today : i === gi ? t.target : ""}</small></div>`; }).join("")}</div>
-      <p class="muted" style="font-size:.85em">${t.totals(total, hours)} ${t.cefr}</p></div>
     <div class="panel"><h2>${t.startT}</h2>
-      ${cur ? `<p>${t.placed(fd(D.pd))}${D.pp ? " " + t.partial : ""}</p>
+      ${cur ? `<p>${t.placed(fd(D.pd), cur, LV[lang][cur])}${D.pp ? " " + t.partial : ""}</p>
         <div class="secs">${(D.sc || []).map(x => `<span class="sec ${x[1] >= 5 ? "ok" : ""}">${x[0]} · ${x[1]}/8 <span style="font-weight:600">${x[1] >= 5 ? t.passed : t.notPassed}</span></span>`).join("")}</div>` : `<p>${t.pending}</p>`}</div>
-    <div class="panel"><h2>${t.routeT}</h2><p class="sub">${t.routeS}</p>
-      <div class="route">${phases.map((p, i) => `<div class="ph"><div class="dot"><span>${i + 1}</span><i></i></div><div class="body">
-        <span class="when">${t.monthsR(p.a, p.b)}</span><h3>${p.t}</h3><p>${p.d}</p>
-        <div class="chips">${p.ls.map(l => `<span class="chip ${l[2] ? "ok" : ""}">${t.lesson} ${esc(l[0])} · ${esc(l[1])}${l[2] ? " · " + t.passedL : ""}</span>`).join("")}${i === 2 || !p.ls.length ? `<span class="chip">${t.extra}</span>` : ""}${i === 2 ? `<span class="chip ms">${t.finalTest}</span>` : ""}</div>
-      </div></div>`).join("")}</div></div>
-    <div class="panel"><h2>${t.howT}</h2><div class="cards">${t.how.map(h => `<div class="card"><span class="ico">${svg(h[0])}</span><div><b>${h[1]}</b><p>${esc(h[2](D.f, D.mn, (D.it || []).join(", ")))}</p></div></div>`).join("")}</div></div>
+    <div class="panel"><h2>${t.topicsT}</h2><p class="sub">${t.topicsS}</p>
+      <div class="cards">${tops.map(k => { const x = TOPICS[k][lang]; return `<div class="card"><span class="ico">${svg(TOPICS[k].i)}</span><div style="display:grid;gap:8px"><div><b>${x[0]}</b><p>${x[1]}</p></div>
+        <div class="chips">${ex(k).map(e => `<span class="chip">${esc(e)}</span>`).join("")}</div>
+        <p class="muted" style="font-size:.84em"><b style="display:inline;color:var(--ink-2)">${t.practice}:</b> ${x[3]}</p></div></div>`; }).join("")}</div></div>
+    ${ls.length ? `<div class="panel"><h2>${t.lessonsT}</h2><p class="sub">${t.lessonsS}</p>
+      <div class="chips">${ls.map(l => `<span class="chip ${l[2] ? "ok" : ""}">${t.lesson} ${esc(l[0])} · ${esc(l[1])}${l[2] ? " · " + t.passedL : ""}</span>`).join("")}<span class="chip">${t.more}</span></div></div>` : ""}
+    <div class="panel"><h2>${t.howT}</h2><div class="cards">${t.how.map(h => `<div class="card"><span class="ico">${svg(h[0])}</span><div><b>${h[1]}</b><p>${esc(h[2](D.f, D.mn, it))}</p></div></div>`).join("")}</div></div>
     <div class="panel"><h2>${t.measureT}</h2><div class="cards">${t.measure.map(h => `<div class="card"><span class="ico">${svg(h[0])}</span><div><b>${h[1]}</b><p>${h[2]}</p></div></div>`).join("")}</div></div>
     <div class="panel"><h2>${t.commitT}</h2><div class="commit">${t.who.map((w, i) => `<div class="col"><div class="hd"><span class="ico">${svg(w[0])}</span>${w[1]}</div>
       <ul>${t.commits(D.f)[i].map(x => `<li>${svg("check")}<span>${x}</span></li>`).join("")}</ul></div>`).join("")}</div></div>
