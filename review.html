@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Review</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lingua · Review">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://tangerine-lily-2bfb73.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<script src="assets/menu.js"></script>
+<style>
+  .wrap { max-width: 900px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 22px; }
+  .wrap > * { min-width: 0; }
+  .page-head h1 { font-size: 2em; font-weight: 800; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 24px; display: grid; gap: 16px; }
+  @media (max-width: 560px) { .panel { padding: 16px; } }
+  .panel h2 { font-size: 1.1em; font-weight: 800; }
+  .kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .kpi { padding: 14px 16px; display: grid; gap: 2px; }
+  .kpi .v { font-size: 1.7em; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .kpi .l { font-size: .8em; color: var(--mute); font-weight: 600; }
+  .start { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; background: var(--brand-soft); border-color: transparent; }
+  @media (max-width: 560px) { .start { grid-template-columns: 1fr; } }
+  .start h2 { color: var(--brand-dark); }
+  .item { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .item:last-child { border-bottom: 0; }
+  .item .p { font-weight: 600; }
+  .item .p b { color: var(--ok-ink); background: var(--ok-soft); padding: 0 4px; border-radius: 4px; }
+  .item small { display: block; color: var(--mute); font-size: .82em; font-weight: 500; margin-top: 2px; }
+  .tag { font-size: .7em; font-weight: 800; padding: 2px 7px; border-radius: 999px; margin-right: 6px; vertical-align: 1px; }
+  .tag.saved { background: var(--badge-soft); color: var(--dev); border: 1px solid var(--badge-line); }
+  .tag.mistake { background: var(--bad-soft); color: var(--bad-ink); }
+  .lhead { display: flex; align-items: center; gap: 10px; }
+  .lhead i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .x { width: 32px; height: 32px; border-radius: 50%; border: 0; background: transparent; color: var(--mute); display: grid; place-items: center; }
+  .x:hover { background: var(--bg); color: var(--ink); }
+  .empty { text-align: center; padding: 34px 16px; display: grid; gap: 8px; justify-items: center; }
+  .empty .big { font-size: 2.6em; }
+  .dots { display: flex; gap: 4px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); }
+  .dots i.on { background: var(--ok); }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="index.html">My learning</a><a class="on" href="review.html">Review</a><a href="words.html">My words</a></nav>
+    <span class="spacer"></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"></a>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"></div></main>
+<script>
+const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
+document.getElementById("logo").innerHTML = G.logo;
+const lessons = G.modulos.flatMap(m => m.lecciones), byId = Object.fromEntries(lessons.map(l => [l.id, l]));
+const full = q => /___/.test(q.p) ? q.p.replace("___", q.a) : q.a;
+const show = q => /___/.test(q.p) ? esc(q.p).replace("___", `<b>${esc(q.a)}</b>`) : `${esc(q.p)} → <b>${esc(q.a)}</b>`;
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function list() {
+  const items = G.review.list(), learned = G.store.get("reviewLearned", 0);
+  const mistakes = items.filter(q => q.src !== "saved").length, saved = items.length - mistakes;
+  const groups = {}; items.forEach(q => (groups[q.l] = groups[q.l] || []).push(q));
+  app.innerHTML = `
+    <div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Practice</span><h1>Review</h1>
+      <p class="muted">Questions you missed in a quiz and the ones you saved with ☆. Get one right two times in a row and it leaves the list.</p></div>
+    <div class="kpis">
+      <div class="card kpi"><span class="v">${items.length}</span><span class="l">To review</span></div>
+      <div class="card kpi"><span class="v">${mistakes}<span class="muted" style="font-size:.5em"> · ${saved} saved</span></span><span class="l">Mistakes</span></div>
+      <div class="card kpi"><span class="v">${learned}</span><span class="l">Learned so far</span></div>
+    </div>
+    ${items.length ? `
+    <div class="panel start"><div><h2>Ready for a quick round?</h2><p class="muted">${Math.min(10, items.length)} questions · about ${Math.max(2, Math.round(Math.min(10, items.length) * .4))} minutes · +3 XP for each right answer</p></div>
+      <button class="btn primary" id="go">Practice now</button></div>
+    ${Object.keys(groups).sort().map(l => `<section class="panel">
+      <div class="lhead"><i style="background:${(byId[l] || {}).color || "var(--brand)"}"></i><h2>Lesson ${esc(l)}${byId[l] ? " · " + byId[l].titulo : ""}</h2><span class="muted" style="font-size:.85em">${groups[l].length}</span></div>
+      <div>${groups[l].map(q => `<div class="item">
+        <div style="min-width:0"><span class="tag ${q.src === "saved" ? "saved" : "mistake"}">${q.src === "saved" ? "★ Saved" : "Mistake"}</span><span class="p">${show(q)}</span><small>${esc(q.why || "")}</small>
+          <span class="dots" title="Right answers in a row" style="margin-top:6px"><i class="${q.right >= 1 ? "on" : ""}"></i><i></i></span></div>
+        ${G.sayBtn(full(q))}
+        <button class="x" data-rm="${q.id}" aria-label="Remove from review" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>`).join("")}</div></section>`).join("")}`
+    : `<div class="panel"><div class="empty"><span class="big">🏁</span><h2>Nothing to review</h2><p class="muted">When you miss a quiz question, or save one with ☆, it shows up here.</p><a class="btn" href="index.html">Go to my lessons</a></div></div>`}`;
+  const go = document.getElementById("go"); if (go) go.onclick = () => practice(shuffle(items).slice(0, 10));
+  app.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { G.review.remove(b.dataset.rm); list(); });
+}
+
+function practice(qs) {
+  qs = qs.map(q => { const opts = shuffle([q.a, ...(q.w || [])]); return { ...q, opts, correct: opts.indexOf(q.a) }; });
+  let i = 0, sel = null, right = 0, learned = 0;
+  function paint() {
+    const q = qs[i], shown = sel != null, ok = sel === q.correct;
+    app.innerHTML = `<div class="page-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div style="display:grid;gap:4px"><span class="eyebrow">Review round</span><h1 style="font-size:1.5em">Question ${i + 1} of ${qs.length}</h1></div><button class="btn ghost" id="quit">End round</button></div>
+      <div class="panel q">
+        <div class="q-head"><span class="eyebrow">Lesson ${esc(q.l)}${byId[q.l] ? " · " + byId[q.l].titulo : ""}</span><div class="steps">${qs.map((_, k) => `<span class="${k === i ? "cur" : k < i ? "ok" : ""}"></span>`).join("")}</div></div>
+        <div class="q-title" style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><span>${esc(q.p).replace("___", shown ? `<span class="gap" style="min-width:0;padding:0 .2em;border-color:var(--ok)">${esc(q.a)}</span>` : '<span class="gap">&nbsp;</span>')}</span>${G.sayBtn(shown ? full(q) : q.p)}</div>
+        <div class="opts">${q.opts.map((t, k) => `<button class="opt ${shown ? (k === q.correct ? "ok" : k === sel ? "bad" : "") : ""}" data-k="${k}" ${shown ? "disabled" : ""}><span class="radio"></span><span>${esc(t)}</span><span class="letter">${k + 1}</span></button>`).join("")}</div>
+        ${shown ? `<div class="feedback ${ok ? "ok" : "bad"}"><div><b>${ok ? "Correct!" : "Not quite."}</b>${esc(q.why || "")}</div></div>
+          <div class="actions" style="justify-content:flex-end"><button class="btn primary" id="next">${i < qs.length - 1 ? "Next question" : "See result"}</button></div>` : ""}
+      </div>`;
+    document.getElementById("quit").onclick = list;
+    app.querySelectorAll(".opt").forEach(b => b.onclick = () => choose(+b.dataset.k));
+    const n = document.getElementById("next"); if (n) { n.onclick = next; n.focus(); }
+  }
+  function choose(k) {
+    if (sel != null) return;
+    sel = k; const q = qs[i], ok = k === q.correct;
+    G.sfx(ok ? "ok" : "bad");
+    if (ok) right++;
+    if (G.review.answer(q.id, ok)) { learned++; G.store.set("reviewLearned", G.store.get("reviewLearned", 0) + 1); G.toast("<b>Learned!</b><span>It left your review list.</span>"); }
+    paint();
+  }
+  function next() { if (i < qs.length - 1) { i++; sel = null; paint(); } else done(); }
+  function done() {
+    if (right) G.game.award(right * 3, { label: "Review round" });
+    if (right === qs.length) { G.confetti(80); G.sfx("win"); }
+    const left = G.review.count();
+    app.innerHTML = `<div class="panel" style="text-align:center;justify-items:center;padding:36px 20px">
+      <span style="font-size:2.6em">${right === qs.length ? "🏆" : right >= qs.length / 2 ? "💪" : "📚"}</span>
+      <h1 style="font-size:1.6em">${right} of ${qs.length} right</h1>
+      <p class="muted">${learned ? `You learned ${learned} question${learned === 1 ? "" : "s"}. ` : ""}${left ? left + " left to review." : "Your review list is empty!"}</p>
+      <div class="actions" style="justify-content:center">${left ? `<button class="btn primary" id="again">Another round</button>` : ""}<button class="btn" id="back">Back to the list</button></div></div>`;
+    const a = document.getElementById("again"); if (a) a.onclick = () => practice(shuffle(G.review.list()).slice(0, 10));
+    document.getElementById("back").onclick = list;
+  }
+  document.onkeydown = e => {
+    if (!document.querySelector(".q")) return;
+    const n = "1234".indexOf(e.key); if (n >= 0 && sel == null && n < qs[i].opts.length) choose(n);
+    else if ((e.key === "Enter" || e.key === " ") && sel != null) { e.preventDefault(); next(); }
+  };
+  paint();
+}
+G.ready.then(list);
+</script>
+</body>
+</html>

@@ -4,6 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lingua · My learning</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lingua · My learning">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://tangerine-lily-2bfb73.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,6 +27,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
 <script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
 <script src="assets/avatar.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
@@ -57,6 +74,24 @@
   .how h4 { font-size: 1em; font-weight: 700; }
   .how p { color: var(--ink-2); font-size: .92em; }
   .ico { width: 36px; height: 36px; border-radius: 8px; background: var(--brand-soft); display: grid; place-items: center; margin-bottom: 6px; }
+  .strip { display: grid; grid-template-columns: 1fr 1.25fr 1.25fr; gap: 16px; }
+  @media (max-width: 900px) { .strip { grid-template-columns: 1fr 1fr; } .strip .wk { grid-column: 1 / -1; } }
+  @media (max-width: 560px) { .strip { grid-template-columns: 1fr; } }
+  .strip .card { padding: 18px 20px; display: grid; gap: 10px; align-content: start; }
+  .strip .v { font-size: 2em; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+  .strip .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .strip .lvl-badge { width: 46px; height: 46px; border-radius: 12px; background: var(--fill-brand); color: var(--on-fill); display: grid; place-items: center; font-weight: 800; font-size: 1.25em; flex: 0 0 auto; }
+  .todo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 800px) { .todo { grid-template-columns: 1fr; } }
+  .todo > :only-child { grid-column: 1 / -1; }
+  .todo .card { padding: 18px 20px; display: grid; gap: 12px; align-content: start; }
+  .todo h3 { font-size: 1.05em; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .hw-row { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 0; border-top: 1px solid var(--line); }
+  .hw-row input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--fill-brand); cursor: pointer; }
+  .hw-row.done b { text-decoration: line-through; color: var(--mute); }
+  .hw-row p { color: var(--ink-2); font-size: .88em; }
+  .hw-row small { color: var(--mute); font-size: .8em; font-weight: 600; }
+  .hw-row small.late { color: var(--bad); }
   footer { border-top: 1px solid var(--line); background: var(--surface); padding-block: 22px; }
   footer .container { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--mute); font-size: .88em; }
 </style>
@@ -85,6 +120,10 @@
 </section>
 
 <main class="gutter">
+  <div class="container" style="display:grid;gap:16px">
+    <div class="strip" id="strip" aria-label="Your progress"></div>
+    <div class="todo" id="todo"></div>
+  </div>
   <div class="container" style="display:grid;gap:28px">
     <div class="course-head">
       <div style="display:grid;gap:4px"><span class="eyebrow">Your course</span><h2 id="courseTitle"></h2></div>
@@ -158,6 +197,42 @@
       const inner = `${C.thumb(l, "LESSON")}<p>${l.tema}</p><div class="foot">${foot}</div>`;
       return soon ? `<div class="lesson soon">${inner}</div>` : `<a class="lesson" href="${l.archivo}">${inner}</a>`;
     }).join("")}</div></section>`).join("");
+
+  // Streak, level and weekly goal
+  function strip() {
+    const g = C.game.mine();
+    document.getElementById("strip").innerHTML = `
+      <div class="card"><span class="eyebrow">Day streak</span>
+        <div class="row"><span class="v">🔥 ${g.streak}</span><span class="muted" style="font-size:.85em;text-align:right">${g.todayXp ? "You practiced today" : g.streak ? "Practice today to keep it" : "Practice today to start one"}<br>Best: ${g.best} day${g.best === 1 ? "" : "s"}</span></div></div>
+      <div class="card"><span class="eyebrow">Your level</span>
+        <div class="row" style="justify-content:flex-start"><span class="lvl-badge">${g.level}</span><div style="display:grid;gap:2px;flex:1;min-width:0"><b>${g.title}</b><span class="muted num" style="font-size:.85em">${g.xp} XP${g.ceil ? " · " + (g.ceil - g.xp) + " XP to Level " + (g.level + 1) : " · Max level"}</span></div></div>
+        <div class="xpbar"><i style="width:${g.pct}%"></i></div>
+        <span class="muted" style="font-size:.82em">New levels unlock helmet designs in your <a href="perfil.html">profile</a>.</span></div>
+      <div class="card wk"><div class="row"><span class="eyebrow">This week</span><span class="chip ${g.weekDays >= g.goal ? "ok" : ""}">${g.weekDays >= g.goal ? "Goal done ✓" : g.weekDays + " of " + g.goal + " days"}</span></div>
+        <div class="week">${g.week.map(d => `<span class="${d.xp ? "on" : ""} ${d.today ? "today" : ""}"><i></i>${d.label}</span>`).join("")}</div>
+        <span class="muted" style="font-size:.82em">Weekly goal: practice ${g.goal} days. Bonus +50 XP.</span></div>`;
+  }
+  // Homework and review
+  function todo() {
+    const n = C.review.count(), hw = C.homework ? C.homework.cached() : [], pend = hw.filter(h => !h.done_at);
+    const due = h => { if (!h.due) return ""; const d = new Date(h.due + "T23:59"), late = !h.done_at && d < new Date(); return `<small class="${late ? "late" : ""}">${late ? "Late · " : "Due "}${d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</small>`; };
+    const hwCard = C.cloudEnabled ? `<div class="card"><h3>📝 Homework ${pend.length ? `<span class="chip new">${pend.length} to do</span>` : ""}</h3>
+      ${hw.length ? hw.slice(0, 6).map(h => `<label class="hw-row ${h.done_at ? "done" : ""}"><input type="checkbox" data-hw="${h.id}" ${h.done_at ? "checked" : ""}>
+        <span style="min-width:0"><b>${C.esc(h.title)}</b>${h.details ? `<p>${C.esc(h.details)}</p>` : ""}${due(h)}</span></label>`).join("")
+        : `<p class="muted" style="font-size:.92em">No homework right now. Your teacher adds it here after class.</p>`}</div>` : "";
+    document.getElementById("todo").innerHTML = hwCard + `<div class="card"><h3>🔁 Review</h3>
+      <p class="muted" style="font-size:.92em">${n ? `You have <b style="color:var(--ink)">${n} question${n === 1 ? "" : "s"}</b> to review from your quizzes.` : "No mistakes to review. Great job!"}</p>
+      <div class="actions">${n ? `<a class="btn primary" href="review.html">Practice now</a>` : ""}<a class="btn ${n ? "ghost" : ""}" href="words.html">Listen to my words</a></div></div>`;
+    document.querySelectorAll("[data-hw]").forEach(x => x.onchange = async () => {
+      x.disabled = true;
+      try { await C.homework.setDone(x.dataset.hw, x.checked); if (x.checked) { C.sfx("win"); C.confetti(70); C.game.award(15, { once: "hw." + x.dataset.hw, label: "Homework done" }); } }
+      catch (e) { x.checked = !x.checked; C.toast("We couldn’t save that. Try again."); }
+      todo();
+    });
+  }
+  C.ready.then(() => { strip(); todo(); });
+  document.addEventListener("lingua:xp", strip);
+  document.addEventListener("lingua:homework", todo);
 </script>
 </body>
 </html>

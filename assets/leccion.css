@@ -95,3 +95,18 @@ body.clase .player { grid-template-columns: 1fr; }
 .obj li::before { content: ""; width: 14px; height: 8px; margin-top: 5px; border: 2px solid var(--brand); border-top: 0; border-right: 0; transform: rotate(-45deg) scale(.8); }
 .badge-earned { display: flex; align-items: center; gap: 12px; margin-top: 6px; padding: 10px 14px; border-radius: var(--r-m); background: var(--badge-soft); border: 1px solid var(--badge-line); font-size: .9em; }
 .pbar .ltitle a:hover { color: var(--ink); }
+
+/* Illustrated flashcards with audio */
+.flash { cursor: pointer; height: 178px; }
+.flash:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: var(--r-m); }
+.flash .ftop, .flash .fbot { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.flash .fbot { justify-content: flex-end; margin-top: auto; }
+.flash .fimg { font-size: 2.1em; line-height: 1; }
+.flash .face { justify-content: flex-start; }
+.flash .face .word { margin-top: auto; }
+.flash .back .es { margin-top: 2px; }
+.q-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.q-title .gap.filled { border-bottom-color: var(--ok); color: var(--ok-ink); padding: 0 .2em; min-width: 0; }
+.feedback { justify-content: space-between; }
+.gap-row .fix { display: inline-flex; align-items: center; gap: 8px; margin-left: 8px; }
+.msg .bub .say, .model .say { vertical-align: middle; margin-left: 2px; }

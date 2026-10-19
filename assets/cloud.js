@@ -5,7 +5,7 @@
 // - Each saved key carries its change time, so the newest value always wins.
 (function () {
   const L = window.LINGUA, cfg = L.cloud || {};
-  const LOCAL_ONLY = ["textSize", "modoClase", "reportLang", "theme"];
+  const LOCAL_ONLY = ["textSize", "modoClase", "reportLang", "theme", "sounds", "voice", "voiceRate"];
   const root = /\/clases\//.test(location.pathname) ? "../" : "";
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const qs = new URLSearchParams(location.search);
@@ -57,7 +57,9 @@
   }
   L.decorate = decorate;
 
+  L.isTeacher = lsGet("__teacher") === true;
   if (!L.cloudEnabled) {
+    L.homework = { cached: () => [], list: async () => [], setDone: async () => {} };
     L.ready = Promise.resolve(null);
     show();
     document.addEventListener("DOMContentLoaded", decorate);
@@ -116,6 +118,33 @@
     L.profile = data || row; lsSet("__profile", L.profile); decorate();
     return L.profile;
   };
+  // Homework the teacher leaves between classes (table "homework")
+  L.homework = {
+    cached: () => lsGet("__homework") || [],
+    async list() {
+      if (!uid) return L.homework.cached();
+      const { data, error } = await sb.from("homework").select("*").eq("student_id", uid).order("created_at", { ascending: false });
+      if (error) return L.homework.cached();
+      lsSet("__homework", data || []); document.dispatchEvent(new CustomEvent("lingua:homework"));
+      return data || [];
+    },
+    async setDone(id, done) {
+      const { error } = await sb.from("homework").update({ done_at: done ? new Date().toISOString() : null }).eq("id", id);
+      if (error) throw error;
+      lsSet("__homework", L.homework.cached().map(h => h.id === id ? { ...h, done_at: done ? new Date().toISOString() : null } : h));
+      document.dispatchEvent(new CustomEvent("lingua:homework"));
+    }
+  };
+  // Teacher panel: read every student (allowed only for accounts in the "teachers" table)
+  L.teacher = {
+    async load() {
+      const [p, g, h] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false })]);
+      const err = p.error || g.error || h.error; if (err) throw err;
+      return { profiles: p.data || [], progress: g.data || [], homework: h.data || [] };
+    },
+    async addHomework(row) { const { data, error } = await sb.from("homework").insert(row).select(); if (error) throw error; return data; },
+    async deleteHomework(id) { const { error } = await sb.from("homework").delete().eq("id", id); if (error) throw error; }
+  };
   L.signOut = async () => {
     if (timer) { clearTimeout(timer); await push(); }
     await sb.auth.signOut();
@@ -145,8 +174,11 @@
       L.lastSync = { ok: false, error: e.message || String(e), at: Date.now() };
       console.warn("Lingua sync failed:", e);
     }
+    try { const r = await sb.rpc("is_teacher"); L.isTeacher = !r.error && r.data === true; } catch (e) { L.isTeacher = false; }
+    lsSet("__teacher", L.isTeacher);
     if (!(L.profile && L.profile.display_name) && page !== "perfil.html") { location.replace(root + "perfil.html?setup=1"); return null; }
     decorate(); show();
+    L.homework.list().catch(() => {});
     return session.user;
   })();
   document.addEventListener("DOMContentLoaded", () => { if (L.profile) decorate(); });

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · My words</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lingua · My words">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://tangerine-lily-2bfb73.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<script src="assets/menu.js"></script>
+<style>
+  .wrap { max-width: 1100px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 20px; }
+  .wrap > * { min-width: 0; }
+  .page-head h1 { font-size: 2em; font-weight: 800; }
+  .tools { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+  @media (max-width: 640px) { .tools { grid-template-columns: 1fr; } }
+  .search { position: relative; }
+  .search input { font: inherit; color: var(--ink); width: 100%; padding: 12px 14px 12px 42px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--surface); }
+  .search input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--mute); }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filters button { border: 1px solid var(--line-2); background: var(--surface); border-radius: 999px; padding: 7px 13px; font-weight: 700; font-size: .85em; color: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; }
+  .filters button i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .filters button[aria-pressed="true"] { background: var(--inverse); color: var(--on-inverse); border-color: var(--inverse); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+  .w { position: relative; display: grid; gap: 6px; padding: 16px; border-radius: var(--r-l); border: 1px solid var(--line); background: var(--surface); align-content: start; overflow: hidden; }
+  .w::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c); }
+  .w .top { display: flex; align-items: center; gap: 10px; }
+  .w .em { font-size: 1.7em; line-height: 1; width: 44px; height: 44px; border-radius: 12px; background: var(--bg); display: grid; place-items: center; flex: 0 0 auto; }
+  .w b { font-size: 1.12em; letter-spacing: -.01em; flex: 1; min-width: 0; }
+  .w .def { color: var(--ink-2); font-size: .92em; }
+  .w .ex { color: var(--mute); font-size: .88em; display: flex; gap: 6px; align-items: flex-start; justify-content: space-between; }
+  .w .meta { font-size: .72em; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
+  .hidden-mean .w .def, .hidden-mean .w .ex { filter: blur(6px); cursor: pointer; user-select: none; }
+  .hidden-mean .w.open .def, .hidden-mean .w.open .ex { filter: none; }
+  .empty { color: var(--mute); text-align: center; padding: 30px; }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="index.html">My learning</a><a href="review.html">Review</a><a class="on" href="words.html">My words</a></nav>
+    <span class="spacer"></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"></a>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"><p class="muted">Loading your words…</p></div></main>
+<script>
+const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
+document.getElementById("logo").innerHTML = G.logo;
+const ready = G.modulos.flatMap(m => m.lecciones).filter(l => l.estado === "lista");
+const WORDS = [];
+let filter = "all", q = "", hide = false;
+
+// Load each lesson's content file and collect its vocabulary
+function loadLesson(l) {
+  return new Promise(res => {
+    const s = document.createElement("script");
+    s.src = "assets/lessons/" + l.id + ".js";
+    s.onload = () => { const C = window.CLASE; if (C && C.flash) C.flash.forEach(f => WORDS.push({ ...f, l })); res(); };
+    s.onerror = res;
+    document.head.appendChild(s);
+  });
+}
+function render() {
+  const norm = s => (s || "").toLowerCase();
+  const list = WORDS.filter(w => (filter === "all" || w.l.id === filter) && (!q || norm(w.en + " " + w.def + " " + w.ex).includes(norm(q))));
+  document.getElementById("grid").innerHTML = list.length ? list.map((w, i) => `
+    <article class="w" style="--c:${w.l.color}" data-i="${i}">
+      <div class="top"><span class="em" aria-hidden="true">${w.img || "📝"}</span><b>${esc(w.en)}</b>${G.sayBtn(w.en, "Listen: " + w.en)}</div>
+      <span class="def">${esc(w.def)}</span>
+      <span class="ex"><span>${esc(w.ex)}</span>${G.sayBtn(w.ex, "Listen to the example").replace('class="say"', 'class="say sm"')}</span>
+      <span class="meta">Lesson ${w.l.id} · ${esc(w.l.titulo)} · ${esc(w.tag)}</span>
+    </article>`).join("") : `<p class="empty">No words match “${esc(q)}”.</p>`;
+  document.getElementById("count").textContent = list.length + " word" + (list.length === 1 ? "" : "s");
+  document.querySelectorAll(".w").forEach(c => c.onclick = e => { if (hide && !e.target.closest("[data-say]")) c.classList.toggle("open"); });
+}
+function shell() {
+  app.innerHTML = `
+    <div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Practice</span><h1>My words</h1>
+      <p class="muted">Every word and phrase from your lessons. Press <span style="color:var(--brand)">🔊</span> to hear it, then say it out loud.</p></div>
+    <div class="tools">
+      <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Search words" aria-label="Search words"></label>
+      <button class="toggle" id="hide" aria-pressed="false"><span class="sw"></span>Test myself: hide meanings</button>
+    </div>
+    <div class="filters" role="group" aria-label="Filter by lesson">
+      <button type="button" data-f="all" aria-pressed="true">All lessons</button>
+      ${ready.map(l => `<button type="button" data-f="${l.id}" aria-pressed="false"><i style="background:${l.color}"></i>${l.id} · ${esc(l.titulo)}</button>`).join("")}
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><span class="muted num" id="count" style="font-size:.88em;font-weight:600"></span></div>
+    <div id="gridWrap"><div class="grid" id="grid"></div></div>`;
+  document.getElementById("q").oninput = e => { q = e.target.value.trim(); render(); };
+  document.querySelectorAll("[data-f]").forEach(b => b.onclick = () => {
+    filter = b.dataset.f; document.querySelectorAll("[data-f]").forEach(x => x.setAttribute("aria-pressed", x === b)); render();
+  });
+  const h = document.getElementById("hide");
+  h.onclick = () => { hide = !hide; h.classList.toggle("on", hide); h.setAttribute("aria-pressed", hide); document.getElementById("gridWrap").classList.toggle("hidden-mean", hide); };
+  render();
+}
+G.ready.then(async () => { for (const l of ready) await loadLesson(l); shell(); });
+</script>
+</body>
+</html>

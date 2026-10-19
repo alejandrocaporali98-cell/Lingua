@@ -41,3 +41,52 @@ grant select, insert, update on public.profiles to authenticated;
 grant select, insert, update on public.progress to authenticated;
 revoke all on public.profiles from anon;
 revoke all on public.progress from anon;
+
+-- ─────────────────────────────────────────────────────────────
+-- Teacher panel + homework (safe to run again)
+-- ─────────────────────────────────────────────────────────────
+
+-- Teachers can read every student. Only you add rows here (from the SQL editor).
+create table if not exists public.teachers (
+  user_id    uuid primary key references auth.users (id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+alter table public.teachers enable row level security;
+revoke all on public.teachers from anon, authenticated;
+
+create or replace function public.is_teacher() returns boolean
+  language sql stable security definer set search_path = public
+  as $$ select exists (select 1 from public.teachers where user_id = auth.uid()); $$;
+revoke all on function public.is_teacher() from public, anon;
+grant execute on function public.is_teacher() to authenticated;
+
+drop policy if exists "Teachers read all profiles" on public.profiles;
+drop policy if exists "Teachers read all progress" on public.progress;
+create policy "Teachers read all profiles" on public.profiles for select to authenticated using (public.is_teacher());
+create policy "Teachers read all progress" on public.progress for select to authenticated using (public.is_teacher());
+
+-- Homework: the teacher adds it, the student can only mark it done.
+create table if not exists public.homework (
+  id         uuid primary key default gen_random_uuid(),
+  student_id uuid not null references auth.users (id) on delete cascade,
+  title      text not null check (char_length(title) between 1 and 140),
+  details    text check (char_length(details) <= 1000),
+  lesson_id  text,
+  due        date,
+  created_at timestamptz not null default now(),
+  done_at    timestamptz
+);
+alter table public.homework enable row level security;
+
+drop policy if exists "Read own homework"        on public.homework;
+drop policy if exists "Mark own homework"        on public.homework;
+drop policy if exists "Teachers add homework"    on public.homework;
+drop policy if exists "Teachers delete homework" on public.homework;
+create policy "Read own homework"        on public.homework for select to authenticated using (student_id = auth.uid() or public.is_teacher());
+create policy "Mark own homework"        on public.homework for update to authenticated using (student_id = auth.uid() or public.is_teacher()) with check (student_id = auth.uid() or public.is_teacher());
+create policy "Teachers add homework"    on public.homework for insert to authenticated with check (public.is_teacher());
+create policy "Teachers delete homework" on public.homework for delete to authenticated using (public.is_teacher());
+
+revoke all on public.homework from anon, authenticated;
+grant select, insert, delete on public.homework to authenticated;
+grant update (done_at) on public.homework to authenticated;

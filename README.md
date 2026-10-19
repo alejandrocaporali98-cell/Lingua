@@ -16,7 +16,20 @@ English learning platform for one-to-one online classes. Static site (HTML, CSS 
 | `diplomas.html` | **Diplomas**: one certificate per lesson passed with 80% or more; `#d01` opens it ready to print or save as PDF |
 | `resources.html` | **Study resources**: free websites to practice between classes, grouped by skill |
 
-Every page has a **menu** (☰, left of the logo) with links to all of the above, a dark mode switch and sign out.
+| `review.html` | **Review**: quiz mistakes and saved questions; two right answers in a row and a question leaves the list |
+| `words.html` | **My words**: every flashcard from every lesson, with search, audio and a "hide meanings" self-test |
+| `teacher.html` | **Teacher panel** (teachers only): every student's streak, XP, grades, mistakes and homework |
+
+Every page has a **menu** (☰, left of the logo) with links to all of the above, a dark mode switch, "Install the app" and sign out.
+
+## Practice features
+
+- **Pronunciation**: 🔊 buttons on words, examples, questions, answers and role-play lines (the browser's own voices; US or UK accent and speed in Settings).
+- **XP, levels, streak and weekly goal** (`assets/game.js`): +2 XP per new flashcard or gap, +20 per section, +2/+3 per right quiz answer, +50 for passing a lesson, +15 per homework, +50 weekly bonus for practicing 4 days. Levels go from Rookie to Legend (10 levels) and unlock helmet designs, visors and the gold helmet.
+- **Celebrations**: confetti and sounds for diplomas, level ups, perfect gap fills and weekly goals (sounds can be turned off in Settings; no animation with reduced motion).
+- **Homework**: the teacher adds it in the teacher panel; the student sees it on My learning and ticks it off.
+- **Install as an app**: `manifest.webmanifest` + `sw.js` (network first, offline fallback). Icons in `assets/icons/`.
+- **Share preview**: `assets/og.png` and Open Graph tags on every page. If the Netlify address changes, update the `og:image` URL in the pages.
 
 ## Structure
 
@@ -30,6 +43,9 @@ assets/
   cloud.js           accounts + sync (Supabase)
   avatar.js          helmet avatar builder and renderer
   menu.js            side menu (☰)
+  game.js            audio, sounds, confetti, XP / streak / levels, review list, install
+  lessons/           lesson content (01.js … 06.js), used by the lesson pages and My words
+  icons/, og.png     app icons and share image
   vendor/            Supabase browser client (bundled, v2.45.4)
   favicon.svg
 supabase/
@@ -40,8 +56,9 @@ clases/
 
 ## Add a new lesson
 
-1. Copy `clases/leccion-01.html` to `clases/leccion-02.html` and replace the `window.CLASE` data.
-2. In `assets/config.js`, set that lesson's `archivo` and change `estado` from `"pronto"` to `"lista"`.
+1. Copy `assets/lessons/06.js` to `assets/lessons/07.js` and write the new content (`img` is the emoji on each flashcard).
+   Copy `clases/leccion-06.html` to `clases/leccion-07.html` and change `lessons/06.js` to `lessons/07.js` and the title.
+2. In `assets/config.js`, add the lesson with its `archivo` and `estado: "lista"`.
 
 Each lesson has 5 sections: vocabulary, sound natural, fill in the gaps, role-play and a 20-question final quiz. Correct answers rotate A, B, C, D. Every final quiz attempt is saved for **Grades**, and a score of 80% or more unlocks the lesson's **diploma** (signed with `maestroNombre` from `config.js`).
 
@@ -77,3 +94,8 @@ Progress and results are stored in the browser (`localStorage`). On the deployed
 
 - **Netlify:** connect this repo (no build command, publish directory `/`), or drag the folder into Netlify.
 - **GitHub Pages:** Settings → Pages → Deploy from branch → `main` / root.
+
+## Teacher panel setup (once)
+
+1. Run the latest `supabase/setup.sql` in Supabase → SQL Editor (safe to run again). It adds the `teachers` and `homework` tables.
+2. Sign in to Lingua with your own account and open `teacher.html`. It shows one line of SQL with your account's email: run it in the SQL Editor and reload.

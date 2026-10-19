@@ -29,6 +29,7 @@
   --badge-line: #f1df9a;
   --dev: #a35f00;
   --dev-soft: #fff4e0;
+  --xp: #f5c518;
 
   --font: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
   --scale: 1;
@@ -66,6 +67,7 @@
     --badge-line: #5a4a14;
     --dev: #f0a440;
     --dev-soft: #2e2210;
+    --xp: #8a6a00;
     --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
     color-scheme: dark;
   }
@@ -99,6 +101,7 @@
   --badge-line: #5a4a14;
   --dev: #f0a440;
   --dev-soft: #2e2210;
+  --xp: #8a6a00;
   --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 20px rgba(0,0,0,.35);
   color-scheme: dark;
 }
@@ -116,7 +119,7 @@ a { color: var(--brand); }
 button { font: inherit; color: inherit; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
 .gutter { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-.container { max-width: 1180px; margin: 0 auto; }
+.container { max-width: 1180px; margin: 0 auto; width: 100%; }
 .muted { color: var(--mute); }
 .eyebrow { font-size: .78em; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
 .num { font-variant-numeric: tabular-nums; }
@@ -281,3 +284,48 @@ html.lg-lock { overflow: hidden; }
 .lg-row.on .sw::after { transform: translateX(14px); }
 .lg-foot { margin-top: auto; padding: 16px 22px; font-size: .8em; border-top: 1px solid var(--line); }
 @media (prefers-reduced-motion: reduce) { .lg-drawer, .lg-scrim { transition: none; } }
+
+/* Listen button */
+.say { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface); color: var(--brand); display: inline-grid; place-items: center; padding: 0; }
+.say:hover { border-color: var(--brand); background: var(--brand-soft); }
+.say.talk { animation: say-pulse .6s ease; }
+.say.sm { width: 28px; height: 28px; }
+@keyframes say-pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand) 45%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
+
+/* Toasts: XP, level up */
+.toast { display: grid; gap: 2px; text-align: center; max-width: min(92vw, 420px); }
+.toast span { font-weight: 500; opacity: .85; font-size: .92em; }
+.toast.xp b { color: var(--xp); }
+.toast.big { padding: 14px 20px; font-size: 1em; }
+.toast.pop { animation: toast-in .35s cubic-bezier(.2, 1.4, .4, 1); }
+@keyframes toast-in { from { transform: translate(-50%, 16px) scale(.92); opacity: 0; } to { transform: translate(-50%, 0) scale(1); opacity: 1; } }
+.confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 90; }
+
+/* Streak / XP strip */
+.flame { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; }
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.week span { display: grid; place-items: center; gap: 4px; font-size: .72em; font-weight: 700; color: var(--mute); }
+.week i { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line-2); display: grid; place-items: center; font-style: normal; }
+.week .on i { background: var(--ok); border-color: var(--ok); color: var(--on-ok); }
+.week .on i::after { content: "✓"; font-size: 12px; font-weight: 800; }
+.week .today i { border-color: var(--brand); }
+.xpbar { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.xpbar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--fill-brand), #6d8bff); }
+
+/* Loading: page skeleton while we check the session */
+html.auth-pending body::after {
+  content: ""; visibility: visible; position: fixed; inset: 0; z-index: 100; pointer-events: none;
+  --x: max(16px, calc(50vw - 574px));
+  background:
+    linear-gradient(var(--fill-brand), var(--fill-brand)) var(--x) 17px / 30px 30px no-repeat,
+    linear-gradient(var(--line), var(--line)) calc(var(--x) + 40px) 26px / 72px 12px no-repeat,
+    linear-gradient(var(--surface), var(--surface)) 0 0 / 100% 64px no-repeat,
+    linear-gradient(var(--line), var(--line)) 0 64px / 100% 1px no-repeat,
+    linear-gradient(var(--line), var(--line)) var(--x) 112px / min(380px, 70vw) 30px no-repeat,
+    linear-gradient(var(--line), var(--line)) var(--x) 160px / min(560px, 86vw) 14px no-repeat,
+    linear-gradient(var(--line), var(--line)) var(--x) 186px / min(460px, 76vw) 14px no-repeat,
+    linear-gradient(var(--surface), var(--surface)) var(--x) 236px / min(1148px, calc(100vw - 32px)) 190px no-repeat,
+    var(--bg);
+  animation: skel 1s ease-in-out infinite alternate;
+}
+@keyframes skel { from { opacity: 1; } to { opacity: .55; } }

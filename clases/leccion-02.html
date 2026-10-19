@@ -4,6 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lesson 02 · My Garage</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lesson 02 · My Garage">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://tangerine-lily-2bfb73.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,117 +28,12 @@
 <link rel="stylesheet" href="../assets/lingua.css">
 <link rel="stylesheet" href="../assets/leccion.css">
 <script src="../assets/config.js"></script>
+<script src="../assets/game.js"></script>
 <script src="../assets/avatar.js"></script>
 <script src="../assets/vendor/supabase.js"></script>
 <script src="../assets/cloud.js"></script>
 <script src="../assets/menu.js"></script>
-<script>
-window.CLASE = {
-  id: "02",
-  titulo: "My Garage",
-  nivel: "A1–A2",
-  color: "#0f766e",
-  icono: "car",
-  objetivos: [
-    "Describe a car or a thing with have / has and colors",
-    "Say big numbers: hundreds, thousands and millions",
-    "Ask and answer: Does it have…? How much is it?"
-  ],
-
-  flash: [
-    { en: "have / has", def: "I, you, we, they → have. He, she, it → has.", ex: "I have a bike. My dad has a pickup.", tag: "grammar" },
-    { en: "a red car", def: "The color goes before the thing.", ex: "I want a dark blue Supra. (Not: a Supra dark blue)", tag: "grammar" },
-    { en: "garage", def: "The place in a house where you keep the car.", ex: "We have two cars in our garage.", tag: "word" },
-    { en: "engine", def: "The part that makes the car move.", ex: "The R34 GT-R has a six-cylinder engine.", tag: "cars" },
-    { en: "horsepower", def: "How strong an engine is. We write hp. No plural s.", ex: "My dream car has 500 horsepower.", tag: "cars" },
-    { en: "top speed", def: "The fastest a car can go.", ex: "Its top speed is 250 km/h.", tag: "cars" },
-    { en: "seat", def: "The place where you sit in a car.", ex: "A sports car usually has two or four seats.", tag: "cars" },
-    { en: "steering wheel", def: "The round thing you hold to drive.", ex: "In Japan, the steering wheel is on the right.", tag: "cars" },
-    { en: "spoiler", def: "The wing at the back of a car.", ex: "The car has a big black spoiler.", tag: "cars" },
-    { en: "tires", def: "The black rubber parts on the wheels.", ex: "In a pit stop, F1 teams change all four tires in about two seconds.", tag: "F1" },
-    { en: "used", def: "Not new. Someone had it before.", ex: "My uncle has a used Civic.", tag: "word" },
-    { en: "expensive / cheap", def: "Costs a lot of money / costs a little money.", ex: "A Ferrari is expensive. A bike is cheap.", tag: "word" },
-    { en: "hundred", def: "100. After a number, no s.", ex: "It has three hundred horsepower. (Not: three hundreds)", tag: "numbers" },
-    { en: "thousand", def: "1,000. After a number, no s.", ex: "It costs twenty-five thousand dollars.", tag: "numbers" },
-    { en: "million", def: "1,000,000. After a number, no s.", ex: "That car costs two million dollars.", tag: "numbers" },
-    { en: "How much is it?", def: "Ask the price of something.", ex: "How much is it? — It's thirty thousand dollars.", tag: "phrase" }
-  ],
-
-  frases: [
-    { p: "Does your family have a car?", a: "Yes, we have a pickup.", w: ["Yes, we has a pickup.", "Yes, we are a pickup.", "Yes, there have a pickup."], why: "We → have. He, she, it → has." },
-    { p: "What color is your bike?", a: "It's black and red.", w: ["Is black and red.", "It has black and red.", "It's of black and red."], why: "Start with “It's” for the color. Don't start with “Is”." },
-    { p: "Describe your dream car.", a: "It's a white Supra with a big spoiler.", w: ["It's a Supra white with a spoiler big.", "Is a white Supra with a big spoiler.", "It's a white Supra with a spoiler biggest."], why: "Colors and size go before the noun: a white Supra, a big spoiler." },
-    { p: "How much horsepower does it have?", a: "It has about 300 horsepower.", w: ["It have about 300 horsepower.", "It's about 300 horsepowers.", "Has about 300 horsepower."], why: "It → has. Horsepower has no plural s." },
-    { p: "How much does it cost?", a: "It costs about forty thousand dollars.", w: ["It costs about forty thousands dollars.", "It cost about forty thousand dollars.", "Costs about forty thousands of dollars."], why: "Hundred, thousand and million don't take s after a number. It → costs." },
-    { p: "Does your phone have a good camera?", a: "Yes, it does. It has three cameras.", w: ["Yes, it has. It has three cameras.", "Yes, it do. It has three cameras.", "Yes, it does. It have three cameras."], why: "Short answer: Yes, it does / No, it doesn't." },
-    { p: "How many people live in your house?", a: "There are five people in my house.", w: ["There is five people in my house.", "Have five people in my house.", "Are five people in my house."], why: "Many things → there are. Don't use “have” without a subject." },
-    { p: "Does your best friend have a PlayStation?", a: "No, he doesn't. He has an Xbox.", w: ["No, he don't. He has an Xbox.", "No, he doesn't. He have an Xbox.", "No, he hasn't. He has a Xbox."], why: "He → doesn't / has. Xbox starts with a vowel sound (ex), so we say “an”." }
-  ],
-
-  gaps: {
-    title: "My dream garage",
-    text: "Complete the text with a word from the word bank. Press Enter to check each one.",
-    bank: ["have", "has", "does", "doesn't", "is", "are", "hundred", "thousand", "million", "white"],
-    items: [
-      { s: "My dad ___ a gray pickup.", a: ["has"], note: "My dad = he → has." },
-      { s: "We ___ two bikes in the garage.", a: ["have"], note: "We → have." },
-      { s: "My dream car ___ a Nissan GT-R.", a: ["is"], note: "My dream car = it → is." },
-      { s: "I want a ___ GT-R, like snow.", a: ["white"], note: "Snow is white. The color goes before the car." },
-      { s: "___ it have a big spoiler?", a: ["does"], note: "Questions with it → Does it have…?" },
-      { s: "No, it ___. It has a small one.", a: ["doesn't", "does not"], note: "Short answer: No, it doesn't." },
-      { s: "The engine has six ___ horsepower.", a: ["hundred"], note: "600 = six hundred, with no s." },
-      { s: "It costs one hundred fifty ___ dollars.", a: ["thousand"], note: "150,000 = one hundred fifty thousand." },
-      { s: "A Bugatti costs about three ___ dollars!", a: ["million"], note: "3,000,000 = three million." },
-      { s: "The seats ___ red and very comfortable.", a: ["are"], note: "The seats = they → are." }
-    ]
-  },
-
-  roleplay: {
-    title: "At the car dealership",
-    setup: "You want to buy your first car. The salesperson shows you some cars. Answer out loud and ask questions. If you get stuck, look at the example.",
-    lines: [
-      { who: "Salesperson", t: "Hi! Welcome to JDM Motors. How can I help you?" },
-      { you: true, cue: "Say what kind of car you want.", model: "Hi! I'm looking for a Japanese sports car." },
-      { who: "Salesperson", t: "Great. We have a Supra, an RX-7 and a Civic Type R. Which one do you like?" },
-      { you: true, cue: "Choose one and say why (because…).", model: "I like the RX-7, because it has a rotary engine." },
-      { who: "Salesperson", t: "Good choice! What color do you want?" },
-      { you: true, cue: "Say a color. Remember: color + car.", model: "I want a yellow one, please." },
-      { who: "Salesperson", t: "No problem. It has a big spoiler, too." },
-      { you: true, cue: "Ask about the wheels or the seats (Does it have…?).", model: "Cool! Does it have black wheels?" },
-      { who: "Salesperson", t: "Yes, it does. It has black wheels and new tires." },
-      { you: true, cue: "Ask the price.", model: "Nice. How much is it?" },
-      { who: "Salesperson", t: "It's forty-two thousand five hundred dollars." },
-      { you: true, cue: "Repeat the number to check it.", model: "Forty-two thousand five hundred? That's expensive!" },
-      { who: "Salesperson", t: "OK, for you… forty thousand. Do we have a deal?" },
-      { you: true, cue: "Say yes or no, and say goodbye.", model: "Deal! Thank you very much. See you!" }
-    ],
-    extra: "Now you are the salesperson. Ask your teacher about his dream car: the color, the engine, the seats and the price."
-  },
-
-  final: [
-    { p: "My mom ___ a white car.", a: "has", w: ["have", "is", "are"], why: "My mom = she → has." },
-    { p: "We ___ two dogs and a cat.", a: "have", w: ["has", "are", "is"], why: "We → have." },
-    { p: "___ your car have a sunroof?", a: "Does", w: ["Do", "Is", "Has"], why: "Your car = it → Does it have…?" },
-    { p: "Does it have a spoiler? No, it ___.", a: "doesn't", w: ["don't", "isn't", "hasn't"], why: "Short answer: No, it doesn't." },
-    { p: "I want a ___.", a: "black Supra", w: ["Supra black", "black's Supra", "Supra of black"], why: "The color goes before the noun." },
-    { p: "500 = five ___", a: "hundred", w: ["hundreds", "thousand", "hundred of"], why: "After a number, hundred has no s." },
-    { p: "2,500 = two ___ five hundred", a: "thousand", w: ["thousands", "hundred", "million"], why: "2,000 = two thousand." },
-    { p: "3,000,000 = three ___", a: "million", w: ["millions", "thousand", "hundred"], why: "3,000,000 = three million." },
-    { p: "The part that makes the car move is the ___.", a: "engine", w: ["spoiler", "seat", "garage"], why: "The engine makes the car move." },
-    { p: "The wing at the back of a race car is the ___.", a: "spoiler", w: ["engine", "tire", "steering wheel"], why: "Spoiler = the wing at the back." },
-    { p: "In Japan, the ___ is on the right side of the car.", a: "steering wheel", w: ["spoiler", "garage", "engine"], why: "You hold the steering wheel to drive. In Japan, it's on the right." },
-    { p: "___ is your bike? — It's blue.", a: "What color", w: ["How color", "Which colors", "What is color"], why: "Ask about colors with “What color…?”" },
-    { p: "___ is it? — It's 30,000 dollars.", a: "How much", w: ["How many", "What much", "How cost"], why: "Ask the price with “How much…?”" },
-    { p: "It isn't new. It's a ___ car.", a: "used", w: ["using", "use", "uses"], why: "Used = not new. Someone had it before." },
-    { p: "A Ferrari is ___. A bike is cheap.", a: "expensive", w: ["cheap", "free", "cheaper"], why: "Expensive is the opposite of cheap." },
-    { p: "My uncle has ___ Xbox.", a: "an", w: ["a", "some", "two"], why: "Xbox starts with a vowel sound (ex), so we say “an”." },
-    { p: "It has 400 ___.", a: "horsepower", w: ["horsepowers", "horses power", "power horses"], why: "Horsepower has no plural s." },
-    { p: "There ___ three cars in our garage.", a: "are", w: ["is", "have", "has"], why: "Many things → there are." },
-    { p: "Does he have a motorcycle? — Yes, he ___.", a: "does", w: ["has", "is", "do"], why: "Short answer: Yes, he does." },
-    { p: "In a pit stop, F1 teams change the four ___.", a: "tires", w: ["engines", "seats", "garages"], why: "In a pit stop, the team changes the tires." }
-  ]
-};
-</script>
+<script src="../assets/lessons/02.js"></script>
 </head>
 <body>
 <script src="../assets/leccion.js"></script>

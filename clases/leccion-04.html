@@ -4,6 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lesson 04 · Anime Night</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lesson 04 · Anime Night">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://tangerine-lily-2bfb73.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,115 +28,12 @@
 <link rel="stylesheet" href="../assets/lingua.css">
 <link rel="stylesheet" href="../assets/leccion.css">
 <script src="../assets/config.js"></script>
+<script src="../assets/game.js"></script>
 <script src="../assets/avatar.js"></script>
 <script src="../assets/vendor/supabase.js"></script>
 <script src="../assets/cloud.js"></script>
 <script src="../assets/menu.js"></script>
-<script>
-window.CLASE = {
-  id: "04",
-  titulo: "Anime Night",
-  nivel: "A2",
-  color: "#6d3fd6",
-  icono: "chat",
-  objetivos: [
-    "Give your opinion with I love, I don’t mind, I can’t stand…",
-    "Explain why with because, and describe with -ing / -ed adjectives",
-    "Agree and disagree politely in a conversation"
-  ],
-
-  flash: [
-    { en: "I love…", def: "I like it 100%.", ex: "I love Attack on Titan. The story is incredible.", tag: "opinion" },
-    { en: "I don't mind…", def: "It's OK. I don't love it and I don't hate it.", ex: "I don't mind dubbed anime, but I prefer subtitles.", tag: "opinion" },
-    { en: "I can't stand…", def: "I really hate it.", ex: "I can't stand filler episodes.", tag: "opinion" },
-    { en: "I think…", def: "This is my opinion.", ex: "I think the ending is perfect.", tag: "opinion" },
-    { en: "because", def: "It gives the reason.", ex: "I like Levi because he's so calm.", tag: "connector" },
-    { en: "agree / disagree", def: "Have the same opinion / a different opinion.", ex: "I agree with you. / Sorry, I disagree.", tag: "opinion" },
-    { en: "overrated", def: "People say it's great, but you think it isn't.", ex: "In my opinion, that show is overrated.", tag: "opinion" },
-    { en: "recommend", def: "Tell someone to try something good.", ex: "I recommend One Piece. It's long, but it's amazing.", tag: "phrase" },
-    { en: "episode", def: "One part of a series.", ex: "Each episode is about 24 minutes long.", tag: "anime" },
-    { en: "season", def: "A group of episodes.", ex: "Attack on Titan has four seasons.", tag: "anime" },
-    { en: "main character", def: "The most important person in the story.", ex: "Eren Yeager is the main character of Attack on Titan.", tag: "anime" },
-    { en: "villain", def: "The bad character in a story.", ex: "Every hero needs a good villain.", tag: "anime" },
-    { en: "plot", def: "What happens in the story.", ex: "The plot has a lot of surprises.", tag: "anime" },
-    { en: "subtitles", def: "Words at the bottom of the screen.", ex: "I watch anime in Japanese with English subtitles.", tag: "anime" },
-    { en: "exciting / excited", def: "-ing = how the thing is. -ed = how you feel.", ex: "The fight is exciting. I'm so excited!", tag: "grammar" },
-    { en: "boring / bored", def: "-ing = how the thing is. -ed = how you feel.", ex: "The episode is boring, so I'm bored.", tag: "grammar" }
-  ],
-
-  frases: [
-    { p: "Do you like horror anime?", a: "No, I can't stand it. It's too scary.", w: ["No, I can't stand. It's too scary.", "No, I don't stand it. It's too scary.", "No, I can't support it. It's too scary."], why: "Can't stand + the thing (it). “Support” means to help or to cheer for a team." },
-    { p: "What do you think of the new season?", a: "I think it's amazing.", w: ["I think is amazing.", "I'm think it's amazing.", "I think that amazing."], why: "Always use a subject and a verb: I think it's…" },
-    { p: "Why do you like Levi?", a: "Because he's the strongest soldier.", w: ["Because is the strongest soldier.", "Why he's the strongest soldier.", "For that he's the strongest soldier."], why: "Answer “why” with because + subject + verb." },
-    { p: "Do you like the new episodes?", a: "Yes! I'm really excited for the next one.", w: ["Yes! I'm really exciting for the next one.", "Yes! I'm really excite for the next one.", "Yes! I have really excited for the next one."], why: "How you feel → -ed: I'm excited. The thing → -ing: it's exciting." },
-    { p: "I think One Piece is too long.", a: "I agree. It has more than a thousand episodes!", w: ["I'm agree. It has more than a thousand episodes!", "I am agree with. It has more than a thousand episodes!", "I agree. It has more than a thousands episodes!"], why: "Agree is a verb: I agree (not I'm agree)." },
-    { p: "Do you prefer subtitles or dubbing?", a: "I prefer subtitles, but I don't mind dubbing.", w: ["I prefer subtitles, but I don't care of dubbing.", "I prefer subtitles, but I'm not mind dubbing.", "I prefer more subtitles, but I don't mind dubbing."], why: "I don't mind = it's OK for me." },
-    { p: "Do you like the show?", a: "Not really. I think it's boring.", w: ["Not really. I think it's bored.", "Not really. I'm boring with it.", "Not really. I think is boring."], why: "The show is boring (-ing). You are bored (-ed)." },
-    { p: "What anime do you recommend?", a: "I recommend Demon Slayer. The animation is beautiful.", w: ["I recommend you Demon Slayer. The animation is beautiful.", "I recommend to watch Demon Slayer. The animation is beautiful.", "Recommend Demon Slayer. The animation is beautiful."], why: "Recommend + the thing. Not “recommend you…” or “recommend to…”." }
-  ],
-
-  gaps: {
-    title: "My anime review",
-    text: "Complete the review with a word from the word bank. Press Enter to check each one.",
-    bank: ["love", "because", "think", "mind", "stand", "boring", "excited", "agree", "main", "recommend"],
-    items: [
-      { s: "I ___ Attack on Titan. It's my favorite anime.", a: ["love"], note: "I love = I like it 100%." },
-      { s: "The ___ character is Eren.", a: ["main"], note: "Main character = the most important one." },
-      { s: "I like it ___ the story is full of surprises.", a: ["because"], note: "Because gives the reason." },
-      { s: "I ___ the last season is the best one.", a: ["think"], note: "I think = in my opinion." },
-      { s: "Some episodes are slow, but I don't ___.", a: ["mind"], note: "I don't mind = it's OK for me." },
-      { s: "I can't ___ sad endings. I always cry!", a: ["stand"], note: "Can't stand = really hate." },
-      { s: "My friend thinks it's ___, but I think it's exciting.", a: ["boring"], note: "Boring is the opposite of exciting." },
-      { s: "I'm so ___ for the movie!", a: ["excited"], note: "How you feel → -ed." },
-      { s: "Do you ___ with me? Is it the best anime?", a: ["agree"], note: "Agree = have the same opinion." },
-      { s: "I ___ it to everyone. Watch it!", a: ["recommend"], note: "Recommend = tell people to try it." }
-    ]
-  },
-
-  roleplay: {
-    title: "Anime Night debate",
-    setup: "You and a friend are choosing what to watch tonight. Your friend has different opinions. Answer out loud and give reasons with “because”. If you get stuck, look at the example.",
-    lines: [
-      { who: "Friend", t: "So, what do we watch tonight? I want something funny." },
-      { you: true, cue: "Suggest an anime you like.", model: "What about Attack on Titan? I love it." },
-      { who: "Friend", t: "Hmm, I think it's too dark. I can't stand sad stories." },
-      { you: true, cue: "Disagree politely and give a reason.", model: "I don't agree. It's sad, but the story is amazing." },
-      { who: "Friend", t: "OK… Who is your favorite character?" },
-      { you: true, cue: "Say your favorite character and why (because…).", model: "My favorite is Levi, because he's calm and super strong." },
-      { who: "Friend", t: "Do you prefer subtitles or dubbing?" },
-      { you: true, cue: "Use “I prefer…” or “I don't mind…”.", model: "I prefer subtitles, but I don't mind dubbing." },
-      { who: "Friend", t: "What about Spy x Family? It's really funny." },
-      { you: true, cue: "Say what you think about it.", model: "I think it's fun, but a little boring for me." },
-      { who: "Friend", t: "OK, let's decide. One episode of each?" },
-      { you: true, cue: "Agree and finish the conversation.", model: "I agree! Get the popcorn. I'm so excited." }
-    ],
-    extra: "Now ask your teacher about his favorite series or movie. Ask: What do you think of…? Why do you like it? What do you recommend?"
-  },
-
-  final: [
-    { p: "I ___ Naruto. It's my favorite!", a: "love", w: ["can't stand", "don't mind", "hate"], why: "Favorite → love." },
-    { p: "I can't ___ horror movies.", a: "stand", w: ["support", "suffer", "like to"], why: "Can't stand = really hate." },
-    { p: "I don't ___ waiting. It's OK.", a: "mind", w: ["care of", "matter", "bother of"], why: "Don't mind = it's OK for me." },
-    { p: "I like Luffy ___ he's funny and brave.", a: "because", w: ["why", "for", "so"], why: "Because gives the reason." },
-    { p: "The final battle is really ___.", a: "exciting", w: ["excited", "excite", "excitement"], why: "How the thing is → -ing." },
-    { p: "I'm ___. Can we watch something else?", a: "bored", w: ["boring", "bore", "boredom"], why: "How you feel → -ed." },
-    { p: "A: Levi is the best character. B: I ___! He's amazing.", a: "agree", w: ["am agree", "agreed with", "have agree"], why: "Agree is a verb: I agree." },
-    { p: "The bad character in a story is the ___.", a: "villain", w: ["hero", "main character", "narrator"], why: "Villain = the bad character." },
-    { p: "One part of a series is an ___.", a: "episode", w: ["season", "subtitle", "opening"], why: "Episode = one part of a series." },
-    { p: "Words at the bottom of the screen are ___.", a: "subtitles", w: ["lyrics", "credits", "titles"], why: "Subtitles = words at the bottom of the screen." },
-    { p: "What happens in a story is the ___.", a: "plot", w: ["cast", "season", "episode"], why: "Plot = what happens in the story." },
-    { p: "___ do you think of Demon Slayer?", a: "What", w: ["How", "Which", "Who"], why: "Ask for an opinion with “What do you think of…?”" },
-    { p: "I ___ it's the best anime ever.", a: "think", w: ["am think", "thinking", "thinks"], why: "I think…" },
-    { p: "Everyone says it's great, but I think it's ___.", a: "overrated", w: ["recommended", "excited", "favorite"], why: "Overrated = people say it's great, but you don't agree." },
-    { p: "I ___ Spy x Family. It's so funny!", a: "recommend", w: ["recommend you", "recommend to", "am recommend"], why: "Recommend + the thing." },
-    { p: "Do you prefer subtitles ___ dubbing?", a: "or", w: ["and", "but", "than"], why: "Choose between two things with “or”." },
-    { p: "Eren is the ___ character of Attack on Titan.", a: "main", w: ["principal", "most", "first of"], why: "“Main character” is what native speakers say." },
-    { p: "My sister ___ like anime.", a: "doesn't", w: ["don't", "isn't", "not"], why: "She → doesn't + verb." },
-    { p: "I'm really ___ in this story. I want to know the ending.", a: "interested", w: ["interesting", "interest", "interests"], why: "How you feel → -ed: interested." },
-    { p: "Sorry, I ___. I think the ending is bad.", a: "disagree", w: ["am disagree", "disagreed with", "not agree"], why: "Disagree = have a different opinion." }
-  ]
-};
-</script>
+<script src="../assets/lessons/04.js"></script>
 </head>
 <body>
 <script src="../assets/leccion.js"></script>

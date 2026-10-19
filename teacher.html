@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Teacher panel</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lingua · Teacher panel">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://tangerine-lily-2bfb73.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<script src="assets/menu.js"></script>
+<style>
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 20px; }
+  .wrap > * { min-width: 0; }
+  .page-head h1 { font-size: 2em; font-weight: 800; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 24px; display: grid; gap: 16px; align-content: start; }
+  @media (max-width: 560px) { .panel { padding: 16px; } }
+  .panel h2 { font-size: 1.1em; font-weight: 800; }
+  .layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  .roster { display: grid; gap: 6px; }
+  .stu { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px; border-radius: 12px; border: 1px solid transparent; background: none; text-align: left; width: 100%; }
+  .stu:hover { background: var(--bg); }
+  .stu[aria-pressed="true"] { background: var(--brand-soft); border-color: color-mix(in srgb, var(--brand) 30%, transparent); }
+  .stu .av { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; overflow: hidden; }
+  .stu b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stu small { color: var(--mute); font-weight: 600; font-size: .8em; }
+  .pill { font-size: .75em; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: var(--bg); color: var(--ink-2); white-space: nowrap; }
+  .pill.warn { background: var(--dev-soft); color: var(--dev); }
+  .pill.good { background: var(--ok-soft); color: var(--ok-ink); }
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 700px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpi { padding: 14px 16px; display: grid; gap: 2px; border-radius: 12px; background: var(--bg); }
+  .kpi .v { font-size: 1.5em; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .kpi .l { font-size: .8em; color: var(--mute); font-weight: 600; }
+  .dhead { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 16px; align-items: center; }
+  .dhead .av { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; font-weight: 800; color: #fff; font-size: 1.5em; }
+  .dhead h2 { font-size: 1.5em; }
+  .tbl { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .92em; min-width: 560px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+  th { font-size: .72em; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); }
+  td.r, th.r { text-align: right; }
+  .miss { display: grid; gap: 6px; }
+  .miss div { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 10px; padding: 9px 12px; border-radius: 10px; background: var(--bg); font-size: .9em; }
+  .miss div span:first-child { font-weight: 800; color: var(--mute); font-size: .85em; }
+  .hw { display: grid; gap: 8px; }
+  .hw-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; }
+  .hw-item p { color: var(--ink-2); font-size: .88em; }
+  .hw-item small { color: var(--mute); font-weight: 600; font-size: .8em; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+  .field textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--r-s); padding: 11px 12px; width: 100%; min-height: 80px; resize: vertical; }
+  .field select { appearance: auto; }
+  .quick { display: flex; gap: 6px; flex-wrap: wrap; }
+  .quick button { border: 1px dashed var(--line-2); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: .82em; font-weight: 700; color: var(--ink-2); }
+  .quick button:hover { border-color: var(--brand); color: var(--brand-dark); }
+  pre { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; overflow-x: auto; font-size: .85em; white-space: pre-wrap; word-break: break-all; }
+  .empty { color: var(--mute); text-align: center; padding: 18px; }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="index.html">My learning</a><a class="on" href="teacher.html">Teacher panel</a></nav>
+    <span class="spacer"></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"></a>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"></div></main>
+<script>
+const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
+document.getElementById("logo").innerHTML = G.logo;
+const lessons = G.modulos.flatMap(m => m.lecciones), ready = lessons.filter(l => l.estado === "lista");
+const fmt = d => d ? new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—";
+const ago = d => {
+  if (!d) return "never";
+  const s = (Date.now() - new Date(d)) / 1000;
+  return s < 3600 ? "just now" : s < 86400 ? Math.round(s / 3600) + " h ago" : s < 86400 * 2 ? "yesterday" : Math.round(s / 86400) + " days ago";
+};
+let DATA = null, SEL = null;
+
+function studentOf(p) {
+  const row = DATA.progress.find(x => x.user_id === p.id) || { data: {} }, d = row.data || {};
+  const get = (k, def) => d[k] && "v" in d[k] ? d[k].v : def;
+  const game = G.game.stats(get);
+  const best = l => { let t = get("attempts." + l.id, []); const s = get("score." + l.id, null); if (!t.length && s) t = [s]; return t.length ? t.reduce((a, b) => b.ok / b.n > a.ok / a.n ? b : a) : null; };
+  const rows = ready.map(l => { const t = get("attempts." + l.id, []), b = best(l), s = get("score." + l.id, null); return { l, done: get("done." + l.id, []).length, tries: t.length || (s ? 1 : 0), best: b, last: t[t.length - 1] || s }; });
+  const scored = rows.filter(r => r.best), avg = scored.length ? Math.round(scored.reduce((a, r) => a + r.best.ok / r.best.n, 0) / scored.length * 100) : null;
+  const passed = rows.filter(r => r.best && r.best.ok / r.best.n >= .8).length;
+  const review = Object.values(get("review", {}) || {});
+  const hw = DATA.homework.filter(h => h.student_id === p.id), pending = hw.filter(h => !h.done_at).length;
+  return { p, get, game, rows, avg, passed, review, hw, pending, placement: get("placement", null), avatar: get("avatar", null), updated: row.updated_at };
+}
+function avatarOf(s, size) {
+  const name = (s.p.display_name || "?").trim();
+  return s.avatar && s.avatar.style !== "initial" ? G.avatar.svg(s.avatar, size, { label: name }) : `<span style="background:${s.p.avatar_color || "#2346d0"};width:100%;height:100%;display:grid;place-items:center">${esc(name[0] || "?").toUpperCase()}</span>`;
+}
+
+function notTeacher() {
+  const email = (G.user && G.user.email) || "your-username@student.lingua.app";
+  app.innerHTML = `<div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Teacher</span><h1>Teacher panel</h1></div>
+    <div class="panel">
+      <h2>This account isn’t a teacher yet</h2>
+      <p class="muted">Turn on the teacher panel for <b style="color:var(--ink)">${esc(email)}</b> once: in Supabase, open <b>SQL Editor → New query</b>, paste this and press <b>Run</b>. Then reload this page.</p>
+      <pre id="sql">insert into public.teachers (user_id)
+select id from auth.users where email = '${esc(email)}'
+on conflict do nothing;</pre>
+      <div class="actions"><button class="btn" id="copy">Copy SQL</button><a class="btn ghost" href="index.html">Back to My learning</a></div>
+      <p class="muted" style="font-size:.85em">If the query says the table doesn’t exist, run the latest <b>supabase/setup.sql</b> first.</p>
+    </div>`;
+  document.getElementById("copy").onclick = () => navigator.clipboard.writeText(document.getElementById("sql").textContent).then(() => G.toast("SQL copied"));
+}
+
+function render() {
+  const list = DATA.profiles.filter(p => p.id !== (G.user && G.user.id)).map(studentOf)
+    .sort((a, b) => (b.updated || "").localeCompare(a.updated || ""));
+  if (!SEL && list.length) SEL = list[0].p.id;
+  const cur = list.find(s => s.p.id === SEL);
+  app.innerHTML = `
+    <div class="page-head" style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
+      <div style="display:grid;gap:4px"><span class="eyebrow">Teacher</span><h1>Teacher panel</h1><p class="muted">${list.length} student${list.length === 1 ? "" : "s"} · Progress, grades, mistakes and homework.</p></div>
+      <button class="btn" id="reload">Refresh</button>
+    </div>
+    ${list.length ? `<div class="layout">
+      <div class="panel" style="padding:12px"><div class="roster">${list.map(s => `
+        <button class="stu" data-id="${s.p.id}" aria-pressed="${s.p.id === SEL}">
+          <span class="av">${avatarOf(s, 44)}</span>
+          <span style="min-width:0"><b>${esc(s.p.display_name || "New student")}</b><small>Active ${ago(s.updated)} · 🔥 ${s.game.streak}</small></span>
+          ${s.pending ? `<span class="pill warn">${s.pending} to do</span>` : `<span class="pill">Lv ${s.game.level}</span>`}
+        </button>`).join("")}</div></div>
+      <div style="display:grid;gap:20px;min-width:0">${cur ? detail(cur) : ""}</div>
+    </div>` : `<div class="panel"><p class="empty">No students yet. Create a student account in Supabase → Authentication → Users.</p></div>`}`;
+  document.getElementById("reload").onclick = load;
+  app.querySelectorAll(".stu").forEach(b => b.onclick = () => { SEL = b.dataset.id; render(); });
+  if (cur) wireDetail(cur);
+}
+
+function detail(s) {
+  const g = s.game, pl = s.placement;
+  const status = r => !r.best ? `<span class="pill">Not started</span>` : r.best.ok / r.best.n >= .8 ? `<span class="pill good">Passed</span>` : `<span class="pill warn">Practicing</span>`;
+  const byLesson = {}; s.review.forEach(q => byLesson[q.l] = (byLesson[q.l] || 0) + 1);
+  return `
+  <div class="panel">
+    <div class="dhead"><span class="av">${avatarOf(s, 64)}</span>
+      <div style="min-width:0"><h2>${esc(s.p.display_name || "New student")}</h2>
+        <p class="muted" style="font-size:.9em">${s.p.age ? s.p.age + " years old · " : ""}${(s.p.interests || []).map(esc).join(", ") || "No interests yet"}</p></div>
+      <span class="pill" style="font-size:.85em">Level ${pl ? pl.nivel : "—"}</span></div>
+    <div class="kpis">
+      <div class="kpi"><span class="v">🔥 ${g.streak}</span><span class="l">Day streak · best ${g.best}</span></div>
+      <div class="kpi"><span class="v">${g.weekDays}/${g.goal}</span><span class="l">Days practiced this week</span></div>
+      <div class="kpi"><span class="v">${s.passed}/${ready.length}</span><span class="l">Lessons passed</span></div>
+      <div class="kpi"><span class="v">${s.avg == null ? "—" : s.avg + "%"}</span><span class="l">Average best score</span></div>
+      <div class="kpi"><span class="v">${g.xp}</span><span class="l">XP · Level ${g.level} ${g.title}</span></div>
+      <div class="kpi"><span class="v">${s.review.length}</span><span class="l">Questions to review</span></div>
+      <div class="kpi"><span class="v">${pl ? pl.nivel : "—"}</span><span class="l">Placement ${pl ? "· " + fmt(pl.fecha + "T12:00") : "not taken"}</span></div>
+      <div class="kpi"><span class="v" style="font-size:1.1em;padding-top:6px">${ago(s.updated)}</span><span class="l">Last activity</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Homework</h2>
+    <div class="hw">${s.hw.length ? s.hw.map(h => `<div class="hw-item">
+      <div style="min-width:0"><b>${h.done_at ? "✅ " : ""}${esc(h.title)}</b>${h.details ? `<p>${esc(h.details)}</p>` : ""}
+        <small>${h.done_at ? "Done " + fmt(h.done_at) : h.due ? "Due " + fmt(h.due + "T12:00") : "No due date"}${h.lesson_id ? " · Lesson " + esc(h.lesson_id) : ""}</small></div>
+      <button class="btn ghost sm" data-del="${h.id}" aria-label="Delete homework">Delete</button></div>`).join("") : `<p class="empty">No homework yet.</p>`}</div>
+    <form id="hwForm" style="display:grid;gap:12px;border-top:1px solid var(--line);padding-top:16px" novalidate>
+      <b>Add homework</b>
+      <div class="quick" id="quick">
+        ${ready.slice(0, 6).map(l => `<button type="button" data-t="Final quiz · Lesson ${l.id} ${l.titulo}" data-d="Do the final quiz again. Goal: 18 out of 20 or more." data-l="${l.id}">Quiz L${l.id}</button>`).join("")}
+        <button type="button" data-t="Practice your mistakes" data-d="Open Review and practice until the list is empty.">Review mistakes</button>
+        <button type="button" data-t="10 minutes of LyricsTraining" data-d="Pick a song you like on Beginner mode.">LyricsTraining</button>
+        <button type="button" data-t="Listen and repeat: My words" data-d="Open My words, listen to each word and say it out loud.">My words</button>
+      </div>
+      <div class="field"><label for="hwT">Title</label><input id="hwT" maxlength="140" required></div>
+      <div class="field"><label for="hwD">Details <span class="muted" style="font-weight:500">(optional)</span></label><textarea id="hwD" maxlength="1000"></textarea></div>
+      <div class="grid2">
+        <div class="field"><label for="hwL">Lesson <span class="muted" style="font-weight:500">(optional)</span></label><select id="hwL"><option value="">None</option>${ready.map(l => `<option value="${l.id}">Lesson ${l.id} · ${l.titulo}</option>`).join("")}</select></div>
+        <div class="field"><label for="hwDue">Due date</label><input id="hwDue" type="date"></div>
+      </div>
+      <div id="hwMsg" hidden></div>
+      <div class="actions"><button class="btn primary" type="submit" id="hwSave">Add homework</button></div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Lessons</h2>
+    <div class="tbl"><table><thead><tr><th>Lesson</th><th>Sections</th><th class="r">Attempts</th><th class="r">Last</th><th class="r">Best</th><th class="r">To review</th><th>Status</th></tr></thead>
+      <tbody>${s.rows.map(r => `<tr><td><b>${r.l.id}</b> · ${r.l.titulo}</td><td>${r.done}/5</td><td class="r">${r.tries}</td>
+        <td class="r">${r.last ? r.last.ok + "/" + r.last.n : "—"}</td><td class="r"><b>${r.best ? Math.round(r.best.ok / r.best.n * 100) + "%" : "—"}</b></td>
+        <td class="r">${byLesson[r.l.id] || 0}</td><td>${status(r)}</td></tr>`).join("")}</tbody></table></div>
+  </div>
+
+  <div class="panel">
+    <h2>Questions to review <span class="muted" style="font-weight:600;font-size:.8em">· mistakes and saved questions</span></h2>
+    ${s.review.length ? `<div class="miss">${s.review.slice(0, 30).map(q => `<div><span>L${esc(q.l.split(".")[0])}${q.src === "saved" ? " ★" : ""}</span><span>${esc(q.p).replace("___", `<b>${esc(q.a)}</b>`)}${/___/.test(q.p) ? "" : ` → <b>${esc(q.a)}</b>`}</span></div>`).join("")}</div>` : `<p class="empty">Nothing to review. 🎉</p>`}
+  </div>`;
+}
+
+function wireDetail(s) {
+  const f = document.getElementById("hwForm");
+  document.querySelectorAll("#quick button").forEach(b => b.onclick = () => {
+    document.getElementById("hwT").value = b.dataset.t; document.getElementById("hwD").value = b.dataset.d || "";
+    document.getElementById("hwL").value = b.dataset.l || "";
+  });
+  f.addEventListener("submit", async e => {
+    e.preventDefault();
+    const t = document.getElementById("hwT").value.trim(), msg = document.getElementById("hwMsg");
+    if (!t) { msg.className = "alert bad"; msg.textContent = "Write a title."; msg.hidden = false; return; }
+    const row = { student_id: s.p.id, title: t, details: document.getElementById("hwD").value.trim() || null, lesson_id: document.getElementById("hwL").value || null, due: document.getElementById("hwDue").value || null };
+    const btn = document.getElementById("hwSave"); btn.disabled = true;
+    try { await G.teacher.addHomework(row); G.toast("Homework added"); await load(); }
+    catch (err) { msg.className = "alert bad"; msg.textContent = "We couldn’t add it: " + (err.message || err); msg.hidden = false; btn.disabled = false; }
+  });
+  document.querySelectorAll("[data-del]").forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try { await G.teacher.deleteHomework(b.dataset.del); G.toast("Homework deleted"); await load(); } catch (err) { G.toast("Couldn’t delete: " + esc(err.message || err)); b.disabled = false; }
+  });
+}
+
+async function load() {
+  try { DATA = await G.teacher.load(); render(); }
+  catch (e) { app.innerHTML = `<div class="panel"><h2>We couldn’t load your students</h2><p class="muted">${esc(e.message || e)}</p></div>`; }
+}
+G.ready.then(() => {
+  if (!G.cloudEnabled) { app.innerHTML = `<div class="panel"><h2>Teacher panel</h2><p class="muted">The teacher panel needs student accounts (Supabase) to be turned on.</p></div>`; return; }
+  if (!G.isTeacher) notTeacher(); else load();
+});
+</script>
+</body>
+</html>

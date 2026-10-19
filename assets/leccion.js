@@ -72,7 +72,11 @@
     G.store.set("sec." + C.id, st.sec);
     drawToc(); draw(); window.scrollTo({ top: 0 });
   }
-  function markDone(i) { st.done.add(i); G.store.set("done." + C.id, [...st.done]); drawToc(); }
+  function markDone(i) {
+    const first = !st.done.has(i);
+    st.done.add(i); G.store.set("done." + C.id, [...st.done]); drawToc();
+    if (first && G.game) { G.game.award(20, { once: "sec." + C.id + "." + i, label: "Section complete" }); G.sfx("pop"); }
+  }
   function head(title, text) {
     return `<div class="sec-head"><span class="eyebrow">Section ${st.sec + 1} of ${SECS.length} · ${SECS[st.sec].min} min</span><h2>${title}</h2>${text ? `<p>${text}</p>` : ""}</div>`;
   }
@@ -97,12 +101,16 @@
   // ── 1 Vocabulario ──
   function drawFlash() {
     stage.innerHTML = head("Lesson vocabulary", "Read each word out loud and say what you think it means. Click a card to see the answer.") +
-      `<div class="flash-grid">${C.flash.map(f => `
-        <button class="flash" aria-label="${f.en}"><div class="in">
-          <div class="face"><span class="chip" style="align-self:flex-start">${f.tag}</span><span class="word">${f.en}</span><span class="tap">Click to flip</span></div>
-          <div class="face back"><span class="es">${f.def}</span><span class="ex">${f.ex}</span></div>
-        </div></button>`).join("")}</div>` + pager();
-    stage.querySelectorAll(".flash").forEach(b => b.onclick = () => b.classList.toggle("flip"));
+      `<div class="flash-grid">${C.flash.map((f, i) => `
+        <div class="flash" role="button" tabindex="0" aria-label="${G.esc(f.en)}. Flip card" data-i="${i}"><div class="in">
+          <div class="face"><div class="ftop"><span class="chip">${f.tag}</span>${G.sayBtn(f.en, "Listen: " + f.en)}</div>${f.img ? `<span class="fimg" aria-hidden="true">${f.img}</span>` : ""}<span class="word">${f.en}</span><span class="tap">Tap to flip</span></div>
+          <div class="face back"><span class="es">${f.def}</span><span class="ex">${f.ex}</span><div class="fbot">${G.sayBtn(f.ex, "Listen to the example")}</div></div>
+        </div></div>`).join("")}</div>` + pager();
+    stage.querySelectorAll(".flash").forEach(b => {
+      const flip = () => { b.classList.toggle("flip"); G.game && G.game.award(2, { once: "flip." + C.id + "." + b.dataset.i, silent: true }); };
+      b.onclick = e => { if (!e.target.closest("[data-say]")) flip(); };
+      b.onkeydown = e => { if ((e.key === "Enter" || e.key === " ") && !e.target.closest("[data-say]")) { e.preventDefault(); flip(); } };
+    });
   }
 
   // ── Quiz engine ──
@@ -120,12 +128,12 @@
     }};
     const inClass = () => document.body.classList.contains("clase");
     function choose(n) { sel = n; if (!inClass()) reveal(); else paint(); }
-    function reveal() { if (sel == null) return; shown = true; res[i] = sel === qs[i].correct; paint(); }
+    function reveal() { if (sel == null) return; shown = true; res[i] = sel === qs[i].correct; G.sfx(res[i] ? "ok" : "bad"); paint(); }
     function next() { if (i < qs.length - 1) { i++; sel = null; shown = false; paint(); } else { fin = true; summary(); } }
     function flag() {
       const q = qs[i], list = G.store.get(repKey, []), line = q.p.replace("___", q.a);
-      if (flags.has(i)) { flags.delete(i); G.store.set(repKey, list.filter(x => x !== line)); toast("Removed from review"); }
-      else { flags.add(i); if (!list.includes(line)) list.push(line); G.store.set(repKey, list); toast("Saved for review"); }
+      if (flags.has(i)) { flags.delete(i); G.store.set(repKey, list.filter(x => x !== line)); G.review.remove(G.review.id(C.id, q.p)); toast("Removed from review"); }
+      else { flags.add(i); if (!list.includes(line)) list.push(line); G.store.set(repKey, list); G.review.add(q, C.id, "saved"); toast("Saved for review"); }
       drawFlags(); paint();
     }
     function paint() {
@@ -133,12 +141,12 @@
       el.innerHTML = `<div class="panel q">
         <div class="q-head"><span class="eyebrow">Question ${i + 1} of ${qs.length}</span>
           <div class="steps" aria-hidden="true">${qs.map((_, k) => `<span class="${k === i ? "cur" : res[k] === true ? "ok" : res[k] === false ? "bad" : ""} ${flags.has(k) ? "flag" : ""}"></span>`).join("")}</div></div>
-        <div class="q-title">${q.p.replace("___", '<span class="gap">&nbsp;</span>')}</div>
+        <div class="q-title"><span>${q.p.replace("___", shown ? `<span class="gap filled">${q.a}</span>` : '<span class="gap">&nbsp;</span>')}</span>${G.sayBtn(shown ? q.p.replace("___", q.a) : q.p, "Listen to the question")}</div>
         <div class="opts" role="radiogroup">${q.opts.map((t, k) => {
           let c = ""; if (shown) { if (k === q.correct) c = "ok"; else if (k === sel) c = "bad"; } else if (k === sel) c = "sel";
           return `<button class="opt ${c}" data-k="${k}" role="radio" aria-checked="${k === sel}" ${shown ? "disabled" : ""}><span class="radio"></span><span>${t}</span><span class="letter">${k + 1}</span></button>`;
         }).join("")}</div>
-        ${shown ? `<div class="feedback ${res[i] ? "ok" : "bad"}"><div><b>${res[i] ? "Correct!" : "Not quite."}</b>${q.why}</div></div>` : ""}
+        ${shown ? `<div class="feedback ${res[i] ? "ok" : "bad"}"><div><b>${res[i] ? "Correct!" : "Not quite."}</b>${q.why}</div>${G.sayBtn(/___/.test(q.p) ? q.p.replace("___", q.a) : q.a, "Listen to the right answer")}</div>` : ""}
         <div class="actions" style="justify-content:space-between">
           <button class="btn ghost sm" data-a="flag">${flags.has(i) ? "★ Saved for review" : "☆ Save for review"} <span class="kbd">M</span></button>
           ${!shown ? `<button class="btn primary" data-a="rev" ${sel == null ? "disabled" : ""}>Check <span class="kbd">Space</span></button>`
@@ -151,7 +159,9 @@
     }
     function summary() {
       const ok = res.filter(Boolean).length, wrong = qs.filter((_, k) => !res[k]), p = Math.round(ok / qs.length * 100);
+      wrong.forEach(q => G.review.add(q, C.id, "mistake"));
       if (o.onDone) o.onDone(ok, qs.length);
+      if (G.game && ok) G.game.award(ok * (o.badge ? 3 : 2), { label: o.label + " · " + ok + " right" });
       const msg = p >= 80 ? "Excellent! You’re ready for the next lesson." : p >= 50 ? "Good job! Review your mistakes and try again." : "Let’s review this together in the next class.";
       el.innerHTML = `<div class="panel" style="display:grid;gap:20px">
         <div class="result">
@@ -159,8 +169,8 @@
           <div style="display:grid;gap:6px"><span class="eyebrow">${o.label}</span><h3 style="font-size:1.35em;font-weight:800">${msg}</h3>
             ${o.badge && p >= 80 ? `<div class="badge-earned"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="17" r="13" fill="#f5c518"/><circle cx="20" cy="17" r="9" fill="none" stroke="#3a2c00" stroke-width="1.6" stroke-dasharray="2 2.2"/><path d="M14.5 17.5l3.6 3.4 7.4-7.4" fill="none" stroke="#3a2c00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 27l-3 9 5-2 3 4 2-8M27 27l3 9-5-2-3 4-2-8" fill="#2346d0"/></svg><span><b>Diploma unlocked</b><br><span class="muted">Lesson ${C.id} · ${C.titulo} · <a href="../diplomas.html#d${C.id}">View your diploma</a></span></span></div>` : ""}</div>
         </div>
-        ${wrong.length ? `<div style="display:grid;gap:8px"><span class="eyebrow">Correct answers to review</span>${wrong.map(q => `<div class="feedback bad" style="padding:10px 14px"><div>${q.p.replace("___", "<b style='display:inline'>" + q.a + "</b>")}</div></div>`).join("")}</div>` : ""}
-        <div class="actions"><button class="btn" data-a="again">Try again</button></div></div>`;
+        ${wrong.length ? `<div style="display:grid;gap:8px"><span class="eyebrow">Correct answers to review</span>${wrong.map(q => `<div class="feedback bad" style="padding:10px 14px"><div>${q.p.replace("___", "<b style='display:inline'>" + q.a + "</b>")}</div>${G.sayBtn(/___/.test(q.p) ? q.p.replace("___", q.a) : q.a)}</div>`).join("")}<p class="muted" style="font-size:.88em">We added ${wrong.length === 1 ? "this question" : "these " + wrong.length + " questions"} to your <a href="../review.html">Review</a> list.</p></div>` : ""}
+        <div class="actions"><button class="btn" data-a="again">Try again</button>${wrong.length ? `<a class="btn ghost" href="../review.html">Practice my mistakes</a>` : ""}</div></div>`;
       el.querySelector('[data-a="again"]').onclick = () => { res.fill(null); i = 0; sel = null; shown = false; fin = false; paint(); };
     }
     paint(); return api;
@@ -189,10 +199,14 @@
         r.classList.remove("ok", "bad");
         if (!v && !all) { r.querySelector(".fix").textContent = ""; r.querySelector(".note").textContent = ""; return; }
         r.classList.add(good ? "ok" : "bad"); if (good) ok++;
-        r.querySelector(".fix").textContent = good ? "✓" : "→ " + g.a[0];
+        r.querySelector(".fix").innerHTML = (good ? "✓" : "→ " + G.esc(g.a[0])) + G.sayBtn(g.s.replace("___", g.a[0]), "Listen to the sentence");
         r.querySelector(".note").textContent = good ? "" : g.note || "";
+        if (good && G.game) G.game.award(2, { once: "gap." + C.id + "." + r.dataset.i, silent: true });
       });
       document.getElementById("gs").textContent = ok + " of " + it.length + " correct";
+      const bad = stage.querySelectorAll(".gap-row.bad").length;
+      if (!all) G.sfx(bad ? "bad" : ok === it.length ? "win" : "ok");
+      if (!all && ok === it.length) G.confetti(70);
     }
     stage.querySelectorAll("input").forEach((inp, i, all) => inp.addEventListener("keydown", e => {
       if (e.key === "Enter") { e.preventDefault(); check(false); if (all[i + 1]) all[i + 1].focus(); }
@@ -205,9 +219,9 @@
   function drawRP() {
     const R = C.roleplay;
     stage.innerHTML = head(R.title, R.setup) + `<div class="panel chat">${R.lines.map((l, i) => l.you ? `
-      <div class="msg you"><div class="bub"><div class="who">You</div><div class="cue">${l.cue}</div><div class="model" hidden id="m${i}">${l.model}</div>
+      <div class="msg you"><div class="bub"><div class="who">You</div><div class="cue">${l.cue}</div><div class="model" hidden id="m${i}">${l.model} ${G.sayBtn(l.model, "Listen to the example")}</div>
         <button class="btn ghost sm" data-m="${i}" style="margin-top:6px;padding-left:0">Show example</button></div><span class="av">YOU</span></div>` : `
-      <div class="msg"><span class="av">${l.who.slice(0, 2).toUpperCase()}</span><div class="bub"><div class="who">${l.who}</div>${l.t}</div></div>`).join("")}</div>
+      <div class="msg"><span class="av">${l.who.slice(0, 2).toUpperCase()}</span><div class="bub"><div class="who">${l.who}</div>${l.t} ${G.sayBtn(l.t, "Listen")}</div></div>`).join("")}</div>
       ${R.extra ? `<div class="panel" style="display:grid;gap:6px;background:var(--brand-soft);border-color:transparent"><span class="eyebrow" style="color:var(--brand-dark)">Now switch roles</span><p>${R.extra}</p></div>` : ""}` + pager();
     stage.querySelectorAll("[data-m]").forEach(b => b.onclick = () => {
       const m = document.getElementById("m" + b.dataset.m); m.hidden = !m.hidden; b.textContent = m.hidden ? "Show example" : "Hide example";
@@ -225,14 +239,15 @@
         G.store.set("score." + C.id, { ok, n, at });
         const tries = G.store.get("attempts." + C.id, []); tries.push({ ok, n, at }); G.store.set("attempts." + C.id, tries.slice(-50));
         const d = G.store.get("diploma." + C.id, null);
-        if (ok / n >= .8 && !d) G.store.set("diploma." + C.id, { ok, n, at });
+        if (ok / n >= .8) G.game && G.game.award(50, { once: "pass." + C.id, silent: true });
+        if (ok / n >= .8 && !d) { G.store.set("diploma." + C.id, { ok, n, at }); setTimeout(() => { G.confetti(); G.sfx("win"); }, 250); }
         else if (d && ok > d.ok) G.store.set("diploma." + C.id, { ...d, ok, n });
       }
     });
   }
 
   // ── Tools ──
-  function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 1600); }
+  function toast(t) { G.toast(G.esc(t)); }
   function size(d) { const s = Math.max(.85, Math.min(1.4, +(G.store.get("textSize", 1) + d).toFixed(2))); G.store.set("textSize", s); document.documentElement.style.setProperty("--scale", s); }
   function toggleClass() {
     const on = document.body.classList.toggle("clase"), b = document.getElementById("classBtn");

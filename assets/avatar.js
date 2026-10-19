@@ -4,7 +4,7 @@
   const L = window.LINGUA;
   const A = L.avatar = {};
 
-  A.SHELLS = { white: "#f2f3f6", black: "#1b1f2a", red: "#d7263d", blue: "#2346d0", teal: "#0f766e", orange: "#f97316", yellow: "#f5c518", purple: "#6d3fd6", pink: "#e84a8a", green: "#15803d", silver: "#a3aab6" };
+  A.SHELLS = { white: "#f2f3f6", black: "#1b1f2a", red: "#d7263d", blue: "#2346d0", teal: "#0f766e", orange: "#f97316", yellow: "#f5c518", purple: "#6d3fd6", pink: "#e84a8a", green: "#15803d", silver: "#a3aab6", gold: "#c9a227" };
   A.BGS = { sky: "#dbe6ff", mint: "#d5f2e6", sand: "#fbe8cc", rose: "#fbdbe5", lilac: "#e7defb", fog: "#e6e9ef", night: "#1b1f2a", track: "#3a4150" };
   A.VISORS = {
     smoke: { a: "#2b313f", b: "#0d1017", label: "Smoke" },
@@ -16,11 +16,13 @@
   A.DESIGNS = { clean: "Clean", stripes: "Stripes", chevron: "Chevron", split: "Split", checker: "Checker", bolt: "Bolt", dots: "Dots", halo: "Halo" };
   A.DEFAULT = { style: "helmet", shell: "blue", accent: "yellow", design: "stripes", visor: "smoke", number: 7, bg: "sky" };
 
-  const pick = (o) => { const k = Object.keys(o); return k[Math.floor(Math.random() * k.length)]; };
+  // Locked parts (by level) are skipped by "Surprise me"
+  const open = (kind, k) => !(L.game && L.game.needs(kind, k));
+  const pick = (o, kind) => { const k = Object.keys(o).filter(x => !kind || open(kind, x)); return k[Math.floor(Math.random() * k.length)]; };
   A.random = () => {
-    const shell = pick(A.SHELLS); let accent = pick(A.SHELLS);
-    while (accent === shell) accent = pick(A.SHELLS);
-    return { style: "helmet", shell, accent, design: pick(A.DESIGNS), visor: pick(A.VISORS), number: Math.floor(Math.random() * 99) + 1, bg: pick(A.BGS) };
+    const shell = pick(A.SHELLS, "shell"); let accent = pick(A.SHELLS, "accent");
+    while (accent === shell) accent = pick(A.SHELLS, "accent");
+    return { style: "helmet", shell, accent, design: pick(A.DESIGNS, "design"), visor: pick(A.VISORS, "visor"), number: Math.floor(Math.random() * 99) + 1, bg: pick(A.BGS) };
   };
   A.get = () => ({ ...A.DEFAULT, ...(L.store.get("avatar", null) || {}) });
   A.has = () => !!L.store.get("avatar", null);

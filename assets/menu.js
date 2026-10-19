@@ -13,7 +13,12 @@
     gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
     moon: '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
     out: '<path d="M15 4h4v16h-4"/><path d="M10 8l-4 4 4 4M6 12h10"/>',
-    close: '<path d="M6 6l12 12M18 6L6 18"/>'
+    close: '<path d="M6 6l12 12M18 6L6 18"/>',
+    hw: '<path d="M8 4h8l3 3v13H5V4z"/><path d="M9 12l2 2 4-4"/>',
+    review: '<path d="M4 12a8 8 0 0 1 14-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5.3L4 15"/><path d="M4 20v-5h5"/>',
+    words: '<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="17" r="3"/>',
+    teacher: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+    phone: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>'
   };
   const ico = (n, s) => `<svg width="${s || 20}" height="${s || 20}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
   const LV = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", "B2+": "Upper intermediate +" };
@@ -27,10 +32,10 @@
     if (document.getElementById("lgMenu")) return document.getElementById("lgMenu");
     const r = L.root || "";
     const items = [
-      ["Learn", [["home", "My learning", "index.html"], ["test", "Placement test", "examen.html"], ["report", "Placement report", "reporte.html"]]],
+      ["Learn", [["home", "My learning", "index.html"], ...(L.cloudEnabled ? [["hw", "Homework", "index.html#todo", "hw"]] : []), ["test", "Placement test", "examen.html"], ["report", "Placement report", "reporte.html"]]],
+      ["Practice", [["review", "Review", "review.html", "rev"], ["words", "My words", "words.html"], ["book", "Study resources", "resources.html"]]],
       ["Progress", [["grades", "Grades", "grades.html"], ["diploma", "Diplomas", "diplomas.html", "dip"]]],
-      ["Practice", [["book", "Study resources", "resources.html"]]],
-      ["Account", [["user", "Profile & avatar", "perfil.html"], ["gear", "Settings", "perfil.html#settings"]]]
+      ["Account", [["user", "Profile & avatar", "perfil.html"], ["gear", "Settings", "perfil.html#settings"], ...(L.isTeacher ? [["teacher", "Teacher panel", "teacher.html"]] : [])]]
     ];
     const el = document.createElement("div");
     el.id = "lgMenu"; el.className = "lg-menu"; el.hidden = true;
@@ -48,6 +53,7 @@
         }).join("")}</div>`).join("")}
           <div class="lg-sec">
             <button type="button" class="lg-row" id="lgTheme">${ico("moon")}<span>Dark mode</span><span class="sw" aria-hidden="true"></span></button>
+            <button type="button" class="lg-row" id="lgInstall" hidden>${ico("phone")}<span>Install the app</span></button>
             ${L.cloudEnabled ? `<button type="button" class="lg-row" id="lgOut">${ico("out")}<span>Sign out</span></button>` : ""}
           </div>
         </nav>
@@ -57,6 +63,11 @@
     el.querySelectorAll("[data-close]").forEach(x => x.onclick = close);
     el.querySelector("#lgTheme").onclick = () => { L.theme && L.theme.toggle(); paint(); };
     const out = el.querySelector("#lgOut"); if (out) out.onclick = () => L.signOut && L.signOut();
+    el.querySelector("#lgInstall").onclick = async () => {
+      const I = L.install || {};
+      if (I.prompt) { I.prompt.prompt(); try { await I.prompt.userChoice; } catch (e) {} I.prompt = null; paint(); }
+      else location.href = r + "perfil.html#install";
+    };
     el.addEventListener("keydown", e => {
       if (e.key === "Escape") { e.stopPropagation(); close(); }
       if (e.key === "Tab") { // keep focus inside the drawer
@@ -74,8 +85,12 @@
     const pl = L.store.get("placement", null);
     const av = (L.avatar && L.avatar.mine(48)) || `<span class="avatar" style="width:48px;height:48px;font-size:1.2em">${name ? name[0].toUpperCase() : ico("user", 22)}</span>`;
     el.querySelector("#lgMe").innerHTML = `${av}<span style="min-width:0"><b>${name ? name.replace(/[<>&]/g, "") : "Your profile"}</b><span class="muted">${pl ? "Level " + pl.nivel + " · " + (LV[pl.nivel] || "") : "Level not tested yet"}</span></span>`;
-    const n = diplomasCount(), b = el.querySelector('[data-badge="dip"]');
-    if (b) { b.textContent = n; b.hidden = !n; }
+    const badge = (k, n) => { const b = el.querySelector('[data-badge="' + k + '"]'); if (b) { b.textContent = n; b.hidden = !n; } };
+    badge("dip", diplomasCount());
+    badge("rev", L.review ? L.review.count() : 0);
+    badge("hw", L.homework ? L.homework.cached().filter(h => !h.done_at).length : 0);
+    const I = L.install || {}, inst = el.querySelector("#lgInstall");
+    inst.hidden = !!I.standalone || !(I.prompt || I.ios);
     const dark = L.theme ? L.theme.isDark() : false, t = el.querySelector("#lgTheme");
     t.classList.toggle("on", dark); t.setAttribute("aria-pressed", dark);
   }
@@ -107,4 +122,6 @@
   };
   document.addEventListener("DOMContentLoaded", L.menu.mount);
   document.addEventListener("lingua:theme", paint);
+  document.addEventListener("lingua:homework", paint);
+  document.addEventListener("lingua:installable", paint);
 })();

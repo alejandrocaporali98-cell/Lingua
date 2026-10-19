@@ -4,6 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lingua · Profile</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lingua · Profile">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://tangerine-lily-2bfb73.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,6 +27,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
 <script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
 <script src="assets/avatar.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
@@ -60,6 +77,20 @@
   .num button { border: 0; background: var(--bg); width: 40px; height: 40px; font-weight: 800; font-size: 1.1em; }
   .num input { width: 64px; height: 40px; border: 0; text-align: center; font: inherit; font-weight: 800; color: var(--ink); background: var(--surface); }
   .big-av svg { width: 84px; height: 84px; }
+  .tiles button.locked, .swatches button.locked { position: relative; opacity: .55; }
+  .tiles button.locked svg { filter: grayscale(1); }
+  .tiles button.locked::after, .swatches button.locked::after { content: "🔒"; position: absolute; font-size: 12px; }
+  .tiles button.locked::after { top: 4px; right: 4px; }
+  .swatches button.locked::after { inset: 0; display: grid; place-items: center; }
+  .tiles button { position: relative; }
+  .tiles .lk { font-size: .9em; color: var(--mute); }
+  .unlock-note { font-size: .85em; color: var(--mute); display: flex; gap: 8px; align-items: center; }
+  .set-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
+  .set-row:first-of-type { border-top: 0; padding-top: 0; }
+  .set-row b { display: block; }
+  .set-row p { color: var(--mute); font-size: .88em; }
+  @media (max-width: 560px) { .set-row { grid-template-columns: 1fr; } }
+  .steps-i { margin: 0; padding-left: 20px; display: grid; gap: 6px; color: var(--ink-2); font-size: .92em; }
   .sync { display: flex; align-items: center; gap: 8px; font-size: .85em; color: var(--mute); }
   .sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; }
   .sync.off i { background: var(--line-2); }
@@ -90,8 +121,8 @@ function stats() {
   const all = G.modulos.flatMap(m => m.lecciones), ready = all.filter(l => l.estado === "lista");
   const scores = ready.map(l => G.store.get("score." + l.id, null)).filter(Boolean);
   const avg = scores.length ? Math.round(scores.reduce((a, s) => a + s.ok / s.n, 0) / scores.length * 100) : null;
-  const review = ready.reduce((a, l) => a + G.store.get("repaso." + l.id, []).length, 0);
-  return { done: scores.length, total: ready.length, avg, review, place: G.store.get("placement", null) };
+  const review = G.review.count();
+  return { done: scores.length, total: ready.length, avg, review, place: G.store.get("placement", null), game: G.game.mine() };
 }
 
 function render() {
@@ -118,15 +149,15 @@ function render() {
   </div>
 
   ${setup ? "" : `<div class="stats">
-    <div class="card stat"><span class="v">${st.place ? st.place.nivel : "—"}</span><span class="l">Placement level</span></div>
+    <div class="card stat"><span class="v">${st.game.level}<span class="muted" style="font-size:.5em"> · ${st.game.xp} XP</span></span><span class="l">Level · ${st.game.title}</span></div>
+    <div class="card stat"><span class="v">🔥 ${st.game.streak}</span><span class="l">Day streak · best ${st.game.best}</span></div>
     <div class="card stat"><span class="v">${st.done}<span class="muted" style="font-size:.55em"> / ${st.total}</span></span><span class="l">Lessons completed</span></div>
     <div class="card stat"><span class="v">${st.avg == null ? "—" : st.avg + "%"}</span><span class="l">Average final quiz</span></div>
-    <div class="card stat"><span class="v">${st.review}</span><span class="l">Saved for review</span></div>
   </div>`}
 
   <section class="panel" aria-labelledby="avT">
     <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
-      <div><h2 id="avT">Your avatar</h2><p class="muted" style="font-size:.9em">Design your own racing helmet, or use your initial.</p></div>
+      <div><h2 id="avT">Your avatar</h2><p class="muted" style="font-size:.9em">Design your own racing helmet, or use your initial. Level up to unlock more designs 🔒</p></div>
       <div class="seg" role="group" aria-label="Avatar style"><button type="button" data-style="helmet">Helmet</button><button type="button" data-style="initial">Initial</button></div>
     </div>
     <div class="builder" id="builder"></div>
@@ -144,9 +175,24 @@ function render() {
     <div class="actions"><button class="btn primary" type="submit" id="psave">${setup ? "Save and start" : "Save profile and avatar"}</button></div>
   </form>
 
-  ${setup ? "" : `<div class="panel" id="settings" style="grid-template-columns:minmax(0,1fr) auto;align-items:center;scroll-margin-top:80px">
-    <div><h2>Appearance</h2><p class="muted" style="font-size:.9em">System follows your phone or computer setting.</p></div>
-    <div class="seg" role="group" aria-label="Theme">${["light", "dark", "system"].map(v => `<button type="button" data-theme-opt="${v}" aria-pressed="${G.theme.get() === v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div>
+  ${setup ? "" : `<div class="panel" id="settings" style="scroll-margin-top:80px;gap:0">
+    <h2 style="margin-bottom:14px">Settings</h2>
+    <div class="set-row"><div><b>Appearance</b><p>System follows your phone or computer setting.</p></div>
+      <div class="seg" role="group" aria-label="Theme">${["light", "dark", "system"].map(v => `<button type="button" data-theme-opt="${v}" aria-pressed="${G.theme.get() === v}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div></div>
+    <div class="set-row"><div><b>Text size</b><p>Makes the lessons easier to read.</p></div>
+      <div class="seg" role="group" aria-label="Text size">${[[.9, "Small"], [1, "Normal"], [1.15, "Large"], [1.3, "Extra large"]].map(([v, t]) => `<button type="button" data-size="${v}" aria-pressed="${Math.abs(G.store.get("textSize", 1) - v) < .03}">${t}</button>`).join("")}</div></div>
+    <div class="set-row"><div><b>Sounds</b><p>Little sounds for right and wrong answers.</p></div>
+      <button type="button" class="toggle ${G.store.get("sounds", true) ? "on" : ""}" id="sndT" aria-pressed="${G.store.get("sounds", true)}"><span class="sw"></span><span id="sndL">${G.store.get("sounds", true) ? "On" : "Off"}</span></button></div>
+    ${G.canSpeak ? `<div class="set-row"><div><b>Pronunciation voice</b><p>The voice you hear when you press 🔊.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <div class="seg" role="group" aria-label="Accent">${[["en-US", "🇺🇸 US"], ["en-GB", "🇬🇧 UK"]].map(([v, t]) => `<button type="button" data-voice="${v}" aria-pressed="${G.store.get("voice", "en-US") === v}">${t}</button>`).join("")}</div>
+        <div class="seg" role="group" aria-label="Speed">${[[.75, "Slow"], [.92, "Normal"]].map(([v, t]) => `<button type="button" data-rate="${v}" aria-pressed="${G.store.get("voiceRate", .92) === v}">${t}</button>`).join("")}</div>
+        <button type="button" class="btn sm" id="tryV">Try it</button></div></div>` : ""}
+    <div class="set-row" id="install" style="scroll-margin-top:80px"><div><b>Install on your phone</b>
+      ${G.install.standalone ? `<p>Lingua is installed on this device. 🎉</p>`
+        : G.install.ios ? `<p>Open Lingua in Safari, then:</p><ol class="steps-i"><li>Tap the Share button <b style="display:inline">⎋</b> at the bottom.</li><li>Choose <b style="display:inline">Add to Home Screen</b>.</li><li>Tap <b style="display:inline">Add</b>. Lingua shows up like an app.</li></ol>`
+        : `<p>Add Lingua to your home screen so it opens like an app.</p><p id="instHelp" ${G.install.prompt ? "hidden" : ""}>In Chrome, open the ⋮ menu and choose <b style="display:inline">Install app</b> or <b style="display:inline">Add to Home screen</b>.</p>`}</div>
+      ${!G.install.standalone && !G.install.ios ? `<button class="btn" id="instB" ${G.install.prompt ? "" : "hidden"}>Install</button>` : ""}</div>
   </div>`}
 
   ${G.cloudEnabled && !setup ? `
@@ -177,8 +223,9 @@ function render() {
   function drawBuilder() {
     const A = G.avatar, b = document.getElementById("builder");
     document.querySelectorAll("[data-style]").forEach(x => x.setAttribute("aria-pressed", x.dataset.style === av.style));
-    const sw = (obj, key) => `<div class="swatches sm">${Object.entries(obj).map(([k, c]) => `<button type="button" aria-label="${k}" aria-pressed="${av[key] === k}" data-k="${key}" data-v="${k}" style="background:${c}"></button>`).join("")}</div>`;
-    const tiles = (obj, key, labelOf) => `<div class="tiles">${Object.keys(obj).map(k => `<button type="button" aria-pressed="${av[key] === k}" data-k="${key}" data-v="${k}">${A.svg({ ...av, style: "helmet", [key]: k }, 48)}${labelOf(k)}</button>`).join("")}</div>`;
+    const need = (key, k) => key === "bg" ? 0 : G.game.needs(key, k) && av[key] !== k ? G.game.needs(key, k) : 0;
+    const sw = (obj, key) => `<div class="swatches sm">${Object.entries(obj).map(([k, c]) => { const n = need(key, k); return `<button type="button" class="${n ? "locked" : ""}" aria-label="${k}${n ? ", unlocks at level " + n : ""}" title="${n ? "Unlocks at Level " + n : k}" aria-pressed="${av[key] === k}" ${n ? `data-lock="${n}"` : `data-k="${key}" data-v="${k}"`} style="background:${c}"></button>`; }).join("")}</div>`;
+    const tiles = (obj, key, labelOf) => `<div class="tiles">${Object.keys(obj).sort((a, b) => need(key, a) - need(key, b)).map(k => { const n = need(key, k); return `<button type="button" class="${n ? "locked" : ""}" aria-pressed="${av[key] === k}" ${n ? `data-lock="${n}" title="Unlocks at Level ${n}"` : `data-k="${key}" data-v="${k}"`}>${A.svg({ ...av, style: "helmet", [key]: k }, 48)}${n ? `<span class="lk">Level ${n}</span>` : labelOf(k)}</button>`; }).join("")}</div>`;
     const helmet = `
       <div class="opt-group"><b>Design</b>${tiles(A.DESIGNS, "design", k => A.DESIGNS[k])}</div>
       <div class="opt-group"><b>Helmet color</b>${sw(A.SHELLS, "shell")}</div>
@@ -191,6 +238,7 @@ function render() {
       <div class="opts-row">${av.style === "helmet" ? helmet : initial}</div>`;
     paintPreview();
     b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => { av[x.dataset.k] = x.dataset.v; drawBuilder(); });
+    b.querySelectorAll("[data-lock]").forEach(x => x.onclick = () => G.toast(`<b>🔒 Unlocks at Level ${x.dataset.lock}</b><span>You're Level ${G.game.mine().level}. Practice to earn XP!</span>`));
     b.querySelectorAll("[data-c]").forEach(x => x.onclick = () => { chosenColor = x.dataset.c; drawBuilder(); });
     const r = document.getElementById("rand"); if (r) r.onclick = () => { av = { ...A.random(), number: av.number }; drawBuilder(); };
     const ni = document.getElementById("nIn");
@@ -206,6 +254,15 @@ function render() {
     document.querySelectorAll("[data-theme-opt]").forEach(y => y.setAttribute("aria-pressed", y === x));
   });
   document.querySelectorAll("[data-style]").forEach(x => x.onclick = () => { av.style = x.dataset.style; drawBuilder(); });
+  const pressOnly = (sel, x) => document.querySelectorAll(sel).forEach(y => y.setAttribute("aria-pressed", y === x));
+  document.querySelectorAll("[data-size]").forEach(x => x.onclick = () => { const v = +x.dataset.size; G.store.set("textSize", v); document.documentElement.style.setProperty("--scale", v); pressOnly("[data-size]", x); });
+  document.querySelectorAll("[data-voice]").forEach(x => x.onclick = () => { G.store.set("voice", x.dataset.voice); pressOnly("[data-voice]", x); G.say("Hi! This is how I sound."); });
+  document.querySelectorAll("[data-rate]").forEach(x => x.onclick = () => { G.store.set("voiceRate", +x.dataset.rate); pressOnly("[data-rate]", x); G.say("Hi! This is how I sound."); });
+  const tv = document.getElementById("tryV"); if (tv) tv.onclick = () => G.say("Hi! My dream car is a Nissan Skyline.");
+  const snd = document.getElementById("sndT");
+  if (snd) snd.onclick = () => { const on = !G.store.get("sounds", true); G.store.set("sounds", on); snd.classList.toggle("on", on); snd.setAttribute("aria-pressed", on); document.getElementById("sndL").textContent = on ? "On" : "Off"; if (on) G.sfx("ok"); };
+  const ib = document.getElementById("instB");
+  if (ib) ib.onclick = async () => { if (!G.install.prompt) return; G.install.prompt.prompt(); try { await G.install.prompt.userChoice; } catch (e) {} G.install.prompt = null; ib.hidden = true; };
 
   const say = (id, cls, t) => { const m = document.getElementById(id); m.className = "alert " + cls; m.textContent = t; m.hidden = false; };
   document.getElementById("pform").addEventListener("submit", async e => {
@@ -241,6 +298,7 @@ function render() {
   if (out) out.onclick = () => G.signOut();
 }
 G.ready.then(() => { render(); if (location.hash) { const t = document.querySelector(location.hash); if (t) setTimeout(() => t.scrollIntoView({ behavior: "smooth", block: "start" }), 80); } });
+document.addEventListener("lingua:installable", () => { const b = document.getElementById("instB"), h = document.getElementById("instHelp"); if (b) b.hidden = false; if (h) h.hidden = true; });
 document.addEventListener("lingua:sync", () => {
   const s = document.querySelector(".sync"); if (!s) return;
   const ok = G.lastSync && G.lastSync.ok;
