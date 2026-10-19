@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Class notes</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lingua · Class notes">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://lingua-english-class.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<script src="assets/menu.js"></script>
+<style>
+  .wrap { max-width: 820px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 18px; }
+  .wrap > * { min-width: 0; }
+  .page-head h1 { font-size: 2em; font-weight: 800; }
+  .cls { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 20px 22px; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 16px; }
+  @media (max-width: 560px) { .cls { padding: 16px; grid-template-columns: 48px minmax(0, 1fr); gap: 12px; } }
+  .cal { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); text-align: center; align-self: start; }
+  .cal span { display: block; background: var(--fill-brand); color: var(--on-fill); font-size: .68em; font-weight: 800; letter-spacing: .06em; padding: 2px 0; }
+  .cal b { display: block; font-size: 1.35em; padding: 2px 0 4px; }
+  .cls.missed .cal span, .cls.cancelled .cal span { background: var(--mute); }
+  .cls h2 { font-size: 1.08em; font-weight: 800; }
+  .cls .meta { color: var(--mute); font-size: .85em; font-weight: 600; }
+  .cls .txt { color: var(--ink-2); white-space: pre-wrap; margin-top: 8px; }
+  .wl { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .wl span { display: inline-flex; align-items: center; gap: 6px; padding: 4px 4px 4px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-dark); font-weight: 700; font-size: .88em; }
+  .wl .say { width: 26px; height: 26px; }
+  .empty { text-align: center; padding: 34px 16px; display: grid; gap: 8px; justify-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="index.html">My learning</a><a class="on" href="notes.html">Class notes</a></nav>
+    <span class="spacer"></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"></a>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"></div></main>
+<script>
+const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
+document.getElementById("logo").innerHTML = G.logo;
+const ST = { scheduled: ["Upcoming", "brand"], attended: ["Attended", "ok"], missed: ["Missed", ""], cancelled: ["Cancelled", ""] };
+function render(list) {
+  const now = Date.now();
+  const up = list.filter(c => c.status === "scheduled" && new Date(c.starts_at) > now - 3600e3).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+  const past = list.filter(c => !up.includes(c)).sort((a, b) => b.starts_at.localeCompare(a.starts_at));
+  const attended = past.filter(c => c.status === "attended").length;
+  const card = c => { const d = new Date(c.starts_at), st = ST[c.status] || ST.scheduled, words = (c.words || "").split(/[,\n]/).map(w => w.trim()).filter(Boolean);
+    return `<article class="cls ${c.status}"><span class="cal"><span>${d.toLocaleDateString("en-US", { month: "short" }).toUpperCase()}</span><b>${d.getDate()}</b></span>
+      <div style="min-width:0"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap"><h2>${esc(c.title || (c.lesson_id ? "Lesson " + c.lesson_id : "Class with " + G.maestro))}</h2><span class="chip ${st[1]}">${st[0]}</span></div>
+      <div class="meta">${d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} · ${d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}${c.lesson_id ? " · Lesson " + esc(c.lesson_id) : ""}</div>
+      ${c.notes ? `<p class="txt">${esc(c.notes)}</p>` : ""}
+      ${words.length ? `<div class="wl" aria-label="New words">${words.map(w => `<span>${esc(w)}${G.sayBtn(w)}</span>`).join("")}</div>` : ""}</div></article>`; };
+  app.innerHTML = `<div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Classes</span><h1>Class notes</h1>
+      <p class="muted">What we did in each class, new words and your next classes. ${attended ? `You’ve come to <b style="color:var(--ink)">${attended} class${attended === 1 ? "" : "es"}</b>.` : ""}</p></div>
+    ${up.length ? `<span class="eyebrow">Next</span>${up.map(card).join("")}` : ""}
+    ${past.length ? `<span class="eyebrow">Past classes</span>${past.map(card).join("")}` : ""}
+    ${!list.length ? `<div class="empty"><span style="font-size:2.4em">📒</span><h2>No classes yet</h2><p class="muted">After each class, your teacher’s notes show up here.</p></div>` : ""}`;
+}
+G.ready.then(async () => {
+  if (!G.cloudEnabled) { app.innerHTML = `<div class="empty"><h2>Class notes</h2><p class="muted">Class notes need student accounts to be turned on.</p></div>`; return; }
+  render(G.classes.cached());
+  render(await G.classes.list());
+});
+</script>
+</body>
+</html>

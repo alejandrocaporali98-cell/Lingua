@@ -329,3 +329,31 @@ html.auth-pending body::after {
   animation: skel 1s ease-in-out infinite alternate;
 }
 @keyframes skel { from { opacity: 1; } to { opacity: .55; } }
+
+/* Say it (microphone) sheet */
+.say.mic { color: #c0362c; }
+.say.mic:hover { border-color: #c0362c; background: var(--bad-soft); }
+.sheet { position: fixed; inset: 0; z-index: 85; display: grid; align-items: end; justify-items: center; }
+@media (min-width: 640px) { .sheet { align-items: center; } }
+.sheet-scrim { position: absolute; inset: 0; background: rgba(10, 12, 18, .45); }
+.sheet-card { position: relative; width: min(560px, 100%); background: var(--surface); border-radius: 18px 18px 0 0; padding: 22px 22px calc(22px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 14px; box-shadow: var(--shadow); animation: sheet-in .25s ease; }
+@media (min-width: 640px) { .sheet-card { border-radius: 18px; } }
+@keyframes sheet-in { from { transform: translateY(24px); opacity: 0; } }
+.sheet-target { font-size: 1.35em; font-weight: 800; line-height: 1.35; display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
+.sheet-heard { min-height: 48px; display: grid; gap: 6px; }
+.sheet-words { font-size: 1.2em; font-weight: 700; line-height: 1.7; }
+.sheet-words .ok { color: var(--ok-ink); background: var(--ok-soft); border-radius: 5px; padding: 1px 5px; }
+.sheet-words .miss { color: var(--bad-ink); background: var(--bad-soft); border-radius: 5px; padding: 1px 5px; }
+.sheet-score b { font-size: 1.4em; margin-right: 6px; }
+.sheet-score.good b { color: var(--ok); }
+.sheet-bad { color: var(--bad-ink); }
+.sheet-act { display: flex; justify-content: space-between; gap: 10px; }
+.rec-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff5a4f; display: inline-block; animation: rec 1s infinite; }
+@keyframes rec { 50% { opacity: .3; } }
+.badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.bdg { display: grid; justify-items: center; text-align: center; gap: 4px; padding: 14px 10px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
+.bdg .e { font-size: 2em; line-height: 1.1; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--badge-soft); border: 2px solid var(--badge-line); }
+.bdg b { font-size: .9em; }
+.bdg small { color: var(--mute); font-size: .76em; line-height: 1.35; }
+.bdg.off { opacity: .55; }
+.bdg.off .e { filter: grayscale(1); background: var(--bg); border-color: var(--line); }

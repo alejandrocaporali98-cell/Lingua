@@ -194,6 +194,158 @@
     }
   };
 
+  // ── Counters (for badges) ──
+  L.count = (k, n) => { const c = S.get("counters", {}) || {}; c[k] = (c[k] || 0) + (n || 1); S.set("counters", c); L.badges && L.badges.check(); return c[k]; };
+
+  // ── Speaking: the browser's speech recognition ──
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  L.canListen = !!SR;
+  const CONTR = { "i'm": "i am", "you're": "you are", "he's": "he is", "she's": "she is", "it's": "it is", "we're": "we are", "they're": "they are",
+    "don't": "do not", "doesn't": "does not", "didn't": "did not", "can't": "cannot", "can not": "cannot", "isn't": "is not", "aren't": "are not",
+    "wasn't": "was not", "weren't": "were not", "what's": "what is", "that's": "that is", "there's": "there is", "let's": "let us", "i've": "i have", "i'll": "i will" };
+  const NUM = { "0": "zero", "1": "one", "2": "two", "3": "three", "4": "four", "5": "five", "6": "six", "7": "seven", "8": "eight", "9": "nine", "10": "ten", "11": "eleven", "12": "twelve", "13": "thirteen", "14": "fourteen", "15": "fifteen", "16": "sixteen", "17": "seventeen", "18": "eighteen", "19": "nineteen", "20": "twenty" };
+  const words = t => {
+    let x = " " + String(t || "").toLowerCase().replace(/[’`]/g, "'").replace(/\([^)]*\)/g, " ").replace(/[^a-z0-9' ]+/g, " ") + " ";
+    Object.keys(CONTR).forEach(k => { x = x.split(" " + k + " ").join(" " + CONTR[k] + " "); });
+    return x.trim().split(/\s+/).filter(Boolean).map(w => NUM[w] || w.replace(/^'+|'+$/g, ""));
+  };
+  // Which words of the target did we hear (in order)? Longest common subsequence.
+  L.compare = function (target, heard) {
+    const raw = String(target).replace(/\([^)]*\)/g, " ").trim().split(/\s+/).filter(Boolean);
+    const tw = raw.map(w => words(w)), flat = [], owner = [];
+    tw.forEach((ws, i) => ws.forEach(w => { flat.push(w); owner.push(i); }));
+    const hw = words(heard), n = flat.length, m = hw.length;
+    const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+    for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) dp[i][j] = flat[i] === hw[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    const hit = new Array(n).fill(false);
+    for (let i = 0, j = 0; i < n && j < m;) { if (flat[i] === hw[j]) { hit[i] = true; i++; j++; } else if (dp[i + 1][j] >= dp[i][j + 1]) i++; else j++; }
+    const okWord = raw.map((_, i) => owner.every((o, k) => o !== i || hit[k]));
+    const pct = n ? Math.round(hit.filter(Boolean).length / n * 100) : 0;
+    return { words: raw.map((w, i) => ({ w, ok: okWord[i] })), pct };
+  };
+  L.listen = function (opt) {
+    const r = new SR(); let final = "", done = false;
+    r.lang = S.get("voice", "en-US"); r.interimResults = true; r.continuous = false; r.maxAlternatives = 3;
+    r.onresult = e => {
+      let interim = ""; final = "";
+      for (const res of e.results) { if (res.isFinal) final += res[0].transcript + " "; else interim += res[0].transcript + " "; }
+      opt.onText && opt.onText((final + interim).trim());
+    };
+    r.onerror = e => { if (!done) { done = true; opt.onError && opt.onError(e.error); } };
+    r.onend = () => { if (!done) { done = true; opt.onEnd && opt.onEnd(final.trim()); } };
+    try { if (synth) synth.cancel(); r.start(); } catch (e) { done = true; opt.onError && opt.onError("start"); }
+    return { stop: () => { try { r.stop(); } catch (e) {} } };
+  };
+  const MIC = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+  L.micIcon = MIC;
+  L.micBtn = (text, label) => L.canListen ? `<button type="button" class="say mic" data-listen="${esc(text)}" aria-label="${esc(label || "Say it")}" title="Say it">${MIC}</button>` : "";
+  // "Say it" sheet: listen, then show which words were understood
+  L.speak = function (target, done) {
+    document.querySelectorAll(".sheet").forEach(x => x.remove());
+    const el = document.createElement("div"); el.className = "sheet"; el.setAttribute("role", "dialog"); el.setAttribute("aria-label", "Say it");
+    el.innerHTML = `<div class="sheet-scrim"></div><div class="sheet-card"><span class="eyebrow">Say it out loud</span>
+      <div class="sheet-target">${esc(target)} ${L.sayBtn(target, "Listen first")}</div>
+      <div class="sheet-heard" aria-live="polite"></div>
+      <div class="sheet-act"><button type="button" class="btn ghost" data-x>Close</button><button type="button" class="btn primary" data-go>${MIC} Start</button></div></div>`;
+    document.body.appendChild(el);
+    const heard = el.querySelector(".sheet-heard"), go = el.querySelector("[data-go]");
+    let rec = null;
+    const close = () => { if (rec) rec.stop(); el.remove(); };
+    el.querySelector("[data-x]").onclick = close; el.querySelector(".sheet-scrim").onclick = close;
+    el.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+    function start() {
+      go.disabled = true; go.innerHTML = `<span class="rec-dot"></span> Listening…`;
+      heard.innerHTML = `<span class="muted">Speak now…</span>`;
+      rec = L.listen({
+        onText: t => { heard.innerHTML = `<span class="muted">${esc(t)}</span>`; },
+        onError: err => {
+          go.disabled = false; go.innerHTML = `${MIC} Try again`;
+          heard.innerHTML = `<span class="sheet-bad">${err === "not-allowed" || err === "service-not-allowed" ? "Allow the microphone for this site to use speaking practice." : err === "no-speech" ? "We didn’t hear anything. Try again a little louder." : "The microphone isn’t available right now."}</span>`;
+        },
+        onEnd: t => {
+          go.disabled = false; go.innerHTML = `${MIC} Try again`;
+          if (!t) { heard.innerHTML = `<span class="sheet-bad">We didn’t hear anything. Try again.</span>`; return; }
+          const r = L.compare(target, t), good = r.pct >= 80;
+          heard.innerHTML = `<div class="sheet-words">${r.words.map(w => `<span class="${w.ok ? "ok" : "miss"}">${esc(w.w)}</span>`).join(" ")}</div>
+            <div class="sheet-score ${good ? "good" : ""}"><b>${r.pct}%</b> ${r.pct === 100 ? "Perfect!" : good ? "Great! Very clear." : r.pct >= 50 ? "Almost. Listen and try again." : "Listen first, then try again."}</div>
+            <div class="muted" style="font-size:.85em">We heard: “${esc(t)}”</div>`;
+          L.sfx(good ? "ok" : "bad");
+          if (good) { L.count("spoken"); L.game.award(5, { once: "speak." + L.review.id("s", target) + "." + L.game.today(), label: "Clear voice" }); }
+          done && done(r);
+        }
+      });
+    }
+    go.onclick = start; go.focus();
+  };
+  document.addEventListener("click", e => {
+    const b = e.target.closest && e.target.closest("[data-listen]");
+    if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    L.speak(b.getAttribute("data-listen"));
+  }, true);
+
+  // ── Badges ──
+  const lessonsReady = () => L.modulos.flatMap(m => m.lecciones).filter(l => l.estado === "lista");
+  const BADGES = [
+    { id: "first", e: "🏁", t: "First lap", d: "Finish your first lesson section.", ok: c => c.sections >= 1 },
+    { id: "placement", e: "🧭", t: "Know your level", d: "Finish a section of the placement test.", ok: c => !!c.placement },
+    { id: "diploma1", e: "🎓", t: "First diploma", d: "Pass a lesson with 80% or more.", ok: c => c.diplomas >= 1 },
+    { id: "podium", e: "🏆", t: "Podium", d: "Get 3 diplomas.", ok: c => c.diplomas >= 3 },
+    { id: "champion", e: "👑", t: "World champion", d: "Get a diploma in every lesson.", ok: c => c.diplomas >= c.ready && c.ready > 0 },
+    { id: "perfect", e: "💯", t: "Perfect lap", d: "Get 20 out of 20 in a final quiz.", ok: c => c.perfect },
+    { id: "streak3", e: "🔥", t: "On fire", d: "Practice 3 days in a row.", ok: c => c.g.best >= 3 },
+    { id: "streak7", e: "⚡", t: "Full week", d: "Practice 7 days in a row.", ok: c => c.g.best >= 7 },
+    { id: "streak14", e: "🌟", t: "Unstoppable", d: "Practice 14 days in a row.", ok: c => c.g.best >= 14 },
+    { id: "weekly", e: "📅", t: "Weekly goal", d: "Practice 4 days in one week.", ok: c => c.weekly },
+    { id: "mechanic", e: "🔧", t: "Mechanic", d: "Fix 10 questions in Review.", ok: c => c.learned >= 10 },
+    { id: "voice", e: "🎤", t: "Clear voice", d: "Say 20 sentences right with the microphone.", ok: c => (c.n.spoken || 0) >= 20 },
+    { id: "ears", e: "🎧", t: "Sharp ears", d: "Write 20 dictations right.", ok: c => (c.n.dictation || 0) >= 20 },
+    { id: "pole", e: "⏱️", t: "Pole position", d: "Finish a speed match in under 30 seconds.", ok: c => c.bestLap && c.bestLap < 30 },
+    { id: "homework", e: "📝", t: "On time", d: "Finish 5 homework tasks.", ok: c => (c.n.homework || 0) >= 5 },
+    { id: "level5", e: "🏎️", t: "Formula 2", d: "Reach level 5.", ok: c => c.g.level >= 5 }
+  ];
+  function context(get) {
+    const ready = lessonsReady(), g = stats(get), once = (get("game", null) || {}).once || {};
+    const laps = ready.map(l => get("lap." + l.id, null)).concat(get("lap.all", null)).filter(Boolean);
+    return {
+      g, ready: ready.length, n: get("counters", {}) || {}, placement: get("placement", null), learned: get("reviewLearned", 0),
+      sections: ready.reduce((a, l) => a + (get("done." + l.id, []) || []).length, 0),
+      diplomas: ready.filter(l => get("diploma." + l.id, null)).length,
+      perfect: ready.some(l => (get("attempts." + l.id, []) || []).concat(get("score." + l.id, null) || []).some(t => t && t.ok === t.n && t.n >= 20)),
+      weekly: Object.keys(once).some(k => k.indexOf("week.") === 0), bestLap: laps.length ? Math.min(...laps) : null
+    };
+  }
+  L.badges = {
+    list: BADGES,
+    earned: get => { get = get || ((k, d) => S.get(k, d)); const c = context(get), have = get("badges", {}) || {}; return BADGES.map(b => ({ ...b, at: have[b.id] || null, now: b.ok(c) })); },
+    check() {
+      if (L.badges._busy) return; L.badges._busy = true;
+      try {
+        const have = S.get("badges", {}) || {}, c = context((k, d) => S.get(k, d)), fresh = BADGES.filter(b => !have[b.id] && b.ok(c));
+        if (fresh.length) {
+          fresh.forEach(b => have[b.id] = new Date().toISOString()); S.set("badges", have);
+          setTimeout(() => { L.confetti(70); L.sfx("win"); L.toast(`<b>${fresh[0].e} New badge: ${esc(fresh[0].t)}</b><span>${esc(fresh[0].d)}${fresh.length > 1 ? ` · +${fresh.length - 1} more` : ""}</span>`, "big"); }, 900);
+        }
+      } finally { L.badges._busy = false; }
+    }
+  };
+  document.addEventListener("lingua:xp", () => L.badges.check());
+  document.addEventListener("DOMContentLoaded", () => { if (L.ready) L.ready.then(u => { if (u || !L.cloudEnabled) setTimeout(() => L.badges.check(), 600); }); });
+
+  // ── Lesson content (built-in files or lessons made in the lesson builder) ──
+  let chain = Promise.resolve();
+  L.lessonData = function (id) {
+    const custom = (S.get("__lessons", []) || []).find(x => x.id === id);
+    if (custom) return Promise.resolve({ ...custom.data, id });
+    return (chain = chain.then(() => new Promise(res => {
+      const s = document.createElement("script");
+      s.src = (L.root || (/\/clases\//.test(location.pathname) ? "../" : "")) + "assets/lessons/" + id + ".js";
+      s.onload = () => res(window.CLASE && window.CLASE.id === id ? window.CLASE : null);
+      s.onerror = () => res(null);
+      document.head.appendChild(s);
+    })));
+  };
+
   // ── Install as an app (PWA) ──
   L.install = { prompt: null, ios: /iphone|ipad|ipod/i.test(navigator.userAgent), standalone: (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true };
   window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); L.install.prompt = e; document.dispatchEvent(new CustomEvent("lingua:installable")); });

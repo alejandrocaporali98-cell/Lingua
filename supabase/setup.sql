@@ -90,3 +90,39 @@ create policy "Teachers delete homework" on public.homework for delete to authen
 revoke all on public.homework from anon, authenticated;
 grant select, insert, delete on public.homework to authenticated;
 grant update (done_at) on public.homework to authenticated;
+
+-- ─────────────────────────────────────────────────────────────
+-- Classes (schedule, attendance, notes) + lessons made in the lesson builder (safe to run again)
+-- ─────────────────────────────────────────────────────────────
+create table if not exists public.classes (
+  id         uuid primary key default gen_random_uuid(),
+  student_id uuid not null references auth.users (id) on delete cascade,
+  starts_at  timestamptz not null,
+  status     text not null default 'scheduled' check (status in ('scheduled', 'attended', 'missed', 'cancelled')),
+  lesson_id  text,
+  title      text check (char_length(title) <= 140),
+  notes      text check (char_length(notes) <= 3000),
+  words      text check (char_length(words) <= 1000),
+  created_at timestamptz not null default now()
+);
+alter table public.classes enable row level security;
+drop policy if exists "Read own classes"        on public.classes;
+drop policy if exists "Teachers write classes"  on public.classes;
+create policy "Read own classes"       on public.classes for select to authenticated using (student_id = auth.uid() or public.is_teacher());
+create policy "Teachers write classes" on public.classes for all    to authenticated using (public.is_teacher()) with check (public.is_teacher());
+revoke all on public.classes from anon, authenticated;
+grant select, insert, update, delete on public.classes to authenticated;
+
+create table if not exists public.lessons (
+  id         text primary key check (id ~ '^[0-9]{2,3}$'),
+  data       jsonb not null,
+  published  boolean not null default false,
+  updated_at timestamptz not null default now()
+);
+alter table public.lessons enable row level security;
+drop policy if exists "Read published lessons" on public.lessons;
+drop policy if exists "Teachers write lessons" on public.lessons;
+create policy "Read published lessons" on public.lessons for select to authenticated using (published or public.is_teacher());
+create policy "Teachers write lessons" on public.lessons for all    to authenticated using (public.is_teacher()) with check (public.is_teacher());
+revoke all on public.lessons from anon, authenticated;
+grant select, insert, update, delete on public.lessons to authenticated;

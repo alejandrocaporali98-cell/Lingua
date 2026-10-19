@@ -64,7 +64,7 @@
 <header class="nav gutter">
   <div class="container nav-in">
     <a class="logo" href="index.html" id="logo"></a>
-    <nav class="nav-links"><a href="index.html">My learning</a><a href="review.html">Review</a><a class="on" href="words.html">My words</a></nav>
+    <nav class="nav-links"><a href="index.html">My learning</a><a href="review.html">Review</a><a href="practice.html">Practice</a><a class="on" href="words.html">My words</a></nav>
     <span class="spacer"></span>
     <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"></a>
   </div>
@@ -79,22 +79,16 @@ let filter = "all", q = "", hide = false;
 
 // Load each lesson's content file and collect its vocabulary
 function loadLesson(l) {
-  return new Promise(res => {
-    const s = document.createElement("script");
-    s.src = "assets/lessons/" + l.id + ".js";
-    s.onload = () => { const C = window.CLASE; if (C && C.flash) C.flash.forEach(f => WORDS.push({ ...f, l })); res(); };
-    s.onerror = res;
-    document.head.appendChild(s);
-  });
+  return G.lessonData(l.id).then(C => { if (C && C.flash) C.flash.forEach(f => WORDS.push({ ...f, l })); });
 }
 function render() {
   const norm = s => (s || "").toLowerCase();
   const list = WORDS.filter(w => (filter === "all" || w.l.id === filter) && (!q || norm(w.en + " " + w.def + " " + w.ex).includes(norm(q))));
   document.getElementById("grid").innerHTML = list.length ? list.map((w, i) => `
     <article class="w" style="--c:${w.l.color}" data-i="${i}">
-      <div class="top"><span class="em" aria-hidden="true">${w.img || "📝"}</span><b>${esc(w.en)}</b>${G.sayBtn(w.en, "Listen: " + w.en)}</div>
+      <div class="top"><span class="em" aria-hidden="true">${w.img || "📝"}</span><b>${esc(w.en)}</b>${G.sayBtn(w.en, "Listen: " + w.en)}${G.micBtn(w.en, "Say: " + w.en)}</div>
       <span class="def">${esc(w.def)}</span>
-      <span class="ex"><span>${esc(w.ex)}</span>${G.sayBtn(w.ex, "Listen to the example").replace('class="say"', 'class="say sm"')}</span>
+      <span class="ex"><span>${esc(w.ex)}</span><span style="display:flex;gap:4px">${G.sayBtn(w.ex, "Listen to the example").replace('class="say"', 'class="say sm"')}${G.micBtn(w.ex.replace(/\s*\([^)]*\)/g, ""), "Say the example").replace('class="say mic"', 'class="say mic sm"')}</span></span>
       <span class="meta">Lesson ${w.l.id} · ${esc(w.l.titulo)} · ${esc(w.tag)}</span>
     </article>`).join("") : `<p class="empty">No words match “${esc(q)}”.</p>`;
   document.getElementById("count").textContent = list.length + " word" + (list.length === 1 ? "" : "s");

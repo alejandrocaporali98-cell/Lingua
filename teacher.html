@@ -73,7 +73,7 @@
   .hw-item p { color: var(--ink-2); font-size: .88em; }
   .hw-item small { color: var(--mute); font-weight: 600; font-size: .8em; }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr !important; } }
   .field textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--r-s); padding: 11px 12px; width: 100%; min-height: 80px; resize: vertical; }
   .field select { appearance: auto; }
   .quick { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -103,7 +103,9 @@ const ago = d => {
   const s = (Date.now() - new Date(d)) / 1000;
   return s < 3600 ? "just now" : s < 86400 ? Math.round(s / 3600) + " h ago" : s < 86400 * 2 ? "yesterday" : Math.round(s / 86400) + " days ago";
 };
-let DATA = null, SEL = null;
+let DATA = null, SEL = null, ACC = null, ACCERR = null, OPEN = null;
+const day = d => { const x = new Date(d); return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0"); };
+const b64 = obj => { const bytes = new TextEncoder().encode(JSON.stringify(obj)); let bin = ""; bytes.forEach(c => bin += String.fromCharCode(c)); return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
 
 function studentOf(p) {
   const row = DATA.progress.find(x => x.user_id === p.id) || { data: {} }, d = row.data || {};
@@ -145,7 +147,7 @@ function render() {
   app.innerHTML = `
     <div class="page-head" style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
       <div style="display:grid;gap:4px"><span class="eyebrow">Teacher</span><h1>Teacher panel</h1><p class="muted">${list.length} student${list.length === 1 ? "" : "s"} · Progress, grades, mistakes and homework.</p></div>
-      <button class="btn" id="reload">Refresh</button>
+      <div class="actions"><a class="btn ghost" href="builder.html">Lesson builder</a><button class="btn" id="reload">Refresh</button></div>
     </div>
     ${list.length ? `<div class="layout">
       <div class="panel" style="padding:12px"><div class="roster">${list.map(s => `
@@ -155,8 +157,10 @@ function render() {
           ${s.pending ? `<span class="pill warn">${s.pending} to do</span>` : `<span class="pill">Lv ${s.game.level}</span>`}
         </button>`).join("")}</div></div>
       <div style="display:grid;gap:20px;min-width:0">${cur ? detail(cur) : ""}</div>
-    </div>` : `<div class="panel"><p class="empty">No students yet. Create a student account in Supabase → Authentication → Users.</p></div>`}`;
+    </div>` : `<div class="panel"><p class="empty">No students yet. Create one below in Student accounts.</p></div>`}
+    ${accounts()}`;
   document.getElementById("reload").onclick = load;
+  wireAccounts();
   app.querySelectorAll(".stu").forEach(b => b.onclick = () => { SEL = b.dataset.id; render(); });
   if (cur) wireDetail(cur);
 }
@@ -208,6 +212,9 @@ function detail(s) {
     </form>
   </div>
 
+  ${classesPanel(s)}
+  ${reportPanel(s)}
+
   <div class="panel">
     <h2>Lessons</h2>
     <div class="tbl"><table><thead><tr><th>Lesson</th><th>Sections</th><th class="r">Attempts</th><th class="r">Last</th><th class="r">Best</th><th class="r">To review</th><th>Status</th></tr></thead>
@@ -222,7 +229,139 @@ function detail(s) {
   </div>`;
 }
 
+function classesPanel(s) {
+  if (DATA.classes === null) return `<div class="panel"><h2>Classes</h2><p class="muted">To schedule classes and write class notes, run the latest <b>supabase/setup.sql</b> (the “Classes” part) in Supabase.</p></div>`;
+  const list = DATA.classes.filter(c => c.student_id === s.p.id).sort((a, b) => b.starts_at.localeCompare(a.starts_at));
+  const ST = { scheduled: ["Scheduled", ""], attended: ["Attended", "good"], missed: ["Missed", "warn"], cancelled: ["Cancelled", ""] };
+  const when = c => new Date(c.starts_at).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  const d0 = new Date(); d0.setDate(d0.getDate() + 1);
+  return `<div class="panel">
+    <h2>Classes <span class="muted" style="font-weight:600;font-size:.8em">· schedule, attendance and notes</span></h2>
+    <form id="clsForm" class="grid2" style="grid-template-columns:repeat(4,minmax(0,1fr));align-items:end" novalidate>
+      <div class="field"><label for="cD">Date</label><input id="cD" type="date" value="${day(d0)}"></div>
+      <div class="field"><label for="cT">Time</label><input id="cT" type="time" value="17:00"></div>
+      <div class="field"><label for="cL">Lesson</label><select id="cL"><option value="">—</option>${ready.map(l => `<option value="${l.id}">${l.id} · ${esc(l.titulo)}</option>`).join("")}</select></div>
+      <button class="btn primary" type="submit" id="cSave">Schedule class</button>
+    </form>
+    <div class="hw">${list.length ? list.map(c => `<div class="hw-item" style="grid-template-columns:minmax(0,1fr)">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="min-width:0"><b>${when(c)}</b> <span class="pill ${ST[c.status][1]}">${ST[c.status][0]}</span><br><small>${c.lesson_id ? "Lesson " + esc(c.lesson_id) : "No lesson set"}${c.notes || c.words ? " · has notes" : ""}</small></div>
+        <div class="actions">${c.status !== "attended" ? `<button class="btn sm" data-st="attended" data-c="${c.id}">✓ Attended</button>` : ""}${c.status === "scheduled" ? `<button class="btn ghost sm" data-st="missed" data-c="${c.id}">Missed</button><button class="btn ghost sm" data-st="cancelled" data-c="${c.id}">Cancel</button>` : ""}
+          <button class="btn ghost sm" data-open="${c.id}">${OPEN === c.id ? "Close" : "Notes"}</button><button class="btn ghost sm" data-cdel="${c.id}" aria-label="Delete class">Delete</button></div></div>
+      ${OPEN === c.id ? `<div style="display:grid;gap:10px;border-top:1px solid var(--line);padding-top:12px">
+        <div class="field"><label for="nN">What we did · notes for the student</label><textarea id="nN" maxlength="3000">${esc(c.notes || "")}</textarea></div>
+        <div class="field"><label for="nW">New words <span class="muted" style="font-weight:500">(separate with commas)</span></label><input id="nW" maxlength="1000" value="${esc(c.words || "")}"></div>
+        <div class="actions"><button class="btn primary sm" data-savenote="${c.id}">Save notes</button></div></div>` : ""}
+    </div>`).join("") : `<p class="empty">No classes yet. Schedule the next one above.</p>`}</div>
+  </div>`;
+}
+function reportPanel(s) {
+  const months = [0, 1, 2].map(k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return day(d).slice(0, 7); });
+  return `<div class="panel">
+    <h2>Monthly report for parents</h2>
+    <p class="muted" style="font-size:.9em">A one-page summary in Spanish (with an English button) that opens without signing in: classes, practice days, lessons, homework and your class notes.</p>
+    <div class="grid2">
+      <div class="field"><label for="rM">Month</label><select id="rM">${months.map(m => `<option value="${m}">${new Date(m + "-15").toLocaleDateString("en-US", { month: "long", year: "numeric" })}</option>`).join("")}</select></div>
+      <div class="field"><label for="rL">Language</label><select id="rL"><option value="es">Spanish</option><option value="en">English</option></select></div>
+    </div>
+    <div class="field"><label for="rC">Your comment <span class="muted" style="font-weight:500">(optional)</span></label><textarea id="rC" maxlength="600"></textarea></div>
+    <div class="actions"><button class="btn primary" id="rOpen">Open report</button><button class="btn" id="rCopy">Copy link for WhatsApp</button></div>
+  </div>`;
+}
+function reportLink(s) {
+  const m = document.getElementById("rM").value, lang = document.getElementById("rL").value, c = document.getElementById("rC").value.trim();
+  const inM = d => d && day(d).slice(0, 7) === m;
+  const g = s.get("game", null) || {}, days = Object.keys(g.days || {}).filter(k => k.slice(0, 7) === m && g.days[k] > 0).map(k => +k.slice(8, 10));
+  const cls = (DATA.classes || []).filter(x => x.student_id === s.p.id && inM(x.starts_at));
+  const hw = s.hw.filter(h => inM(h.created_at) || inM(h.done_at));
+  const data = {
+    v: 1, n: s.p.display_name || "Student", m, g: new Date().toISOString(), lv: s.placement ? s.placement.nivel : null,
+    xp: s.game.xp, gl: s.game.level, st: s.game.best, bd: G.badges.earned(s.get).filter(b => b.at).length, rv: s.review.length,
+    dp: days, hw: hw.length ? [hw.filter(h => h.done_at).length, hw.length] : null,
+    cl: DATA.classes ? [cls.filter(x => x.status === "attended").length, cls.filter(x => x.status === "missed").length] : null,
+    cd: cls.filter(x => x.status === "attended" || x.status === "scheduled").map(x => new Date(x.starts_at).getDate()),
+    nt: cls.filter(x => x.status === "attended" && (x.notes || x.words)).sort((a, b) => a.starts_at.localeCompare(b.starts_at)).slice(-8)
+      .map(x => [day(x.starts_at), (x.notes || "").slice(0, 280), (x.words || "").slice(0, 140)]),
+    ls: s.rows.map(r => [r.l.id, r.l.titulo, r.done, r.best ? Math.round(r.best.ok / r.best.n * 100) : null, r.tries, r.best && r.best.ok / r.best.n >= .8 ? 1 : 0]),
+    c: c || undefined
+  };
+  return location.origin + location.pathname.replace(/teacher\.html$/, "") + "progress.html?d=" + b64(data) + "&lang=" + lang;
+}
+
+function accounts() {
+  const dom = (G.cloud && G.cloud.usernameDomain) || "student.lingua.app";
+  const setup = `<div class="alert info" style="display:grid;gap:6px"><b>One-time setup needed</b><span>To create accounts and change passwords from here, install the small “admin-users” helper in Supabase. The steps are in the README (Teacher panel setup → Accounts helper). Until then, you can keep using Supabase → Authentication → Users.</span></div>`;
+  return `<div class="panel" id="acc" style="margin-top:20px">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap"><div><h2>Student accounts</h2><p class="muted" style="font-size:.9em">Create a student and change passwords. Students sign in with the username.</p></div>
+      ${ACC ? `<button class="btn ghost sm" id="accReload">Refresh list</button>` : ""}</div>
+    ${ACCERR && ACCERR.missing ? setup : ACCERR ? `<div class="alert bad">${esc(ACCERR.message)}</div>` : ""}
+    <form id="accForm" class="grid2" style="grid-template-columns:repeat(4,minmax(0,1fr));align-items:end" novalidate>
+      <div class="field"><label for="aN">Name</label><input id="aN" maxlength="40" autocomplete="off"></div>
+      <div class="field"><label for="aU">Username</label><input id="aU" maxlength="40" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+      <div class="field"><label for="aP">Password</label><input id="aP" type="text" minlength="8" maxlength="72" autocomplete="new-password"></div>
+      <button class="btn primary" type="submit" id="aSave">Create account</button>
+    </form>
+    <div id="aMsg" hidden></div>
+    ${ACC ? `<div class="hw">${ACC.filter(u => u.id !== (G.user && G.user.id)).map(u => `<div class="hw-item">
+      <div style="min-width:0"><b>${esc((u.email || "").replace("@" + dom, ""))}</b><br><small>${u.last_sign_in_at ? "Last sign-in " + ago(u.last_sign_in_at) : "Never signed in"} · created ${fmt(u.created_at)}</small></div>
+      <div class="actions"><input class="pw" data-pwfor="${u.id}" type="text" placeholder="New password" aria-label="New password" style="font:inherit;padding:7px 10px;border:1px solid var(--line-2);border-radius:var(--r-s);width:150px;background:var(--surface);color:var(--ink)"><button class="btn sm" data-pw="${u.id}">Change password</button></div></div>`).join("")}</div>` : ""}
+  </div>`;
+}
+async function loadAccounts() {
+  try { ACC = (await G.admin("list")).users || []; ACCERR = null; } catch (e) { ACCERR = e; ACC = null; }
+}
+function wireAccounts() {
+  const msg = (cls, t) => { const m = document.getElementById("aMsg"); m.className = "alert " + cls; m.textContent = t; m.hidden = false; };
+  document.getElementById("accForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const name = document.getElementById("aN").value.trim(), user = document.getElementById("aU").value.trim().toLowerCase(), pw = document.getElementById("aP").value;
+    if (!/^[a-z0-9._-]{3,40}$/.test(user)) return msg("bad", "Username: 3–40 letters, numbers, dots or dashes (like emiliano.sanchez).");
+    if (pw.length < 8) return msg("bad", "Password: at least 8 characters.");
+    const b = document.getElementById("aSave"); b.disabled = true;
+    try { await G.admin("create", { username: user, password: pw, display_name: name }); G.toast(`<b>Account created</b><span>Username: ${esc(user)}</span>`); await loadAccounts(); await load(); }
+    catch (err) { msg("bad", err.missing ? "Install the accounts helper first (see the note above)." : "We couldn’t create it: " + err.message); if (err.missing) { ACCERR = err; } b.disabled = false; }
+  });
+  document.querySelectorAll("[data-pw]").forEach(b => b.onclick = async () => {
+    const inp = document.querySelector(`[data-pwfor="${b.dataset.pw}"]`), pw = inp.value;
+    if (pw.length < 8) { G.toast("Password: at least 8 characters"); inp.focus(); return; }
+    b.disabled = true;
+    try { await G.admin("password", { user_id: b.dataset.pw, password: pw }); inp.value = ""; G.toast("<b>Password changed</b><span>Share it with your student.</span>"); }
+    catch (err) { G.toast("Couldn’t change it: " + esc(err.message)); }
+    b.disabled = false;
+  });
+  const r = document.getElementById("accReload"); if (r) r.onclick = async () => { await loadAccounts(); render(); };
+}
+
 function wireDetail(s) {
+  const cf = document.getElementById("clsForm");
+  if (cf) cf.addEventListener("submit", async e => {
+    e.preventDefault();
+    const d = document.getElementById("cD").value, t = document.getElementById("cT").value || "17:00";
+    if (!d) { G.toast("Choose a date"); return; }
+    const b = document.getElementById("cSave"); b.disabled = true;
+    try { await G.teacher.saveClass({ student_id: s.p.id, starts_at: new Date(d + "T" + t).toISOString(), lesson_id: document.getElementById("cL").value || null }); G.toast("Class scheduled"); await load(); }
+    catch (err) { G.toast("Couldn’t save: " + esc(err.message)); b.disabled = false; }
+  });
+  document.querySelectorAll("[data-st]").forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try { await G.teacher.saveClass({ id: b.dataset.c, status: b.dataset.st }); if (b.dataset.st === "attended") OPEN = b.dataset.c; await load(); } catch (err) { G.toast("Couldn’t save: " + esc(err.message)); b.disabled = false; }
+  });
+  document.querySelectorAll("[data-open]").forEach(b => b.onclick = () => { OPEN = OPEN === b.dataset.open ? null : b.dataset.open; render(); });
+  document.querySelectorAll("[data-savenote]").forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try { await G.teacher.saveClass({ id: b.dataset.savenote, notes: document.getElementById("nN").value.trim() || null, words: document.getElementById("nW").value.trim() || null }); OPEN = null; G.toast("Notes saved"); await load(); }
+    catch (err) { G.toast("Couldn’t save: " + esc(err.message)); b.disabled = false; }
+  });
+  document.querySelectorAll("[data-cdel]").forEach(b => b.onclick = async () => {
+    if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "Tap again"; setTimeout(() => { if (b.isConnected) { b.dataset.armed = ""; b.textContent = "Delete"; } }, 3000); return; }
+    try { await G.teacher.deleteClass(b.dataset.cdel); await load(); } catch (err) { G.toast("Couldn’t delete: " + esc(err.message)); }
+  });
+  const ro = document.getElementById("rOpen"); if (ro) ro.onclick = () => window.open(reportLink(s), "_blank", "noopener");
+  const rc = document.getElementById("rCopy"); if (rc) rc.onclick = () => {
+    const url = reportLink(s), msg = (document.getElementById("rL").value === "es" ? "Reporte de inglés de " : "English report for ") + (s.p.display_name || "") + ": " + url;
+    navigator.clipboard.writeText(msg).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url));
+  };
+
   const f = document.getElementById("hwForm");
   document.querySelectorAll("#quick button").forEach(b => b.onclick = () => {
     document.getElementById("hwT").value = b.dataset.t; document.getElementById("hwD").value = b.dataset.d || "";
@@ -244,7 +383,7 @@ function wireDetail(s) {
 }
 
 async function load() {
-  try { DATA = await G.teacher.load(); render(); }
+  try { DATA = await G.teacher.load(); if (ACC === null && !ACCERR) await loadAccounts(); render(); }
   catch (e) { app.innerHTML = `<div class="panel"><h2>We couldn’t load your students</h2><p class="muted">${esc(e.message || e)}</p></div>`; }
 }
 G.ready.then(() => {

@@ -18,7 +18,11 @@
     review: '<path d="M4 12a8 8 0 0 1 14-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-14 5.3L4 15"/><path d="M4 20v-5h5"/>',
     words: '<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="17" r="3"/>',
     teacher: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
-    phone: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>'
+    phone: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+    game: '<path d="M7 10h4M9 8v4"/><circle cx="15.5" cy="10.5" r="1"/><circle cx="17.5" cy="12.5" r="1"/><path d="M6.5 6h11a4 4 0 0 1 4 4.4l-.6 5.2a2.5 2.5 0 0 1-4.3 1.4L14.5 15h-5l-2.1 2a2.5 2.5 0 0 1-4.3-1.4l-.6-5.2A4 4 0 0 1 6.5 6z"/>',
+    notes: '<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>',
+    badge: '<circle cx="12" cy="9" r="6"/><path d="M12 6l1 2 2 .3-1.5 1.4.4 2.1-1.9-1-1.9 1 .4-2.1L9 8.3l2-.3z"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/>',
+    build: '<path d="M14 6l4 4M4 20l4-1 11-11-3-3L5 16z"/>'
   };
   const ico = (n, s) => `<svg width="${s || 20}" height="${s || 20}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
   const LV = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", "B2+": "Upper intermediate +" };
@@ -32,10 +36,11 @@
     if (document.getElementById("lgMenu")) return document.getElementById("lgMenu");
     const r = L.root || "";
     const items = [
-      ["Learn", [["home", "My learning", "index.html"], ...(L.cloudEnabled ? [["hw", "Homework", "index.html#todo", "hw"]] : []), ["test", "Placement test", "examen.html"], ["report", "Placement report", "reporte.html"]]],
-      ["Practice", [["review", "Review", "review.html", "rev"], ["words", "My words", "words.html"], ["book", "Study resources", "resources.html"]]],
-      ["Progress", [["grades", "Grades", "grades.html"], ["diploma", "Diplomas", "diplomas.html", "dip"]]],
-      ["Account", [["user", "Profile & avatar", "perfil.html"], ["gear", "Settings", "perfil.html#settings"], ...(L.isTeacher ? [["teacher", "Teacher panel", "teacher.html"]] : [])]]
+      ["Learn", [["home", "My learning", "index.html"], ...(L.cloudEnabled ? [["hw", "Homework", "index.html#todo", "hw"], ["notes", "Class notes", "notes.html"]] : []), ["test", "Placement test", "examen.html"], ["report", "Placement report", "reporte.html"]]],
+      ["Practice", [["review", "Review", "review.html", "rev"], ["game", "Practice games", "practice.html"], ["words", "My words", "words.html"], ["book", "Study resources", "resources.html"]]],
+      ["Progress", [["grades", "Grades", "grades.html"], ["diploma", "Diplomas", "diplomas.html", "dip"], ["badge", "Badges", "perfil.html#badges", "bdg"]]],
+      ...(L.isTeacher ? [["Teacher", [["teacher", "Teacher panel", "teacher.html"], ["build", "Lesson builder", "builder.html"]]]] : []),
+      ["Account", [["user", "Profile & avatar", "perfil.html"], ["gear", "Settings", "perfil.html#settings"]]]
     ];
     const el = document.createElement("div");
     el.id = "lgMenu"; el.className = "lg-menu"; el.hidden = true;
@@ -87,6 +92,7 @@
     el.querySelector("#lgMe").innerHTML = `${av}<span style="min-width:0"><b>${name ? name.replace(/[<>&]/g, "") : "Your profile"}</b><span class="muted">${pl ? "Level " + pl.nivel + " · " + (LV[pl.nivel] || "") : "Level not tested yet"}</span></span>`;
     const badge = (k, n) => { const b = el.querySelector('[data-badge="' + k + '"]'); if (b) { b.textContent = n; b.hidden = !n; } };
     badge("dip", diplomasCount());
+    badge("bdg", L.badges ? L.badges.earned().filter(b => b.at).length : 0);
     badge("rev", L.review ? L.review.count() : 0);
     badge("hw", L.homework ? L.homework.cached().filter(h => !h.done_at).length : 0);
     const I = L.install || {}, inst = el.querySelector("#lgInstall");

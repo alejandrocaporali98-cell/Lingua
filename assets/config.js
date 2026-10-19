@@ -67,6 +67,20 @@ window.LINGUA.mark = function (s) {
 window.LINGUA.logo = window.LINGUA.mark(30) + '<span class="wordmark">lingua</span>';
 document.documentElement.style.setProperty("--scale", window.LINGUA.store.get("textSize", 1));
 
+// Lessons made in the lesson builder (saved in Supabase, cached here) join the course as a new module
+(function () {
+  const L = window.LINGUA, rows = (L.store.get("__lessons", []) || []).filter(r => r.published && r.data);
+  if (!rows.length) return;
+  const known = new Set(L.modulos.flatMap(m => m.lecciones).map(l => l.id));
+  const extra = rows.filter(r => !known.has(r.id)).sort((a, b) => a.id.localeCompare(b.id)).map(r => ({
+    id: r.id, archivo: "clases/custom.html?id=" + r.id, titulo: r.data.titulo || "Lesson " + r.id, tema: r.data.tema || "",
+    nivel: r.data.nivel || "A2", min: 60, icono: r.data.icono || "chat", color: r.data.color || "#2346d0", estado: "lista", custom: true
+  }));
+  if (!extra.length) return;
+  const name = rows[0].data.modulo || "Module 3 · More lessons";
+  L.modulos.push({ titulo: name, lecciones: extra });
+})();
+
 // ── Theme: "system" (follows the device), "light" or "dark". Saved per device. ──
 (function () {
   const L = window.LINGUA, root = document.documentElement;

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Monthly progress report</title>
+<meta name="description" content="Monthly English progress report: classes, practice days, lessons passed and teacher notes.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lingua · Monthly progress report">
+<meta property="og:description" content="Monthly English progress report: classes, practice days, lessons passed and teacher notes.">
+<meta property="og:image" content="https://lingua-english-class.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<style>
+  .wrap { max-width: 900px; margin: 0 auto; padding-block: 28px 64px; display: grid; gap: 18px; }
+  .wrap > * { min-width: 0; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 24px; display: grid; gap: 14px; }
+  @media (max-width: 560px) { .panel { padding: 16px; } }
+  .panel h2 { font-size: 1.1em; font-weight: 800; }
+  .hero { border-top: 4px solid var(--brand); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; }
+  @media (max-width: 600px) { .hero { grid-template-columns: 1fr; } }
+  .hero h1 { font-size: 1.8em; font-weight: 800; }
+  .lang { display: inline-flex; border: 1px solid var(--line-2); border-radius: var(--r-s); overflow: hidden; }
+  .lang button { border: 0; background: var(--surface); padding: 7px 12px; font-weight: 700; font-size: .85em; }
+  .lang button.on { background: var(--inverse); color: var(--on-inverse); }
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 700px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpi { padding: 14px 16px; display: grid; gap: 2px; border-radius: 12px; background: var(--bg); }
+  .kpi .v { font-size: 1.7em; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .kpi .l { font-size: .8em; color: var(--mute); font-weight: 600; }
+  .month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; max-width: 420px; }
+  .month span { aspect-ratio: 1; border-radius: 8px; display: grid; place-items: center; font-size: .78em; font-weight: 700; background: var(--bg); color: var(--mute); }
+  .month span.on { background: var(--ok); color: var(--on-ok); }
+  .month span.cls { box-shadow: inset 0 0 0 2px var(--brand); }
+  .month .h { background: none; aspect-ratio: auto; font-size: .7em; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .8em; color: var(--ink-2); }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; vertical-align: -1px; margin-right: 6px; }
+  .tbl { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .92em; min-width: 480px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+  th { font-size: .72em; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); }
+  td.r, th.r { text-align: right; }
+  .pill { font-size: .75em; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: var(--bg); color: var(--ink-2); white-space: nowrap; }
+  .pill.good { background: var(--ok-soft); color: var(--ok-ink); }
+  .pill.warn { background: var(--dev-soft); color: var(--dev); }
+  .note { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .note:last-child { border-bottom: 0; }
+  .note b { font-size: .85em; color: var(--mute); }
+  .comment { background: var(--brand-soft); color: var(--brand-dark); border-radius: 12px; padding: 16px 18px; white-space: pre-wrap; }
+  .foot { color: var(--mute); font-size: .82em; text-align: center; }
+  @media print { header.nav, .noprint, .menu-btn, .theme-btn { display: none !important; } body { background: #fff; } .panel { break-inside: avoid; } }
+</style>
+</head>
+<body>
+<header class="nav gutter noprint">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <span class="spacer"></span>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"></div></main>
+<script>
+const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
+document.getElementById("logo").innerHTML = G.logo;
+const qp = new URLSearchParams(location.search);
+let lang = qp.get("lang") === "en" ? "en" : "es";
+const T = {
+  es: { title: "Reporte mensual de avance", student: "Alumno", teacher: "Maestro", cls: "Clases asistidas", days: "Días que practicó", lessons: "Lecciones aprobadas", level: "Nivel de inglés",
+    xp: "Puntos (XP)", streak: "Mejor racha", hw: "Tareas entregadas", review: "Preguntas por repasar", badges: "Insignias", calendar: "Práctica del mes", practiced: "Practicó en la plataforma", classDay: "Día de clase",
+    lessonsT: "Lecciones", lesson: "Lección", sections: "Secciones", tries: "Intentos", best: "Mejor calificación", status: "Estado", passed: "Aprobada", practicing: "En práctica", notStarted: "Sin empezar",
+    notesT: "Notas de clase", noNotes: "Sin notas este mes.", commentT: "Comentario del maestro", print: "Imprimir o guardar PDF", days_: "días", of: "de", gen: "Generado el", made: "Reporte generado con Lingua.",
+    missing: "Este enlace no tiene datos del reporte.", noLevel: "Sin examen", notTested: "aún no presenta el examen de colocación", wk: ["L", "M", "M", "J", "V", "S", "D"], lvl: "Nivel", missedCls: "faltas" },
+  en: { title: "Monthly progress report", student: "Student", teacher: "Teacher", cls: "Classes attended", days: "Days practiced", lessons: "Lessons passed", level: "English level",
+    xp: "Points (XP)", streak: "Best streak", hw: "Homework done", review: "Questions to review", badges: "Badges", calendar: "Practice this month", practiced: "Practiced on the platform", classDay: "Class day",
+    lessonsT: "Lessons", lesson: "Lesson", sections: "Sections", tries: "Attempts", best: "Best score", status: "Status", passed: "Passed", practicing: "Practicing", notStarted: "Not started",
+    notesT: "Class notes", noNotes: "No notes this month.", commentT: "Teacher’s comment", print: "Print or save as PDF", days_: "days", of: "of", gen: "Generated on", made: "Report made with Lingua.",
+    missing: "This link has no report data.", noLevel: "Not tested", notTested: "hasn’t taken the placement test yet", wk: ["M", "T", "W", "T", "F", "S", "S"], lvl: "Level", missedCls: "missed" }
+};
+function decode(s) { try { const b = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return null; } }
+const D = decode(qp.get("d") || "");
+function render() {
+  const t = T[lang], loc = lang === "es" ? "es-MX" : "en-US";
+  document.documentElement.lang = lang;
+  if (!D) { app.innerHTML = `<div class="panel"><p>${t.missing}</p></div>`; return; }
+  const [y, mo] = D.m.split("-").map(Number), first = new Date(y, mo - 1, 1), daysIn = new Date(y, mo, 0).getDate();
+  const mn = first.toLocaleDateString(loc, { month: "long", year: "numeric" }), monthName = mn[0].toUpperCase() + mn.slice(1);
+  const pad = (first.getDay() + 6) % 7, clsDays = new Set((D.nt || []).map(n => +n[0].slice(8, 10)).concat(D.cd || []));
+  const st = r => r[5] ? `<span class="pill good">${t.passed}</span>` : r[4] ? `<span class="pill warn">${t.practicing}</span>` : `<span class="pill">${t.notStarted}</span>`;
+  app.innerHTML = `
+    <div class="panel hero">
+      <div style="display:grid;gap:6px"><span class="eyebrow">${t.title}</span><h1>${esc(D.n)}</h1>
+        <span class="muted">${esc(monthName)} · ${t.teacher}: ${esc(G.maestroNombre || G.maestro)}</span></div>
+      <div class="noprint" style="display:grid;gap:8px;justify-items:end"><div class="lang"><button data-lang="es" class="${lang === "es" ? "on" : ""}">ES</button><button data-lang="en" class="${lang === "en" ? "on" : ""}">EN</button></div>
+        <button class="btn sm" id="pr">${t.print}</button></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span class="v">${D.cl ? D.cl[0] : "—"}</span><span class="l">${t.cls}${D.cl && D.cl[1] ? ` · ${D.cl[1]} ${t.missedCls}` : ""}</span></div>
+      <div class="kpi"><span class="v">${(D.dp || []).length}</span><span class="l">${t.days} (${t.of} ${daysIn})</span></div>
+      <div class="kpi"><span class="v">${D.ls.filter(r => r[5]).length}<span class="muted" style="font-size:.55em"> / ${D.ls.length}</span></span><span class="l">${t.lessons}</span></div>
+      <div class="kpi"><span class="v">${D.lv || "—"}</span><span class="l">${D.lv ? t.level : t.notTested}</span></div>
+      <div class="kpi"><span class="v">${D.xp}</span><span class="l">${t.xp} · ${t.lvl} ${D.gl}</span></div>
+      <div class="kpi"><span class="v">🔥 ${D.st}</span><span class="l">${t.streak} (${t.days_})</span></div>
+      <div class="kpi"><span class="v">${D.hw ? D.hw[0] + "/" + D.hw[1] : "—"}</span><span class="l">${t.hw}</span></div>
+      <div class="kpi"><span class="v">${D.bd}</span><span class="l">${t.badges}</span></div>
+    </div>
+    <div class="panel"><h2>${t.calendar}</h2>
+      <div class="month">${t.wk.map(d => `<span class="h">${d}</span>`).join("")}${"<span style='background:none'></span>".repeat(pad)}${Array.from({ length: daysIn }, (_, i) => `<span class="${(D.dp || []).includes(i + 1) ? "on" : ""} ${clsDays.has(i + 1) ? "cls" : ""}">${i + 1}</span>`).join("")}</div>
+      <div class="legend"><span><i style="background:var(--ok)"></i>${t.practiced}</span><span><i style="box-shadow:inset 0 0 0 2px var(--brand)"></i>${t.classDay}</span></div></div>
+    <div class="panel"><h2>${t.lessonsT}</h2><div class="tbl"><table><thead><tr><th>${t.lesson}</th><th>${t.sections}</th><th class="r">${t.tries}</th><th class="r">${t.best}</th><th>${t.status}</th></tr></thead>
+      <tbody>${D.ls.map(r => `<tr><td><b>${esc(r[0])}</b> · ${esc(r[1])}</td><td>${r[2]}/5</td><td class="r">${r[4]}</td><td class="r"><b>${r[3] == null ? "—" : r[3] + "%"}</b></td><td>${st(r)}</td></tr>`).join("")}</tbody></table></div></div>
+    <div class="panel"><h2>${t.notesT}</h2>${(D.nt || []).length ? D.nt.map(n => `<div class="note"><b>${new Date(n[0] + "T12:00").toLocaleDateString(loc, { month: "short", day: "numeric" })}</b><div>${n[1] ? `<p>${esc(n[1])}</p>` : ""}${n[2] ? `<p class="muted" style="font-size:.88em;margin-top:4px">📝 ${esc(n[2])}</p>` : ""}</div></div>`).join("") : `<p class="muted">${t.noNotes}</p>`}</div>
+    ${D.c ? `<div class="panel"><h2>${t.commentT}</h2><div class="comment">${esc(D.c)}</div><span class="muted" style="font-size:.88em">— ${esc(G.maestroNombre || G.maestro)}</span></div>` : ""}
+    <p class="foot">${t.gen} ${new Date(D.g).toLocaleDateString(loc, { year: "numeric", month: "long", day: "numeric" })}. ${t.made}</p>`;
+  app.querySelectorAll("[data-lang]").forEach(b => b.onclick = () => { lang = b.dataset.lang; render(); });
+  document.getElementById("pr").onclick = () => window.print();
+}
+G.ready.then(render);
+</script>
+</body>
+</html>

@@ -10,7 +10,7 @@
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   const qs = new URLSearchParams(location.search);
   const isLogin = page === "login.html";
-  const isPublicReport = page === "reporte.html" && qs.has("r");
+  const isPublicReport = (page === "reporte.html" && qs.has("r")) || (page === "progress.html" && qs.has("d"));
 
   const show = () => document.documentElement.classList.remove("auth-pending");
   const lsGet = (k) => { try { return JSON.parse(localStorage.getItem("lingua." + k)); } catch (e) { return null; } };
@@ -60,6 +60,7 @@
   L.isTeacher = lsGet("__teacher") === true;
   if (!L.cloudEnabled) {
     L.homework = { cached: () => [], list: async () => [], setDone: async () => {} };
+    L.classes = { cached: () => [], list: async () => [] };
     L.ready = Promise.resolve(null);
     show();
     document.addEventListener("DOMContentLoaded", decorate);
@@ -135,15 +136,55 @@
       document.dispatchEvent(new CustomEvent("lingua:homework"));
     }
   };
+  // Classes: schedule, attendance and notes (the teacher writes them, the student reads their own)
+  L.classes = {
+    cached: () => lsGet("__classes") || [],
+    async list() {
+      if (!uid) return L.classes.cached();
+      const { data, error } = await sb.from("classes").select("*").eq("student_id", uid).order("starts_at", { ascending: false });
+      if (error) return L.classes.cached();
+      lsSet("__classes", data || []); document.dispatchEvent(new CustomEvent("lingua:classes"));
+      return data || [];
+    }
+  };
+  // Lessons made in the lesson builder
+  async function syncLessons() {
+    const { data, error } = await sb.from("lessons").select("id, data, published, updated_at").order("id");
+    if (error) return false;
+    const before = JSON.stringify(lsGet("__lessons") || []), rows = (data || []).filter(r => r.published || L.isTeacher);
+    lsSet("__lessons", rows);
+    return before !== JSON.stringify(rows);
+  }
+  L.lessons = {
+    async all() { const { data, error } = await sb.from("lessons").select("*").order("id"); if (error) throw error; return data || []; },
+    async save(row) { const { data, error } = await sb.from("lessons").upsert({ ...row, updated_at: new Date().toISOString() }).select(); if (error) throw error; await syncLessons(); return data; },
+    async remove(id) { const { error } = await sb.from("lessons").delete().eq("id", id); if (error) throw error; await syncLessons(); },
+    sync: syncLessons
+  };
+  // Accounts (create students, change passwords) through the "admin-users" Edge Function
+  L.admin = async (action, payload) => {
+    const { data, error } = await sb.functions.invoke("admin-users", { body: { action, domain: cfg.usernameDomain, ...(payload || {}) } });
+    if (error) {
+      let msg = error.message || String(error);
+      try { const b = await error.context.json(); if (b && b.error) msg = b.error; } catch (e) {}
+      const missing = /not found|404|Failed to send|FunctionsFetchError|FunctionsRelayError/i.test(msg + " " + (error.name || ""));
+      const err = new Error(missing ? "The accounts helper isn’t installed yet." : msg); err.missing = missing; throw err;
+    }
+    if (data && data.error) throw new Error(data.error);
+    return data;
+  };
   // Teacher panel: read every student (allowed only for accounts in the "teachers" table)
   L.teacher = {
     async load() {
-      const [p, g, h] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false })]);
+      const [p, g, h, c] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
+        sb.from("classes").select("*").order("starts_at", { ascending: false })]);
       const err = p.error || g.error || h.error; if (err) throw err;
-      return { profiles: p.data || [], progress: g.data || [], homework: h.data || [] };
+      return { profiles: p.data || [], progress: g.data || [], homework: h.data || [], classes: c.error ? null : (c.data || []) };
     },
     async addHomework(row) { const { data, error } = await sb.from("homework").insert(row).select(); if (error) throw error; return data; },
-    async deleteHomework(id) { const { error } = await sb.from("homework").delete().eq("id", id); if (error) throw error; }
+    async deleteHomework(id) { const { error } = await sb.from("homework").delete().eq("id", id); if (error) throw error; },
+    async saveClass(row) { const q = row.id ? sb.from("classes").update(row).eq("id", row.id) : sb.from("classes").insert(row); const { error } = await q; if (error) throw error; },
+    async deleteClass(id) { const { error } = await sb.from("classes").delete().eq("id", id); if (error) throw error; }
   };
   L.signOut = async () => {
     if (timer) { clearTimeout(timer); await push(); }
@@ -176,9 +217,12 @@
     }
     try { const r = await sb.rpc("is_teacher"); L.isTeacher = !r.error && r.data === true; } catch (e) { L.isTeacher = false; }
     lsSet("__teacher", L.isTeacher);
+    try { if (await syncLessons() && !sessionStorage.getItem("lingua.reloadedL")) { sessionStorage.setItem("lingua.reloadedL", "1"); location.reload(); return null; } } catch (e) {}
+    sessionStorage.removeItem("lingua.reloadedL");
     if (!(L.profile && L.profile.display_name) && page !== "perfil.html") { location.replace(root + "perfil.html?setup=1"); return null; }
     decorate(); show();
     L.homework.list().catch(() => {});
+    L.classes.list().catch(() => {});
     return session.user;
   })();
   document.addEventListener("DOMContentLoaded", () => { if (L.profile) decorate(); });

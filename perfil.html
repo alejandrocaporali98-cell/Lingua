@@ -155,6 +155,11 @@ function render() {
     <div class="card stat"><span class="v">${st.avg == null ? "—" : st.avg + "%"}</span><span class="l">Average final quiz</span></div>
   </div>`}
 
+  ${setup ? "" : (() => { const bs = G.badges.earned(), got = bs.filter(b => b.at).length; return `<section class="panel" id="badges" style="scroll-margin-top:80px" aria-labelledby="bdT">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap"><div><h2 id="bdT">Badges</h2><p class="muted" style="font-size:.9em">${got} of ${bs.length} earned. Keep practicing to unlock the rest.</p></div></div>
+    <div class="badge-grid">${bs.sort((x, y) => (y.at ? 1 : 0) - (x.at ? 1 : 0)).map(b => `<div class="bdg ${b.at ? "" : "off"}" title="${G.esc(b.d)}"><span class="e" aria-hidden="true">${b.e}</span><b>${G.esc(b.t)}</b><small>${b.at ? "Earned " + new Date(b.at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : G.esc(b.d)}</small></div>`).join("")}</div>
+  </section>`; })()}
+
   <section class="panel" aria-labelledby="avT">
     <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
       <div><h2 id="avT">Your avatar</h2><p class="muted" style="font-size:.9em">Design your own racing helmet, or use your initial. Level up to unlock more designs 🔒</p></div>

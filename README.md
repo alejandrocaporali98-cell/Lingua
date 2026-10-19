@@ -18,7 +18,11 @@ English learning platform for one-to-one online classes. Static site (HTML, CSS 
 
 | `review.html` | **Review**: quiz mistakes and saved questions; two right answers in a row and a question leaves the list |
 | `words.html` | **My words**: every flashcard from every lesson, with search, audio and a "hide meanings" self-test |
-| `teacher.html` | **Teacher panel** (teachers only): every student's streak, XP, grades, mistakes and homework |
+| `teacher.html` | **Teacher panel** (teachers only): every student's progress, homework, classes (schedule, attendance, notes), monthly parent report and student accounts |
+| `builder.html` | **Lesson builder** (teachers only): make new lessons without code; they appear as "Module 3" and play in `clases/custom.html?id=07` |
+| `practice.html` | **Practice games**: dictation (listen and write), speaking with the microphone, speed match against the clock |
+| `notes.html` | **Class notes**: the student's classes, attendance, notes and new words |
+| `progress.html` | **Monthly parent report** (opens from a link, no sign-in, Spanish/English) |
 
 Every page has a **menu** (☰, left of the logo) with links to all of the above, a dark mode switch, "Install the app" and sign out.
 
@@ -28,6 +32,9 @@ Every page has a **menu** (☰, left of the logo) with links to all of the above
 - **XP, levels, streak and weekly goal** (`assets/game.js`): +2 XP per new flashcard or gap, +20 per section, +2/+3 per right quiz answer, +50 for passing a lesson, +15 per homework, +50 weekly bonus for practicing 4 days. Levels go from Rookie to Legend (10 levels) and unlock helmet designs, visors and the gold helmet.
 - **Celebrations**: confetti and sounds for diplomas, level ups, perfect gap fills and weekly goals (sounds can be turned off in Settings; no animation with reduced motion).
 - **Homework**: the teacher adds it in the teacher panel; the student sees it on My learning and ticks it off.
+- **Speaking**: 🎤 buttons (role-play, My words, Practice games) use the browser's speech recognition (Chrome, Safari on iPhone) and show which words were clear.
+- **Badges**: 16 badges (streaks, diplomas, perfect quiz, speaking, dictation, speed match, homework…) in Profile → Badges.
+- **Your season**: the course as a race track on My learning; passing a lesson moves the helmet forward.
 - **Install as an app**: `manifest.webmanifest` + `sw.js` (network first, offline fallback). Icons in `assets/icons/`.
 - **Share preview**: `assets/og.png` and Open Graph tags on every page. If the Netlify address changes, update the `og:image` URL in the pages.
 
@@ -99,3 +106,11 @@ Progress and results are stored in the browser (`localStorage`). On the deployed
 
 1. Run the latest `supabase/setup.sql` in Supabase → SQL Editor (safe to run again). It adds the `teachers` and `homework` tables.
 2. Sign in to Lingua with your own account and open `teacher.html`. It shows one line of SQL with your account's email: run it in the SQL Editor and reload.
+
+### Accounts helper (create students and change passwords from the panel)
+
+1. Supabase → **Edge Functions** → **Deploy a new function** → **Via Editor**.
+2. Name it `admin-users` and paste `supabase/functions/admin-users/index.ts`. Deploy.
+3. In the function's settings, turn **off** "Verify JWT" (the function checks that the caller is a teacher itself).
+
+The function reads Supabase's own secret key from its server environment. The secret key is never in the site or in this repo.

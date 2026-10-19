@@ -219,7 +219,7 @@
   function drawRP() {
     const R = C.roleplay;
     stage.innerHTML = head(R.title, R.setup) + `<div class="panel chat">${R.lines.map((l, i) => l.you ? `
-      <div class="msg you"><div class="bub"><div class="who">You</div><div class="cue">${l.cue}</div><div class="model" hidden id="m${i}">${l.model} ${G.sayBtn(l.model, "Listen to the example")}</div>
+      <div class="msg you"><div class="bub"><div class="who">You</div><div class="cue">${l.cue}</div><div class="model" hidden id="m${i}">${l.model} ${G.sayBtn(l.model, "Listen to the example")} ${G.micBtn(l.model, "Say the example")}</div>
         <button class="btn ghost sm" data-m="${i}" style="margin-top:6px;padding-left:0">Show example</button></div><span class="av">YOU</span></div>` : `
       <div class="msg"><span class="av">${l.who.slice(0, 2).toUpperCase()}</span><div class="bub"><div class="who">${l.who}</div>${l.t} ${G.sayBtn(l.t, "Listen")}</div></div>`).join("")}</div>
       ${R.extra ? `<div class="panel" style="display:grid;gap:6px;background:var(--brand-soft);border-color:transparent"><span class="eyebrow" style="color:var(--brand-dark)">Now switch roles</span><p>${R.extra}</p></div>` : ""}` + pager();

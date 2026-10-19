@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Practice games</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lingua · Practice games">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://lingua-english-class.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<script src="assets/menu.js"></script>
+<style>
+  .wrap { max-width: 900px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 20px; }
+  .wrap > * { min-width: 0; }
+  .page-head h1 { font-size: 2em; font-weight: 800; }
+  .modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 640px) { .modes { grid-template-columns: 1fr; } }
+  .mode { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 12px; align-items: center; padding: 14px 16px; border-radius: var(--r-l); border: 1px solid var(--line); background: var(--surface); text-align: left; }
+  .mode .em { font-size: 1.6em; width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: var(--bg); }
+  .mode b { display: block; }
+  .mode small { color: var(--mute); font-size: .82em; }
+  .mode[aria-pressed="true"] { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filters button { border: 1px solid var(--line-2); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: .84em; color: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; }
+  .filters button i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .filters button[aria-pressed="true"] { background: var(--inverse); color: var(--on-inverse); border-color: var(--inverse); }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 24px; display: grid; gap: 16px; }
+  @media (max-width: 560px) { .panel { padding: 16px; } }
+  .big-play { width: 84px; height: 84px; border-radius: 50%; border: 0; background: var(--fill-brand); color: var(--on-fill); display: grid; place-items: center; justify-self: center; box-shadow: 0 8px 24px color-mix(in srgb, var(--brand) 35%, transparent); }
+  .big-play:active { transform: scale(.96); }
+  .dict-in { font: inherit; font-size: 1.15em; width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); }
+  .dict-in:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .diff { font-size: 1.15em; line-height: 1.8; }
+  .diff .ok { color: var(--ok-ink); background: var(--ok-soft); border-radius: 4px; padding: 1px 4px; }
+  .diff .miss { color: var(--bad-ink); background: var(--bad-soft); border-radius: 4px; padding: 1px 4px; text-decoration: underline wavy; }
+  .say-list { display: grid; gap: 8px; }
+  .say-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; padding: 12px 14px; border-radius: 12px; background: var(--bg); }
+  .say-row.done { background: var(--ok-soft); }
+  .say-row.done .t::before { content: "✓ "; color: var(--ok); font-weight: 800; }
+  .say-row .t { font-weight: 600; }
+  .say.mic { color: #c0362c; }
+  .match { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .match .col { display: grid; gap: 8px; align-content: start; }
+  .tile { min-height: 58px; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line-2); background: var(--surface); font-weight: 700; text-align: left; font-size: .95em; line-height: 1.3; transition: transform .1s, opacity .25s; }
+  .tile.def { font-weight: 500; font-size: .88em; }
+  .tile.sel { border-color: var(--brand); background: var(--brand-soft); }
+  .tile.done { border-color: var(--ok); background: var(--ok-soft); opacity: .45; pointer-events: none; }
+  .tile.wrong { border-color: var(--bad); background: var(--bad-soft); animation: shake .3s; }
+  @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  .clock { font-size: 2.2em; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .center { text-align: center; justify-items: center; }
+  .note { font-size: .85em; color: var(--mute); }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="index.html">My learning</a><a href="review.html">Review</a><a class="on" href="practice.html">Practice</a></nav>
+    <span class="spacer"></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"></a>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"><p class="muted">Loading…</p></div></main>
+<script>
+const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
+document.getElementById("logo").innerHTML = G.logo;
+const ready = G.modulos.flatMap(m => m.lecciones).filter(l => l.estado === "lista");
+const DATA = {};
+let mode = new URLSearchParams(location.search).get("m") || "dictation", lesson = "all", timer = null;
+const clean = s => String(s || "").replace(/\s*\((?:Not|No)[^)]*\)/gi, "").replace(/\s*\([^)]*\)\s*$/, "").replace(/\s+/g, " ").trim();
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function sentences(ids) {
+  const out = [];
+  ids.forEach(id => {
+    const C = DATA[id]; if (!C) return;
+    (C.flash || []).forEach(f => out.push(clean(f.ex)));
+    (C.frases || []).forEach(q => out.push(clean(q.a)));
+    ((C.gaps && C.gaps.items) || []).forEach(g => out.push(clean(g.s.replace("___", g.a[0]))));
+    ((C.roleplay && C.roleplay.lines) || []).filter(l => l.you).forEach(l => out.push(clean(l.model)));
+  });
+  return [...new Set(out)].filter(s => s.split(" ").length >= 3 && s.split(" ").length <= 14 && !/[…]/.test(s));
+}
+const ids = () => lesson === "all" ? ready.map(l => l.id) : [lesson];
+
+function shell() {
+  const best = l => G.store.get("lap." + l, null);
+  app.innerHTML = `
+    <div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Practice</span><h1>Practice games</h1>
+      <p class="muted">Short games with the words and sentences from your lessons. Every right answer gives you XP.</p></div>
+    <div class="modes" role="group" aria-label="Game">
+      ${[["dictation", "🎧", "Dictation", "Listen and write"], ["speak", "🎤", "Speaking", "Say it out loud"], ["match", "⏱️", "Speed match", "Beat your best time"]].map(([k, e, t, d]) =>
+        `<button type="button" class="mode" data-mode="${k}" aria-pressed="${mode === k}"><span class="em">${e}</span><span><b>${t}</b><small>${d}</small></span></button>`).join("")}
+    </div>
+    <div class="filters" role="group" aria-label="Lesson">
+      <button type="button" data-l="all" aria-pressed="${lesson === "all"}">All lessons</button>
+      ${ready.map(l => `<button type="button" data-l="${l.id}" aria-pressed="${lesson === l.id}"><i style="background:${l.color}"></i>${l.id} · ${esc(l.titulo)}</button>`).join("")}
+    </div>
+    <div id="game"></div>`;
+  app.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { mode = b.dataset.mode; shell(); });
+  app.querySelectorAll("[data-l]").forEach(b => b.onclick = () => { lesson = b.dataset.l; shell(); });
+  clearInterval(timer);
+  ({ dictation, speak, match })[mode]();
+}
+
+// ── Dictation ──
+function dictation() {
+  const pool = shuffle(sentences(ids())).slice(0, 8), el = document.getElementById("game");
+  let i = 0, right = 0;
+  if (!G.canSpeak) { el.innerHTML = `<div class="panel"><p class="muted">Dictation needs a browser with voices (Chrome or Safari).</p></div>`; return; }
+  function q() {
+    const t = pool[i];
+    el.innerHTML = `<div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow">Sentence ${i + 1} of ${pool.length}</span><span class="steps">${pool.map((_, k) => `<span class="${k === i ? "cur" : k < i ? "ok" : ""}"></span>`).join("")}</span></div>
+      <button class="big-play" id="play" aria-label="Play the sentence"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+      <div class="actions" style="justify-content:center"><button class="btn ghost sm" id="slow">🐢 Slower</button></div>
+      <input class="dict-in" id="in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Write what you hear" aria-label="Write what you hear">
+      <div id="out"></div>
+      <div class="actions" style="justify-content:space-between"><button class="btn ghost" id="skip">Show me</button><button class="btn primary" id="chk">Check</button></div>
+    </div>`;
+    const play = rate => { const r = G.store.get("voiceRate", .92); if (rate) G.store.set("voiceRate", rate); G.say(t); if (rate) setTimeout(() => G.store.set("voiceRate", r), 50); };
+    document.getElementById("play").onclick = () => play();
+    document.getElementById("slow").onclick = () => play(.65);
+    const inp = document.getElementById("in");
+    inp.onkeydown = e => { if (e.key === "Enter") { e.preventDefault(); check(); } };
+    document.getElementById("chk").onclick = check;
+    document.getElementById("skip").onclick = () => check(true);
+    setTimeout(() => { play(); inp.focus(); }, 250);
+    function check(giveUp) {
+      const r = G.compare(t, giveUp ? "" : inp.value), good = !giveUp && r.pct >= 90;
+      if (good) { right++; G.count("dictation"); }
+      G.sfx(good ? "ok" : "bad");
+      document.getElementById("out").innerHTML = `<div class="diff">${r.words.map(w => `<span class="${w.ok ? "ok" : "miss"}">${esc(w.w)}</span>`).join(" ")}</div>
+        <p class="note" style="margin-top:6px">${good ? (r.pct === 100 ? "Perfect!" : "Right! Small details only.") : giveUp ? "Here it is. Listen again and read it out loud." : "Underlined words are missing or different."}</p>`;
+      inp.disabled = true;
+      const c = document.getElementById("chk"); c.textContent = i < pool.length - 1 ? "Next" : "See result"; c.onclick = nxt; c.focus();
+      document.getElementById("skip").style.visibility = "hidden";
+    }
+    function nxt() { if (i < pool.length - 1) { i++; q(); } else end(); }
+  }
+  function end() {
+    if (right) G.game.award(right * 3, { label: "Dictation · " + right + " right" });
+    if (right === pool.length) G.confetti(80);
+    el.innerHTML = `<div class="panel center"><span style="font-size:2.4em">🎧</span><h2 style="font-size:1.5em">${right} of ${pool.length} right</h2>
+      <div class="actions"><button class="btn primary" id="again">Play again</button></div></div>`;
+    document.getElementById("again").onclick = dictation;
+  }
+  pool.length ? q() : el.innerHTML = `<div class="panel"><p class="muted">No sentences yet.</p></div>`;
+}
+
+// ── Speaking ──
+function speak() {
+  const pool = shuffle(sentences(ids())).slice(0, 8), el = document.getElementById("game");
+  el.innerHTML = `<div class="panel">
+    ${G.canListen ? `<p class="muted">Press <span style="color:var(--brand)">🔊</span> to listen, then <b style="color:#c0362c">🎤</b> and say the sentence. We show you which words were clear.</p>`
+      : `<div class="alert info">Speaking practice needs Chrome (computer or Android) or Safari (iPhone). You can still listen and repeat out loud.</div>`}
+    <div class="say-list">${pool.map((t, i) => `<div class="say-row" data-i="${i}"><span class="t">${esc(t)}</span>${G.sayBtn(t)}${G.canListen ? `<button type="button" class="say mic" data-sp="${i}" aria-label="Say it" title="Say it">${G.micIcon}</button>` : ""}</div>`).join("")}</div>
+    <div class="actions" style="justify-content:flex-end"><button class="btn" id="more">New sentences</button></div></div>`;
+  el.querySelectorAll("[data-sp]").forEach(b => b.onclick = () => G.speak(pool[+b.dataset.sp], r => { if (r.pct >= 80) el.querySelector(`.say-row[data-i="${b.dataset.sp}"]`).classList.add("done"); }));
+  document.getElementById("more").onclick = speak;
+}
+
+// ── Speed match ──
+function match() {
+  const el = document.getElementById("game"), key = lesson === "all" ? "all" : lesson;
+  let cards = [];
+  ids().forEach(id => (DATA[id] && DATA[id].flash || []).forEach(f => cards.push({ en: f.en, def: f.def })));
+  cards = shuffle(cards).slice(0, 6);
+  const best = G.store.get("lap." + key, null);
+  el.innerHTML = `<div class="panel center"><span style="font-size:2.4em">⏱️</span><h2 style="font-size:1.4em">Match the 6 words with their meaning</h2>
+    <p class="muted">Tap a word, then its meaning. A wrong match adds 3 seconds.</p>
+    <p><b>Best time:</b> ${best ? best.toFixed(1) + " s" : "—"}</p>
+    <button class="btn primary" id="go">Start</button></div>`;
+  document.getElementById("go").onclick = run;
+  function run() {
+    const left = shuffle(cards.map((c, i) => ({ i, t: c.en }))), right = shuffle(cards.map((c, i) => ({ i, t: c.def })));
+    let sel = null, done = 0, pen = 0; const t0 = performance.now();
+    el.innerHTML = `<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center"><span class="clock" id="clk">0.0</span><span class="muted" id="pen"></span></div>
+      <div class="match"><div class="col">${left.map(x => `<button class="tile" data-side="l" data-i="${x.i}">${esc(x.t)}</button>`).join("")}</div>
+      <div class="col">${right.map(x => `<button class="tile def" data-side="r" data-i="${x.i}">${esc(x.t)}</button>`).join("")}</div></div></div>`;
+    const clk = document.getElementById("clk");
+    timer = setInterval(() => clk.textContent = ((performance.now() - t0) / 1000 + pen).toFixed(1), 100);
+    el.querySelectorAll(".tile").forEach(b => b.onclick = () => {
+      if (!sel || sel.dataset.side === b.dataset.side) { el.querySelectorAll(`.tile[data-side="${b.dataset.side}"]`).forEach(x => x.classList.remove("sel")); b.classList.add("sel"); sel = b; return; }
+      if (sel.dataset.i === b.dataset.i) { sel.classList.replace("sel", "done"); b.classList.add("done"); G.sfx("ok"); done++; sel = null; if (done === cards.length) finish(); }
+      else { pen += 3; document.getElementById("pen").textContent = "+" + pen + " s"; G.sfx("bad"); [sel, b].forEach(x => { x.classList.add("wrong"); setTimeout(() => x.classList.remove("wrong", "sel"), 350); }); sel = null; }
+    });
+    function finish() {
+      clearInterval(timer);
+      const t = +((performance.now() - t0) / 1000 + pen).toFixed(1), prev = G.store.get("lap." + key, null), rec = !prev || t < prev;
+      if (rec) G.store.set("lap." + key, t);
+      G.game.award(10, { once: "match." + key + "." + G.game.today(), label: "Speed match" });
+      G.count("match"); if (rec) { G.confetti(80); G.sfx("win"); }
+      el.innerHTML = `<div class="panel center"><span style="font-size:2.4em">${rec ? "🏆" : "🏁"}</span><h2 style="font-size:1.6em">${t.toFixed(1)} seconds</h2>
+        <p class="muted">${rec ? (prev ? "New record! Before: " + prev.toFixed(1) + " s" : "Your first lap time!") : "Best time: " + prev.toFixed(1) + " s"}</p>
+        <div class="actions"><button class="btn primary" id="again">Race again</button></div></div>`;
+      document.getElementById("again").onclick = match;
+    }
+  }
+}
+
+G.ready.then(async () => {
+  for (const l of ready) DATA[l.id] = await G.lessonData(l.id);
+  shell();
+});
+</script>
+</body>
+</html>

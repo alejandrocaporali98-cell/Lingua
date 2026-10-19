@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Lesson builder</title>
+<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lingua">
+<meta property="og:title" content="Lingua · Lesson builder">
+<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta property="og:image" content="https://lingua-english-class.netlify.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161a22" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<script src="assets/menu.js"></script>
+<style>
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 32px 80px; display: grid; gap: 20px; }
+  .wrap > * { min-width: 0; }
+  .page-head h1 { font-size: 2em; font-weight: 800; }
+  .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 22px; display: grid; gap: 14px; align-content: start; }
+  @media (max-width: 560px) { .panel { padding: 14px; } }
+  .panel h2 { font-size: 1.1em; font-weight: 800; }
+  .lst { display: grid; gap: 6px; }
+  .lst button { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; border: 1px solid transparent; background: none; text-align: left; width: 100%; }
+  .lst button:hover { background: var(--bg); }
+  .lst button[aria-pressed="true"] { background: var(--brand-soft); }
+  .lst i { width: 12px; height: 12px; border-radius: 3px; }
+  .pill { font-size: .72em; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--bg); color: var(--ink-2); }
+  .pill.good { background: var(--ok-soft); color: var(--ok-ink); }
+  .g2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .g3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 700px) { .g2, .g3 { grid-template-columns: 1fr; } }
+  .field textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--r-s); padding: 10px 12px; width: 100%; min-height: 64px; resize: vertical; }
+  .field input, .field select, .field textarea { font-size: .95em; }
+  details.sec { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  details.sec > summary { cursor: pointer; padding: 14px 16px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; gap: 10px; list-style: none; }
+  details.sec > summary::-webkit-details-marker { display: none; }
+  details.sec > summary::after { content: "▾"; color: var(--mute); }
+  details.sec[open] > summary::after { content: "▴"; }
+  details.sec > .in { padding: 0 16px 16px; display: grid; gap: 12px; }
+  .row { display: grid; gap: 8px; padding: 12px; border-radius: 10px; background: var(--bg); position: relative; }
+  .row .n { font-size: .75em; font-weight: 800; color: var(--mute); }
+  .row .x { position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; border-radius: 50%; border: 0; background: transparent; color: var(--mute); }
+  .row .x:hover { background: var(--surface); color: var(--bad); }
+  details.sec .in > input, .row input, .row select, .row textarea { font: inherit; font-size: .92em; color: var(--ink); background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--r-s); padding: 8px 10px; width: 100%; }
+  .row .cols { display: grid; grid-template-columns: 70px minmax(0, 1fr) minmax(0, 1.4fr); gap: 8px; }
+  .row .q4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 700px) { .row .cols, .row .q4 { grid-template-columns: 1fr 1fr; } }
+  .row .ok { border-color: var(--ok) !important; background: var(--ok-soft) !important; }
+  .sw { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sw button { width: 30px; height: 30px; border-radius: 50%; border: 3px solid transparent; box-shadow: 0 0 0 1px var(--line-2); }
+  .sw button[aria-pressed="true"] { border-color: var(--surface); box-shadow: 0 0 0 3px var(--ink); }
+  .bar-act { position: sticky; bottom: 0; z-index: 5; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; padding: 12px; margin: 0 -12px; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(6px); border-top: 1px solid var(--line); }
+  .problems { display: grid; gap: 4px; font-size: .88em; }
+  .help { font-size: .82em; color: var(--mute); }
+  textarea.json { font-family: ui-monospace, Menlo, monospace; font-size: .8em; min-height: 160px; }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="teacher.html">Teacher panel</a><a class="on" href="builder.html">Lesson builder</a></nav>
+    <span class="spacer"></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"></a>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"><p class="muted">Loading…</p></div></main>
+<script>
+const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
+document.getElementById("logo").innerHTML = G.logo;
+const COLORS = ["#2346d0", "#0f766e", "#b45309", "#6d3fd6", "#15803d", "#be123c", "#0369a1", "#a21caf", "#1b1f2a"];
+const ICONS = { helmet: "Helmet", car: "Car", clock: "Clock", chat: "Chat", ball: "Ball", pad: "Game pad" };
+const LEVELS = ["A1", "A1–A2", "A2", "A2–B1", "B1", "B2"];
+let ROWS = [], CUR = null, D = null, dirty = false;
+
+const blank = id => ({
+  titulo: "", tema: "", nivel: "A2", color: COLORS[(+id || 0) % COLORS.length], icono: "chat", modulo: "Module 3 · More lessons",
+  objetivos: ["", "", ""],
+  flash: Array.from({ length: 8 }, () => ({ img: "", en: "", def: "", ex: "", tag: "word" })),
+  frases: Array.from({ length: 4 }, () => ({ p: "", a: "", w: ["", "", ""], why: "" })),
+  gaps: { title: "", text: "Complete the text with a word from the word bank. Press Enter to check each one.", bank: [], items: Array.from({ length: 6 }, () => ({ s: "", a: [""], note: "" })) },
+  roleplay: { title: "", setup: "", lines: [{ who: "Friend", t: "" }, { you: true, cue: "", model: "" }, { who: "Friend", t: "" }, { you: true, cue: "", model: "" }], extra: "" },
+  final: Array.from({ length: 10 }, () => ({ p: "", a: "", w: ["", "", ""], why: "" }))
+});
+const nextId = () => { const used = new Set(G.modulos.flatMap(m => m.lecciones).map(l => l.id).concat(ROWS.map(r => r.id))); for (let n = 7; n < 999; n++) { const id = String(n).padStart(2, "0"); if (!used.has(id)) return id; } };
+
+function list() {
+  return `<div class="panel" style="padding:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 6px 8px"><b>Your lessons</b><button class="btn primary sm" id="new">+ New</button></div>
+    <div class="lst">${ROWS.length ? ROWS.map(r => `<button data-id="${r.id}" aria-pressed="${CUR === r.id}"><i style="background:${r.data.color || "#2346d0"}"></i><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><b>${r.id}</b> · ${esc(r.data.titulo || "Untitled")}</span><span class="pill ${r.published ? "good" : ""}">${r.published ? "Live" : "Draft"}</span></button>`).join("")
+      : `<p class="muted" style="padding:6px;font-size:.9em">No lessons yet. Lessons 01–06 are built in. Make Lesson ${nextId()} with “New”.</p>`}</div></div>`;
+}
+const inp = (path, v, ph, attrs) => `<input data-p="${path}" value="${esc(v || "")}" ${ph ? `placeholder="${esc(ph)}"` : ""} ${attrs || ""}>`;
+function qRows(key, arr, label) {
+  return arr.map((q, i) => `<div class="row"><span class="n">${label} ${i + 1}</span><button type="button" class="x" data-del="${key}.${i}" aria-label="Remove">✕</button>
+    ${inp(`${key}.${i}.p`, q.p, "Question or sentence. Use ___ for the blank")}
+    <div class="q4">${inp(`${key}.${i}.a`, q.a, "Right answer", 'class="ok"')}${q.w.map((w, k) => inp(`${key}.${i}.w.${k}`, w, "Wrong " + (k + 1))).join("")}</div>
+    ${inp(`${key}.${i}.why`, q.why, "Why (short explanation)")}</div>`).join("") + `<button type="button" class="btn sm" data-add="${key}">+ Add question</button>`;
+}
+function editor() {
+  const d = D, r = ROWS.find(x => x.id === CUR);
+  return `<div class="panel" style="gap:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2>Lesson ${CUR}${r ? ` <span class="pill ${r.published ? "good" : ""}">${r.published ? "Live for students" : "Draft"}</span>` : ` <span class="pill">New</span>`}</h2>
+      <span class="help">Everything the student sees is in English.</span></div>
+    <div class="g2">
+      <div class="field"><label>Title</label>${inp("titulo", d.titulo, "", 'maxlength="40"')}</div>
+      <div class="field"><label>Topic (one line on the lesson card)</label>${inp("tema", d.tema, "", 'maxlength="120"')}</div>
+    </div>
+    <div class="g3">
+      <div class="field"><label>Level</label><select data-p="nivel">${LEVELS.map(l => `<option ${d.nivel === l ? "selected" : ""}>${l}</option>`).join("")}</select></div>
+      <div class="field"><label>Icon</label><select data-p="icono">${Object.entries(ICONS).map(([k, v]) => `<option value="${k}" ${d.icono === k ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+      <div class="field"><label>Module</label>${inp("modulo", d.modulo, "", 'maxlength="60"')}</div>
+    </div>
+    <div class="field"><label>Color</label><div class="sw">${COLORS.map(c => `<button type="button" data-color="${c}" aria-label="${c}" aria-pressed="${d.color === c}" style="background:${c}"></button>`).join("")}</div></div>
+    <div style="max-width:420px">${G.thumb({ id: CUR, titulo: d.titulo || "Title", nivel: d.nivel, color: d.color, icono: d.icono }, "LESSON")}</div>
+
+    <details class="sec" open><summary>What you’ll learn <span class="help">3 goals</span></summary><div class="in">${d.objetivos.map((o, i) => inp(`objetivos.${i}`, o, "Goal " + (i + 1))).join("")}</div></details>
+
+    <details class="sec"><summary>1 · Vocabulary <span class="help">${d.flash.length} cards</span></summary><div class="in">
+      ${d.flash.map((f, i) => `<div class="row"><span class="n">Card ${i + 1}</span><button type="button" class="x" data-del="flash.${i}" aria-label="Remove">✕</button>
+        <div class="cols">${inp(`flash.${i}.img`, f.img, "Emoji")}${inp(`flash.${i}.en`, f.en, "Word or phrase")}${inp(`flash.${i}.def`, f.def, "Meaning (simple English)")}</div>
+        <div class="cols" style="grid-template-columns:minmax(0,3fr) minmax(0,1fr)">${inp(`flash.${i}.ex`, f.ex, "Example sentence")}${inp(`flash.${i}.tag`, f.tag, "Tag (cars, F1…)")}</div></div>`).join("")}
+      <button type="button" class="btn sm" data-add="flash">+ Add card</button></div></details>
+
+    <details class="sec"><summary>2 · Sound natural <span class="help">${d.frases.length} questions</span></summary><div class="in">
+      <p class="help">A question and four answers: the natural one and three common mistakes.</p>${qRows("frases", d.frases, "Question")}</div></details>
+
+    <details class="sec"><summary>3 · Fill in the gaps <span class="help">${d.gaps.items.length} sentences</span></summary><div class="in">
+      <div class="g2"><div class="field"><label>Title</label>${inp("gaps.title", d.gaps.title, "", 'maxlength="60"')}</div><div class="field"><label>Instructions</label>${inp("gaps.text", d.gaps.text)}</div></div>
+      <p class="help">Write ___ where the missing word goes. Accepted answers: separate with “/” (for example: don't / do not). The word bank is made for you.</p>
+      ${d.gaps.items.map((g, i) => `<div class="row"><span class="n">Sentence ${i + 1}</span><button type="button" class="x" data-del="gaps.items.${i}" aria-label="Remove">✕</button>
+        ${inp(`gaps.items.${i}.s`, g.s, "My name ___ Diego.")}
+        <div class="g2">${inp(`gaps.items.${i}.a`, g.a.join(" / "), "Answer", 'class="ok"')}${inp(`gaps.items.${i}.note`, g.note, "Tip if wrong")}</div></div>`).join("")}
+      <button type="button" class="btn sm" data-add="gaps.items">+ Add sentence</button></div></details>
+
+    <details class="sec"><summary>4 · Role-play <span class="help">${d.roleplay.lines.length} lines</span></summary><div class="in">
+      <div class="g2"><div class="field"><label>Title</label>${inp("roleplay.title", d.roleplay.title, "", 'maxlength="60"')}</div><div class="field"><label>Situation</label>${inp("roleplay.setup", d.roleplay.setup)}</div></div>
+      ${d.roleplay.lines.map((l, i) => `<div class="row"><span class="n">${l.you ? "Student" : "Other person"} · line ${i + 1}</span><button type="button" class="x" data-del="roleplay.lines.${i}" aria-label="Remove">✕</button>
+        ${l.you ? `<div class="g2">${inp(`roleplay.lines.${i}.cue`, l.cue, "What to say (instruction)")}${inp(`roleplay.lines.${i}.model`, l.model, "Example answer")}</div>`
+          : `<div class="cols" style="grid-template-columns:150px minmax(0,1fr)">${inp(`roleplay.lines.${i}.who`, l.who, "Name (Reporter…)")}${inp(`roleplay.lines.${i}.t`, l.t, "What they say")}</div>`}</div>`).join("")}
+      <div class="actions"><button type="button" class="btn sm" data-add="rp-other">+ Other person</button><button type="button" class="btn sm" data-add="rp-you">+ Student</button></div>
+      <div class="field"><label>Switch roles (optional)</label>${inp("roleplay.extra", d.roleplay.extra, "Now you are the reporter. Ask your teacher three questions…")}</div></div></details>
+
+    <details class="sec"><summary>5 · Final quiz <span class="help">${d.final.length} questions · 80% unlocks the diploma</span></summary><div class="in">${qRows("final", d.final, "Question")}</div></details>
+
+    <details class="sec"><summary>Copy or paste the whole lesson (JSON) <span class="help">advanced</span></summary><div class="in">
+      <p class="help">Copy a lesson to keep a backup, or paste a lesson someone prepared for you (for example, Claude) and press Load.</p>
+      <textarea class="json" id="json">${esc(JSON.stringify(D, null, 1))}</textarea>
+      <div class="actions"><button type="button" class="btn sm" id="jCopy">Copy</button><button type="button" class="btn sm" id="jLoad">Load pasted lesson</button></div></div></details>
+
+    <div id="problems"></div>
+    <div class="bar-act">
+      ${r ? `<button class="btn ghost" id="del">Delete</button>` : ""}
+      <button class="btn" id="save">Save draft</button>
+      ${r ? `<a class="btn" href="clases/custom.html?id=${CUR}" target="_blank" rel="noopener">Preview</a>` : ""}
+      <button class="btn primary" id="pub">${r && r.published ? "Save and keep live" : "Publish for students"}</button>
+      ${r && r.published ? `<button class="btn ghost" id="unpub">Unpublish</button>` : ""}
+    </div>
+  </div>`;
+}
+function setPath(obj, path, val) { const k = path.split("."); let o = obj; for (let i = 0; i < k.length - 1; i++) { if (o[k[i]] == null) return; o = o[k[i]]; } o[k[k.length - 1]] = val; }
+function collect() {
+  const d = JSON.parse(JSON.stringify(D));
+  app.querySelectorAll("[data-p]").forEach(el => {
+    const p = el.dataset.p; let v = el.value;
+    if (/^gaps\.items\.\d+\.a$/.test(p)) v = v.split("/").map(x => x.trim()).filter(Boolean);
+    setPath(d, p, v);
+  });
+  return d;
+}
+function clean(d) {
+  const t = s => String(s || "").trim(), qOk = q => t(q.p) && t(q.a) && q.w.filter(w => t(w)).length === 3;
+  const out = { ...d, titulo: t(d.titulo), tema: t(d.tema), objetivos: d.objetivos.map(t).filter(Boolean),
+    flash: d.flash.filter(f => t(f.en) && t(f.def)).map(f => ({ img: t(f.img), en: t(f.en), def: t(f.def), ex: t(f.ex), tag: t(f.tag) || "word" })),
+    frases: d.frases.filter(qOk).map(q => ({ p: t(q.p), a: t(q.a), w: q.w.map(t), why: t(q.why) })),
+    final: d.final.filter(qOk).map(q => ({ p: t(q.p), a: t(q.a), w: q.w.map(t), why: t(q.why) })),
+    gaps: { title: t(d.gaps.title) || "Fill in the gaps", text: t(d.gaps.text), items: d.gaps.items.filter(g => /___/.test(g.s) && g.a.length).map(g => ({ s: t(g.s), a: g.a.map(t).filter(Boolean), note: t(g.note) })) },
+    roleplay: { title: t(d.roleplay.title) || "Role-play", setup: t(d.roleplay.setup), extra: t(d.roleplay.extra),
+      lines: d.roleplay.lines.filter(l => l.you ? t(l.cue) || t(l.model) : t(l.t)).map(l => l.you ? { you: true, cue: t(l.cue), model: t(l.model) } : { who: t(l.who) || "Friend", t: t(l.t) }) } };
+  out.gaps.bank = [...new Set(out.gaps.items.map(g => g.a[0]))].sort(() => Math.random() - .5);
+  return out;
+}
+function problems(d, c) {
+  const p = [];
+  if (!c.titulo) p.push("Write a title.");
+  if (c.flash.length < 4) p.push("Add at least 4 vocabulary cards (word + meaning).");
+  if (c.final.length < 5) p.push("The final quiz needs at least 5 complete questions (question, right answer and 3 wrong ones).");
+  [["frases", "Sound natural"], ["final", "Final quiz"]].forEach(([k, n]) => d[k].forEach((q, i) => {
+    const filled = [q.p, q.a, ...q.w].filter(x => String(x).trim()).length;
+    if (filled && filled < 5) p.push(`${n} · question ${i + 1} is incomplete (it will be skipped).`);
+    const all = [q.a, ...q.w].map(x => String(x).trim().toLowerCase()).filter(Boolean);
+    if (new Set(all).size !== all.length) p.push(`${n} · question ${i + 1} repeats an answer.`);
+  }));
+  d.gaps.items.forEach((g, i) => { if (String(g.s).trim() && !/___/.test(g.s)) p.push(`Fill in the gaps · sentence ${i + 1} needs ___ for the blank.`); });
+  return p;
+}
+function render() {
+  app.innerHTML = `<div class="page-head" style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
+      <div style="display:grid;gap:4px"><span class="eyebrow">Teacher</span><h1>Lesson builder</h1><p class="muted">Make new lessons without code. They use the same player, quizzes, XP and diplomas as Lessons 01–06.</p></div>
+      <a class="btn ghost" href="teacher.html">← Teacher panel</a></div>
+    <div class="layout">${list()}<div style="min-width:0">${CUR ? editor() : `<div class="panel"><p class="muted">Choose a lesson or press “New”.</p></div>`}</div></div>`;
+  wire();
+}
+function wire() {
+  document.getElementById("new").onclick = () => { if (dirty && !confirmLeave()) return; CUR = nextId(); D = blank(CUR); dirty = false; render(); };
+  app.querySelectorAll(".lst [data-id]").forEach(b => b.onclick = () => { if (dirty && !confirmLeave()) return; CUR = b.dataset.id; const rd = ROWS.find(r => r.id === CUR).data; D = norm(rd.__draft || rd); dirty = false; render(); });
+  if (!CUR) return;
+  app.querySelectorAll("[data-p]").forEach(el => el.addEventListener("input", () => { dirty = true; if (/^(titulo|nivel|icono)$/.test(el.dataset.p)) { D = collect(); const th = app.querySelector(".thumb"); if (th) th.outerHTML = G.thumb({ id: CUR, titulo: D.titulo || "Title", nivel: D.nivel, color: D.color, icono: D.icono }, "LESSON"); } }));
+  app.querySelectorAll("select[data-p]").forEach(el => el.addEventListener("change", () => { D = collect(); dirty = true; render(); }));
+  app.querySelectorAll("[data-color]").forEach(b => b.onclick = () => { D = collect(); D.color = b.dataset.color; dirty = true; render(); });
+  app.querySelectorAll("[data-add]").forEach(b => b.onclick = () => {
+    D = collect(); const k = b.dataset.add; dirty = true;
+    if (k === "flash") D.flash.push({ img: "", en: "", def: "", ex: "", tag: "word" });
+    else if (k === "frases" || k === "final") D[k].push({ p: "", a: "", w: ["", "", ""], why: "" });
+    else if (k === "gaps.items") D.gaps.items.push({ s: "", a: [""], note: "" });
+    else if (k === "rp-other") D.roleplay.lines.push({ who: "Friend", t: "" });
+    else if (k === "rp-you") D.roleplay.lines.push({ you: true, cue: "", model: "" });
+    const open = [...app.querySelectorAll("details.sec")].map(x => x.open); render(); app.querySelectorAll("details.sec").forEach((x, i) => x.open = open[i]);
+  });
+  app.querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
+    D = collect(); const parts = b.dataset.del.split("."), i = +parts.pop(); let o = D; parts.forEach(p => o = o[p]); o.splice(i, 1); dirty = true;
+    const open = [...app.querySelectorAll("details.sec")].map(x => x.open); render(); app.querySelectorAll("details.sec").forEach((x, k) => x.open = open[k]);
+  });
+  document.getElementById("save").onclick = () => save(null);
+  document.getElementById("pub").onclick = () => save(true);
+  const un = document.getElementById("unpub"); if (un) un.onclick = () => save(false);
+  const del = document.getElementById("del"); if (del) del.onclick = async () => {
+    if (del.dataset.armed !== "1") { del.dataset.armed = "1"; del.textContent = "Tap again to delete"; return; }
+    try { await G.lessons.remove(CUR); ROWS = ROWS.filter(r => r.id !== CUR); CUR = null; dirty = false; G.toast("Lesson deleted"); render(); } catch (e) { G.toast("Couldn’t delete: " + esc(e.message)); }
+  };
+  document.getElementById("jCopy").onclick = () => navigator.clipboard.writeText(JSON.stringify(clean(collect()), null, 2)).then(() => G.toast("Lesson copied"));
+  document.getElementById("jLoad").onclick = () => {
+    try { const j = JSON.parse(document.getElementById("json").value); D = norm(j); dirty = true; render(); G.toast("<b>Lesson loaded</b><span>Check it and press Save.</span>"); }
+    catch (e) { G.toast("That text isn’t a valid lesson."); }
+  };
+}
+function confirmLeave() { return window.confirm("You have unsaved changes. Leave this lesson without saving?"); }
+// Fill gaps in older or pasted data so the editor always has every part
+function norm(d) {
+  const b = blank(CUR); d = d || {};
+  const q = x => ({ p: x.p || "", a: x.a || "", w: [0, 1, 2].map(k => (x.w || [])[k] || ""), why: x.why || "" });
+  return { ...b, ...d, objetivos: [0, 1, 2].map(k => (d.objetivos || [])[k] || ""),
+    flash: (d.flash && d.flash.length ? d.flash : b.flash).map(f => ({ img: f.img || "", en: f.en || "", def: f.def || "", ex: f.ex || "", tag: f.tag || "word" })),
+    frases: (d.frases && d.frases.length ? d.frases : b.frases).map(q), final: (d.final && d.final.length ? d.final : b.final).map(q),
+    gaps: { ...b.gaps, ...(d.gaps || {}), items: ((d.gaps && d.gaps.items && d.gaps.items.length) ? d.gaps.items : b.gaps.items).map(g => ({ s: g.s || "", a: Array.isArray(g.a) ? g.a : [g.a || ""], note: g.note || "" })) },
+    roleplay: { ...b.roleplay, ...(d.roleplay || {}), lines: (d.roleplay && d.roleplay.lines && d.roleplay.lines.length ? d.roleplay.lines : b.roleplay.lines) } };
+}
+async function save(publish) {
+  D = collect(); const c = clean(D), probs = problems(D, c), r = ROWS.find(x => x.id === CUR);
+  const pub = publish === null ? !!(r && r.published) : publish;
+  const box = document.getElementById("problems");
+  const blocking = probs.filter(p => !/skipped|repeats/.test(p));
+  if (pub && blocking.length) { box.innerHTML = `<div class="alert bad problems"><b>Fix these before publishing:</b>${probs.map(p => `<span>• ${esc(p)}</span>`).join("")}</div>`; box.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+  box.innerHTML = probs.length ? `<div class="alert info problems">${probs.map(p => `<span>• ${esc(p)}</span>`).join("")}</div>` : "";
+  try {
+    const data = pub ? c : { ...c, __draft: D }; // drafts keep every unfinished row for editing
+    await G.lessons.save({ id: CUR, data, published: pub });
+    ROWS = await G.lessons.all(); dirty = false;
+    G.toast(pub ? `<b>Lesson ${CUR} is live</b><span>Students see it after they reload.</span>` : "<b>Draft saved</b>");
+    if (pub) G.confetti(60);
+    render();
+  } catch (e) { G.toast("Couldn’t save: " + esc(e.message)); }
+}
+window.addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+G.ready.then(async () => {
+  if (!G.cloudEnabled) { app.innerHTML = `<div class="panel"><h2>Lesson builder</h2><p class="muted">The lesson builder needs accounts (Supabase) to be turned on.</p></div>`; return; }
+  if (!G.isTeacher) { app.innerHTML = `<div class="panel"><h2>Lesson builder</h2><p class="muted">Only teachers can make lessons.</p></div>`; return; }
+  try { ROWS = await G.lessons.all(); render(); }
+  catch (e) { app.innerHTML = `<div class="panel"><h2>Lesson builder</h2><p class="muted">To use the lesson builder, run the latest <b>supabase/setup.sql</b> (the “lessons” part) in Supabase.</p><p class="muted" style="font-size:.85em">${esc(e.message || e)}</p></div>`; }
+});
+</script>
+</body>
+</html>
