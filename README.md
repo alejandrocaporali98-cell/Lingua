@@ -9,7 +9,7 @@ English learning platform for one-to-one online classes. Static site (HTML, CSS 
 | `index.html` | **My learning**: continue card, current level, course modules and lessons |
 | `examen.html` | **Placement test**: 4 written sections (A1 → B2, 8 questions each, pass = 5/8) + speaking scored by the teacher |
 | `reporte.html` | **Placement report**: section and skill-area charts, speaking, strengths, focus areas, plan and question review. EN / ES toggle for parents |
-| `clases/leccion-01.html` | **Lesson 01 · Driver Profile** (A1–A2) |
+| `clases/leccion-01.html` … `leccion-06.html` | **Lessons**: 01 Driver Profile · 02 My Garage · 03 Race Day · 04 Anime Night · 05 Matchday · 06 Level Up |
 | `login.html` | **Sign in** with username and password |
 | `perfil.html` | **Profile**: helmet avatar builder, name, age, interests, settings (`#settings`: text size, dark mode), change password, sign out |
 | `grades.html` | **Grades**: final quiz results per lesson (best, last, attempts, history) and the placement level |

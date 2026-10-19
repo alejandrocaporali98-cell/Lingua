@@ -10,13 +10,13 @@ window.LINGUA = {
   modulos: [
     { titulo: "Module 1 · The basics", lecciones: [
       { id: "01", archivo: "clases/leccion-01.html", titulo: "Driver Profile", tema: "Introduce yourself: your name, age, where you’re from and what you like.", nivel: "A1–A2", min: 60, icono: "helmet", color: "#2346d0", estado: "lista" },
-      { id: "02", titulo: "My Garage", tema: "Describe things with have / has, colors and big numbers.", nivel: "A1–A2", min: 60, icono: "car", color: "#0f766e", estado: "pronto" },
-      { id: "03", titulo: "Race Day", tema: "Your daily routine and telling the time with the present simple.", nivel: "A2", min: 60, icono: "clock", color: "#b45309", estado: "pronto" }
+      { id: "02", archivo: "clases/leccion-02.html", titulo: "My Garage", tema: "Describe things with have / has, colors and big numbers.", nivel: "A1–A2", min: 60, icono: "car", color: "#0f766e", estado: "lista" },
+      { id: "03", archivo: "clases/leccion-03.html", titulo: "Race Day", tema: "Your daily routine and telling the time with the present simple.", nivel: "A2", min: 60, icono: "clock", color: "#b45309", estado: "lista" }
     ]},
     { titulo: "Module 2 · Tell and compare", lecciones: [
-      { id: "04", titulo: "Anime Night", tema: "Give your opinion: I love, I can't stand, because…", nivel: "A2", min: 60, icono: "chat", color: "#6d3fd6", estado: "pronto" },
-      { id: "05", titulo: "Matchday", tema: "Tell the story of a match with the past simple.", nivel: "A2", min: 60, icono: "ball", color: "#15803d", estado: "pronto" },
-      { id: "06", titulo: "Level Up", tema: "Compare games and cars: faster, better, the best.", nivel: "A2–B1", min: 60, icono: "pad", color: "#be123c", estado: "pronto" }
+      { id: "04", archivo: "clases/leccion-04.html", titulo: "Anime Night", tema: "Give your opinion: I love, I can't stand, because…", nivel: "A2", min: 60, icono: "chat", color: "#6d3fd6", estado: "lista" },
+      { id: "05", archivo: "clases/leccion-05.html", titulo: "Matchday", tema: "Tell the story of a match with the past simple.", nivel: "A2", min: 60, icono: "ball", color: "#15803d", estado: "lista" },
+      { id: "06", archivo: "clases/leccion-06.html", titulo: "Level Up", tema: "Compare games and cars: faster, better, the best.", nivel: "A2–B1", min: 60, icono: "pad", color: "#be123c", estado: "lista" }
     ]}
   ],
 

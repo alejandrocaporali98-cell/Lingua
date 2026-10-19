@@ -5,6 +5,7 @@
 .pbar .tools { display: flex; align-items: center; gap: 6px; }
 .ring { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: .88em; color: var(--ink-2); }
 @media (max-width: 760px) { .pbar .hide-sm { display: none; } }
+@media (max-width: 560px) { .pbar { gap: 10px; } .pbar #szDown, .pbar #szUp, .pbar .toggle .kbd { display: none; } }
 
 .player { display: grid; grid-template-columns: minmax(0, 1fr) 340px; min-height: calc(100vh - 61px); }
 @media (max-width: 980px) { .player { grid-template-columns: 1fr; } }
