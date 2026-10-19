@@ -11,6 +11,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
 <script src="assets/config.js"></script>
+<script src="assets/avatar.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
 <style>
@@ -39,6 +40,25 @@
   .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
   .swatches button { width: 36px; height: 36px; border-radius: 50%; border: 3px solid transparent; box-shadow: 0 0 0 1px var(--line-2); }
   .swatches button[aria-pressed="true"] { border-color: var(--surface); box-shadow: 0 0 0 3px var(--ink); }
+  .builder { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 28px; align-items: start; }
+  @media (max-width: 700px) { .builder { grid-template-columns: 1fr; } }
+  .preview { display: grid; gap: 12px; justify-items: center; position: sticky; top: calc(80px + env(safe-area-inset-top, 0px)); }
+  @media (max-width: 700px) { .preview { position: static; } }
+  .preview .stage { width: 200px; height: 200px; border-radius: 50%; box-shadow: 0 10px 30px rgba(27,31,42,.14); }
+  .seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: var(--r-s); overflow: hidden; }
+  .seg button { border: 0; background: var(--surface); padding: 8px 14px; font-weight: 700; font-size: .85em; }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .opts-row { display: grid; gap: 14px; }
+  .opt-group { display: grid; gap: 8px; }
+  .opt-group > b { font-size: .88em; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
+  .tiles button { border: 2px solid transparent; background: var(--bg); border-radius: 12px; padding: 6px 4px 4px; display: grid; justify-items: center; gap: 2px; font-size: .72em; font-weight: 700; color: var(--ink-2); }
+  .tiles button[aria-pressed="true"] { border-color: var(--ink); background: var(--surface); }
+  .swatches.sm button { width: 30px; height: 30px; }
+  .num { justify-self: start; display: inline-flex; align-items: center; border: 1px solid var(--line-2); border-radius: var(--r-s); overflow: hidden; }
+  .num button { border: 0; background: var(--bg); width: 40px; height: 40px; font-weight: 800; font-size: 1.1em; }
+  .num input { width: 64px; height: 40px; border: 0; text-align: center; font: inherit; font-weight: 800; color: var(--ink); background: var(--surface); }
+  .big-av svg { width: 84px; height: 84px; }
   .sync { display: flex; align-items: center; gap: 8px; font-size: .85em; color: var(--mute); }
   .sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; }
   .sync.off i { background: var(--line-2); }
@@ -77,6 +97,7 @@ function render() {
   const p = (G.cloudEnabled ? G.profile : localProfile()) || {};
   const name = p.display_name || "", color = p.avatar_color || COLORS[0], st = stats();
   const picked = new Set(p.interests || []);
+  let av = G.avatar.has() ? G.avatar.get() : { ...G.avatar.DEFAULT, number: p.age && p.age < 100 ? p.age : 7 };
   const since = G.user && G.user.created_at ? new Date(G.user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : null;
   const sync = !G.cloudEnabled ? `<span class="sync off"><i></i>Saved on this device only</span>`
     : G.lastSync && !G.lastSync.ok ? `<span class="sync err"><i></i>Not synced yet. We’ll keep trying.</span>`
@@ -85,7 +106,7 @@ function render() {
   document.getElementById("app").innerHTML = `
   ${setup ? `<div class="alert info"><b>Welcome to Lingua!</b> Set up your profile to start. It takes one minute.</div>` : ""}
   <div class="panel head">
-    <div class="big-av" id="bigAv" style="background:${color}">${name ? esc(name[0].toUpperCase()) : "?"}</div>
+    <div class="big-av" id="bigAv">${G.avatar.svg(av, 84, { initial: name[0] || "?", initialBg: color })}</div>
     <div style="display:grid;gap:4px;min-width:0">
       <span class="eyebrow">${setup ? "New student" : "Student"}</span>
       <h1 id="nameOut">${esc(name) || "Your profile"}</h1>
@@ -102,6 +123,14 @@ function render() {
     <div class="card stat"><span class="v">${st.review}</span><span class="l">Saved for review</span></div>
   </div>`}
 
+  <section class="panel" aria-labelledby="avT">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
+      <div><h2 id="avT">Your avatar</h2><p class="muted" style="font-size:.9em">Design your own racing helmet, or use your initial.</p></div>
+      <div class="seg" role="group" aria-label="Avatar style"><button type="button" data-style="helmet">Helmet</button><button type="button" data-style="initial">Initial</button></div>
+    </div>
+    <div class="builder" id="builder"></div>
+  </section>
+
   <form class="panel" id="pform" novalidate>
     <div><h2>${setup ? "Tell us about you" : "Profile"}</h2><p class="muted" style="font-size:.9em">Your teacher uses this to make lessons about the things you like.</p></div>
     <div class="grid2">
@@ -110,10 +139,8 @@ function render() {
     </div>
     <div class="field"><label>Things you love</label><span class="help">Choose as many as you want.</span>
       <div class="chips" id="chips">${INTERESTS.map(i => `<button type="button" aria-pressed="${picked.has(i)}">${i}</button>`).join("")}</div></div>
-    <div class="field"><label>Profile color</label>
-      <div class="swatches" id="sw">${COLORS.map(c => `<button type="button" aria-label="Color ${c}" aria-pressed="${c === color}" data-c="${c}" style="background:${c}"></button>`).join("")}</div></div>
     <div id="pmsg" hidden></div>
-    <div class="actions"><button class="btn primary" type="submit" id="psave">${setup ? "Save and start" : "Save profile"}</button></div>
+    <div class="actions"><button class="btn primary" type="submit" id="psave">${setup ? "Save and start" : "Save profile and avatar"}</button></div>
   </form>
 
   ${G.cloudEnabled && !setup ? `
@@ -132,15 +159,43 @@ function render() {
   </div>` : ""}`;
 
   let chosenColor = color;
+  drawBuilder();
   document.querySelectorAll("#chips button").forEach(b => b.onclick = () => b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true"));
-  document.querySelectorAll("#sw button").forEach(b => b.onclick = () => {
-    chosenColor = b.dataset.c;
-    document.querySelectorAll("#sw button").forEach(x => x.setAttribute("aria-pressed", x === b));
-    document.getElementById("bigAv").style.background = chosenColor;
-  });
-  document.getElementById("dn").addEventListener("input", e => {
-    const v = e.target.value.trim(); document.getElementById("bigAv").textContent = v ? v[0].toUpperCase() : "?";
-  });
+  document.getElementById("dn").addEventListener("input", () => paintPreview());
+
+  function paintPreview() {
+    const n = document.getElementById("dn").value.trim() || name, o = { initial: n[0] || "?", initialBg: chosenColor };
+    document.getElementById("bigAv").innerHTML = G.avatar.svg(av, 84, o);
+    const st = document.getElementById("stage"); if (st) st.innerHTML = G.avatar.svg(av, 200, o);
+  }
+  function drawBuilder() {
+    const A = G.avatar, b = document.getElementById("builder");
+    document.querySelectorAll("[data-style]").forEach(x => x.setAttribute("aria-pressed", x.dataset.style === av.style));
+    const sw = (obj, key) => `<div class="swatches sm">${Object.entries(obj).map(([k, c]) => `<button type="button" aria-label="${k}" aria-pressed="${av[key] === k}" data-k="${key}" data-v="${k}" style="background:${c}"></button>`).join("")}</div>`;
+    const tiles = (obj, key, labelOf) => `<div class="tiles">${Object.keys(obj).map(k => `<button type="button" aria-pressed="${av[key] === k}" data-k="${key}" data-v="${k}">${A.svg({ ...av, style: "helmet", [key]: k }, 48)}${labelOf(k)}</button>`).join("")}</div>`;
+    const helmet = `
+      <div class="opt-group"><b>Design</b>${tiles(A.DESIGNS, "design", k => A.DESIGNS[k])}</div>
+      <div class="opt-group"><b>Helmet color</b>${sw(A.SHELLS, "shell")}</div>
+      <div class="opt-group"><b>Accent color</b>${sw(A.SHELLS, "accent")}</div>
+      <div class="opt-group"><b>Visor</b>${tiles(A.VISORS, "visor", k => A.VISORS[k].label)}</div>
+      <div class="opt-group"><b>Racing number</b><div class="num"><button type="button" id="nDn" aria-label="Lower number">−</button><input id="nIn" type="number" min="0" max="99" inputmode="numeric" value="${av.number}" aria-label="Racing number"><button type="button" id="nUp" aria-label="Higher number">+</button></div></div>
+      <div class="opt-group"><b>Background</b>${sw(A.BGS, "bg")}</div>`;
+    const initial = `<div class="opt-group"><b>Color</b><div class="swatches" id="sw">${COLORS.map(c => `<button type="button" aria-label="Color ${c}" aria-pressed="${c === chosenColor}" data-c="${c}" style="background:${c}"></button>`).join("")}</div></div>`;
+    b.innerHTML = `<div class="preview"><div class="stage" id="stage"></div>${av.style === "helmet" ? `<button type="button" class="btn sm" id="rand">Surprise me</button>` : ""}</div>
+      <div class="opts-row">${av.style === "helmet" ? helmet : initial}</div>`;
+    paintPreview();
+    b.querySelectorAll("[data-k]").forEach(x => x.onclick = () => { av[x.dataset.k] = x.dataset.v; drawBuilder(); });
+    b.querySelectorAll("[data-c]").forEach(x => x.onclick = () => { chosenColor = x.dataset.c; drawBuilder(); });
+    const r = document.getElementById("rand"); if (r) r.onclick = () => { av = { ...A.random(), number: av.number }; drawBuilder(); };
+    const ni = document.getElementById("nIn");
+    if (ni) {
+      const setN = v => { av.number = Math.max(0, Math.min(99, isNaN(v) ? 0 : v)); ni.value = av.number; paintPreview(); };
+      ni.oninput = () => setN(parseInt(ni.value, 10));
+      document.getElementById("nUp").onclick = () => setN(av.number + 1);
+      document.getElementById("nDn").onclick = () => setN(av.number - 1);
+    }
+  }
+  document.querySelectorAll("[data-style]").forEach(x => x.onclick = () => { av.style = x.dataset.style; drawBuilder(); });
 
   const say = (id, cls, t) => { const m = document.getElementById(id); m.className = "alert " + cls; m.textContent = t; m.hidden = false; };
   document.getElementById("pform").addEventListener("submit", async e => {
@@ -150,11 +205,12 @@ function render() {
     if (age != null && (age < 5 || age > 99)) { say("pmsg", "bad", "Age must be between 5 and 99."); return; }
     const interests = [...document.querySelectorAll('#chips button[aria-pressed="true"]')].map(b => b.textContent);
     const fields = { display_name: dn, age, interests, avatar_color: chosenColor };
+    G.store.set("avatar", av);
     const btn = document.getElementById("psave"); btn.disabled = true;
     try {
       if (G.cloudEnabled) await G.saveProfile(fields); else { G.store.set("profileLocal", fields); G.profile = fields; G.decorate && G.decorate(); }
       if (setup) { location.replace("index.html"); return; }
-      say("pmsg", "ok", "Profile saved."); document.getElementById("nameOut").textContent = dn;
+      say("pmsg", "ok", "Profile saved."); document.getElementById("nameOut").textContent = dn; G.decorate && G.decorate();
     } catch (err) { say("pmsg", "bad", "We couldn’t save your profile: " + (err.message || err)); }
     btn.disabled = false;
   });

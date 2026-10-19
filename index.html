@@ -11,6 +11,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
 <script src="assets/config.js"></script>
+<script src="assets/avatar.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
 <style>
@@ -20,6 +21,7 @@
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: stretch; }
   @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
   .hero h1 { font-size: 2.1em; font-weight: 800; }
+  .hero-av { width: 56px; height: 56px; flex: 0 0 auto; font-size: 1.4em; }
   .hero .lead { color: var(--ink-2); margin-top: 6px; font-size: 1.05em; }
   .resume { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 20px; padding: 16px; margin-top: 22px; align-items: center; }
   @media (max-width: 600px) { .resume { grid-template-columns: 1fr; } }
@@ -72,7 +74,7 @@
   <div class="container hero-grid">
     <div>
       <span class="eyebrow" id="today"></span>
-      <h1 style="margin-top:6px" data-greet>Welcome back</h1>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:8px"><a class="avatar hero-av" data-avatar="56" href="perfil.html" aria-label="Your profile" hidden></a><h1 data-greet>Welcome back</h1></div>
       <p class="lead">Pick up where you left off. Every lesson we do in class stays here so you can review it.</p>
       <div class="instructor" style="margin-top:14px"><span class="in" id="inIni"></span><span style="font-size:.9em"><span class="muted">Instructor</span><br><b id="inName"></b></span></div>
       <div class="card resume" id="resume"></div>

@@ -49,7 +49,9 @@
     document.querySelectorAll("[data-avatar]").forEach(el => {
       el.setAttribute("href", root + "perfil.html");
       el.setAttribute("aria-label", "Your profile");
-      if (name) { el.textContent = name[0].toUpperCase(); el.style.background = p.avatar_color || "var(--ink)"; el.classList.add("has-name"); }
+      const svg = L.avatar && L.avatar.mine(el.getAttribute("data-avatar") ? +el.getAttribute("data-avatar") : 36);
+      if (svg) { el.innerHTML = svg; el.style.background = "transparent"; el.classList.add("has-avatar"); el.hidden = false; }
+      else if (name) { el.textContent = name[0].toUpperCase(); el.style.background = p.avatar_color || "var(--ink)"; el.classList.add("has-name"); el.hidden = false; }
     });
     if (first) document.querySelectorAll("[data-greet]").forEach(el => el.textContent = "Welcome back, " + first);
   }
