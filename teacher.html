@@ -301,7 +301,7 @@ function planLink(s) {
   const data = {
     v: 1, n: s.p.display_name || "Student", g: new Date().toISOString(),
     lv: pl ? pl.nivel : null, pd: pl ? pl.fecha : null, pp: pl && pl.partial ? 1 : 0, sc: pl ? (pl.secciones || []).map(x => [x.lvl, x.score]) : [],
-    it: (s.p.interests || []).slice(0, 5), st: v("pS") || day(new Date()), f: +v("pF"), mn: +v("pM"), tp: [...document.querySelectorAll("#pTp [data-tp]")].filter(b => b.getAttribute("aria-pressed") === "true").map(b => b.dataset.tp),
+    av: s.avatar && s.avatar.style !== "initial" ? s.avatar : undefined, it: (s.p.interests || []).slice(0, 5), st: v("pS") || day(new Date()), f: +v("pF"), mn: +v("pM"), tp: [...document.querySelectorAll("#pTp [data-tp]")].filter(b => b.getAttribute("aria-pressed") === "true").map(b => b.dataset.tp),
     dy, tm: dy.length ? v("pT") : "", ls: s.rows.map(r => [r.l.id, r.l.titulo, r.best && r.best.ok / r.best.n >= .8 ? 1 : 0]),
     c: v("pC").trim() || undefined
   };
