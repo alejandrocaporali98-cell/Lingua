@@ -33,124 +33,87 @@
 <script src="assets/cloud.js"></script>
 <style>
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .wrap { max-width: 960px; margin: 0 auto; padding-block: 24px 64px; display: grid; gap: 22px; }
-  .wrap > * { min-width: 0; }
-  /* Cover */
-  .cover { position: relative; overflow: hidden; border-radius: 22px; color: #fff; padding: 30px 34px 26px; display: grid; gap: 26px;
-    background: radial-gradient(120% 140% at 100% 0%, #3d5df0 0%, rgba(61,93,240,0) 55%), linear-gradient(135deg, #0f1f66 0%, #1a36a6 45%, #2346d0 100%); }
-  .cover::before { content: ""; position: absolute; right: -40px; top: -40px; width: 260px; height: 260px; opacity: .09; transform: rotate(18deg);
-    background: repeating-conic-gradient(#fff 0 25%, transparent 0 50%) 0 0 / 26px 26px; }
-  .cover > * { position: relative; z-index: 1; }
-  .ctop { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .brand { display: inline-flex; align-items: center; gap: 9px; font-weight: 800; font-size: 1.15em; letter-spacing: -.02em; }
-  .brand .mark { box-shadow: 0 0 0 2px rgba(255,255,255,.55); border-radius: 8px; }
+  .wrap { max-width: 880px; margin: 0 auto; padding-block: 28px 64px; }
+  .doc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; }
+  .head { background: var(--fill-brand); color: #fff; padding: 14px 44px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.05em; letter-spacing: -.02em; }
+  .brand .mark rect { fill: #fff; } .brand .mark path { fill: #2346d0; }
   .tools { display: flex; gap: 8px; align-items: center; }
-  .lang { display: inline-flex; border: 1px solid rgba(255,255,255,.35); border-radius: 8px; overflow: hidden; }
-  .lang button { border: 0; background: transparent; color: #fff; padding: 6px 11px; font-weight: 700; font-size: .8em; }
+  .lang { display: inline-flex; border: 1px solid rgba(255,255,255,.4); border-radius: 6px; overflow: hidden; }
+  .lang button { border: 0; background: transparent; color: #fff; padding: 5px 10px; font-weight: 700; font-size: .78em; }
   .lang button.on { background: #fff; color: #1a36a6; }
-  .pbtn { border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.1); color: #fff; border-radius: 8px; padding: 6px 12px; font-weight: 700; font-size: .8em; }
-  .pbtn:hover { background: rgba(255,255,255,.2); }
-  .cmain { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; }
-  .kick { font-size: .78em; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #f5c518; }
-  .cover h1 { font-size: clamp(2em, 6vw, 3.1em); font-weight: 800; letter-spacing: -.035em; line-height: 1.02; margin: 8px 0 10px; }
-  .cover .who { color: rgba(255,255,255,.82); font-size: .95em; }
-  .helmet { width: 148px; height: 148px; border-radius: 50%; background: rgba(255,255,255,.96); display: grid; place-items: center; overflow: hidden;
-    box-shadow: 0 0 0 6px rgba(255,255,255,.16), 0 18px 40px rgba(6,14,60,.45); }
-  .helmet > * { width: 118px; height: 118px; }
-  .helmet .ini { width: 100%; height: 100%; display: grid; place-items: center; font-size: 3.4em; font-weight: 800; color: #1a36a6; }
-  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.16); border-radius: 16px; backdrop-filter: blur(6px); }
-  .stat { padding: 14px 18px; display: grid; gap: 2px; }
-  .stat + .stat { border-left: 1px solid rgba(255,255,255,.16); }
-  .stat .v { font-size: 1.9em; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
-  .stat .v small { font-size: .5em; font-weight: 700; margin-left: 3px; color: rgba(255,255,255,.75); letter-spacing: 0; }
-  .stat .l { font-size: .78em; font-weight: 600; color: rgba(255,255,255,.75); }
-  @media (max-width: 640px) {
-    .cover { padding: 22px 20px 20px; } .cmain { grid-template-columns: 1fr; } .helmet { width: 112px; height: 112px; order: -1; } .helmet > * { width: 90px; height: 90px; }
-    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stat:nth-child(3) { border-left: 0; } .stat:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.16); }
-  }
-  /* Sections */
-  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; display: grid; gap: 18px; }
-  @media (max-width: 560px) { .panel { padding: 18px; } }
-  .sh { display: flex; align-items: baseline; gap: 12px; }
-  .sh .n { font-size: .82em; font-weight: 800; color: var(--brand); letter-spacing: .08em; }
-  .sh h2 { font-size: 1.35em; font-weight: 800; letter-spacing: -.02em; }
-  .sub { color: var(--mute); font-size: .92em; margin-top: -8px; }
+  .pbtn { border: 1px solid rgba(255,255,255,.4); background: transparent; color: #fff; border-radius: 6px; padding: 5px 11px; font-weight: 700; font-size: .78em; }
+  .body { padding: 36px 44px 40px; }
+  @media (max-width: 600px) { .head { padding: 12px 20px; } .body { padding: 24px 20px 28px; } }
+  .title { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; }
+  .kick { font-size: .74em; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--brand); }
+  .title h1 { font-size: clamp(1.8em, 5vw, 2.4em); font-weight: 800; letter-spacing: -.03em; line-height: 1.08; margin: 6px 0 8px; }
+  .title .who { color: var(--ink-2); font-size: .95em; }
+  .helmet { width: 104px; height: 104px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); display: grid; place-items: center; overflow: hidden; }
+  .helmet > * { width: 84px; height: 84px; }
+  .helmet .ini { width: 100%; height: 100%; display: grid; place-items: center; font-size: 2.4em; font-weight: 800; color: var(--brand); }
+  @media (max-width: 520px) { .title { grid-template-columns: 1fr; } .helmet { order: -1; width: 84px; height: 84px; } .helmet > * { width: 68px; height: 68px; } }
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 26px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .fact { padding: 12px 16px 12px 0; display: grid; gap: 2px; }
+  .fact + .fact { padding-left: 16px; border-left: 1px solid var(--line); }
+  .fact span { font-size: .72em; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
+  .fact b { font-size: 1.05em; font-weight: 800; }
+  @media (max-width: 600px) { .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fact:nth-child(3) { border-left: 0; padding-left: 0; } .fact:nth-child(n+3) { border-top: 1px solid var(--line); } }
+  .sec { padding-top: 30px; margin-top: 30px; border-top: 1px solid var(--line); display: grid; gap: 14px; }
+  .facts + .sec { border-top: 0; margin-top: 4px; }
+  .sec h2 { font-size: 1.15em; font-weight: 800; letter-spacing: -.01em; }
+  .sec .lead { color: var(--ink-2); margin-top: -6px; }
   /* Starting point */
-  .start { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 28px; align-items: center; }
-  @media (max-width: 640px) { .start { grid-template-columns: 1fr; justify-items: start; } }
-  .lvl { width: 160px; height: 160px; border-radius: 50%; display: grid; place-items: center; position: relative;
-    background: conic-gradient(var(--brand) 0 var(--p), var(--brand-soft) var(--p) 100%); }
-  .lvl::before { content: ""; position: absolute; inset: 12px; border-radius: 50%; background: var(--surface); }
-  .lvl > div { position: relative; text-align: center; display: grid; gap: 0; }
-  .lvl b { font-size: 3em; font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--ink); }
-  .lvl span { font-size: .8em; font-weight: 700; color: var(--mute); }
-  .bars { display: grid; gap: 12px; }
-  .brow { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+  .start { display: grid; grid-template-columns: 136px minmax(0, 1fr); gap: 28px; align-items: center; }
+  @media (max-width: 560px) { .start { grid-template-columns: 1fr; } }
+  .lvl { width: 128px; height: 128px; border-radius: 50%; display: grid; place-items: center; position: relative; background: conic-gradient(var(--brand) 0 var(--p), var(--line) var(--p) 100%); }
+  .lvl::before { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: var(--surface); }
+  .lvl > div { position: relative; text-align: center; display: grid; }
+  .lvl b { font-size: 2.4em; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+  .lvl span { font-size: .74em; font-weight: 700; color: var(--mute); }
+  .bars { display: grid; gap: 10px; }
+  .brow { display: grid; grid-template-columns: 30px minmax(0, 1fr) 130px; gap: 12px; align-items: center; font-size: .92em; }
   .brow > b { font-weight: 800; }
-  .lights { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
-  .lights i { height: 14px; border-radius: 4px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); }
-  .lights i.on { background: var(--ok); box-shadow: none; }
-  .lights.dev i.on { background: #e0a400; }
-  .tag { font-size: .78em; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: var(--ok-soft); color: var(--ok-ink); white-space: nowrap; }
-  .tag.dev { background: var(--dev-soft); color: var(--dev); }
-  /* Topics */
-  .topics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-  @media (max-width: 820px) { .topics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 560px) { .topics { grid-template-columns: 1fr; } }
-  .topic { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; padding: 20px 18px 18px; display: grid; gap: 10px; align-content: start; background: var(--surface); }
-  .topic::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--c); }
-  .topic .num { position: absolute; right: 14px; top: 8px; font-size: 2.6em; font-weight: 800; letter-spacing: -.05em; color: var(--c); opacity: .12; }
-  .topic .ti { width: 46px; height: 46px; border-radius: 13px; background: var(--c); color: #fff; display: grid; place-items: center; box-shadow: 0 8px 18px color-mix(in srgb, var(--c) 35%, transparent); }
-  .topic .ti svg { width: 22px; height: 22px; }
-  .topic h3 { font-size: 1.05em; font-weight: 800; }
-  .topic p { color: var(--ink-2); font-size: .9em; }
-  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tchip { font-size: .78em; font-weight: 700; padding: 4px 9px; border-radius: 999px; background: color-mix(in srgb, var(--c) 11%, var(--surface)); color: color-mix(in srgb, var(--c) 80%, var(--ink)); }
-  .topic .how { font-size: .82em; color: var(--mute); border-top: 1px dashed var(--line); padding-top: 10px; }
-  .topic .how b { color: var(--ink-2); }
+  .lights { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; max-width: 320px; }
+  .lights i { height: 10px; border-radius: 2px; background: var(--line); }
+  .lights i.on { background: var(--ok); }
+  .lights.dev i.on { background: #d39a00; }
+  .res { font-weight: 700; color: var(--ok); } .res.dev { color: var(--dev); }
+  @media (max-width: 480px) { .brow { grid-template-columns: 30px minmax(0, 1fr); } .res { grid-column: 2; margin-top: -6px; font-size: .9em; } }
+  /* Lists */
+  .list2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 36px; }
+  @media (max-width: 640px) { .list2 { grid-template-columns: 1fr; } }
+  .item { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); align-content: start; }
+  .list2 .item:nth-last-child(-n+2):nth-child(odd), .list2 .item:last-child { border-bottom: 0; }
+  @media (max-width: 640px) { .list2 .item:nth-last-child(-n+2):nth-child(odd) { border-bottom: 1px solid var(--line); } .list2 .item:last-child { border-bottom: 0; } }
+  .item > svg { width: 22px; height: 22px; color: var(--c, var(--brand)); margin-top: 1px; }
+  .item b { display: block; margin-bottom: 3px; }
+  .item p { color: var(--ink-2); font-size: .92em; }
+  .item .ex { color: var(--mute); font-size: .86em; margin-top: 6px; }
+  .item .ex em { font-style: normal; font-weight: 700; color: var(--ink-2); }
   /* Lessons */
-  .lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
-  @media (max-width: 560px) { .lessons { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .lt .done { font-size: .62em; padding: 2px 6px; } }
+  .lessons { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 700px) { .lessons { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .lt { position: relative; }
-  .lt .done { position: absolute; right: 8px; top: 8px; display: inline-flex; gap: 4px; align-items: center; font-size: .72em; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: #fff; color: var(--ok); z-index: 2; }
-  .lt .done svg { width: 12px; height: 12px; }
+  .lt .done { position: absolute; right: 6px; top: 6px; display: inline-flex; gap: 3px; align-items: center; font-size: .66em; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #fff; color: var(--ok); z-index: 2; }
+  .lt .done svg { width: 11px; height: 11px; }
   .lt.ok .thumb .lv { display: none; }
-  .lmore { aspect-ratio: 16 / 9; border-radius: var(--r-m); border: 2px dashed var(--line-2); display: grid; place-items: center; text-align: center; padding: 12px; color: var(--mute); font-weight: 700; font-size: .88em; }
-  /* How we work band */
-  .band { background: linear-gradient(135deg, #12172a, #1b1f2a); color: #fff; border-radius: 20px; padding: 28px; display: grid; gap: 20px; }
-  .band .sh .n { color: #f5c518; } .band .sh h2 { color: #fff; }
-  .how4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-  @media (max-width: 820px) { .how4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 480px) { .how4 { grid-template-columns: 1fr; } }
-  .hw { display: grid; gap: 10px; align-content: start; padding: 18px; border-radius: 16px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); }
-  .hw .ti { width: 44px; height: 44px; border-radius: 12px; background: rgba(245,197,24,.14); color: #f5c518; display: grid; place-items: center; }
-  .hw .ti svg { width: 22px; height: 22px; }
-  .hw b { font-size: 1em; } .hw p { color: rgba(255,255,255,.72); font-size: .88em; }
-  /* Measure stepper */
-  .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; position: relative; }
-  .steps::before { content: ""; position: absolute; left: 12%; right: 12%; top: 27px; height: 2px; background: repeating-linear-gradient(90deg, var(--brand) 0 8px, transparent 8px 14px); opacity: .5; }
-  .step { position: relative; display: grid; gap: 8px; justify-items: center; text-align: center; }
-  .step .ti { width: 56px; height: 56px; border-radius: 50%; background: var(--surface); border: 2px solid var(--brand); color: var(--brand); display: grid; place-items: center; }
-  .step .ti svg { width: 24px; height: 24px; }
-  .step b { font-size: .98em; } .step p { color: var(--ink-2); font-size: .86em; }
-  @media (max-width: 700px) {
-    .steps { grid-template-columns: 1fr; gap: 14px; } .steps::before { left: 27px; right: auto; top: 10px; bottom: 10px; width: 2px; height: auto; background: repeating-linear-gradient(180deg, var(--brand) 0 8px, transparent 8px 14px); }
-    .step { grid-template-columns: 56px minmax(0, 1fr); justify-items: start; text-align: left; column-gap: 14px; row-gap: 2px; } .step .ti { grid-row: span 2; }
-  }
-  /* Message + sign */
-  .quote { position: relative; border-radius: 20px; padding: 30px 30px 26px 30px; background: var(--brand-soft); color: var(--brand-dark); }
-  .quote::before { content: "\201C"; position: absolute; left: 18px; top: -18px; font-size: 6em; font-weight: 800; color: var(--brand); opacity: .25; line-height: 1; }
-  .quote p { position: relative; font-size: 1.15em; font-weight: 600; line-height: 1.5; white-space: pre-wrap; }
-  .quote small { display: block; margin-top: 12px; font-weight: 700; color: var(--brand); }
-  .sign { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; padding: 6px 4px 0; }
-  .sign .line { min-width: 260px; border-top: 1.5px solid var(--ink); padding-top: 8px; display: grid; }
+  .more { color: var(--mute); font-size: .9em; }
+  /* Measure */
+  .rows { display: grid; }
+  .row { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row b { font-weight: 800; } .row p { color: var(--ink-2); font-size: .94em; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; gap: 2px; } }
+  /* Letter */
+  .letter p { white-space: pre-wrap; font-size: 1.02em; line-height: 1.6; }
+  .sign { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-top: 40px; }
+  .sign .line { min-width: 240px; border-top: 1.5px solid var(--ink); padding-top: 8px; display: grid; }
   .sign .line b { font-weight: 800; } .sign .line span { color: var(--mute); font-size: .88em; }
-  .sign .meta { display: grid; justify-items: end; gap: 6px; color: var(--mute); font-size: .85em; }
-  .sign .meta .brand { color: var(--ink); font-size: 1em; }
+  .sign .date { color: var(--mute); font-size: .85em; }
   @media print {
-    header.nav, .noprint, .menu-btn, .theme-btn { display: none !important; } html, body { background: #fff; }
-    .topic, .hw, .step, .brow, .lt, .quote, .sign, .stats { break-inside: avoid; } .sh { break-after: avoid; } .wrap { padding-block: 0; gap: 16px; }
-    .panel, .band { break-inside: auto; }
+    .noprint { display: none !important; } html, body { background: #fff; } .wrap { padding: 0; max-width: none; }
+    .doc { border: 0; box-shadow: none; border-radius: 0; } .item, .row, .brow, .lt, .sign, .start { break-inside: avoid; } .sec h2 { break-after: avoid; }
   }
 </style>
 </head>
@@ -249,69 +212,68 @@ function lessonOf(l) {
 function render() {
   const t = T[lang], loc = lang === "es" ? "es-MX" : "en-US";
   document.documentElement.lang = lang;
-  if (!D) { app.innerHTML = `<div class="panel"><p>${t.missing}</p></div>`; return; }
+  if (!D) { app.innerHTML = `<div class="doc"><div class="body"><p>${t.missing}</p></div></div>`; return; }
   const fd = (d, o) => new Date(d + "T12:00").toLocaleDateString(loc, o || { year: "numeric", month: "long", day: "numeric" });
   const cur = D.lv && LV.en[D.lv] ? D.lv : null, it = (D.it || []).join(", ");
   const list = (arr) => arr.length < 2 ? arr.join("") : arr.slice(0, -1).join(", ") + " " + t.and + " " + arr[arr.length - 1];
   const sched = (D.dy || []).length ? `${list(D.dy.map(d => t.days[d]))}${D.tm ? ` ${t.at} ${new Date("2000-01-01T" + D.tm).toLocaleTimeString(loc, { hour: "numeric", minute: "2-digit" })}` : ""}` : "";
   const tops = (D.tp && D.tp.length ? D.tp : Object.keys(TOPICS)).filter(k => TOPICS[k]);
   const ex = k => k === "verbs" ? VERBS[lang][cur || "A1"] : k === "vocab" ? t.vocabEx(it) : TOPICS[k][lang][2];
-  const ls = D.ls || [], name = (D.n || "").trim();
-  const helmet = D.av && D.av.style !== "initial" && G.avatar ? G.avatar.svg(D.av, 118, { label: name }) : `<span class="ini">${esc((name[0] || "?").toUpperCase())}</span>`;
-  const secs = D.sc || [], passedN = secs.filter(x => x[1] >= 5).length;
-  const st = fd(D.st, { month: "short", day: "numeric" }).replace(".", "");
-  let n = 0; const sh = (title) => `<div class="sh"><span class="n">${String(++n).padStart(2, "0")}</span><h2>${title}</h2></div>`;
-  app.innerHTML = `
-    <section class="cover">
-      <div class="ctop"><span class="brand">${G.mark(30)}lingua</span>
-        <div class="tools noprint"><div class="lang"><button data-lang="es" class="${lang === "es" ? "on" : ""}">ES</button><button data-lang="en" class="${lang === "en" ? "on" : ""}">EN</button></div>
-          <button class="pbtn" id="pr">${t.print}</button></div></div>
-      <div class="cmain">
+  const ls = D.ls || [], name = (D.n || "").trim(), es = lang === "es";
+  const helmet = D.av && D.av.style !== "initial" && G.avatar ? G.avatar.svg(D.av, 84, { label: name }) : `<span class="ini">${esc((name[0] || "?").toUpperCase())}</span>`;
+  const secs = D.sc || [], passedN = secs.filter(x => x[1] >= 5).length, teacher = esc(G.maestroNombre || G.maestro);
+  app.innerHTML = `<article class="doc">
+    <header class="head"><span class="brand">${G.mark(24)}lingua</span>
+      <div class="tools noprint"><div class="lang"><button data-lang="es" class="${es ? "on" : ""}">ES</button><button data-lang="en" class="${es ? "" : "on"}">EN</button></div>
+        <button class="pbtn" id="pr">${t.print}</button></div></header>
+    <div class="body">
+      <div class="title">
         <div><span class="kick">${t.eyebrow}</span><h1>${esc(name)}</h1>
-          <p class="who">${t.teacher}: <b>${esc(G.maestroNombre || G.maestro)}</b>${sched ? `<br>${t.sched}: ${esc(sched)}` : ""}</p></div>
+          <p class="who">${t.teacher}: ${teacher}${sched ? ` · ${t.sched}: ${esc(sched)}` : ""}</p></div>
         <div class="helmet">${helmet}</div>
       </div>
-      <div class="stats">
-        <div class="stat"><span class="v">${esc(st)}</span><span class="l">${t.kStart}</span></div>
-        <div class="stat"><span class="v">${D.f}<small>×</small></span><span class="l">${t.kCls}</span></div>
-        <div class="stat"><span class="v">${D.mn}<small>min</small></span><span class="l">${t.kLen}</span></div>
-        <div class="stat"><span class="v">4<small>${lang === "es" ? "días" : "days"}</small></span><span class="l">${t.kPr}</span></div>
+      <div class="facts">
+        <div class="fact"><span>${t.kStart}</span><b>${fd(D.st)}</b></div>
+        <div class="fact"><span>${t.kCls}</span><b>${D.f}</b></div>
+        <div class="fact"><span>${t.kLen}</span><b>${D.mn} min</b></div>
+        <div class="fact"><span>${t.kPr}</span><b>4</b></div>
       </div>
-    </section>
 
-    <section class="panel">${sh(t.startT)}
-      ${cur ? `<div class="start">
-        <div class="lvl" style="--p:${secs.length ? Math.round(passedN / 4 * 100) : 25}%"><div><b>${cur}</b><span>${LV[lang][cur]}</span></div></div>
-        <div style="display:grid;gap:16px"><p>${t.placed(fd(D.pd), cur, LV[lang][cur])}${D.pp ? " " + t.partial : ""}</p>
-          ${secs.length ? `<div class="bars">${secs.map(x => `<div class="brow"><b>${x[0]}</b><div class="lights ${x[1] >= 5 ? "" : "dev"}">${Array.from({ length: 8 }, (_, i) => `<i class="${i < x[1] ? "on" : ""}"></i>`).join("")}</div>
-            <span class="tag ${x[1] >= 5 ? "" : "dev"}">${x[1]}/8 · ${x[1] >= 5 ? t.passed : t.notPassed}</span></div>`).join("")}</div>` : ""}</div>
-      </div>` : `<div class="start"><div class="lvl" style="--p:0%"><div><b>?</b><span>${lang === "es" ? "Por definir" : "To be set"}</span></div></div><p>${t.pending}</p></div>`}
-    </section>
+      <section class="sec"><h2>${t.startT}</h2>
+        ${cur ? `<div class="start">
+          <div class="lvl" style="--p:${secs.length ? Math.round(passedN / 4 * 100) : 25}%"><div><b>${cur}</b><span>${LV[lang][cur]}</span></div></div>
+          <div style="display:grid;gap:14px"><p>${t.placed(fd(D.pd), cur, LV[lang][cur])}${D.pp ? " " + t.partial : ""}</p>
+            ${secs.length ? `<div class="bars">${secs.map(x => `<div class="brow"><b>${x[0]}</b><div class="lights ${x[1] >= 5 ? "" : "dev"}">${Array.from({ length: 8 }, (_, i) => `<i class="${i < x[1] ? "on" : ""}"></i>`).join("")}</div>
+              <span class="res ${x[1] >= 5 ? "" : "dev"}">${x[1]}/8 · ${x[1] >= 5 ? t.passed : t.notPassed}</span></div>`).join("")}</div>` : ""}</div>
+        </div>` : `<p>${t.pending}</p>`}
+      </section>
 
-    <section class="panel">${sh(t.topicsT)}<p class="sub">${t.topicsS}</p>
-      <div class="topics">${tops.map((k, i) => { const x = TOPICS[k][lang]; return `<div class="topic" style="--c:${TCOL[k]}"><span class="num">${String(i + 1).padStart(2, "0")}</span>
-        <span class="ti">${svg(TOPICS[k].i)}</span><h3>${x[0]}</h3><p>${x[1]}</p>
-        <div class="chips">${ex(k).map(e => `<span class="tchip">${esc(e)}</span>`).join("")}</div>
-        <p class="how"><b>${t.practice}:</b> ${x[3]}</p></div>`; }).join("")}</div>
-    </section>
+      <section class="sec"><h2>${t.topicsT}</h2><p class="lead">${t.topicsS}</p>
+        <div class="list2">${tops.map(k => { const x = TOPICS[k][lang]; return `<div class="item" style="--c:${TCOL[k]}">${svg(TOPICS[k].i)}<div>
+          <b>${x[0]}</b><p>${x[1]}</p>
+          <p class="ex"><em>${t.ex}:</em> ${ex(k).map(esc).join(", ")}.</p>
+          <p class="ex"><em>${t.practice}:</em> ${x[3]}</p></div></div>`; }).join("")}</div>
+      </section>
 
-    ${ls.length ? `<section class="panel">${sh(t.lessonsT)}<p class="sub">${t.lessonsS}</p>
-      <div class="lessons">${ls.map(l => `<div class="lt ${l[2] ? "ok" : ""}">${G.thumb(lessonOf(l), lang === "es" ? "LECCIÓN" : "LESSON")}${l[2] ? `<span class="done">${svg("check")}${t.passedL}</span>` : ""}</div>`).join("")}
-        <div class="lmore">${t.more}</div></div>
-    </section>` : ""}
+      ${ls.length ? `<section class="sec"><h2>${t.lessonsT}</h2><p class="lead">${t.lessonsS}</p>
+        <div class="lessons">${ls.map(l => `<div class="lt ${l[2] ? "ok" : ""}">${G.thumb(lessonOf(l), es ? "LECCIÓN" : "LESSON")}${l[2] ? `<span class="done">${svg("check")}${t.passedL}</span>` : ""}</div>`).join("")}</div>
+        <p class="more">${t.more.charAt(0).toUpperCase() + t.more.slice(1)}.</p>
+      </section>` : ""}
 
-    <section class="band">${sh(t.howT)}
-      <div class="how4">${t.how.map(h => `<div class="hw"><span class="ti">${svg(h[0])}</span><b>${h[1]}</b><p>${esc(h[2](D.f, D.mn, it))}</p></div>`).join("")}</div>
-    </section>
+      <section class="sec"><h2>${t.howT}</h2>
+        <div class="list2">${t.how.map(h => `<div class="item">${svg(h[0])}<div><b>${h[1]}</b><p>${esc(h[2](D.f, D.mn, it))}</p></div></div>`).join("")}</div>
+      </section>
 
-    <section class="panel">${sh(t.measureT)}
-      <div class="steps">${t.measure.map(h => `<div class="step"><span class="ti">${svg(h[0])}</span><b>${h[1]}</b><p>${h[2]}</p></div>`).join("")}</div>
-    </section>
+      <section class="sec"><h2>${t.measureT}</h2>
+        <div class="rows">${t.measure.map(h => `<div class="row"><b>${h[1]}</b><p>${h[2]}</p></div>`).join("")}</div>
+      </section>
 
-    ${D.c ? `<section class="quote"><p>${esc(D.c)}</p><small>— ${esc(G.maestroNombre || G.maestro)}</small></section>` : ""}
+      ${D.c ? `<section class="sec letter"><h2>${t.commentT}</h2><p>${esc(D.c)}</p></section>` : ""}
 
-    <section class="sign"><div class="line"><b>${esc(G.maestroNombre || G.maestro)}</b><span>${t.role}</span></div>
-      <div class="meta"><span class="brand">${G.mark(22)}lingua</span><span>${t.gen} ${new Date(D.g).toLocaleDateString(loc, { year: "numeric", month: "long", day: "numeric" })}</span></div></section>`;
+      <div class="sign"><div class="line"><b>${teacher}</b><span>${t.role}</span></div>
+        <span class="date">${t.gen} ${new Date(D.g).toLocaleDateString(loc, { year: "numeric", month: "long", day: "numeric" })}</span></div>
+    </div>
+  </article>`;
   app.querySelectorAll("[data-lang]").forEach(b => b.onclick = () => { lang = b.dataset.lang; render(); });
   document.getElementById("pr").onclick = () => window.print();
 }
