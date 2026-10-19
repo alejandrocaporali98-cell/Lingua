@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Placement test</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/placement-data.js"></script>
+<style>
+  .wrap { max-width: 820px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 22px; }
+  .track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .track div { display: grid; gap: 6px; }
+  .track .lb { font-size: .75em; font-weight: 700; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .track .lb.on { color: var(--ink); }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 28px; }
+  @media (max-width: 560px) { .panel { padding: 18px; } }
+  .intro h1 { font-size: 2em; font-weight: 800; }
+  .sec-list { display: grid; border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden; }
+  .sec-list > div { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--line); background: var(--surface); }
+  .sec-list > div:last-child { border-bottom: 0; }
+  .lvl-badge { width: 46px; height: 32px; border-radius: 6px; display: grid; place-items: center; font-weight: 800; font-size: .85em; background: var(--brand-soft); color: var(--brand-dark); }
+  .rate { display: inline-flex; border: 1px solid var(--line-2); border-radius: var(--r-s); overflow: hidden; }
+  .rate button { border: 0; background: var(--surface); padding: 8px 12px; font-weight: 600; font-size: .85em; border-right: 1px solid var(--line-2); }
+  .rate button:last-child { border-right: 0; }
+  .rate button.on { background: var(--brand); color: #fff; }
+  .sp-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .sp-item:last-child { border-bottom: 0; }
+  @media (max-width: 640px) { .sp-item { grid-template-columns: 1fr; } }
+  .res-top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: center; }
+  @media (max-width: 560px) { .res-top { grid-template-columns: 1fr; } }
+  .res-lvl { width: 120px; height: 120px; border-radius: 20px; background: var(--brand); color: #fff; display: grid; place-items: center; font-size: 3em; font-weight: 800; letter-spacing: -.04em; }
+  .cefr { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+  .cefr span { text-align: center; padding: 7px 0; border-radius: 5px; background: var(--bg); color: var(--mute); font-weight: 700; font-size: .8em; }
+  .cefr span.on { background: var(--brand); color: #fff; }
+  .cefr span.past { background: var(--brand-soft); color: var(--brand-dark); }
+  table { width: 100%; border-collapse: collapse; font-size: .95em; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+  th { font-size: .78em; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); }
+  td.r, th.r { text-align: right; }
+  .mini { height: 6px; width: 120px; max-width: 100%; border-radius: 999px; background: var(--line); overflow: hidden; display: inline-block; vertical-align: middle; }
+  .mini i { display: block; height: 100%; }
+  .miss { display: grid; gap: 8px; }
+  .miss div { padding: 12px 14px; border-radius: var(--r-m); background: var(--bg); display: grid; gap: 2px; }
+  .miss .x { color: var(--bad); text-decoration: line-through; }
+  .miss .y { color: var(--ok); font-weight: 700; }
+  .cert { position: relative; overflow: hidden; border-top: 4px solid var(--brand); }
+  .cert::after { content: ""; position: absolute; right: -40px; bottom: -40px; width: 220px; height: 220px; border-radius: 50%; pointer-events: none; background-image: radial-gradient(color-mix(in srgb, var(--brand) 18%, transparent) 1.2px, transparent 1.5px); background-size: 14px 14px; }
+  .cert-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px dashed var(--line-2); }
+  body.clase { --scale: 1.16; }
+  body.clase .hide-in-class { display: none !important; }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="index.html">My learning</a><a class="on" href="examen.html">Placement test</a></nav>
+    <span class="spacer"></span>
+    <button class="toggle" id="classBtn" aria-pressed="false"><span class="sw"></span>Class mode <span class="kbd">C</span></button>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"></div></main>
+
+<script>
+const { SEGMENTS, RADIO, PASS, NAMES, LEVELS } = window;
+const S = { screen: "intro", seg: 0, qi: 0, answers: {}, radio: RADIO.map(() => null), taken: [] };
+const app = document.getElementById("app"), G = window.LINGUA;
+document.getElementById("logo").innerHTML = G.logo;
+const segName = i => `Section ${i + 1} · ${NAMES[i]} (${SEGMENTS[i].lvl})`;
+const score = i => SEGMENTS[i].qs.filter(q => S.answers[q.g] === q.correct).length;
+
+function track(active) {
+  const labels = SEGMENTS.map(s => s.lvl).concat(["Speaking"]);
+  return `<div class="track hide-in-class" aria-hidden="true">${labels.map((l, i) => {
+    const pct = i < active ? 100 : i === active ? (S.screen === "q" ? (S.qi + 1) / 8 * 100 : 100) : 0;
+    return `<div><div class="bar"><i style="width:${pct}%"></i></div><span class="lb ${i === active ? "on" : ""}">${l}</span></div>`;
+  }).join("")}</div>`;
+}
+function render() { ({ intro, q: question, check, radio, result })[S.screen](); window.scrollTo({ top: 0 }); }
+
+function intro() {
+  app.innerHTML = `
+  <div class="panel intro" style="display:grid;gap:18px">
+    <span class="eyebrow">Starting assessment · about 20 minutes</span>
+    <h1>Placement test</h1>
+    <p style="color:var(--ink-2);font-size:1.05em;max-width:62ch">This test shows us where to start. There is no grade: the sections get harder, and if one is too difficult, we stop there.</p>
+    <div class="sec-list">
+      ${SEGMENTS.map((s, i) => `<div><span class="lvl-badge">${s.lvl}</span><div><b>${NAMES[i]}</b><div class="muted" style="font-size:.9em">${s.intro}</div></div><span class="muted num" style="font-size:.88em">8 questions</span></div>`).join("")}
+      <div><span class="lvl-badge"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5"/><path d="M3 8a5 5 0 0 0 10 0M8 13v2"/></svg></span><div><b>Speaking</b><div class="muted" style="font-size:.9em">Four questions to answer out loud. Your teacher scores them.</div></div><span class="muted num" style="font-size:.88em">4 questions</span></div>
+    </div>
+    <div class="actions" style="justify-content:space-between">
+      <span class="hint"><span><span class="kbd">1–4</span> choose</span><span><span class="kbd">Enter</span> next</span><span><span class="kbd">←</span> back</span></span>
+      <button class="btn primary" id="go">Start test</button>
+    </div>
+  </div>`;
+  document.getElementById("go").onclick = () => { S.screen = "q"; S.seg = 0; S.qi = 0; S.taken = [0]; render(); };
+}
+
+function question() {
+  const seg = SEGMENTS[S.seg], q = seg.qs[S.qi], sel = S.answers[q.g];
+  app.innerHTML = track(S.seg) + `
+  <div class="panel q">
+    <div class="q-head"><span class="eyebrow">${segName(S.seg)}</span><span class="muted num" style="font-weight:700;font-size:.88em">Question ${S.qi + 1} of 8</span></div>
+    <div class="q-title">${q.p.replace("___", '<span class="gap">&nbsp;</span>')}</div>
+    <div class="opts" role="radiogroup">${q.opts.map((o, i) => `<button class="opt ${sel === i ? "sel" : ""}" data-i="${i}" role="radio" aria-checked="${sel === i}"><span class="radio"></span><span>${o}</span><span class="letter">${i + 1}</span></button>`).join("")}</div>
+    <div class="actions" style="justify-content:space-between">
+      <button class="btn ghost" id="back" ${S.qi === 0 ? "disabled" : ""}>← Back</button>
+      <div class="actions"><button class="btn ghost" id="skip">I don’t know</button><button class="btn primary" id="next" ${sel == null ? "disabled" : ""}>${S.qi === 7 ? "Finish section" : "Next"}</button></div>
+    </div>
+  </div>`;
+  app.querySelectorAll(".opt").forEach(b => b.onclick = () => pick(+b.dataset.i));
+  document.getElementById("next").onclick = () => next();
+  document.getElementById("back").onclick = back;
+  document.getElementById("skip").onclick = () => { S.answers[q.g] = -1; next(true); };
+}
+function pick(i) { S.answers[SEGMENTS[S.seg].qs[S.qi].g] = i; render(); }
+function next(force) {
+  const q = SEGMENTS[S.seg].qs[S.qi];
+  if (S.answers[q.g] == null && !force) return;
+  if (S.qi < 7) { S.qi++; render(); } else { S.screen = "check"; render(); }
+}
+function back() { if (S.qi > 0) { S.qi--; render(); } }
+
+function check() {
+  const i = S.seg, s = score(i), ok = s >= PASS, last = i === SEGMENTS.length - 1;
+  app.innerHTML = track(i + 1) + `
+  <div class="panel" style="display:grid;gap:18px">
+    <span class="eyebrow">${segName(i)} · complete</span>
+    <div style="display:flex;align-items:baseline;gap:12px"><span class="num" style="font-size:3.4em;font-weight:800;line-height:1">${s}/8</span><span class="chip ${ok ? "ok" : ""}">${ok ? "Passed" : "Below 5/8"}</span></div>
+    <p style="color:var(--ink-2);font-size:1.05em">${ok ? (last ? "You finished all the written sections. Great level!" : "Nice work! Let’s go to the next section.") : "This is your limit for now, and that’s fine. Now we know where to start. Let’s go to speaking."}</p>
+    <div class="actions">
+      ${ok && !last ? `<button class="btn primary" id="cont">Next: ${segName(i + 1)}</button><button class="btn" id="toR">Go to speaking</button>` : ""}
+      ${!ok || last ? `<button class="btn primary" id="toR">Go to speaking</button>${!last ? `<button class="btn ghost" id="cont">Try section ${i + 2} anyway</button>` : ""}` : ""}
+    </div>
+  </div>`;
+  const c = document.getElementById("cont");
+  if (c) c.onclick = () => { S.seg++; S.qi = 0; S.taken.push(S.seg); S.screen = "q"; render(); };
+  document.getElementById("toR").onclick = () => { S.screen = "radio"; render(); };
+}
+
+function radio() {
+  app.innerHTML = track(4) + `
+  <div class="panel" style="display:grid;gap:8px">
+    <span class="eyebrow">Final section · Speaking</span>
+    <h2 style="font-size:1.5em;font-weight:800">Answer out loud</h2>
+    <p style="color:var(--ink-2)">Mistakes are OK. What matters is how you get your message across. Your teacher scores each answer.</p>
+    <div>${RADIO.map((r, i) => `
+      <div class="sp-item">
+        <div><span class="chip brand" style="margin-bottom:6px">${r.lvl}</span><div style="font-weight:700;font-size:1.08em">${r.en}</div></div>
+        <div class="rate" data-i="${i}" role="group" aria-label="Score">${[["0", "Couldn’t"], ["1", "With help"], ["2", "Good"]].map(([v, t]) => `<button data-v="${v}" class="${S.radio[i] === +v ? "on" : ""}">${t}</button>`).join("")}</div>
+      </div>`).join("")}</div>
+    <div class="actions" style="justify-content:space-between;margin-top:8px"><span class="muted" style="font-size:.88em">Questions you skip count as “Couldn’t”.</span><button class="btn primary" id="res">See result</button></div>
+  </div>`;
+  app.querySelectorAll(".rate").forEach(r => r.querySelectorAll("button").forEach(b => b.onclick = () => { S.radio[+r.dataset.i] = +b.dataset.v; radio(); }));
+  document.getElementById("res").onclick = () => { S.screen = "result"; render(); };
+}
+
+function result() {
+  let p = 0; for (const i of S.taken) { if (score(i) >= PASS) p++; else break; }
+  const L0 = LEVELS[p], sp = S.radio.reduce((a, v) => a + (v || 0), 0);
+  const note = (p >= 2 && sp <= 3) ? "Your grammar is ahead of your speaking, so we’ll add more conversation from the start."
+             : (p <= 1 && sp >= 5) ? "You speak better than your grammar score shows. That’s a great sign!" : "";
+  const missed = S.taken.flatMap(i => SEGMENTS[i].qs).filter(q => S.answers[q.g] !== q.correct);
+  const enc = window.ALLQ.map(q => !S.taken.includes(SEGMENTS.findIndex(sg => sg.qs.includes(q))) ? "x" : S.answers[q.g] == null || S.answers[q.g] < 0 ? "s" : String(S.answers[q.g])).join("") + "-" + S.radio.map(v => v == null ? "x" : v).join("");
+  G.store.set("placement", { nivel: L0.lvl, fecha: new Date().toISOString().slice(0, 10), secciones: S.taken.map(i => ({ lvl: SEGMENTS[i].lvl, score: score(i) })), speaking: sp, r: enc });
+  const scale = ["A1", "A2", "B1", "B2", "C1", "C2"], idx = scale.indexOf(L0.lvl.replace("+", ""));
+  app.innerHTML = `
+  <div class="panel cert" style="display:grid;gap:22px">
+    <div class="cert-top"><span style="display:flex;align-items:center;gap:10px">${G.mark(26)}<span><b>Level certificate</b><br><span class="muted" style="font-size:.85em">Lingua · Placement test</span></span></span><span class="muted num" style="font-size:.88em;text-align:right">${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}<br>Instructor: ${G.maestro}</span></div>
+    <div class="res-top">
+      <div class="res-lvl">${L0.lvl}</div>
+      <div style="display:grid;gap:6px"><span class="eyebrow">Result · ${L0.name}</span><h2 style="font-size:1.4em;font-weight:800">${L0.txt}</h2><p class="muted">We start with: <b style="color:var(--ink)">${L0.start}</b></p></div>
+    </div>
+    <div class="cefr" aria-label="CEFR scale">${scale.map((x, i) => `<span class="${i === idx ? "on" : i < idx ? "past" : ""}">${x}</span>`).join("")}</div>
+    ${note ? `<div class="feedback" style="background:var(--brand-soft);color:var(--brand-dark)"><div>${note}</div></div>` : ""}
+  </div>
+  <div class="panel" style="display:grid;gap:10px">
+    <span class="eyebrow">Breakdown</span>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th>Section</th><th>Level</th><th>Progress</th><th class="r">Points</th></tr></thead>
+      <tbody>
+        ${SEGMENTS.map((s, i) => { const t = S.taken.includes(i), sc = t ? score(i) : 0;
+          return `<tr style="${t ? "" : "color:var(--mute)"}"><td>${NAMES[i]}</td><td>${s.lvl}</td><td><span class="mini"><i style="width:${sc / 8 * 100}%;background:${sc >= PASS ? "var(--ok)" : "var(--bad)"}"></i></span></td><td class="r num">${t ? sc + " / 8" : "Not taken"}</td></tr>`; }).join("")}
+        <tr><td>Speaking</td><td>A1–B2</td><td><span class="mini"><i style="width:${sp / 8 * 100}%;background:var(--brand)"></i></span></td><td class="r num">${sp} / 8</td></tr>
+      </tbody></table></div>
+    <p class="muted" style="font-size:.85em">You pass each section with 5 out of 8.</p>
+  </div>
+  <div class="panel" style="display:grid;gap:12px">
+    <span class="eyebrow">To review (${missed.length})</span>
+    <div class="miss">${missed.length ? missed.slice(0, 10).map(q => { const a = S.answers[q.g];
+      return `<div><span>${q.p.replace("___", "<b>___</b>")}</span><span><span class="x">${a >= 0 ? q.opts[a] : "Didn’t know"}</span> → <span class="y">${q.a}</span></span><span class="muted" style="font-size:.88em">${q.why}</span></div>`; }).join("")
+      : `<p class="muted">No mistakes. Excellent!</p>`}${missed.length > 10 ? `<p class="muted">And ${missed.length - 10} more. We’ll go over them in class.</p>` : ""}</div>
+  </div>
+  <div class="actions"><a class="btn primary" href="reporte.html">See full report</a><a class="btn" href="index.html">Go to My learning</a><button class="btn ghost" id="again">Retake test</button></div>`;
+  document.getElementById("again").onclick = () => { S.answers = {}; S.radio = RADIO.map(() => null); S.screen = "intro"; render(); };
+}
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  const k = e.key.toLowerCase();
+  if (k === "c") { toggleClass(); return; }
+  if (S.screen === "q") {
+    const n = "1234".indexOf(k); if (n >= 0) { pick(n); return; }
+    if (k === "enter" || k === " ") { e.preventDefault(); next(); }
+    if (k === "arrowleft") { e.preventDefault(); back(); }
+  }
+});
+function toggleClass() { const on = document.body.classList.toggle("clase"), b = document.getElementById("classBtn"); b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); }
+document.getElementById("classBtn").onclick = toggleClass;
+render();
+</script>
+</body>
+</html>

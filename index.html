@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · My learning</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<style>
+  .hero { position: relative; background: var(--surface); border-bottom: 1px solid var(--line); padding-block: 36px 40px; overflow: hidden; }
+  .hero::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 46%; pointer-events: none; background-image: radial-gradient(color-mix(in srgb, var(--brand) 18%, transparent) 1.2px, transparent 1.5px); background-size: 16px 16px; -webkit-mask-image: linear-gradient(to left, #000 10%, transparent 90%); mask-image: linear-gradient(to left, #000 10%, transparent 90%); }
+  .hero .container { position: relative; z-index: 1; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: stretch; }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+  .hero h1 { font-size: 2.1em; font-weight: 800; }
+  .hero .lead { color: var(--ink-2); margin-top: 6px; font-size: 1.05em; }
+  .resume { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 20px; padding: 16px; margin-top: 22px; align-items: center; }
+  @media (max-width: 600px) { .resume { grid-template-columns: 1fr; } }
+  .resume h3 { font-size: 1.2em; font-weight: 700; }
+  .resume .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 6px 0 12px; }
+  .level { padding: 22px; display: grid; gap: 12px; align-content: start; }
+  .level .big { font-size: 3.2em; font-weight: 800; line-height: 1; letter-spacing: -.04em; }
+  .level .big.pend { font-size: 1.4em; color: var(--mute); letter-spacing: 0; }
+  .cefr { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 3px; }
+  .cefr span { font-size: .72em; font-weight: 700; text-align: center; padding: 5px 0; border-radius: 4px; background: var(--bg); color: var(--mute); }
+  .cefr span.on { background: var(--brand); color: #fff; }
+  .cefr span.past { background: var(--brand-soft); color: var(--brand-dark); }
+  main { padding-block: 40px 56px; display: grid; gap: 40px; }
+  .course-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
+  .course-head h2 { font-size: 1.55em; font-weight: 800; }
+  .course-meta { display: flex; gap: 18px; flex-wrap: wrap; color: var(--ink-2); font-weight: 600; font-size: .92em; }
+  .module { display: grid; gap: 14px; }
+  .module h3 { font-size: 1.05em; font-weight: 700; }
+  .lessons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  @media (max-width: 900px) { .lessons { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .lessons { grid-template-columns: 1fr; } }
+  .lesson { display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: var(--ink); padding: 12px 12px 16px; border-radius: var(--r-l); border: 1px solid transparent; transition: border-color .15s, background .15s; }
+  a.lesson:hover { background: var(--surface); border-color: var(--line); box-shadow: var(--shadow); }
+  .lesson h4 { font-size: 1.05em; font-weight: 700; }
+  .lesson p { color: var(--ink-2); font-size: .92em; }
+  .lesson .foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; padding-top: 4px; }
+  .lesson.soon .thumb { filter: grayscale(.85); opacity: .55; }
+  .lesson.soon h4, .lesson.soon p { color: var(--mute); }
+  .how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  @media (max-width: 800px) { .how { grid-template-columns: 1fr; } }
+  .how .card { padding: 20px; display: grid; gap: 6px; align-content: start; }
+  .how h4 { font-size: 1em; font-weight: 700; }
+  .how p { color: var(--ink-2); font-size: .92em; }
+  .ico { width: 36px; height: 36px; border-radius: 8px; background: var(--brand-soft); display: grid; place-items: center; margin-bottom: 6px; }
+  footer { border-top: 1px solid var(--line); background: var(--surface); padding-block: 22px; }
+  footer .container { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--mute); font-size: .88em; }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a class="on" href="index.html">My learning</a><a href="examen.html">Placement test</a></nav>
+    <span class="spacer"></span>
+    <span class="avatar" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></span>
+  </div>
+</header>
+
+<section class="hero gutter">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow" id="today"></span>
+      <h1 style="margin-top:6px">Welcome back</h1>
+      <p class="lead">Pick up where you left off. Every lesson we do in class stays here so you can review it.</p>
+      <div class="instructor" style="margin-top:14px"><span class="in" id="inIni"></span><span style="font-size:.9em"><span class="muted">Instructor</span><br><b id="inName"></b></span></div>
+      <div class="card resume" id="resume"></div>
+    </div>
+    <aside class="card level" id="level" aria-label="Your level"></aside>
+  </div>
+</section>
+
+<main class="gutter">
+  <div class="container" style="display:grid;gap:28px">
+    <div class="course-head">
+      <div style="display:grid;gap:4px"><span class="eyebrow">Your course</span><h2 id="courseTitle"></h2></div>
+      <div class="course-meta" id="courseMeta"></div>
+    </div>
+    <div id="modules" style="display:grid;gap:32px"></div>
+  </div>
+
+  <div class="container" style="display:grid;gap:16px">
+    <h2 style="font-size:1.25em;font-weight:800">How classes work</h2>
+    <div class="how">
+      <div class="card"><span class="ico"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="var(--brand)" stroke-width="1.8"><rect x="1.5" y="3" width="15" height="10" rx="1.5"/><path d="M6 16h6" stroke-linecap="round"/></svg></span><h4>Live, on a video call</h4><p>Your teacher shares the screen. You answer out loud and he types your answers.</p></div>
+      <div class="card"><span class="ico"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round"><path d="M3 9.5l3.5 3.5L15 4.5"/></svg></span><h4>Practice between classes</h4><p>Repeat the final quiz of each lesson. Your goal is 18 out of 20 or more.</p></div>
+      <div class="card"><span class="ico"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linejoin="round"><path d="M4 2h10v14l-5-3.5L4 16z"/></svg></span><h4>Save the hard ones</h4><p>Save questions for review. We go over them together at the start of the next class.</p></div>
+    </div>
+  </div>
+</main>
+
+<footer class="gutter"><div class="container"><span style="display:flex;align-items:center;gap:10px" id="flogo"></span><span id="teacher"></span></div></footer>
+
+<script>
+  const C = window.LINGUA, P = C.store.get("placement", null);
+  document.getElementById("logo").innerHTML = C.logo;
+  document.getElementById("teacher").textContent = "Instructor: " + C.maestro;
+  document.getElementById("inIni").textContent = C.maestro[0];
+  document.getElementById("inName").textContent = C.maestro;
+  document.getElementById("flogo").innerHTML = C.mark(22) + "<span>English classes made for you</span>";
+  const td = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  document.getElementById("today").textContent = td;
+  document.getElementById("courseTitle").textContent = C.curso;
+  const all = C.modulos.flatMap(m => m.lecciones), ready = all.filter(l => l.estado === "lista");
+  const doneOf = l => C.store.get("done." + l.id, []).length;
+  const pct = l => Math.round(doneOf(l) / 5 * 100);
+  document.getElementById("courseMeta").innerHTML =
+    `<span>${all.length} lessons</span><span>~${Math.round(all.reduce((a, l) => a + l.min, 0) / 60)} hours</span><span>${ready.length} available</span>`;
+
+  // Continue card
+  const cur = ready.find(l => pct(l) < 100) || ready[ready.length - 1];
+  document.getElementById("resume").innerHTML = cur ? `
+    ${C.thumb(cur, "LESSON")}
+    <div>
+      <span class="eyebrow">Continue where you left off</span>
+      <h3 style="margin-top:4px">Lesson ${cur.id} · ${cur.titulo}</h3>
+      <div class="meta"><span class="chip">${cur.nivel}</span><span class="muted" style="font-size:.9em">${cur.min} min · 5 sections</span></div>
+      <div class="bar" style="margin-bottom:6px"><i style="width:${pct(cur)}%"></i></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px">
+        <span class="muted num" style="font-size:.88em">${pct(cur)}% complete</span>
+        <a class="btn primary" href="${cur.archivo}">${pct(cur) ? "Continue lesson" : "Start lesson"}</a>
+      </div>
+    </div>` : "";
+
+  // Level card
+  const L = ["A1", "A2", "B1", "B2", "C1", "C2"], names = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", "B2+": "Upper intermediate +" };
+  const lvl = P ? P.nivel : null, idx = lvl ? L.indexOf(lvl.replace("+", "")) : -1;
+  document.getElementById("level").innerHTML = `
+    <span class="eyebrow">Your level</span>
+    ${lvl ? `<div style="display:flex;align-items:baseline;gap:10px"><span class="big">${lvl}</span><span style="font-weight:700;color:var(--ink-2)">${names[lvl] || ""}</span></div>`
+          : `<div class="big pend">Not tested yet</div>`}
+    <div class="cefr">${L.map((x, i) => `<span class="${i === idx ? "on" : i < idx ? "past" : ""}">${x}</span>`).join("")}</div>
+    <p class="muted" style="font-size:.9em">${lvl ? "From your placement test on " + new Date(P.fecha + "T12:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + "." : "Take the placement test to find your starting point. It takes about 20 minutes."}</p>
+    ${lvl ? `<div class="actions"><a class="btn primary" href="reporte.html">View full report</a><a class="btn ghost" href="examen.html">Retake test</a></div>` : `<a class="btn primary" href="examen.html">Take the test</a>`}`;
+
+  // Modules
+  document.getElementById("modules").innerHTML = C.modulos.map(m => `
+    <section class="module"><h3>${m.titulo}</h3><div class="lessons">${m.lecciones.map(l => {
+      const soon = l.estado !== "lista", sc = C.store.get("score." + l.id, null), p = pct(l);
+      const foot = soon ? `<span class="chip">Coming soon</span><span class="muted" style="font-size:.85em">${l.nivel}</span>`
+        : sc ? `<span class="chip ok">Completed · ${sc.ok}/${sc.n}</span><span class="muted" style="font-size:.85em">${l.nivel}</span>`
+        : p ? `<div style="flex:1;display:grid;gap:4px"><div class="bar"><i style="width:${p}%"></i></div><span class="muted num" style="font-size:.8em">${p}% complete</span></div>`
+        : `<span class="chip new">New</span><span class="muted" style="font-size:.85em">${l.nivel} · ${l.min} min</span>`;
+      const inner = `${C.thumb(l, "LESSON")}<p>${l.tema}</p><div class="foot">${foot}</div>`;
+      return soon ? `<div class="lesson soon">${inner}</div>` : `<a class="lesson" href="${l.archivo}">${inner}</a>`;
+    }).join("")}</div></section>`).join("");
+</script>
+</body>
+</html>
