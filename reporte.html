@@ -166,7 +166,7 @@ const T = {
     emptyT: "No test results yet", emptyP: "Take the placement test and the full report will appear here.", emptyB: "Take the test",
     oldT: "Detailed analysis not available for this result", oldP: "This test was saved before the detailed report existed. The section scores are below. Retake the test to see the full analysis.",
     retake: "Retake test",
-    shareTxt: (d) => `Lingua · Placement report (${d.date})\nLevel: ${d.lvl} (${d.name})\nAccuracy: ${d.acc}% (${d.ok}/${d.n})\nSpeaking: ${d.sp}/8\nStrengths: ${d.str || "—"}\nFocus areas: ${d.foc || "—"}\nInstructor: ${G.maestro}`
+    shareTxt: (d) => `Lingua · Placement report (${d.date})\nLevel: ${d.lvl} (${d.name})\nAccuracy: ${d.acc}% (${d.ok}/${d.n})\nSpeaking: ${d.sp}${d.sp === "—" ? "" : "/8"}\nStrengths: ${d.str || "—"}\nFocus areas: ${d.foc || "—"}\nInstructor: ${G.maestro}`
   },
   es: {
     navHome: "Mi aprendizaje", navTest: "Examen de colocación",
@@ -202,7 +202,7 @@ const T = {
     emptyT: "Aún no hay resultados", emptyP: "Haz el examen de colocación y aquí aparecerá el reporte completo.", emptyB: "Hacer examen",
     oldT: "Análisis detallado no disponible para este resultado", oldP: "Este examen se guardó antes de que existiera el reporte detallado. Abajo están los puntajes por sección. Repite el examen para ver el análisis completo.",
     retake: "Repetir examen",
-    shareTxt: (d) => `Lingua · Reporte de colocación (${d.date})\nNivel: ${d.lvl} (${d.nameEs})\nPrecisión: ${d.acc}% (${d.ok}/${d.n})\nSpeaking: ${d.sp}/8\nFortalezas: ${d.str || "—"}\nEn qué enfocarnos: ${d.foc || "—"}\nInstructor: ${G.maestro}`
+    shareTxt: (d) => `Lingua · Reporte de colocación (${d.date})\nNivel: ${d.lvl} (${d.nameEs})\nPrecisión: ${d.acc}% (${d.ok}/${d.n})\nSpeaking: ${d.sp}${d.sp === "—" ? "" : "/8"}\nFortalezas: ${d.str || "—"}\nEn qué enfocarnos: ${d.foc || "—"}\nInstructor: ${G.maestro}`
   }
 };
 
@@ -285,7 +285,7 @@ function render() {
     <div class="card kpi"><span class="v">${A.acc}%</span><span class="l">${t("kAcc")}</span></div>
     <div class="card kpi"><span class="v">${A.ok}<span class="muted" style="font-size:.55em"> / ${A.takenQ.length}</span></span><span class="l">${t("kCorrect")}</span></div>
     <div class="card kpi"><span class="v">${passed}<span class="muted" style="font-size:.55em"> / ${takenS}</span></span><span class="l">${t("kSections")}</span></div>
-    <div class="card kpi"><span class="v">${A.spTotal}<span class="muted" style="font-size:.55em"> / 8</span></span><span class="l">${t("kSpeak")}</span></div>
+    <div class="card kpi"><span class="v">${A.radio.every(v => v == null) ? "—" : A.spTotal + '<span class="muted" style="font-size:.55em"> / 8</span>'}</span><span class="l">${t("kSpeak")}</span></div>
   </div>
 
   <div class="panel">
@@ -345,7 +345,7 @@ function render() {
   document.getElementById("fM").onclick = () => { onlyMistakes = true; render(); };
   document.getElementById("fA").onclick = () => { onlyMistakes = false; render(); };
   const sum = {
-    date: fmtDate(D), lvl: L0.lvl, name: L0.name, nameEs: L0.es, acc: A.acc, ok: A.ok, n: A.takenQ.length, sp: A.spTotal,
+    date: fmtDate(D), lvl: L0.lvl, name: L0.name, nameEs: L0.es, acc: A.acc, ok: A.ok, n: A.takenQ.length, sp: A.radio.every(v => v == null) ? "—" : A.spTotal,
     str: A.strengths.slice(0, 3).map(a => a[lang]).join(", "), foc: A.focus.slice(0, 3).map(a => a[lang]).join(", ")
   };
   document.getElementById("copy").onclick = () => copyText(t("shareTxt")(sum), t("copied"));

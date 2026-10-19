@@ -73,6 +73,7 @@
   .cert { position: relative; overflow: hidden; border-top: 4px solid var(--brand); }
   .cert::after { content: ""; position: absolute; right: -40px; bottom: -40px; width: 220px; height: 220px; border-radius: 50%; pointer-events: none; background-image: radial-gradient(color-mix(in srgb, var(--brand) 18%, transparent) 1.2px, transparent 1.5px); background-size: 14px 14px; }
   .cert-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px dashed var(--line-2); }
+  @media (max-width: 600px) { #classBtn { display: none; } .hint { display: none !important; } }
   body.clase { --scale: 1.16; }
   body.clase .hide-in-class { display: none !important; }
 </style>
@@ -91,44 +92,105 @@
 
 <script>
 const { SEGMENTS, RADIO, PASS, NAMES, LEVELS } = window;
-const S = { screen: "intro", seg: 0, qi: 0, answers: {}, radio: RADIO.map(() => null), taken: [] };
-const app = document.getElementById("app"), G = window.LINGUA;
+const G = window.LINGUA, app = document.getElementById("app");
 document.getElementById("logo").innerHTML = G.logo;
+// Progress is saved after every answer, so the test can be done one section at a time (on any device).
+const saved = G.store.get("placementProgress", null) || {};
+const S = { screen: "intro", seg: 0, qi: 0, answers: saved.answers || {}, radio: saved.radio || RADIO.map(() => null), done: saved.done || {} };
 const segName = i => `Section ${i + 1} · ${NAMES[i]} (${SEGMENTS[i].lvl})`;
 const score = i => SEGMENTS[i].qs.filter(q => S.answers[q.g] === q.correct).length;
+const isDone = i => S.done[i] != null;
+const anyDone = () => SEGMENTS.some((_, i) => isDone(i));
+const allDone = () => SEGMENTS.every((_, i) => isDone(i));
+const spDone = () => S.radio.some(v => v != null);
+function levelIndex() { let p = 0; for (let i = 0; i < SEGMENTS.length; i++) { if (isDone(i) && S.done[i] >= PASS) p++; else break; } return p; }
+// The section we suggest next: after the last passed one, unless a section was failed
+function suggested() {
+  for (let i = 0; i < SEGMENTS.length; i++) { if (!isDone(i)) return i; if (S.done[i] < PASS) return -1; }
+  return -1;
+}
+function save() {
+  G.store.set("placementProgress", { answers: S.answers, radio: S.radio, done: S.done, at: new Date().toISOString() });
+  if (anyDone()) saveResult();
+}
+// Keep the level up to date after every section, so it shows right away on My learning and in the report
+function saveResult() {
+  const L0 = LEVELS[levelIndex()], sp = S.radio.reduce((a, v) => a + (v || 0), 0);
+  const enc = window.ALLQ.map(q => { const si = SEGMENTS.findIndex(sg => sg.qs.includes(q)); if (!isDone(si)) return "x"; const a = S.answers[q.g]; return a == null || a < 0 ? "s" : String(a); }).join("")
+    + "-" + S.radio.map(v => v == null ? "x" : v).join("");
+  G.store.set("placement", { nivel: L0.lvl, fecha: new Date().toISOString().slice(0, 10), secciones: SEGMENTS.map((sg, i) => isDone(i) ? { lvl: sg.lvl, score: S.done[i] } : null).filter(Boolean), speaking: sp, r: enc, partial: suggested() >= 0 });
+}
 
 function track(active) {
   const labels = SEGMENTS.map(s => s.lvl).concat(["Speaking"]);
   return `<div class="track hide-in-class" aria-hidden="true">${labels.map((l, i) => {
-    const pct = i < active ? 100 : i === active ? (S.screen === "q" ? (S.qi + 1) / 8 * 100 : 100) : 0;
-    return `<div><div class="bar"><i style="width:${pct}%"></i></div><span class="lb ${i === active ? "on" : ""}">${l}</span></div>`;
+    const fin = i < SEGMENTS.length ? isDone(i) : spDone();
+    const pct = i === active && S.screen === "q" ? (S.qi + 1) / 8 * 100 : fin ? 100 : 0;
+    return `<div><div class="bar"><i style="width:${pct}%;${fin && i < SEGMENTS.length && S.done[i] < PASS ? "background:var(--bad)" : ""}"></i></div><span class="lb ${i === active ? "on" : ""}">${l}</span></div>`;
   }).join("")}</div>`;
 }
 function render() { ({ intro, q: question, check, radio, result })[S.screen](); window.scrollTo({ top: 0 }); }
 
+function start(i, redo) {
+  if (redo) { SEGMENTS[i].qs.forEach(q => delete S.answers[q.g]); delete S.done[i]; save(); }
+  const firstOpen = SEGMENTS[i].qs.findIndex(q => S.answers[q.g] == null);
+  S.seg = i; S.qi = firstOpen < 0 ? 0 : firstOpen; S.screen = "q"; render();
+}
+
 function intro() {
+  const sug = suggested(), started = anyDone() || Object.keys(S.answers).length;
+  const status = i => {
+    if (isDone(i)) return `<span class="chip ${S.done[i] >= PASS ? "ok" : ""}" style="${S.done[i] >= PASS ? "" : "background:var(--bad-soft);color:var(--bad-ink);border-color:transparent"}">${S.done[i]}/8 · ${S.done[i] >= PASS ? "Passed" : "Not yet"}</span>`;
+    const part = SEGMENTS[i].qs.filter(q => S.answers[q.g] != null).length;
+    return part ? `<span class="chip">${part}/8 answered</span>` : `<span class="muted num" style="font-size:.85em">8 questions</span>`;
+  };
+  const btn = i => isDone(i) ? `<button class="btn ghost sm" data-redo="${i}">Retake</button>`
+    : `<button class="btn ${i === sug ? "primary" : ""} sm" data-start="${i}">${SEGMENTS[i].qs.some(q => S.answers[q.g] != null) ? "Continue" : "Start"}</button>`;
   app.innerHTML = `
   <div class="panel intro" style="display:grid;gap:18px">
-    <span class="eyebrow">Starting assessment · about 20 minutes</span>
+    <span class="eyebrow">Starting assessment · about 5 minutes per section</span>
     <h1>Placement test</h1>
-    <p style="color:var(--ink-2);font-size:1.05em;max-width:62ch">This test shows us where to start. There is no grade: the sections get harder, and if one is too difficult, we stop there.</p>
+    <p style="color:var(--ink-2);font-size:1.05em;max-width:62ch">Do it all at once or <b style="color:var(--ink)">one section at a time</b>. Your answers are saved, so you can stop after any section, come back later and see your level at any moment. If a section is too difficult, that’s where we stop.</p>
     <div class="sec-list">
-      ${SEGMENTS.map((s, i) => `<div><span class="lvl-badge">${s.lvl}</span><div><b>${NAMES[i]}</b><div class="muted" style="font-size:.9em">${s.intro}</div></div><span class="muted num" style="font-size:.88em">8 questions</span></div>`).join("")}
-      <div><span class="lvl-badge"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5"/><path d="M3 8a5 5 0 0 0 10 0M8 13v2"/></svg></span><div><b>Speaking</b><div class="muted" style="font-size:.9em">Four questions to answer out loud. Your teacher scores them.</div></div><span class="muted num" style="font-size:.88em">4 questions</span></div>
+      ${SEGMENTS.map((s, i) => `<div style="grid-template-columns:46px minmax(0,1fr) auto"><span class="lvl-badge">${s.lvl}</span>
+        <div style="min-width:0"><b>${NAMES[i]}</b>${i === sug && started ? ` <span class="chip new" style="margin-left:4px">Next</span>` : ""}<div class="muted" style="font-size:.9em">${s.intro}</div><div style="margin-top:6px">${status(i)}</div></div>
+        ${btn(i)}</div>`).join("")}
+      <div style="grid-template-columns:46px minmax(0,1fr) auto"><span class="lvl-badge"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5"/><path d="M3 8a5 5 0 0 0 10 0M8 13v2"/></svg></span>
+        <div><b>Speaking</b><div class="muted" style="font-size:.9em">Four questions to answer out loud, with your teacher in class.</div><div style="margin-top:6px">${spDone() ? `<span class="chip ok">${S.radio.reduce((a, v) => a + (v || 0), 0)}/8 · Scored</span>` : `<span class="muted" style="font-size:.85em">Optional · done in class</span>`}</div></div>
+        <button class="btn ${!anyDone() ? "" : sug < 0 && !spDone() ? "primary" : ""} sm" id="sp">${spDone() ? "Edit" : "Open"}</button></div>
     </div>
     <div class="actions" style="justify-content:space-between">
       <span class="hint"><span><span class="kbd">1–4</span> choose</span><span><span class="kbd">Enter</span> next</span><span><span class="kbd">←</span> back</span></span>
-      <button class="btn primary" id="go">Start test</button>
+      <div class="actions">
+        ${started ? `<button class="btn ghost" id="reset">Start over</button>` : ""}
+        ${anyDone() ? `<button class="btn ${sug < 0 ? "primary" : ""}" id="see">See my level${sug < 0 ? "" : " so far"}</button>` : ""}
+        ${sug >= 0 ? `<button class="btn primary" id="go">${started ? "Continue: " + SEGMENTS[sug].lvl : "Start with " + SEGMENTS[0].lvl}</button>` : ""}
+      </div>
     </div>
   </div>`;
-  document.getElementById("go").onclick = () => { S.screen = "q"; S.seg = 0; S.qi = 0; S.taken = [0]; render(); };
+  app.querySelectorAll("[data-start]").forEach(b => b.onclick = () => start(+b.dataset.start));
+  app.querySelectorAll("[data-redo]").forEach(b => b.onclick = () => start(+b.dataset.redo, true));
+  document.getElementById("sp").onclick = () => { S.screen = "radio"; render(); };
+  const go = document.getElementById("go"); if (go) go.onclick = () => start(sug);
+  const see = document.getElementById("see"); if (see) see.onclick = () => { S.screen = "result"; render(); };
+  const rs = document.getElementById("reset"); if (rs) rs.onclick = () => {
+    if (!confirmReset()) return;
+    S.answers = {}; S.radio = RADIO.map(() => null); S.done = {}; G.store.set("placementProgress", null); render();
+  };
+}
+let resetArmed = false;
+function confirmReset() {
+  if (resetArmed) { resetArmed = false; return true; }
+  resetArmed = true; const b = document.getElementById("reset"); b.textContent = "Tap again to erase your answers"; b.classList.add("primary");
+  setTimeout(() => { resetArmed = false; if (b.isConnected) { b.textContent = "Start over"; b.classList.remove("primary"); } }, 3500);
+  return false;
 }
 
 function question() {
   const seg = SEGMENTS[S.seg], q = seg.qs[S.qi], sel = S.answers[q.g];
   app.innerHTML = track(S.seg) + `
   <div class="panel q">
-    <div class="q-head"><span class="eyebrow">${segName(S.seg)}</span><span class="muted num" style="font-weight:700;font-size:.88em">Question ${S.qi + 1} of 8</span></div>
+    <div class="q-head"><span class="eyebrow">${segName(S.seg)}</span><span style="display:flex;gap:10px;align-items:center"><span class="muted num" style="font-weight:700;font-size:.88em">Question ${S.qi + 1} of 8</span><button class="btn ghost sm" id="exit">Save and exit</button></span></div>
     <div class="q-title">${q.p.replace("___", '<span class="gap">&nbsp;</span>')}</div>
     <div class="opts" role="radiogroup">${q.opts.map((o, i) => `<button class="opt ${sel === i ? "sel" : ""}" data-i="${i}" role="radio" aria-checked="${sel === i}"><span class="radio"></span><span>${o}</span><span class="letter">${i + 1}</span></button>`).join("")}</div>
     <div class="actions" style="justify-content:space-between">
@@ -139,37 +201,48 @@ function question() {
   app.querySelectorAll(".opt").forEach(b => b.onclick = () => pick(+b.dataset.i));
   document.getElementById("next").onclick = () => next();
   document.getElementById("back").onclick = back;
-  document.getElementById("skip").onclick = () => { S.answers[q.g] = -1; next(true); };
+  document.getElementById("skip").onclick = () => { S.answers[q.g] = -1; save(); next(true); };
+  document.getElementById("exit").onclick = () => { save(); S.screen = "intro"; render(); G.toast("<b>Saved</b><span>Continue whenever you want.</span>"); };
 }
-function pick(i) { S.answers[SEGMENTS[S.seg].qs[S.qi].g] = i; render(); }
+function pick(i) { S.answers[SEGMENTS[S.seg].qs[S.qi].g] = i; save(); render(); }
 function next(force) {
   const q = SEGMENTS[S.seg].qs[S.qi];
   if (S.answers[q.g] == null && !force) return;
-  if (S.qi < 7) { S.qi++; render(); } else { S.screen = "check"; render(); }
+  if (S.qi < 7) { S.qi++; render(); }
+  else {
+    const first = !isDone(S.seg);
+    S.done[S.seg] = score(S.seg); save();
+    if (first && G.game) G.game.award(15, { once: "placement." + S.seg, silent: true });
+    G.sfx(S.done[S.seg] >= PASS ? "win" : "pop");
+    S.screen = "check"; render();
+  }
 }
 function back() { if (S.qi > 0) { S.qi--; render(); } }
 
 function check() {
-  const i = S.seg, s = score(i), ok = s >= PASS, last = i === SEGMENTS.length - 1;
-  app.innerHTML = track(i + 1) + `
+  const i = S.seg, s = S.done[i], ok = s >= PASS, last = i === SEGMENTS.length - 1, L0 = LEVELS[levelIndex()];
+  const nextOpen = SEGMENTS.findIndex((_, k) => k > i && !isDone(k));
+  app.innerHTML = track(i) + `
   <div class="panel" style="display:grid;gap:18px">
     <span class="eyebrow">${segName(i)} · complete</span>
-    <div style="display:flex;align-items:baseline;gap:12px"><span class="num" style="font-size:3.4em;font-weight:800;line-height:1">${s}/8</span><span class="chip ${ok ? "ok" : ""}">${ok ? "Passed" : "Below 5/8"}</span></div>
-    <p style="color:var(--ink-2);font-size:1.05em">${ok ? (last ? "You finished all the written sections. Great level!" : "Nice work! Let’s go to the next section.") : "This is your limit for now, and that’s fine. Now we know where to start. Let’s go to speaking."}</p>
+    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="num" style="font-size:3.4em;font-weight:800;line-height:1">${s}/8</span><span class="chip ${ok ? "ok" : ""}">${ok ? "Passed" : "Below 5/8"}</span></div>
+    <p style="color:var(--ink-2);font-size:1.05em">${ok ? (last ? "You finished all the written sections. Great level!" : "Nice work! Keep going now, or stop here and continue another day.") : "This is your limit for now, and that’s fine. Now we know where to start."}</p>
+    <div class="feedback" style="background:var(--brand-soft);color:var(--brand-dark)"><div><b>Your level so far: ${L0.lvl} · ${L0.name}</b>It’s saved. You can see the full result any time.</div></div>
     <div class="actions">
-      ${ok && !last ? `<button class="btn primary" id="cont">Next: ${segName(i + 1)}</button><button class="btn" id="toR">Go to speaking</button>` : ""}
-      ${!ok || last ? `<button class="btn primary" id="toR">Go to speaking</button>${!last ? `<button class="btn ghost" id="cont">Try section ${i + 2} anyway</button>` : ""}` : ""}
+      ${ok && nextOpen >= 0 ? `<button class="btn primary" id="cont">Next: ${segName(nextOpen)}</button><button class="btn" id="see">Finish here and see my level</button>`
+        : `<button class="btn primary" id="see">See my level</button>${nextOpen >= 0 ? `<button class="btn ghost" id="cont">Try ${SEGMENTS[nextOpen].lvl} anyway</button>` : ""}`}
+      <button class="btn ghost" id="later">Save and continue later</button>
     </div>
   </div>`;
-  const c = document.getElementById("cont");
-  if (c) c.onclick = () => { S.seg++; S.qi = 0; S.taken.push(S.seg); S.screen = "q"; render(); };
-  document.getElementById("toR").onclick = () => { S.screen = "radio"; render(); };
+  const c = document.getElementById("cont"); if (c) c.onclick = () => start(nextOpen);
+  document.getElementById("see").onclick = () => { S.screen = "result"; render(); };
+  document.getElementById("later").onclick = () => { S.screen = "intro"; render(); };
 }
 
 function radio() {
-  app.innerHTML = track(4) + `
+  app.innerHTML = track(SEGMENTS.length) + `
   <div class="panel" style="display:grid;gap:8px">
-    <span class="eyebrow">Final section · Speaking</span>
+    <span class="eyebrow">Speaking · with your teacher</span>
     <h2 style="font-size:1.5em;font-weight:800">Answer out loud</h2>
     <p style="color:var(--ink-2)">Mistakes are OK. What matters is how you get your message across. Your teacher scores each answer.</p>
     <div>${RADIO.map((r, i) => `
@@ -177,22 +250,25 @@ function radio() {
         <div><span class="chip brand" style="margin-bottom:6px">${r.lvl}</span><div style="font-weight:700;font-size:1.08em">${r.en}</div></div>
         <div class="rate" data-i="${i}" role="group" aria-label="Score">${[["0", "Couldn’t"], ["1", "With help"], ["2", "Good"]].map(([v, t]) => `<button data-v="${v}" class="${S.radio[i] === +v ? "on" : ""}">${t}</button>`).join("")}</div>
       </div>`).join("")}</div>
-    <div class="actions" style="justify-content:space-between;margin-top:8px"><span class="muted" style="font-size:.88em">Questions you skip count as “Couldn’t”.</span><button class="btn primary" id="res">See result</button></div>
+    <div class="actions" style="justify-content:space-between;margin-top:8px"><span class="muted" style="font-size:.88em">Questions you skip count as “Couldn’t”.</span>
+      <div class="actions"><button class="btn ghost" id="later">Back to sections</button>${anyDone() ? `<button class="btn primary" id="res">See result</button>` : ""}</div></div>
   </div>`;
-  app.querySelectorAll(".rate").forEach(r => r.querySelectorAll("button").forEach(b => b.onclick = () => { S.radio[+r.dataset.i] = +b.dataset.v; radio(); }));
-  document.getElementById("res").onclick = () => { S.screen = "result"; render(); };
+  app.querySelectorAll(".rate").forEach(r => r.querySelectorAll("button").forEach(b => b.onclick = () => { S.radio[+r.dataset.i] = +b.dataset.v; save(); radio(); }));
+  const res = document.getElementById("res"); if (res) res.onclick = () => { S.screen = "result"; render(); };
+  document.getElementById("later").onclick = () => { S.screen = "intro"; render(); };
 }
 
 function result() {
-  let p = 0; for (const i of S.taken) { if (score(i) >= PASS) p++; else break; }
-  const L0 = LEVELS[p], sp = S.radio.reduce((a, v) => a + (v || 0), 0);
-  const note = (p >= 2 && sp <= 3) ? "Your grammar is ahead of your speaking, so we’ll add more conversation from the start."
+  saveResult();
+  const p = levelIndex(), L0 = LEVELS[p], sp = S.radio.reduce((a, v) => a + (v || 0), 0), spOn = spDone();
+  const note = !spOn ? "" : (p >= 2 && sp <= 3) ? "Your grammar is ahead of your speaking, so we’ll add more conversation from the start."
              : (p <= 1 && sp >= 5) ? "You speak better than your grammar score shows. That’s a great sign!" : "";
-  const missed = S.taken.flatMap(i => SEGMENTS[i].qs).filter(q => S.answers[q.g] !== q.correct);
-  const enc = window.ALLQ.map(q => !S.taken.includes(SEGMENTS.findIndex(sg => sg.qs.includes(q))) ? "x" : S.answers[q.g] == null || S.answers[q.g] < 0 ? "s" : String(S.answers[q.g])).join("") + "-" + S.radio.map(v => v == null ? "x" : v).join("");
-  G.store.set("placement", { nivel: L0.lvl, fecha: new Date().toISOString().slice(0, 10), secciones: S.taken.map(i => ({ lvl: SEGMENTS[i].lvl, score: score(i) })), speaking: sp, r: enc });
+  const taken = SEGMENTS.map((_, i) => i).filter(isDone);
+  const missed = taken.flatMap(i => SEGMENTS[i].qs).filter(q => S.answers[q.g] !== q.correct);
+  const left = SEGMENTS.map((_, i) => i).filter(i => !isDone(i)), sug = suggested();
   const scale = ["A1", "A2", "B1", "B2", "C1", "C2"], idx = scale.indexOf(L0.lvl.replace("+", ""));
   app.innerHTML = `
+  ${left.length && sug >= 0 ? `<div class="alert info" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span><b>Level so far.</b> ${left.length} section${left.length === 1 ? "" : "s"} left. Your result can go up when you do ${left.length === 1 ? "it" : "them"}.</span><button class="btn sm primary" id="cont2">Continue: ${SEGMENTS[sug].lvl}</button></div>` : ""}
   <div class="panel cert" style="display:grid;gap:22px">
     <div class="cert-top"><span style="display:flex;align-items:center;gap:10px">${G.mark(26)}<span><b>Level certificate</b><br><span class="muted" style="font-size:.85em">Lingua · Placement test</span></span></span><span class="muted num" style="font-size:.88em;text-align:right">${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}<br>Instructor: ${G.maestro}</span></div>
     <div class="res-top">
@@ -207,9 +283,9 @@ function result() {
     <div style="overflow-x:auto"><table>
       <thead><tr><th>Section</th><th>Level</th><th>Progress</th><th class="r">Points</th></tr></thead>
       <tbody>
-        ${SEGMENTS.map((s, i) => { const t = S.taken.includes(i), sc = t ? score(i) : 0;
+        ${SEGMENTS.map((s, i) => { const t = isDone(i), sc = t ? S.done[i] : 0;
           return `<tr style="${t ? "" : "color:var(--mute)"}"><td>${NAMES[i]}</td><td>${s.lvl}</td><td><span class="mini"><i style="width:${sc / 8 * 100}%;background:${sc >= PASS ? "var(--ok)" : "var(--bad)"}"></i></span></td><td class="r num">${t ? sc + " / 8" : "Not taken"}</td></tr>`; }).join("")}
-        <tr><td>Speaking</td><td>A1–B2</td><td><span class="mini"><i style="width:${sp / 8 * 100}%;background:var(--brand)"></i></span></td><td class="r num">${sp} / 8</td></tr>
+        <tr style="${spOn ? "" : "color:var(--mute)"}"><td>Speaking</td><td>A1–B2</td><td><span class="mini"><i style="width:${sp / 8 * 100}%;background:var(--brand)"></i></span></td><td class="r num">${spOn ? sp + " / 8" : "With your teacher"}</td></tr>
       </tbody></table></div>
     <p class="muted" style="font-size:.85em">You pass each section with 5 out of 8.</p>
   </div>
@@ -219,8 +295,9 @@ function result() {
       return `<div><span>${q.p.replace("___", "<b>___</b>")}</span><span><span class="x">${a >= 0 ? q.opts[a] : "Didn’t know"}</span> → <span class="y">${q.a}</span></span><span class="muted" style="font-size:.88em">${q.why}</span></div>`; }).join("")
       : `<p class="muted">No mistakes. Excellent!</p>`}${missed.length > 10 ? `<p class="muted">And ${missed.length - 10} more. We’ll go over them in class.</p>` : ""}</div>
   </div>
-  <div class="actions"><a class="btn primary" href="reporte.html">See full report</a><a class="btn" href="index.html">Go to My learning</a><button class="btn ghost" id="again">Retake test</button></div>`;
-  document.getElementById("again").onclick = () => { S.answers = {}; S.radio = RADIO.map(() => null); S.screen = "intro"; render(); };
+  <div class="actions"><a class="btn primary" href="reporte.html">See full report</a><button class="btn" id="secs">Back to sections</button><a class="btn ghost" href="index.html">Go to My learning</a></div>`;
+  const c2 = document.getElementById("cont2"); if (c2) c2.onclick = () => start(sug);
+  document.getElementById("secs").onclick = () => { S.screen = "intro"; render(); };
 }
 
 document.addEventListener("keydown", e => {
