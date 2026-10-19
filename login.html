@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Sign in</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<style>
+  body { min-height: 100vh; display: grid; grid-template-rows: 1fr auto; }
+  .stage { display: grid; place-items: center; padding-block: 48px; position: relative; overflow: hidden; }
+  .stage::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(color-mix(in srgb, var(--brand) 16%, transparent) 1.2px, transparent 1.5px); background-size: 18px 18px; -webkit-mask-image: radial-gradient(ellipse at center, transparent 30%, #000 75%); mask-image: radial-gradient(ellipse at center, transparent 30%, #000 75%); }
+  .box { position: relative; width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 32px; box-shadow: var(--shadow); display: grid; gap: 20px; }
+  @media (max-width: 480px) { .box { padding: 24px 20px; } }
+  .box .logo { font-size: 1.25em; }
+  .box h1 { font-size: 1.6em; font-weight: 800; }
+  .pw { position: relative; }
+  .pw input { padding-right: 74px; }
+  .pw button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: none; font-weight: 700; font-size: .82em; color: var(--brand); padding: 6px 8px; border-radius: 6px; }
+  .btn.block { width: 100%; padding-block: 13px; }
+  footer { text-align: center; color: var(--mute); font-size: .85em; padding-block: 20px; }
+</style>
+</head>
+<body class="gutter">
+<main class="stage">
+  <form class="box" id="form" novalidate>
+    <a class="logo" href="index.html" id="logo"></a>
+    <div style="display:grid;gap:6px">
+      <h1>Sign in</h1>
+      <p class="muted">Welcome to your English course. Use the username and password your teacher gave you.</p>
+    </div>
+    <div id="msg" hidden></div>
+    <div class="field">
+      <label for="user">Username</label>
+      <input id="user" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" required placeholder="e.g. diego">
+    </div>
+    <div class="field">
+      <label for="pass">Password</label>
+      <div class="pw"><input id="pass" name="password" type="password" autocomplete="current-password" required><button type="button" id="eye" aria-label="Show password">Show</button></div>
+    </div>
+    <button class="btn primary block" id="go" type="submit">Sign in</button>
+    <p class="muted" style="font-size:.88em;text-align:center">Forgot your password? Ask your teacher to reset it.</p>
+  </form>
+</main>
+<footer id="foot"></footer>
+<script>
+  const G = window.LINGUA, f = document.getElementById("form"), msg = document.getElementById("msg");
+  document.getElementById("logo").innerHTML = G.logo;
+  document.getElementById("foot").textContent = "Lingua · Instructor: " + G.maestro;
+  const say = (cls, html) => { msg.className = "alert " + cls; msg.innerHTML = html; msg.hidden = false; };
+  document.getElementById("eye").onclick = (e) => {
+    const p = document.getElementById("pass"), on = p.type === "password";
+    p.type = on ? "text" : "password"; e.target.textContent = on ? "Hide" : "Show"; e.target.setAttribute("aria-label", on ? "Hide password" : "Show password");
+  };
+  if (!G.cloudEnabled) {
+    say("info", "Accounts aren’t set up yet, so your progress is saved on this device. <a href=\"index.html\">Go to My learning</a>");
+    f.querySelectorAll("input,button[type=submit]").forEach(el => el.disabled = true);
+  }
+  f.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!G.cloudEnabled) return;
+    const u = document.getElementById("user").value.trim(), p = document.getElementById("pass").value;
+    if (!u || !p) { say("bad", "Enter your username and password."); return; }
+    const btn = document.getElementById("go"); btn.disabled = true; btn.textContent = "Signing in…";
+    const { error } = await G.sb.auth.signInWithPassword({ email: G.toEmail(u), password: p });
+    if (error) {
+      btn.disabled = false; btn.textContent = "Sign in";
+      say("bad", /invalid/i.test(error.message) ? "That username or password isn’t right. Check them and try again." : "We couldn’t sign you in: " + error.message);
+      return;
+    }
+    const next = new URLSearchParams(location.search).get("next") || "index.html";
+    location.replace(/^[\w\-./?=&%]+$/.test(next) && !next.startsWith("//") ? next : "index.html");
+  });
+</script>
+</body>
+</html>

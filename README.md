@@ -10,6 +10,8 @@ English learning platform for one-to-one online classes. Static site (HTML, CSS 
 | `examen.html` | **Placement test**: 4 written sections (A1 → B2, 8 questions each, pass = 5/8) + speaking scored by the teacher |
 | `reporte.html` | **Placement report**: section and skill-area charts, speaking, strengths, focus areas, plan and question review. EN / ES toggle for parents |
 | `clases/leccion-01.html` | **Lesson 01 · Driver Profile** (A1–A2) |
+| `login.html` | **Sign in** with username and password |
+| `perfil.html` | **Profile**: name, age, interests, color, stats, change password, sign out |
 
 ## Structure
 
@@ -20,7 +22,11 @@ assets/
   lingua.css         shared styles
   leccion.css        lesson player styles
   leccion.js         lesson player engine
+  cloud.js           accounts + sync (Supabase)
+  vendor/            Supabase browser client (bundled, v2.45.4)
   favicon.svg
+supabase/
+  setup.sql          tables + row-level security (run once)
 clases/
   leccion-01.html    one file per lesson (data only; the engine renders it)
 ```
@@ -37,6 +43,24 @@ Each lesson has 5 sections: vocabulary, sound natural, fill in the gaps, role-pl
 - `C` toggles class mode (larger text, no sidebar, answers revealed only when checked)
 - `1`–`4` choose an answer, `Space` check / next, `M` save for review
 - `Shift` + `←` / `→` previous / next section
+
+## Accounts and cloud saving (Supabase)
+
+Without settings, the site works in **local mode** (progress saved only in the browser). With Supabase connected:
+
+- Every page asks the student to sign in (except a shared report link).
+- First sign-in opens profile setup.
+- Progress (placement result, lessons, scores, review list) syncs to the account a moment after each change and on every page load, so it follows the student between devices. Each saved value carries its change time; the newest wins.
+
+**Setup (once):**
+
+1. Create a free project at [supabase.com](https://supabase.com).
+2. **SQL Editor** → paste `supabase/setup.sql` → **Run**.
+3. **Authentication → Sign In / Providers → Email**: keep Email on, and turn **off** "Allow new users to sign up" (only the teacher creates accounts).
+4. **Authentication → Users → Add user → Create new user**: email `username@student.lingua.app` (e.g. `diego@student.lingua.app`), a password, and **Auto Confirm User** on. The student signs in with just `diego` and that password.
+5. **Settings → API Keys**: copy the Project URL and the **publishable** key into `cloud` in `assets/config.js`. Never use the secret / service_role key here.
+
+Reset a forgotten password from **Authentication → Users**.
 
 ## Sharing the placement report
 

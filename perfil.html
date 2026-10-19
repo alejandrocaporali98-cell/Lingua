@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Profile</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<style>
+  .wrap { max-width: 860px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 20px; }
+  .wrap > * { min-width: 0; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 26px; display: grid; gap: 18px; }
+  @media (max-width: 560px) { .panel { padding: 18px; } }
+  .panel h2 { font-size: 1.15em; font-weight: 800; }
+  .head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 20px; align-items: center; position: relative; overflow: hidden; border-top: 4px solid var(--brand); }
+  @media (max-width: 600px) { .head { grid-template-columns: auto minmax(0, 1fr); } .head .lvl { grid-column: 1 / -1; justify-self: start; } }
+  .big-av { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 2.2em; font-weight: 800; }
+  .head h1 { font-size: 1.7em; font-weight: 800; }
+  .lvl { text-align: center; padding: 10px 18px; border-radius: 14px; background: var(--brand-soft); color: var(--brand-dark); }
+  .lvl b { display: block; font-size: 1.9em; line-height: 1; font-weight: 800; }
+  .lvl span { font-size: .75em; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 700px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .stat { padding: 16px; display: grid; gap: 2px; }
+  .stat .v { font-size: 1.6em; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .stat .l { font-size: .82em; color: var(--mute); font-weight: 600; }
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips button { border: 1px solid var(--line-2); background: var(--surface); border-radius: 999px; padding: 7px 14px; font-weight: 600; font-size: .9em; }
+  .chips button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+  .swatches button { width: 36px; height: 36px; border-radius: 50%; border: 3px solid transparent; box-shadow: 0 0 0 1px var(--line-2); }
+  .swatches button[aria-pressed="true"] { border-color: var(--surface); box-shadow: 0 0 0 3px var(--ink); }
+  .sync { display: flex; align-items: center; gap: 8px; font-size: .85em; color: var(--mute); }
+  .sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; }
+  .sync.off i { background: var(--line-2); }
+  .sync.err i { background: var(--bad); }
+</style>
+</head>
+<body>
+<header class="nav gutter">
+  <div class="container nav-in">
+    <a class="logo" href="index.html" id="logo"></a>
+    <nav class="nav-links"><a href="index.html">My learning</a><a href="examen.html">Placement test</a></nav>
+    <span class="spacer"></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a>
+  </div>
+</header>
+<main class="gutter"><div class="wrap" id="app"></div></main>
+
+<script>
+const G = window.LINGUA, setup = new URLSearchParams(location.search).get("setup") === "1";
+document.getElementById("logo").innerHTML = G.logo;
+const INTERESTS = ["Formula 1", "JDM cars", "Anime", "Football", "Video games", "Music", "Movies & series", "Basketball", "Travel", "Food"];
+const COLORS = ["#2346d0", "#0f766e", "#b45309", "#6d3fd6", "#15803d", "#be123c", "#1b1f2a"];
+const LV = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", "B2+": "Upper intermediate +" };
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+function localProfile() { return G.store.get("profileLocal", {}); }
+function stats() {
+  const all = G.modulos.flatMap(m => m.lecciones), ready = all.filter(l => l.estado === "lista");
+  const scores = ready.map(l => G.store.get("score." + l.id, null)).filter(Boolean);
+  const avg = scores.length ? Math.round(scores.reduce((a, s) => a + s.ok / s.n, 0) / scores.length * 100) : null;
+  const review = ready.reduce((a, l) => a + G.store.get("repaso." + l.id, []).length, 0);
+  return { done: scores.length, total: ready.length, avg, review, place: G.store.get("placement", null) };
+}
+
+function render() {
+  const p = (G.cloudEnabled ? G.profile : localProfile()) || {};
+  const name = p.display_name || "", color = p.avatar_color || COLORS[0], st = stats();
+  const picked = new Set(p.interests || []);
+  const since = G.user && G.user.created_at ? new Date(G.user.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : null;
+  const sync = !G.cloudEnabled ? `<span class="sync off"><i></i>Saved on this device only</span>`
+    : G.lastSync && !G.lastSync.ok ? `<span class="sync err"><i></i>Not synced yet. We’ll keep trying.</span>`
+    : `<span class="sync"><i></i>Progress saved to your account</span>`;
+
+  document.getElementById("app").innerHTML = `
+  ${setup ? `<div class="alert info"><b>Welcome to Lingua!</b> Set up your profile to start. It takes one minute.</div>` : ""}
+  <div class="panel head">
+    <div class="big-av" id="bigAv" style="background:${color}">${name ? esc(name[0].toUpperCase()) : "?"}</div>
+    <div style="display:grid;gap:4px;min-width:0">
+      <span class="eyebrow">${setup ? "New student" : "Student"}</span>
+      <h1 id="nameOut">${esc(name) || "Your profile"}</h1>
+      <div class="muted" style="font-size:.9em">${since ? "Student since " + since + " · " : ""}Instructor: ${G.maestro}</div>
+      ${sync}
+    </div>
+    <div class="lvl"><span>Level</span><b>${st.place ? st.place.nivel : "—"}</b><span>${st.place ? LV[st.place.nivel] || "" : "Not tested"}</span></div>
+  </div>
+
+  ${setup ? "" : `<div class="stats">
+    <div class="card stat"><span class="v">${st.place ? st.place.nivel : "—"}</span><span class="l">Placement level</span></div>
+    <div class="card stat"><span class="v">${st.done}<span class="muted" style="font-size:.55em"> / ${st.total}</span></span><span class="l">Lessons completed</span></div>
+    <div class="card stat"><span class="v">${st.avg == null ? "—" : st.avg + "%"}</span><span class="l">Average final quiz</span></div>
+    <div class="card stat"><span class="v">${st.review}</span><span class="l">Saved for review</span></div>
+  </div>`}
+
+  <form class="panel" id="pform" novalidate>
+    <div><h2>${setup ? "Tell us about you" : "Profile"}</h2><p class="muted" style="font-size:.9em">Your teacher uses this to make lessons about the things you like.</p></div>
+    <div class="grid2">
+      <div class="field"><label for="dn">Your name</label><input id="dn" maxlength="40" autocomplete="given-name" value="${esc(name)}" placeholder="e.g. Diego"></div>
+      <div class="field"><label for="age">Age</label><input id="age" type="number" min="5" max="99" inputmode="numeric" value="${p.age || ""}" placeholder="e.g. 15"></div>
+    </div>
+    <div class="field"><label>Things you love</label><span class="help">Choose as many as you want.</span>
+      <div class="chips" id="chips">${INTERESTS.map(i => `<button type="button" aria-pressed="${picked.has(i)}">${i}</button>`).join("")}</div></div>
+    <div class="field"><label>Profile color</label>
+      <div class="swatches" id="sw">${COLORS.map(c => `<button type="button" aria-label="Color ${c}" aria-pressed="${c === color}" data-c="${c}" style="background:${c}"></button>`).join("")}</div></div>
+    <div id="pmsg" hidden></div>
+    <div class="actions"><button class="btn primary" type="submit" id="psave">${setup ? "Save and start" : "Save profile"}</button></div>
+  </form>
+
+  ${G.cloudEnabled && !setup ? `
+  <form class="panel" id="wform" novalidate>
+    <div><h2>Password</h2><p class="muted" style="font-size:.9em">Use at least 8 characters.</p></div>
+    <div class="grid2">
+      <div class="field"><label for="np">New password</label><input id="np" type="password" autocomplete="new-password" minlength="8"></div>
+      <div class="field"><label for="np2">Repeat new password</label><input id="np2" type="password" autocomplete="new-password" minlength="8"></div>
+    </div>
+    <div id="wmsg" hidden></div>
+    <div class="actions"><button class="btn" type="submit" id="wsave">Change password</button></div>
+  </form>
+  <div class="panel" style="grid-template-columns:minmax(0,1fr) auto;align-items:center">
+    <div><h2>Sign out</h2><p class="muted" style="font-size:.9em">Your progress stays saved in your account.</p></div>
+    <button class="btn" id="out">Sign out</button>
+  </div>` : ""}`;
+
+  let chosenColor = color;
+  document.querySelectorAll("#chips button").forEach(b => b.onclick = () => b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true"));
+  document.querySelectorAll("#sw button").forEach(b => b.onclick = () => {
+    chosenColor = b.dataset.c;
+    document.querySelectorAll("#sw button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    document.getElementById("bigAv").style.background = chosenColor;
+  });
+  document.getElementById("dn").addEventListener("input", e => {
+    const v = e.target.value.trim(); document.getElementById("bigAv").textContent = v ? v[0].toUpperCase() : "?";
+  });
+
+  const say = (id, cls, t) => { const m = document.getElementById(id); m.className = "alert " + cls; m.textContent = t; m.hidden = false; };
+  document.getElementById("pform").addEventListener("submit", async e => {
+    e.preventDefault();
+    const dn = document.getElementById("dn").value.trim(), ageRaw = document.getElementById("age").value, age = ageRaw ? +ageRaw : null;
+    if (!dn) { say("pmsg", "bad", "Write your name."); return; }
+    if (age != null && (age < 5 || age > 99)) { say("pmsg", "bad", "Age must be between 5 and 99."); return; }
+    const interests = [...document.querySelectorAll('#chips button[aria-pressed="true"]')].map(b => b.textContent);
+    const fields = { display_name: dn, age, interests, avatar_color: chosenColor };
+    const btn = document.getElementById("psave"); btn.disabled = true;
+    try {
+      if (G.cloudEnabled) await G.saveProfile(fields); else { G.store.set("profileLocal", fields); G.profile = fields; G.decorate && G.decorate(); }
+      if (setup) { location.replace("index.html"); return; }
+      say("pmsg", "ok", "Profile saved."); document.getElementById("nameOut").textContent = dn;
+    } catch (err) { say("pmsg", "bad", "We couldn’t save your profile: " + (err.message || err)); }
+    btn.disabled = false;
+  });
+
+  const w = document.getElementById("wform");
+  if (w) w.addEventListener("submit", async e => {
+    e.preventDefault();
+    const a = document.getElementById("np").value, b = document.getElementById("np2").value;
+    if (a.length < 8) { say("wmsg", "bad", "Use at least 8 characters."); return; }
+    if (a !== b) { say("wmsg", "bad", "The two passwords don’t match."); return; }
+    const btn = document.getElementById("wsave"); btn.disabled = true;
+    const { error } = await G.sb.auth.updateUser({ password: a });
+    btn.disabled = false;
+    if (error) say("wmsg", "bad", "We couldn’t change your password: " + error.message);
+    else { say("wmsg", "ok", "Password changed."); w.reset(); }
+  });
+  const out = document.getElementById("out");
+  if (out) out.onclick = () => G.signOut();
+}
+G.ready.then(render);
+document.addEventListener("lingua:sync", () => {
+  const s = document.querySelector(".sync"); if (!s) return;
+  const ok = G.lastSync && G.lastSync.ok;
+  s.className = "sync" + (ok ? "" : " err"); s.innerHTML = ok ? "<i></i>Progress saved to your account" : "<i></i>Not synced yet. We’ll keep trying.";
+});
+</script>
+</body>
+</html>

@@ -17,13 +17,33 @@ window.LINGUA = {
       { id: "05", titulo: "Matchday", tema: "Tell the story of a match with the past simple.", nivel: "A2", min: 60, icono: "ball", color: "#15803d", estado: "pronto" },
       { id: "06", titulo: "Level Up", tema: "Compare games and cars: faster, better, the best.", nivel: "A2–B1", min: 60, icono: "pad", color: "#be123c", estado: "pronto" }
     ]}
-  ]
+  ],
+
+  // ── Cuentas (Supabase) ──
+  // Pega aquí el Project URL y la Publishable key (Settings → API Keys).
+  // Si se dejan vacíos, la plataforma funciona sin cuentas y guarda solo en el navegador.
+  cloud: {
+    url: "",
+    key: "",
+    // Si el alumno escribe un usuario sin "@", se convierte en usuario@este-dominio
+    usernameDomain: "student.lingua.app"
+  }
 };
 
 // ── Helpers compartidos (no hace falta tocarlos) ──
+// Cada valor guardado lleva su hora de cambio en "lingua.__meta" para sincronizar sin perder avances.
 window.LINGUA.store = {
   get(k, d) { try { const v = localStorage.getItem("lingua." + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem("lingua." + k, JSON.stringify(v)); } catch (e) {} }
+  set(k, v) {
+    try {
+      localStorage.setItem("lingua." + k, JSON.stringify(v));
+      if (k.indexOf("__") !== 0) {
+        const m = JSON.parse(localStorage.getItem("lingua.__meta") || "{}"); m[k] = Date.now();
+        localStorage.setItem("lingua.__meta", JSON.stringify(m));
+      }
+    } catch (e) {}
+    if (window.LINGUA.onSet) window.LINGUA.onSet(k);
+  }
 };
 window.LINGUA.icons = {
   helmet: '<path d="M8 34c0-12 9-22 21-22 9 0 17 6 19 15l2 9H30a4 4 0 0 0-4 4v4H12a4 4 0 0 1-4-4z"/><path d="M30 27h18"/>',

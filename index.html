@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="auth-pending">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -11,6 +11,8 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
 <script src="assets/config.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
 <style>
   .hero { position: relative; background: var(--surface); border-bottom: 1px solid var(--line); padding-block: 36px 40px; overflow: hidden; }
   .hero::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 46%; pointer-events: none; background-image: radial-gradient(color-mix(in srgb, var(--brand) 18%, transparent) 1.2px, transparent 1.5px); background-size: 16px 16px; -webkit-mask-image: linear-gradient(to left, #000 10%, transparent 90%); mask-image: linear-gradient(to left, #000 10%, transparent 90%); }
@@ -62,7 +64,7 @@
     <a class="logo" href="index.html" id="logo"></a>
     <nav class="nav-links"><a class="on" href="index.html">My learning</a><a href="examen.html">Placement test</a></nav>
     <span class="spacer"></span>
-    <span class="avatar" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></span>
+    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a>
   </div>
 </header>
 
@@ -70,7 +72,7 @@
   <div class="container hero-grid">
     <div>
       <span class="eyebrow" id="today"></span>
-      <h1 style="margin-top:6px">Welcome back</h1>
+      <h1 style="margin-top:6px" data-greet>Welcome back</h1>
       <p class="lead">Pick up where you left off. Every lesson we do in class stays here so you can review it.</p>
       <div class="instructor" style="margin-top:14px"><span class="in" id="inIni"></span><span style="font-size:.9em"><span class="muted">Instructor</span><br><b id="inName"></b></span></div>
       <div class="card resume" id="resume"></div>
