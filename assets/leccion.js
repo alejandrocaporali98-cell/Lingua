@@ -28,6 +28,7 @@
         <button class="btn ghost sm hide-in-class" id="szDown" aria-label="Smaller text">A−</button>
         <button class="btn ghost sm hide-in-class" id="szUp" aria-label="Larger text">A+</button>
         <button class="toggle" id="classBtn" aria-pressed="false"><span class="sw"></span>Class mode <span class="kbd">C</span></button>
+        <button class="btn sm hide-sm" id="presentBtn" title="Full screen for sharing your screen">Present <span class="kbd">P</span></button>
         <a class="avatar hide-in-class hide-sm" data-avatar href="../perfil.html" aria-label="Your profile" style="width:32px;height:32px"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a>
       </div>
     </div>
@@ -75,6 +76,7 @@
     st.sec = Math.max(0, Math.min(SECS.length - 1, i));
     G.store.set("sec." + C.id, st.sec);
     drawToc(); draw(); window.scrollTo({ top: 0 });
+    try { pt(); } catch (e) {}
   }
   function markDone(i) {
     const first = !st.done.has(i);
@@ -307,13 +309,30 @@
     navigator.clipboard.writeText(txt).then(() => toast("List copied"), () => toast("Couldn’t copy"));
   };
   if (G.store.get("modoClase", false)) toggleClass();
+  // ── Present: clean full screen for sharing in class ──
+  const pctl = document.createElement("div");
+  pctl.className = "pctl"; pctl.innerHTML = `<button type="button" data-p="-1" aria-label="Previous section">←</button><span id="pctlT"></span><button type="button" data-p="1" aria-label="Next section">→</button><button type="button" data-p="x">Exit</button>`;
+  document.body.appendChild(pctl);
+  const pt = () => { const t = document.getElementById("pctlT"); if (t) t.textContent = (st.sec + 1) + " / " + SECS.length + " · " + SECS[st.sec].t; };
+  function present(on) {
+    document.body.classList.toggle("present", on);
+    if (on && !document.body.classList.contains("clase")) toggleClass();
+    try { if (on && document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); if (!on && document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch (e) {}
+    pt(); window.scrollTo({ top: 0 });
+  }
+  document.getElementById("presentBtn").onclick = () => present(true);
+  pctl.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { if (b.dataset.p === "x") return present(false); markDone(st.sec); go(st.sec + +b.dataset.p); pt(); });
+  document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.body.classList.contains("present")) present(false); });
   document.addEventListener("keydown", e => {
     if (e.target.tagName === "INPUT" || e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key.toLowerCase();
     if (k === "c") { toggleClass(); return; }
+    if (k === "p") { present(!document.body.classList.contains("present")); return; }
+    if (k === "escape" && document.body.classList.contains("present")) { present(false); return; }
     if (quiz && quiz.key(k)) { e.preventDefault(); return; }
-    if (e.shiftKey && k === "arrowright") go(st.sec + 1);
-    if (e.shiftKey && k === "arrowleft") go(st.sec - 1);
+    const pres = document.body.classList.contains("present");
+    if ((e.shiftKey || pres) && k === "arrowright") { markDone(st.sec); go(st.sec + 1); pt(); }
+    if ((e.shiftKey || pres) && k === "arrowleft") { go(st.sec - 1); pt(); }
   });
   drawToc(); draw();
   if (G.decorate) G.decorate();

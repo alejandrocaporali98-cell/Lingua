@@ -130,3 +130,16 @@ body.clase .player { grid-template-columns: 1fr; }
 .tnotes { background: var(--badge-soft); border-color: var(--badge-line); }
 .tnotes ul { display: grid; gap: 6px; padding-left: 18px; font-size: .92em; }
 @keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+
+/* Present: full screen, no menus, big type, only the exercise */
+.pctl { display: none; }
+body.present { --scale: 1.3; }
+body.present header.nav, body.present .classbar, body.present .side { display: none !important; }
+body.present .player { grid-template-columns: 1fr; min-height: 100vh; }
+body.present .stage-in { max-width: 1180px; margin: 0 auto; padding-bottom: 96px; }
+body.present .pctl { display: flex; position: fixed; right: 18px; bottom: 18px; z-index: 90; align-items: center; gap: 4px; padding: 6px; border-radius: 12px;
+  background: color-mix(in srgb, var(--ink) 88%, transparent); color: var(--on-inverse, #fff); box-shadow: var(--shadow); font-size: 14px; opacity: .35; transition: opacity .2s; }
+body.present .pctl:hover, body.present .pctl:focus-within { opacity: 1; }
+.pctl button { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 800; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+.pctl button:hover { background: rgba(255,255,255,.14); }
+.pctl span { padding: 0 6px; font-weight: 700; white-space: nowrap; }

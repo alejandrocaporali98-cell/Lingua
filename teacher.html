@@ -32,89 +32,137 @@
 <script src="assets/avatar.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
-<script src="assets/menu.js"></script>
 <style>
-  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 32px 64px; display: grid; gap: 20px; }
-  .wrap > * { min-width: 0; }
-  .page-head h1 { font-size: 2em; font-weight: 800; }
-  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); padding: 24px; display: grid; gap: 16px; align-content: start; }
-  @media (max-width: 560px) { .panel { padding: 16px; } }
-  .panel h2 { font-size: 1.1em; font-weight: 800; }
-  .layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 20px; align-items: start; }
-  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
-  .roster { display: grid; gap: 6px; }
-  .stu { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px; border-radius: 12px; border: 1px solid transparent; background: none; text-align: left; width: 100%; }
-  .stu:hover { background: var(--bg); }
-  .stu[aria-pressed="true"] { background: var(--brand-soft); border-color: color-mix(in srgb, var(--brand) 30%, transparent); }
-  .stu .av { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; overflow: hidden; }
-  .stu b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .stu small { color: var(--mute); font-weight: 600; font-size: .8em; }
-  .pill { font-size: .75em; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: var(--bg); color: var(--ink-2); white-space: nowrap; }
-  .pill.warn { background: var(--dev-soft); color: var(--dev); }
-  .pill.good { background: var(--ok-soft); color: var(--ok-ink); }
-  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-  @media (max-width: 700px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .kpi { padding: 14px 16px; display: grid; gap: 2px; border-radius: 12px; background: var(--bg); }
-  .kpi .v { font-size: 1.5em; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-  .kpi .l { font-size: .8em; color: var(--mute); font-weight: 600; }
-  .dhead { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 16px; align-items: center; }
-  .dhead .av { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; font-weight: 800; color: #fff; font-size: 1.5em; }
-  .dhead h2 { font-size: 1.5em; }
-  .tbl { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: .92em; min-width: 560px; }
-  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
-  th { font-size: .72em; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); }
-  td.r, th.r { text-align: right; }
+  /* Teacher admin: its own look, separate from the student site */
+  :root { --adm-side: #0f1420; --adm-side-2: #1a2131; --adm-side-ink: #c9d0de; --adm-bg: #f3f4f7; }
+  :root[data-theme="dark"] { --adm-bg: #0b0e14; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --adm-bg: #0b0e14; } }
+  body { background: var(--adm-bg); }
+  .adm { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; min-height: 100dvh; }
+  .adm-side { position: sticky; top: 0; height: 100vh; height: 100dvh; background: var(--adm-side); color: var(--adm-side-ink); display: flex; flex-direction: column; padding: 18px 12px; gap: 18px; }
+  .adm-brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px; color: #fff; text-decoration: none; }
+  .adm-brand b { display: block; font-size: 1.1em; letter-spacing: -.02em; } .adm-brand small { display: block; font-size: .72em; color: #8b95a9; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .adm-nav { display: grid; gap: 2px; }
+  .adm-nav a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--adm-side-ink); text-decoration: none; font-weight: 600; font-size: .93em; }
+  .adm-nav a:hover { background: var(--adm-side-2); color: #fff; }
+  .adm-nav a.on { background: #2346d0; color: #fff; }
+  .adm-nav svg, .adm-ico svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .adm-sep { height: 1px; background: #232b3b; margin: 8px 6px; }
+  .adm-foot { margin-top: auto; display: flex; align-items: center; gap: 6px; padding: 10px 6px 0; border-top: 1px solid #232b3b; }
+  .adm-me { flex: 1; min-width: 0; } .adm-me b { display: block; color: #fff; font-size: .9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .adm-me small { color: #8b95a9; font-size: .75em; }
+  .adm-ico { width: 34px; height: 34px; border-radius: 8px; border: 0; background: transparent; color: var(--adm-side-ink); display: grid; place-items: center; }
+  .adm-ico:hover { background: var(--adm-side-2); color: #fff; }
+  .adm-main { min-width: 0; }
+  .adm-wrap { max-width: 1240px; margin: 0 auto; padding: 26px 28px 64px; display: grid; gap: 18px; }
+  .adm-wrap > * { min-width: 0; }
+  @media (max-width: 860px) {
+    .adm { grid-template-columns: 1fr; }
+    .adm-side { position: sticky; top: 0; z-index: 40; height: auto; flex-direction: row; align-items: center; padding: 8px 10px; gap: 8px; overflow-x: auto; }
+    .adm-brand small, .adm-sep, .adm-me { display: none; }
+    .adm-nav { display: flex; gap: 2px; } .adm-nav a { padding: 7px 9px; white-space: nowrap; font-size: .85em; }
+    .adm-foot { margin: 0; padding: 0; border: 0; }
+    .adm-wrap { padding: 16px 14px 48px; }
+  }
+  .adm-top { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+  .adm-top h1 { font-size: 1.55em; font-weight: 800; letter-spacing: -.02em; } .adm-top p { color: var(--mute); font-size: .92em; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; }
+  .stat > span { font-size: .74em; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); }
+  .stat b { font-size: 1.6em; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; } .stat b small { font-size: .55em; color: var(--mute); font-weight: 700; margin-left: 2px; }
+  .stat > small { font-size: .78em; }
+  .card, .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: grid; gap: 14px; align-content: start; }
+  @media (max-width: 560px) { .card, .panel { padding: 14px; } }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card h2, .panel h2 { font-size: 1.02em; font-weight: 800; }
+  .card-head input[type=search] { font: inherit; padding: 8px 12px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); width: min(320px, 100%); }
+  .tbl { overflow-x: auto; margin: 0 -4px; }
+  table { width: 100%; border-collapse: collapse; font-size: .9em; min-width: 560px; }
+  th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  th { font-size: .7em; text-transform: uppercase; letter-spacing: .07em; color: var(--mute); font-weight: 800; background: color-mix(in srgb, var(--bg) 60%, transparent); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.r, th.r { text-align: right; } .num { font-variant-numeric: tabular-nums; } .nowrap { white-space: nowrap; }
+  table.crm { min-width: 980px; }
+  table.crm tbody tr[data-row] { cursor: pointer; }
+  table.crm tbody tr[data-row]:hover, table.crm tbody tr[data-row]:focus-visible { background: color-mix(in srgb, var(--brand) 5%, transparent); outline: none; }
+  .who { display: flex; align-items: center; gap: 10px; min-width: 0; } .who b { display: block; white-space: nowrap; } .who small { color: var(--mute); font-size: .8em; }
+  .who .av, .fhead .av { flex: none; border-radius: 50%; overflow: hidden; display: grid; place-items: center; font-weight: 800; color: #fff; }
+  .who .av { width: 34px; height: 34px; } .who a { color: inherit; text-decoration: none; }
+  .sty { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; } .sty svg { border-radius: 50%; }
+  .prog { display: flex; align-items: center; gap: 8px; } .prog .bar { width: 80px; height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; } .prog .bar i { display: block; height: 100%; background: var(--ok); } .prog small { color: var(--mute); font-weight: 700; }
+  .rowact { display: inline-flex; gap: 6px; }
+  .tag, .pill { display: inline-block; font-size: .74em; font-weight: 800; padding: 3px 8px; border-radius: 6px; background: var(--bg); color: var(--ink-2); white-space: nowrap; border: 1px solid var(--line); }
+  .tag.warn, .pill.warn { background: var(--dev-soft); color: var(--dev); border-color: transparent; }
+  .tag.good, .pill.good { background: var(--ok-soft); color: var(--ok-ink); border-color: transparent; }
+  .back { color: var(--mute); text-decoration: none; font-weight: 700; font-size: .88em; } .back:hover { color: var(--ink); }
+  .file { gap: 0; padding: 0; overflow: hidden; }
+  .fhead { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 20px; }
+  .fhead .av { width: 64px; height: 64px; font-size: 1.5em; } .fhead h1 { font-size: 1.45em; font-weight: 800; letter-spacing: -.02em; } .fhead p { font-size: .9em; margin-top: 2px; }
+  .fhead .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .startbox { display: grid; gap: 6px; } .startbox label { font-size: .78em; font-weight: 700; }
+  .startrow { display: flex; gap: 8px; flex-wrap: wrap; } .startrow select { min-width: 220px; max-width: 100%; font: inherit; padding: 8px 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  @media (max-width: 900px) { .fhead { grid-template-columns: 56px minmax(0, 1fr); } .fhead .av { width: 56px; height: 56px; } .startbox { grid-column: 1 / -1; } }
+  .tabs { display: flex; gap: 2px; padding: 0 12px; border-top: 1px solid var(--line); overflow-x: auto; }
+  .tabs a { padding: 12px 12px 10px; color: var(--mute); font-weight: 700; font-size: .9em; text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tabs a:hover { color: var(--ink); } .tabs a.on { color: var(--brand); border-bottom-color: var(--brand); }
   .miss { display: grid; gap: 6px; }
-  .miss div { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 10px; padding: 9px 12px; border-radius: 10px; background: var(--bg); font-size: .9em; }
+  .miss div { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 10px; padding: 9px 12px; border-radius: 8px; background: var(--bg); font-size: .9em; }
   .miss div span:first-child { font-weight: 800; color: var(--mute); font-size: .85em; }
   .hw { display: grid; gap: 8px; }
-  .hw-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; }
-  .hw-item p { color: var(--ink-2); font-size: .88em; }
-  .hw-item small { color: var(--mute); font-weight: 600; font-size: .8em; }
+  .hw-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; }
+  .hw-item p { color: var(--ink-2); font-size: .88em; } .hw-item small { color: var(--mute); font-weight: 600; font-size: .8em; }
   .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr !important; } }
   .field textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--r-s); padding: 11px 12px; width: 100%; min-height: 80px; resize: vertical; }
   .field select { appearance: auto; }
   .quick { display: flex; gap: 6px; flex-wrap: wrap; }
-  .quick button { border: 1px dashed var(--line-2); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: .82em; font-weight: 700; color: var(--ink-2); }
+  .quick button { border: 1px dashed var(--line-2); background: var(--surface); border-radius: 6px; padding: 5px 10px; font-size: .82em; font-weight: 700; color: var(--ink-2); }
   .quick button:hover { border-color: var(--brand); color: var(--brand-dark); }
   .quick button.on { border-style: solid; border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
-  .startcls { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 16px; border-radius: 12px; background: var(--brand-soft); border: 1px solid color-mix(in srgb, var(--brand) 25%, transparent); }
-  .startcls b { color: var(--brand-dark); }
-  .startrow { display: flex; gap: 8px; flex-wrap: wrap; }
-  .startrow select { min-width: 200px; max-width: 100%; }
   .seg { display: flex; gap: 8px; flex-wrap: wrap; }
-  .seg label { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line-2); border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: .9em; cursor: pointer; }
+  .seg label { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line-2); border-radius: 8px; padding: 7px 12px; font-weight: 700; font-size: .9em; cursor: pointer; }
   .seg label:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
-  .lsmod { display: grid; gap: 8px; } .lsmod > b { font-size: .85em; color: var(--mute); text-transform: uppercase; letter-spacing: .06em; }
+  .lsmod { display: grid; gap: 8px; } .lsmod > b { font-size: .78em; color: var(--mute); text-transform: uppercase; letter-spacing: .06em; }
   .lsgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px; }
-  .lsrow { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; font-size: .92em; }
+  .lsrow { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; font-size: .9em; }
   .lsrow:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); }
   .lsdot { width: 10px; height: 10px; border-radius: 3px; }
   #lsEditBox[hidden] { display: none !important; }
-  .assigned { display: grid; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
-  .arow { display: grid; grid-template-columns: 10px 40px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 9px 14px; font-size: .92em; }
+  .assigned { display: grid; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .arow { display: grid; grid-template-columns: 10px 40px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 8px 14px; font-size: .9em; }
   .arow + .arow { border-top: 1px solid var(--line); }
   .arow .aid { font-weight: 800; font-variant-numeric: tabular-nums; } .arow .at { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   @media (max-width: 520px) { .arow { grid-template-columns: 10px 34px minmax(0, 1fr) auto; } .arow > .muted { display: none; } }
-  pre { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; overflow-x: auto; font-size: .85em; white-space: pre-wrap; word-break: break-all; }
+  pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow-x: auto; font-size: .85em; white-space: pre-wrap; word-break: break-all; }
   .empty { color: var(--mute); text-align: center; padding: 18px; }
+  .btn { border-radius: 8px; }
 </style>
 </head>
 <body>
-<header class="nav gutter">
-  <div class="container nav-in">
-    <a class="logo" href="index.html" id="logo"></a>
-    <nav class="nav-links"><a class="on" href="teacher.html">Teacher panel</a><a href="builder.html">Lesson builder</a></nav>
-    <span class="spacer"></span>
-    <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"></a>
-  </div>
-</header>
-<main class="gutter"><div class="wrap" id="app"></div></main>
+<div class="adm">
+  <aside class="adm-side" aria-label="Teacher navigation">
+    <a class="adm-brand" href="teacher.html#students"><span id="mark"></span><span><b>lingua</b><small>Teacher admin</small></span></a>
+    <nav class="adm-nav" id="admNav">
+      <a href="#students" data-v="students"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Students</a>
+      <a href="#schedule" data-v="schedule"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Schedule</a>
+      <a href="#accounts" data-v="accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Accounts</a>
+      <span class="adm-sep"></span>
+      <a href="builder.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Lesson builder</a>
+      <a href="index.html?preview=1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Preview lessons</a>
+    </nav>
+    <div class="adm-foot">
+      <span class="adm-me" id="me"></span>
+      <button type="button" class="adm-ico" id="themeBtn" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+      <button type="button" class="adm-ico" id="outBtn" aria-label="Sign out"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+    </div>
+  </aside>
+  <main class="adm-main"><div class="adm-wrap" id="app"></div></main>
+</div>
 <script>
 const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
-document.getElementById("logo").innerHTML = G.logo;
+document.getElementById("mark").innerHTML = G.mark(30);
+document.getElementById("themeBtn").onclick = () => G.theme && G.theme.toggle();
+document.getElementById("outBtn").onclick = () => G.signOut && G.signOut();
+window.addEventListener("hashchange", () => { if (DATA) render(); });
 const lessons = G.modulos.flatMap(m => m.lecciones), ready = lessons.filter(l => l.estado === "lista");
 const fmt = d => d ? new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—";
 const ago = d => {
@@ -161,65 +209,136 @@ on conflict do nothing;</pre>
   document.getElementById("copy").onclick = () => navigator.clipboard.writeText(document.getElementById("sql").textContent).then(() => G.toast("SQL copied"));
 }
 
+// ── Views: #students (table), #s/<id>/<tab> (student file), #schedule, #accounts ──
+const STYLE_ICON = k => G.avatar.svg({ style: "helmet", shell: "blue", accent: "yellow", design: "stripes", visor: "smoke", number: 7, bg: "fog" }, 26, { kind: G.themeOf(k).avatar, label: G.themeOf(k).label });
+function students() {
+  return DATA.profiles.filter(p => p.id !== (G.user && G.user.id)).map(studentOf).sort((a, b) => (a.p.display_name || "").localeCompare(b.p.display_name || ""));
+}
+function nextClass(id) {
+  const now = Date.now() - 3600e3;
+  return (DATA.classes || []).filter(c => c.student_id === id && c.status === "scheduled" && new Date(c.starts_at) >= now).sort((a, b) => a.starts_at.localeCompare(b.starts_at))[0] || null;
+}
+const when = c => new Date(c.starts_at).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+let Q = "";
 function render() {
-  const list = DATA.profiles.filter(p => p.id !== (G.user && G.user.id)).map(studentOf)
-    .sort((a, b) => (b.updated || "").localeCompare(a.updated || ""));
-  if (!SEL && list.length) SEL = list[0].p.id;
-  const cur = list.find(s => s.p.id === SEL);
-  app.innerHTML = `
-    <div class="page-head" style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
-      <div style="display:grid;gap:4px"><span class="eyebrow">Teacher</span><h1>Teacher panel</h1><p class="muted">${list.length} student${list.length === 1 ? "" : "s"} · Progress, grades, mistakes and homework.</p></div>
-      <div class="actions"><a class="btn ghost" href="builder.html">Lesson builder</a><button class="btn" id="reload">Refresh</button></div>
+  const h = (location.hash || "#students").slice(1).split("/");
+  const v = h[0] === "s" ? "students" : (["students", "schedule", "accounts"].includes(h[0]) ? h[0] : "students");
+  document.querySelectorAll("#admNav [data-v]").forEach(a => a.classList.toggle("on", a.dataset.v === v));
+  const me = G.profile || {}; document.getElementById("me").innerHTML = `<b>${esc(me.display_name || G.maestroNombre || "Teacher")}</b><small>Teacher</small>`;
+  if (h[0] === "s" && h[1]) { const s = students().find(x => x.p.id === h[1]); if (s) { SEL = s.p.id; return studentView(s, h[2] || "overview"); } }
+  if (v === "schedule") return scheduleView();
+  if (v === "accounts") return accountsView();
+  return listView();
+}
+function topBar(title, sub, actions) {
+  return `<div class="adm-top"><div><h1>${title}</h1>${sub ? `<p>${sub}</p>` : ""}</div><div class="actions">${actions || ""}<button class="btn sm" id="reload">Refresh</button></div></div>`;
+}
+function wireTop() { const r = document.getElementById("reload"); if (r) r.onclick = load; }
+
+function listView() {
+  const list = students(), wk = Date.now() + 7 * 864e5, now = Date.now() - 3600e3;
+  const up = (DATA.classes || []).filter(c => c.status === "scheduled" && new Date(c.starts_at) >= now && new Date(c.starts_at) <= wk).length;
+  const active = list.filter(s => s.updated && Date.now() - new Date(s.updated) < 7 * 864e5).length, todo = list.reduce((a, s) => a + s.pending, 0);
+  const rows = list.filter(s => !Q || (s.p.display_name || "").toLowerCase().includes(Q.toLowerCase()));
+  app.innerHTML = topBar("Students", `${list.length} student${list.length === 1 ? "" : "s"}`) + `
+    <div class="stats">
+      <div class="stat"><span>Students</span><b>${list.length}</b></div>
+      <div class="stat"><span>Active this week</span><b>${active}</b></div>
+      <div class="stat"><span>Classes next 7 days</span><b>${up}</b></div>
+      <div class="stat"><span>Homework pending</span><b>${todo}</b></div>
     </div>
-    ${list.length ? `<div class="layout">
-      <div class="panel" style="padding:12px"><div class="roster">${list.map(s => `
-        <button class="stu" data-id="${s.p.id}" aria-pressed="${s.p.id === SEL}">
-          <span class="av">${avatarOf(s, 44)}</span>
-          <span style="min-width:0"><b>${esc(s.p.display_name || "New student")}</b><small>${s.mine.length} lesson${s.mine.length === 1 ? "" : "s"} · Active ${ago(s.updated)}</small></span>
-          ${s.pending ? `<span class="pill warn">${s.pending} to do</span>` : `<span class="pill">Lv ${s.game.level}</span>`}
-        </button>`).join("")}</div></div>
-      <div style="display:grid;gap:20px;min-width:0">${cur ? detail(cur) : ""}</div>
-    </div>` : `<div class="panel"><p class="empty">No students yet. Create one below in Student accounts.</p></div>`}
-    ${accounts()}`;
-  document.getElementById("reload").onclick = load;
-  wireAccounts();
-  app.querySelectorAll(".stu").forEach(b => b.onclick = () => { SEL = b.dataset.id; render(); });
-  if (cur) wireDetail(cur);
+    <div class="card">
+      <div class="card-head"><input type="search" id="q" placeholder="Search students" value="${esc(Q)}" aria-label="Search students"></div>
+      ${list.length ? `<div class="tbl"><table class="crm">
+        <thead><tr><th>Student</th><th>Style</th><th>Level</th><th>Progress</th><th>XP</th><th>Next class</th><th>Homework</th><th>Last active</th><th class="r"></th></tr></thead>
+        <tbody>${rows.map(s => { const nc = nextClass(s.p.id), pct = s.rows.length ? Math.round(s.passed / s.rows.length * 100) : 0; return `<tr data-row="${s.p.id}" tabindex="0">
+          <td><div class="who"><span class="av">${avatarOf(s, 34)}</span><span><b>${esc(s.p.display_name || "New student")}</b><small>${s.p.age ? s.p.age + " y/o" : ""}</small></span></div></td>
+          <td><span class="sty">${STYLE_ICON(s.theme)}${esc(G.themeOf(s.theme).label.split(" (")[0])}</span></td>
+          <td>${s.placement ? `<span class="tag">${esc(s.placement.nivel)}</span>` : `<span class="muted">—</span>`}</td>
+          <td><div class="prog"><span class="bar"><i style="width:${pct}%"></i></span><small>${s.passed}/${s.rows.length}</small></div></td>
+          <td class="num">${s.game.xp}<small class="muted"> · Lv ${s.game.level}</small></td>
+          <td>${nc ? `<span class="nowrap">${when(nc)}</span>` : `<span class="muted">—</span>`}</td>
+          <td>${s.pending ? `<span class="tag warn">${s.pending} pending</span>` : `<span class="muted">—</span>`}</td>
+          <td class="muted nowrap">${ago(s.updated)}</td>
+          <td class="r"><div class="rowact"><button class="btn primary sm" data-start="${s.p.id}">Start class</button><a class="btn sm" href="#s/${s.p.id}">Open</a></div></td>
+        </tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No students yet. Create one in Accounts.</p>`}
+    </div>`;
+  wireTop();
+  const q = document.getElementById("q"); if (q) q.oninput = () => { Q = q.value; const pos = q.selectionStart; listView(); const n = document.getElementById("q"); n.focus(); n.setSelectionRange(pos, pos); };
+  app.querySelectorAll("tr[data-row]").forEach(tr => { const go = () => location.hash = "#s/" + tr.dataset.row; tr.onclick = e => { if (!e.target.closest("button, a")) go(); }; tr.onkeydown = e => { if (e.key === "Enter" && e.target === tr) go(); }; });
+  app.querySelectorAll("[data-start]").forEach(b => b.onclick = () => { const s = list.find(x => x.p.id === b.dataset.start); b.disabled = true; G.actAs({ id: s.p.id, name: s.p.display_name || "Student" }, (s.mine[s.nextIdx] || {}).archivo || "index.html"); });
 }
 
-function detail(s) {
-  const g = s.game, pl = s.placement;
-  const status = r => !r.best ? `<span class="pill">Not started</span>` : r.best.ok / r.best.n >= .8 ? `<span class="pill good">Passed</span>` : `<span class="pill warn">Practicing</span>`;
-  const byLesson = {}; s.review.forEach(q => byLesson[q.l] = (byLesson[q.l] || 0) + 1);
-  return `
-  <div class="panel">
-    <div class="dhead"><span class="av">${avatarOf(s, 64)}</span>
-      <div style="min-width:0"><h2>${esc(s.p.display_name || "New student")}</h2>
-        <p class="muted" style="font-size:.9em">${s.p.age ? s.p.age + " years old · " : ""}${(s.p.interests || []).map(esc).join(", ") || "No interests yet"}</p></div>
-      <span class="pill" style="font-size:.85em">Level ${pl ? pl.nivel : "—"}</span></div>
-    <div class="startcls">
-      <div style="min-width:0"><b>Start a class with ${esc((s.p.display_name || "this student").split(" ")[0])}</b>
-        <p class="muted" style="font-size:.88em">You work on their account: sections, quiz scores, XP, mistakes and diplomas save for them.</p></div>
-      <div class="startrow">
-        <select id="scL" aria-label="Lesson for this class">${s.mine.length ? s.mine.map((l, i) => `<option value="${esc(l.archivo)}" ${i === s.nextIdx ? "selected" : ""}>${esc(l.id)} · ${esc(l.titulo)}</option>`).join("") : ""}<option value="index.html">Their home page</option></select>
-        <button class="btn primary" id="scGo">Start class</button>
+function scheduleView() {
+  const list = students(), byId = Object.fromEntries(list.map(s => [s.p.id, s]));
+  const now = Date.now() - 3600e3, cls = (DATA.classes || []).filter(c => byId[c.student_id]);
+  const up = cls.filter(c => c.status === "scheduled" && new Date(c.starts_at) >= now).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+  const past = cls.filter(c => !(c.status === "scheduled" && new Date(c.starts_at) >= now)).sort((a, b) => b.starts_at.localeCompare(a.starts_at)).slice(0, 15);
+  const ST = { scheduled: ["Scheduled", ""], attended: ["Attended", "good"], missed: ["Missed", "warn"], cancelled: ["Cancelled", ""] };
+  const row = (c, start) => { const s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : null; return `<tr>
+    <td class="nowrap">${when(c)}</td><td><div class="who"><span class="av">${avatarOf(s, 28)}</span><a href="#s/${s.p.id}/classes"><b>${esc(s.p.display_name || "")}</b></a></div></td>
+    <td>${l ? esc(l.id + " · " + l.titulo) : `<span class="muted">—</span>`}</td><td><span class="tag ${ST[c.status][1]}">${ST[c.status][0]}</span></td>
+    <td class="r">${start ? `<button class="btn primary sm" data-sc="${c.id}">Start class</button>` : ""}</td></tr>`; };
+  app.innerHTML = topBar("Schedule", "Upcoming and recent classes for every student. Schedule new ones from a student’s file.") + `
+    <div class="card"><div class="card-head"><h2>Upcoming</h2></div>${up.length ? `<div class="tbl"><table class="crm"><thead><tr><th>When</th><th>Student</th><th>Lesson</th><th>Status</th><th></th></tr></thead><tbody>${up.map(c => row(c, true)).join("")}</tbody></table></div>` : `<p class="empty">No upcoming classes.</p>`}</div>
+    <div class="card"><div class="card-head"><h2>Recent</h2></div>${past.length ? `<div class="tbl"><table class="crm"><thead><tr><th>When</th><th>Student</th><th>Lesson</th><th>Status</th><th></th></tr></thead><tbody>${past.map(c => row(c, false)).join("")}</tbody></table></div>` : `<p class="empty">No classes yet.</p>`}</div>`;
+  wireTop();
+  app.querySelectorAll("[data-sc]").forEach(b => b.onclick = () => { const c = cls.find(x => x.id === b.dataset.sc), s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : null; b.disabled = true; G.actAs({ id: s.p.id, name: s.p.display_name || "Student" }, l ? l.archivo : "index.html"); });
+}
+
+function accountsView() {
+  app.innerHTML = topBar("Accounts", "Create students and change passwords.") + accounts();
+  wireTop(); wireAccounts();
+}
+
+const TABS = [["overview", "Overview"], ["lessons", "Lessons & style"], ["classes", "Classes"], ["homework", "Homework"], ["reports", "Reports"]];
+function studentView(s, tab) {
+  const g = s.game, pl = s.placement, first = esc((s.p.display_name || "this student").split(" ")[0]);
+  app.innerHTML = `
+    <a class="back" href="#students">← All students</a>
+    <div class="card file">
+      <div class="fhead">
+        <span class="av">${avatarOf(s, 64)}</span>
+        <div style="min-width:0"><h1>${esc(s.p.display_name || "New student")}</h1>
+          <p class="muted">${[s.p.age ? s.p.age + " years old" : "", G.themeOf(s.theme).label, pl ? "Level " + pl.nivel : "Placement not taken", "Active " + ago(s.updated)].filter(Boolean).map(esc).join(" · ")}</p>
+          ${(s.p.interests || []).length ? `<div class="chips">${s.p.interests.map(i => `<span class="tag">${esc(i)}</span>`).join("")}</div>` : ""}</div>
+        <div class="startbox">
+          <label for="scL" class="muted">Start a class with ${first}</label>
+          <div class="startrow"><select id="scL" aria-label="Lesson for this class">${s.mine.map((l, i) => `<option value="${esc(l.archivo)}" ${i === s.nextIdx ? "selected" : ""}>${esc(l.id)} · ${esc(l.titulo)}</option>`).join("")}<option value="index.html">Their home page</option></select>
+            <button class="btn primary" id="scGo">Start class</button></div>
+        </div>
       </div>
+      <nav class="tabs" role="tablist">${TABS.map(([k, t]) => `<a role="tab" href="#s/${s.p.id}/${k}" aria-selected="${k === tab}" class="${k === tab ? "on" : ""}">${t}${k === "homework" && s.pending ? ` <span class="tag warn">${s.pending}</span>` : ""}</a>`).join("")}</nav>
     </div>
-    <div class="kpis">
-      <div class="kpi"><span class="v">🔥 ${g.streak}</span><span class="l">Day streak · best ${g.best}</span></div>
-      <div class="kpi"><span class="v">${g.weekDays}/${g.goal}</span><span class="l">Days practiced this week</span></div>
-      <div class="kpi"><span class="v">${s.passed}/${s.rows.length}</span><span class="l">Lessons passed</span></div>
-      <div class="kpi"><span class="v">${s.avg == null ? "—" : s.avg + "%"}</span><span class="l">Average best score</span></div>
-      <div class="kpi"><span class="v">${g.xp}</span><span class="l">XP · Level ${g.level} ${g.title}</span></div>
-      <div class="kpi"><span class="v">${s.review.length}</span><span class="l">Questions to review</span></div>
-      <div class="kpi"><span class="v">${pl ? pl.nivel : "—"}</span><span class="l">Placement ${pl ? "· " + fmt(pl.fecha + "T12:00") : "not taken"}</span></div>
-      <div class="kpi"><span class="v" style="font-size:1.1em;padding-top:6px">${ago(s.updated)}</span><span class="l">Last activity</span></div>
+    ${tab === "overview" ? overviewTab(s) : tab === "lessons" ? lessonsPanel(s) : tab === "classes" ? classesPanel(s) : tab === "homework" ? homeworkTab(s) : reportPanel(s) + planPanel(s)}`;
+  if (tab === "lessons") { const e = document.getElementById("lsEdit"); if (e) setTimeout(() => e.click(), 0); }
+  wireDetail(s);
+}
+function overviewTab(s) {
+  const g = s.game, pl = s.placement;
+  const status = r => !r.best ? `<span class="tag">Not started</span>` : r.best.ok / r.best.n >= .8 ? `<span class="tag good">Passed</span>` : `<span class="tag warn">Practicing</span>`;
+  const byLesson = {}; s.review.forEach(q => byLesson[q.l] = (byLesson[q.l] || 0) + 1);
+  return `<div class="stats">
+      <div class="stat"><span>Lessons passed</span><b>${s.passed}<small>/${s.rows.length}</small></b></div>
+      <div class="stat"><span>Average best score</span><b>${s.avg == null ? "—" : s.avg + "%"}</b></div>
+      <div class="stat"><span>XP · Level ${g.level}</span><b>${g.xp}</b><small class="muted">${esc(g.title)}</small></div>
+      <div class="stat"><span>Practice this week</span><b>${g.weekDays}<small>/${g.goal} days</small></b><small class="muted">Streak ${g.streak} · best ${g.best}</small></div>
+      <div class="stat"><span>Placement</span><b>${pl ? esc(pl.nivel) : "—"}</b><small class="muted">${pl ? fmt(pl.fecha + "T12:00") : "Not taken"}</small></div>
+      <div class="stat"><span>Questions to review</span><b>${s.review.length}</b></div>
     </div>
-  </div>
-
-  ${lessonsPanel(s)}
-
-  <div class="panel">
+    <div class="card"><div class="card-head"><h2>Lessons</h2><a class="btn sm" href="#s/${s.p.id}/lessons">Change lessons or style</a></div>
+      ${s.rows.length ? `<div class="tbl"><table class="crm"><thead><tr><th>Lesson</th><th>Sections</th><th class="r">Attempts</th><th class="r">Last</th><th class="r">Best</th><th class="r">To review</th><th>Status</th></tr></thead>
+      <tbody>${s.rows.map(r => `<tr><td><span class="lsdot" style="background:${r.l.color};display:inline-block;margin-right:8px"></span><b>${esc(r.l.id)}</b> · ${esc(r.l.titulo)}</td><td>${r.done}/${r.l.secs || 5}</td><td class="r">${r.tries}</td>
+        <td class="r">${r.last ? r.last.ok + "/" + r.last.n : "—"}</td><td class="r"><b>${r.best ? Math.round(r.best.ok / r.best.n * 100) + "%" : "—"}</b></td>
+        <td class="r">${byLesson[r.l.id] || 0}</td><td>${status(r)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">No lessons assigned yet.</p>`}
+    </div>
+  <div class="card">
+    <h2>Questions to review <span class="muted" style="font-weight:600;font-size:.8em">· mistakes and saved questions</span></h2>
+    ${s.review.length ? `<div class="miss">${s.review.slice(0, 30).map(q => `<div><span>L${esc(q.l.split(".")[0])}${q.src === "saved" ? " ★" : ""}</span><span>${esc(q.p).replace("___", `<b>${esc(q.a)}</b>`)}${/___/.test(q.p) ? "" : ` → <b>${esc(q.a)}</b>`}</span></div>`).join("")}</div>` : `<p class="empty">Nothing to review. 🎉</p>`}
+  </div>`;
+}
+function homeworkTab(s) {
+  return `<div class="panel">
     <h2>Homework</h2>
     <div class="hw">${s.hw.length ? s.hw.map(h => `<div class="hw-item">
       <div style="min-width:0"><b>${h.done_at ? "✅ " : ""}${esc(h.title)}</b>${h.details ? `<p>${esc(h.details)}</p>` : ""}
@@ -242,23 +361,6 @@ function detail(s) {
       <div id="hwMsg" hidden></div>
       <div class="actions"><button class="btn primary" type="submit" id="hwSave">Add homework</button></div>
     </form>
-  </div>
-
-  ${classesPanel(s)}
-  ${reportPanel(s)}
-  ${planPanel(s)}
-
-  <div class="panel">
-    <h2>Lessons</h2>
-    <div class="tbl"><table><thead><tr><th>Lesson</th><th>Sections</th><th class="r">Attempts</th><th class="r">Last</th><th class="r">Best</th><th class="r">To review</th><th>Status</th></tr></thead>
-      <tbody>${s.rows.map(r => `<tr><td><b>${r.l.id}</b> · ${r.l.titulo}</td><td>${r.done}/${r.l.secs || 5}</td><td class="r">${r.tries}</td>
-        <td class="r">${r.last ? r.last.ok + "/" + r.last.n : "—"}</td><td class="r"><b>${r.best ? Math.round(r.best.ok / r.best.n * 100) + "%" : "—"}</b></td>
-        <td class="r">${byLesson[r.l.id] || 0}</td><td>${status(r)}</td></tr>`).join("")}</tbody></table></div>
-  </div>
-
-  <div class="panel">
-    <h2>Questions to review <span class="muted" style="font-weight:600;font-size:.8em">· mistakes and saved questions</span></h2>
-    ${s.review.length ? `<div class="miss">${s.review.slice(0, 30).map(q => `<div><span>L${esc(q.l.split(".")[0])}${q.src === "saved" ? " ★" : ""}</span><span>${esc(q.p).replace("___", `<b>${esc(q.a)}</b>`)}${/___/.test(q.p) ? "" : ` → <b>${esc(q.a)}</b>`}</span></div>`).join("")}</div>` : `<p class="empty">Nothing to review. 🎉</p>`}
   </div>`;
 }
 
@@ -384,7 +486,7 @@ function reportLink(s) {
 function accounts() {
   const dom = (G.cloud && G.cloud.usernameDomain) || "student.lingua.app";
   const setup = `<div class="alert info" style="display:grid;gap:6px"><b>One-time setup needed</b><span>To create accounts and change passwords from here, install the small “admin-users” helper in Supabase. The steps are in the README (Teacher panel setup → Accounts helper). Until then, you can keep using Supabase → Authentication → Users.</span></div>`;
-  return `<div class="panel" id="acc" style="margin-top:20px">
+  return `<div class="panel" id="acc">
     <div style="display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap"><div><h2>Student accounts</h2><p class="muted" style="font-size:.9em">Create a student and change passwords. Students sign in with the username.</p></div>
       ${ACC ? `<button class="btn ghost sm" id="accReload">Refresh list</button>` : ""}</div>
     ${ACCERR && ACCERR.missing ? setup : ACCERR ? `<div class="alert bad">${esc(ACCERR.message)}</div>` : ""}
@@ -479,6 +581,7 @@ function wireDetail(s) {
   };
 
   const f = document.getElementById("hwForm");
+  if (!f) return;
   document.querySelectorAll("#quick button").forEach(b => b.onclick = () => {
     document.getElementById("hwT").value = b.dataset.t; document.getElementById("hwD").value = b.dataset.d || "";
     document.getElementById("hwL").value = b.dataset.l || "";
