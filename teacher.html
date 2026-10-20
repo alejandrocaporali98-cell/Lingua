@@ -245,7 +245,7 @@ function detail(s) {
   <div class="panel">
     <h2>Lessons</h2>
     <div class="tbl"><table><thead><tr><th>Lesson</th><th>Sections</th><th class="r">Attempts</th><th class="r">Last</th><th class="r">Best</th><th class="r">To review</th><th>Status</th></tr></thead>
-      <tbody>${s.rows.map(r => `<tr><td><b>${r.l.id}</b> · ${r.l.titulo}</td><td>${r.done}/5</td><td class="r">${r.tries}</td>
+      <tbody>${s.rows.map(r => `<tr><td><b>${r.l.id}</b> · ${r.l.titulo}</td><td>${r.done}/${r.l.secs || 5}</td><td class="r">${r.tries}</td>
         <td class="r">${r.last ? r.last.ok + "/" + r.last.n : "—"}</td><td class="r"><b>${r.best ? Math.round(r.best.ok / r.best.n * 100) + "%" : "—"}</b></td>
         <td class="r">${byLesson[r.l.id] || 0}</td><td>${status(r)}</td></tr>`).join("")}</tbody></table></div>
   </div>
@@ -268,7 +268,7 @@ function lessonsPanel(s) {
       <label><input type="radio" name="lsMode" value="all" ${all ? "checked" : ""}> Every lesson</label>
       <label><input type="radio" name="lsMode" value="some" ${all ? "" : "checked"}> Only the ones I choose</label></div>
     <div id="lsPick" ${all ? "hidden" : ""} style="display:grid;gap:14px">
-      ${G.modulos.map(m => { const ls = m.lecciones.filter(l => l.estado === "lista"); return ls.length ? `<div class="lsmod"><b>${esc(m.titulo)}</b>
+      ${G.modulos.map(m => { const ls = m.lecciones.filter(l => l.estado === "lista"); return ls.length ? `<div class="lsmod"><b>${m.owner ? esc(m.owner) + " · " : ""}${esc(m.titulo)}</b>
         <div class="lsgrid">${ls.map(l => `<label class="lsrow"><input type="checkbox" value="${l.id}" ${on.has(l.id) ? "checked" : ""}><span class="lsdot" style="background:${l.color}"></span><span><b>${esc(l.id)}</b> · ${esc(l.titulo)}</span><span class="muted">${esc(l.nivel || "")}</span></label>`).join("")}</div></div>` : ""; }).join("")}
     </div>
     <div class="actions"><button class="btn primary" id="lsSave">Save lessons and style</button></div>
@@ -365,7 +365,7 @@ function reportLink(s) {
     cd: cls.filter(x => x.status === "attended" || x.status === "scheduled").map(x => new Date(x.starts_at).getDate()),
     nt: cls.filter(x => x.status === "attended" && (x.notes || x.words)).sort((a, b) => a.starts_at.localeCompare(b.starts_at)).slice(-8)
       .map(x => [day(x.starts_at), (x.notes || "").slice(0, 280), (x.words || "").slice(0, 140)]),
-    ls: s.rows.map(r => [r.l.id, r.l.titulo, r.done, r.best ? Math.round(r.best.ok / r.best.n * 100) : null, r.tries, r.best && r.best.ok / r.best.n >= .8 ? 1 : 0]),
+    ls: s.rows.map(r => [r.l.id, r.l.titulo, r.done, r.best ? Math.round(r.best.ok / r.best.n * 100) : null, r.tries, r.best && r.best.ok / r.best.n >= .8 ? 1 : 0, r.l.secs || 5]),
     c: c || undefined
   };
   return location.origin + location.pathname.replace(/teacher\.html$/, "") + "progress.html?d=" + b64(data) + "&lang=" + lang;

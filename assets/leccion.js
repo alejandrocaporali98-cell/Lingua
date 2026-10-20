@@ -1,11 +1,15 @@
 // Lingua lesson player (all UI in English). Each lesson defines window.CLASE and loads this file.
 (function () {
   const C = window.CLASE, G = window.LINGUA, AB = "ABCD";
+  // Five core sections, plus optional ones a lesson can bring (spot the error, say it in English, talk about it)
   const SECS = [
     { id: "flash", t: "Vocabulary", min: 10 },
     { id: "frases", t: "Sound natural", min: 10 },
     { id: "gaps", t: "Fill in the gaps", min: 10 },
+    ...(C.errors && C.errors.items && C.errors.items.length ? [{ id: "errors", t: "Spot the error", min: 10 }] : []),
+    ...(C.translate && C.translate.items && C.translate.items.length ? [{ id: "translate", t: "Say it in English", min: 10 }] : []),
     { id: "rp", t: "Role‑play", min: 15 },
+    ...(C.talk && C.talk.questions && C.talk.questions.length ? [{ id: "talk", t: "Over to you", min: 15 }] : []),
     { id: "final", t: "Final quiz", min: 15 }
   ];
   const st = { sec: G.store.get("sec." + C.id, 0), done: new Set(G.store.get("done." + C.id, [])) };
@@ -94,7 +98,7 @@
   }
   function draw() {
     quiz = null;
-    ({ flash: drawFlash, frases: drawFrases, gaps: drawGaps, rp: drawRP, final: drawFinal })[SECS[st.sec].id]();
+    ({ flash: drawFlash, frases: drawFrases, gaps: drawGaps, errors: drawErrors, translate: drawTranslate, rp: drawRP, talk: drawTalk, final: drawFinal })[SECS[st.sec].id]();
     wirePager();
   }
 
@@ -219,7 +223,7 @@
   function drawRP() {
     const R = C.roleplay;
     stage.innerHTML = head(R.title, R.setup) + `<div class="panel chat">${R.lines.map((l, i) => l.you ? `
-      <div class="msg you"><div class="bub"><div class="who">You</div><div class="cue">${l.cue}</div><div class="model" hidden id="m${i}">${l.model} ${G.sayBtn(l.model, "Listen to the example")} ${G.micBtn(l.model, "Say the example")}</div>
+      <div class="msg you"><div class="bub"><div class="who">You</div><div class="cue">${l.cue}</div><div class="model" hidden id="m${i}">${l.model} ${G.sayBtn(l.model, "Listen to the example")} ${G.micBtn(l.model, "Say the example")}${l.tip ? `<p class="tip">${l.tip}</p>` : ""}</div>
         <button class="btn ghost sm" data-m="${i}" style="margin-top:6px;padding-left:0">Show example</button></div><span class="av">YOU</span></div>` : `
       <div class="msg"><span class="av">${l.who.slice(0, 2).toUpperCase()}</span><div class="bub"><div class="who">${l.who}</div>${l.t} ${G.sayBtn(l.t, "Listen")}</div></div>`).join("")}</div>
       ${R.extra ? `<div class="panel" style="display:grid;gap:6px;background:var(--brand-soft);border-color:transparent"><span class="eyebrow" style="color:var(--brand-dark)">Now switch roles</span><p>${R.extra}</p></div>` : ""}` + pager();
@@ -228,13 +232,53 @@
     });
   }
 
+  // ── Optional: spot the error ──
+  function drawErrors() {
+    const E = C.errors;
+    stage.innerHTML = head(E.title || "Spot the error", E.text || "Tap the word that causes the problem.") + `<div class="panel errs">${E.items.map((e, i) => `
+      <div class="err" data-i="${i}"><span class="n num">${i + 1}.</span><div style="display:grid;gap:8px;min-width:0">
+        <div class="words">${e.sentence.split(/\s+/).map((w, k) => `<button type="button" class="w" data-k="${k}">${G.esc(w)}</button>`).join(" ")}</div>
+        <div class="fixed" hidden><b>Better:</b> ${G.esc(e.fixed)} ${G.sayBtn(e.fixed, "Listen")}<p class="muted">${e.why || ""}</p></div></div></div>`).join("")}</div>` + pager();
+    stage.querySelectorAll(".err").forEach(r => {
+      const e = E.items[+r.dataset.i];
+      r.querySelectorAll(".w").forEach(b => b.onclick = () => {
+        if (r.classList.contains("solved")) return;
+        const ok = +b.dataset.k === e.wrong;
+        b.classList.add(ok ? "good" : "bad"); G.sfx(ok ? "ok" : "bad");
+        if (ok) { r.classList.add("solved"); r.querySelector(".fixed").hidden = false; G.game && G.game.award(2, { once: "err." + C.id + "." + r.dataset.i, silent: true }); }
+        else setTimeout(() => b.classList.remove("bad"), 600);
+      });
+    });
+  }
+  // ── Optional: say it in English ──
+  function drawTranslate() {
+    const T = C.translate;
+    stage.innerHTML = head(T.title || "Say it in English", T.text || "Say each sentence in English out loud, then show the model.") + `<div class="panel trs">${T.items.map((t, i) => `
+      <div class="tr" data-i="${i}"><span class="n num">${i + 1}.</span><div style="display:grid;gap:8px;min-width:0">
+        <p class="src" lang="es">${G.esc(t.es)}</p>
+        <div class="model" hidden><b>${G.esc(t.en)}</b> ${G.sayBtn(t.en, "Listen")} ${G.micBtn(t.en, "Say it")}${t.note ? `<p class="muted">${G.esc(t.note)}</p>` : ""}</div>
+        <button type="button" class="btn ghost sm" data-show style="justify-self:start;padding-left:0">Show the English</button></div></div>`).join("")}</div>` + pager();
+    stage.querySelectorAll(".tr").forEach(r => r.querySelector("[data-show]").onclick = (ev) => {
+      const m = r.querySelector(".model"); m.hidden = !m.hidden; ev.target.textContent = m.hidden ? "Show the English" : "Hide";
+      if (!m.hidden) G.game && G.game.award(1, { once: "tr." + C.id + "." + r.dataset.i, silent: true });
+    });
+  }
+  // ── Optional: open conversation ──
+  function drawTalk() {
+    const K = C.talk, teacher = G.isTeacher || !!G.actingAs;
+    stage.innerHTML = head(K.title || "Talk about it", K.text || "No right answers here. Speak freely and let your teacher correct as you go.") + `
+      <div class="panel" style="display:grid;gap:14px"><ol class="talkq">${K.questions.map(q => `<li>${G.esc(q)} ${G.sayBtn(q, "Listen")}</li>`).join("")}</ol></div>
+      ${K.kit && K.kit.length ? `<div class="panel" style="display:grid;gap:10px"><span class="eyebrow">Useful phrases</span><div class="bank">${K.kit.map(k => `<span>${G.esc(k)}</span>`).join("")}</div></div>` : ""}
+      ${teacher && K.notes && K.notes.length ? `<div class="panel tnotes" style="display:grid;gap:8px"><span class="eyebrow">Teacher notes · only you see this</span><ul>${K.notes.map(n => `<li>${G.esc(n)}</li>`).join("")}</ul></div>` : ""}` + pager();
+  }
+
   // ── 5 Quiz final ──
   function drawFinal() {
     stage.innerHTML = head("Final quiz", `${C.final.length} questions from the whole lesson. Save the hard ones for review.`) + `<div id="qz"></div>` + pager();
     quiz = makeQuiz(stage.querySelector("#qz"), C.final, {
       label: "Final quiz result", badge: true,
       onDone: (ok, n) => {
-        markDone(4);
+        markDone(SECS.length - 1);
         const at = new Date().toISOString();
         G.store.set("score." + C.id, { ok, n, at });
         const tries = G.store.get("attempts." + C.id, []); tries.push({ ok, n, at }); G.store.set("attempts." + C.id, tries.slice(-50));

@@ -167,7 +167,7 @@
   document.getElementById("courseTitle").textContent = C.curso;
   const all = C.modulos.flatMap(m => m.lecciones), ready = all.filter(l => l.estado === "lista");
   const doneOf = l => C.store.get("done." + l.id, []).length;
-  const pct = l => Math.round(doneOf(l) / 5 * 100);
+  const pct = l => Math.min(100, Math.round(doneOf(l) / (l.secs || 5) * 100));
   document.getElementById("courseMeta").innerHTML =
     `<span>${all.length} lessons</span><span>~${Math.round(all.reduce((a, l) => a + l.min, 0) / 60)} hours</span><span>${ready.length} available</span>`;
 
@@ -178,7 +178,7 @@
     <div>
       <span class="eyebrow">Continue where you left off</span>
       <h3 style="margin-top:4px">Lesson ${cur.id} · ${cur.titulo}</h3>
-      <div class="meta"><span class="chip">${cur.nivel}</span><span class="muted" style="font-size:.9em">${cur.min} min · 5 sections</span></div>
+      <div class="meta"><span class="chip">${cur.nivel}</span><span class="muted" style="font-size:.9em">${cur.min} min · ${cur.secs || 5} sections</span></div>
       <div class="bar" style="margin-bottom:6px"><i style="width:${pct(cur)}%"></i></div>
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px">
         <span class="muted num" style="font-size:.88em">${pct(cur)}% complete</span>

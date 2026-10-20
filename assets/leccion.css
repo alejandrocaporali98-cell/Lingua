@@ -110,3 +110,23 @@ body.clase .player { grid-template-columns: 1fr; }
 .feedback { justify-content: space-between; }
 .gap-row .fix { display: inline-flex; align-items: center; gap: 8px; margin-left: 8px; }
 .msg .bub .say, .model .say { vertical-align: middle; margin-left: 2px; }
+
+/* Optional sections */
+.chat .tip { margin-top: 8px; font-size: .88em; color: var(--ink-2); border-left: 3px solid var(--brand); padding-left: 10px; }
+.errs, .trs { display: grid; gap: 4px; }
+.err, .tr { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.err:last-child, .tr:last-child { border-bottom: 0; }
+.err .words { display: flex; flex-wrap: wrap; gap: 6px; }
+.err .w { border: 1px solid var(--line-2); background: var(--surface); border-radius: 8px; padding: 4px 9px; font: inherit; font-size: 1em; cursor: pointer; }
+.err .w:hover { border-color: var(--brand); }
+.err .w.good { background: var(--bad-soft); border-color: var(--bad); color: var(--bad-ink); text-decoration: line-through; }
+.err .w.bad { animation: shake .3s; border-color: var(--line-2); }
+.err.solved .w:not(.good) { cursor: default; }
+.err .fixed { background: var(--ok-soft); border-radius: 10px; padding: 10px 12px; }
+.err .fixed p, .tr .model p { margin-top: 4px; font-size: .9em; }
+.tr .src { font-size: 1.05em; font-weight: 700; }
+.tr .model { background: var(--brand-soft); border-radius: 10px; padding: 10px 12px; }
+.talkq { display: grid; gap: 12px; padding-left: 22px; font-size: 1.05em; }
+.tnotes { background: var(--badge-soft); border-color: var(--badge-line); }
+.tnotes ul { display: grid; gap: 6px; padding-left: 18px; font-size: .92em; }
+@keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }

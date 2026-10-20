@@ -141,7 +141,7 @@ function render() {
         const b = r.best ? pct(r.best) : null, s = r.ready ? status(b) : ["none", "Coming soon"];
         return `<tr style="${r.ready ? "" : "color:var(--mute)"}">
           <td><div class="lname">${G.thumb(r.l)}<span><b>${r.l.titulo}</b><br><span class="muted" style="font-size:.85em">Lesson ${r.l.id} · ${r.l.nivel}</span></span></div></td>
-          <td class="num">${r.ready ? r.done + " / 5" : "—"}</td>
+          <td class="num">${r.ready ? r.done + " / " + (r.l && r.l.secs || 5) : "—"}</td>
           <td class="r num">${r.ready ? r.tries.length : "—"}</td>
           <td class="r num">${r.last ? r.last.ok + "/" + r.last.n : "—"}</td>
           <td class="r num"><b>${b == null ? "—" : b + "%"}</b></td>
