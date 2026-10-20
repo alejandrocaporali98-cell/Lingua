@@ -93,7 +93,7 @@ document.documentElement.style.setProperty("--scale", window.LINGUA.store.get("t
 (function () {
   const L = window.LINGUA, st = L.store.get("__settings", null);
   L.settings = st || { lessons: null, theme: "racing" };
-  if (!st || !Array.isArray(st.lessons) || L.store.get("__teacher", false)) return;
+  if (!st || !Array.isArray(st.lessons) || (L.store.get("__teacher", false) && !L.store.get("__actas", null))) return;
   const ok = new Set(st.lessons);
   L.modulos = L.modulos.map(m => ({ ...m, lecciones: m.lecciones.filter(l => ok.has(l.id)) })).filter(m => m.lecciones.length);
 })();

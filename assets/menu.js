@@ -35,11 +35,15 @@
   function build() {
     if (document.getElementById("lgMenu")) return document.getElementById("lgMenu");
     const r = L.root || "";
-    const items = [
+    const teacherHome = L.isTeacher && !L.actingAs;
+    const items = teacherHome ? [
+      ["Teacher", [["teacher", "Teacher panel", "teacher.html"], ["build", "Lesson builder", "builder.html"], ["home", "Preview lessons", "index.html?preview=1"]]],
+      ["Account", [["user", "Profile", "perfil.html"], ["gear", "Settings", "perfil.html#settings"]]]
+    ] : [
       ["Learn", [["home", "My learning", "index.html"], ...(L.cloudEnabled ? [["hw", "Homework", "index.html#todo", "hw"], ["notes", "Class notes", "notes.html"]] : []), ["test", "Placement test", "examen.html"], ["report", "Placement report", "reporte.html"]]],
       ["Practice", [["review", "Review", "review.html", "rev"], ["game", "Practice games", "practice.html"], ["words", "My words", "words.html"], ["book", "Study resources", "resources.html"]]],
       ["Progress", [["grades", "Grades", "grades.html"], ["diploma", "Diplomas", "diplomas.html", "dip"], ["badge", "Badges", "perfil.html#badges", "bdg"]]],
-      ...(L.isTeacher ? [["Teacher", [["teacher", "Teacher panel", "teacher.html"], ["build", "Lesson builder", "builder.html"]]]] : []),
+
       ["Account", [["user", "Profile & avatar", "perfil.html"], ["gear", "Settings", "perfil.html#settings"]]]
     ];
     const el = document.createElement("div");
@@ -57,6 +61,7 @@
           return `<a href="${r}${href}" class="${on ? "on" : ""}" ${on ? 'aria-current="page"' : ""}>${ico(i)}<span>${t}</span>${badge ? `<span class="lg-badge" data-badge="${badge}"></span>` : ""}</a>`;
         }).join("")}</div>`).join("")}
           <div class="lg-sec">
+            ${L.actingAs ? `<button type="button" class="lg-row" id="lgEnd">${ico("teacher")}<span>End class with ${L.esc((L.actingAs.name || "").split(" ")[0])}</span></button>` : ""}
             <button type="button" class="lg-row" id="lgTheme">${ico("moon")}<span>Dark mode</span><span class="sw" aria-hidden="true"></span></button>
             <button type="button" class="lg-row" id="lgInstall" hidden>${ico("phone")}<span>Install the app</span></button>
             ${L.cloudEnabled ? `<button type="button" class="lg-row" id="lgOut">${ico("out")}<span>Sign out</span></button>` : ""}
@@ -67,6 +72,7 @@
     document.body.appendChild(el);
     el.querySelectorAll("[data-close]").forEach(x => x.onclick = close);
     el.querySelector("#lgTheme").onclick = () => { L.theme && L.theme.toggle(); paint(); };
+    const end = el.querySelector("#lgEnd"); if (end) end.onclick = () => L.actAs(null);
     const out = el.querySelector("#lgOut"); if (out) out.onclick = () => L.signOut && L.signOut();
     el.querySelector("#lgInstall").onclick = async () => {
       const I = L.install || {};

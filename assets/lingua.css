@@ -357,3 +357,13 @@ html.auth-pending body::after {
 .bdg small { color: var(--mute); font-size: .76em; line-height: 1.35; }
 .bdg.off { opacity: .55; }
 .bdg.off .e { filter: grayscale(1); background: var(--bg); border-color: var(--line); }
+
+/* Class mode: the teacher is running a class on a student's account */
+.classbar { position: relative; z-index: 60; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 9px max(16px, env(safe-area-inset-left));
+  background: var(--badge-soft); color: var(--badge-ink); border-bottom: 1px solid var(--badge-line); font-size: .9em; }
+.classbar > span:nth-child(2) { flex: 1; min-width: 200px; }
+.classbar .dot { width: 9px; height: 9px; border-radius: 50%; background: #d7263d; box-shadow: 0 0 0 4px rgba(215,38,61,.18); animation: rec 1.6s ease-in-out infinite; }
+@keyframes rec { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .classbar .dot { animation: none; } }
+.classbar .btn { background: var(--surface); }
+@media print { .classbar { display: none !important; } }

@@ -80,6 +80,10 @@
   .quick button { border: 1px dashed var(--line-2); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: .82em; font-weight: 700; color: var(--ink-2); }
   .quick button:hover { border-color: var(--brand); color: var(--brand-dark); }
   .quick button.on { border-style: solid; border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
+  .startcls { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 16px; border-radius: 12px; background: var(--brand-soft); border: 1px solid color-mix(in srgb, var(--brand) 25%, transparent); }
+  .startcls b { color: var(--brand-dark); }
+  .startrow { display: flex; gap: 8px; flex-wrap: wrap; }
+  .startrow select { min-width: 200px; max-width: 100%; }
   .seg { display: flex; gap: 8px; flex-wrap: wrap; }
   .seg label { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line-2); border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: .9em; cursor: pointer; }
   .seg label:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
@@ -96,7 +100,7 @@
 <header class="nav gutter">
   <div class="container nav-in">
     <a class="logo" href="index.html" id="logo"></a>
-    <nav class="nav-links"><a href="index.html">My learning</a><a class="on" href="teacher.html">Teacher panel</a></nav>
+    <nav class="nav-links"><a class="on" href="teacher.html">Teacher panel</a><a href="builder.html">Lesson builder</a></nav>
     <span class="spacer"></span>
     <a class="avatar" data-avatar href="perfil.html" aria-label="Your profile"></a>
   </div>
@@ -129,7 +133,7 @@ function studentOf(p) {
   const passed = rows.filter(r => r.best && r.best.ok / r.best.n >= .8).length;
   const review = Object.values(get("review", {}) || {});
   const hw = DATA.homework.filter(h => h.student_id === p.id), pending = hw.filter(h => !h.done_at).length;
-  return { p, get, game, rows, mine, settings: set, theme: theme0, avg, passed, review, hw, pending, placement: get("placement", null), avatar: get("avatar", null), updated: row.updated_at };
+  return { p, get, game, rows, mine, settings: set, theme: theme0, nextIdx: Math.max(0, rows.findIndex(r => !(r.best && r.best.ok / r.best.n >= .8))), avg, passed, review, hw, pending, placement: get("placement", null), avatar: get("avatar", null), updated: row.updated_at };
 }
 function avatarOf(s, size) {
   const name = (s.p.display_name || "?").trim();
@@ -145,7 +149,7 @@ function notTeacher() {
       <pre id="sql">insert into public.teachers (user_id)
 select id from auth.users where email = '${esc(email)}'
 on conflict do nothing;</pre>
-      <div class="actions"><button class="btn" id="copy">Copy SQL</button><a class="btn ghost" href="index.html">Back to My learning</a></div>
+      <div class="actions"><button class="btn" id="copy">Copy SQL</button><a class="btn ghost" href="index.html?preview=1">Preview lessons</a></div>
       <p class="muted" style="font-size:.85em">If the query says the table doesn’t exist, run the latest <b>supabase/setup.sql</b> first.</p>
     </div>`;
   document.getElementById("copy").onclick = () => navigator.clipboard.writeText(document.getElementById("sql").textContent).then(() => G.toast("SQL copied"));
@@ -187,6 +191,14 @@ function detail(s) {
       <div style="min-width:0"><h2>${esc(s.p.display_name || "New student")}</h2>
         <p class="muted" style="font-size:.9em">${s.p.age ? s.p.age + " years old · " : ""}${(s.p.interests || []).map(esc).join(", ") || "No interests yet"}</p></div>
       <span class="pill" style="font-size:.85em">Level ${pl ? pl.nivel : "—"}</span></div>
+    <div class="startcls">
+      <div style="min-width:0"><b>Start a class with ${esc((s.p.display_name || "this student").split(" ")[0])}</b>
+        <p class="muted" style="font-size:.88em">You work on their account: sections, quiz scores, XP, mistakes and diplomas save for them.</p></div>
+      <div class="startrow">
+        <select id="scL" aria-label="Lesson for this class">${s.mine.length ? s.mine.map((l, i) => `<option value="${esc(l.archivo)}" ${i === s.nextIdx ? "selected" : ""}>${esc(l.id)} · ${esc(l.titulo)}</option>`).join("") : ""}<option value="index.html">Their home page</option></select>
+        <button class="btn primary" id="scGo">Start class</button>
+      </div>
+    </div>
     <div class="kpis">
       <div class="kpi"><span class="v">🔥 ${g.streak}</span><span class="l">Day streak · best ${g.best}</span></div>
       <div class="kpi"><span class="v">${g.weekDays}/${g.goal}</span><span class="l">Days practiced this week</span></div>
@@ -281,7 +293,7 @@ function classesPanel(s) {
       <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
         <div style="min-width:0"><b>${when(c)}</b> <span class="pill ${ST[c.status][1]}">${ST[c.status][0]}</span><br><small>${c.lesson_id ? "Lesson " + esc(c.lesson_id) : "No lesson set"}${c.notes || c.words ? " · has notes" : ""}</small></div>
         <div class="actions">${c.status !== "attended" ? `<button class="btn sm" data-st="attended" data-c="${c.id}">✓ Attended</button>` : ""}${c.status === "scheduled" ? `<button class="btn ghost sm" data-st="missed" data-c="${c.id}">Missed</button><button class="btn ghost sm" data-st="cancelled" data-c="${c.id}">Cancel</button>` : ""}
-          <button class="btn ghost sm" data-open="${c.id}">${OPEN === c.id ? "Close" : "Notes"}</button><button class="btn ghost sm" data-cdel="${c.id}" aria-label="Delete class">Delete</button></div></div>
+          ${c.status === "scheduled" ? `<button class="btn primary sm" data-startcls="${c.id}">Start class</button>` : ""}<button class="btn ghost sm" data-open="${c.id}">${OPEN === c.id ? "Close" : "Notes"}</button><button class="btn ghost sm" data-cdel="${c.id}" aria-label="Delete class">Delete</button></div></div>
       ${OPEN === c.id ? `<div style="display:grid;gap:10px;border-top:1px solid var(--line);padding-top:12px">
         <div class="field"><label for="nN">What we did · notes for the student</label><textarea id="nN" maxlength="3000">${esc(c.notes || "")}</textarea></div>
         <div class="field"><label for="nW">New words <span class="muted" style="font-weight:500">(separate with commas)</span></label><input id="nW" maxlength="1000" value="${esc(c.words || "")}"></div>
@@ -441,6 +453,12 @@ function wireDetail(s) {
     try { await G.teacher.saveSettings({ student_id: s.p.id, lessons: all ? null : ids, theme: document.getElementById("thSel").value }); G.toast("<b>Saved</b><span>" + esc(s.p.display_name || "The student") + " will see them next time they open Lingua.</span>"); await load(); }
     catch (err) { G.toast("Couldn’t save: " + esc(err.message)); lsS.disabled = false; }
   };
+  const who = { id: s.p.id, name: s.p.display_name || "Student" };
+  const sg = document.getElementById("scGo"); if (sg) sg.onclick = () => { sg.disabled = true; G.actAs(who, document.getElementById("scL").value); };
+  document.querySelectorAll("[data-startcls]").forEach(b => b.onclick = () => {
+    const c = (DATA.classes || []).find(x => x.id === b.dataset.startcls), l = c && c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : null;
+    b.disabled = true; G.actAs(who, l ? l.archivo : "index.html");
+  });
   const ro = document.getElementById("rOpen"); if (ro) ro.onclick = () => window.open(reportLink(s), "_blank", "noopener");
   const rc = document.getElementById("rCopy"); if (rc) rc.onclick = () => {
     const url = reportLink(s), msg = (document.getElementById("rL").value === "es" ? "Reporte de inglés de " : "English report for ") + (s.p.display_name || "") + ": " + url;

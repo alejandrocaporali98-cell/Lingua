@@ -33,11 +33,12 @@
     }
     return out;
   }
+  const KEEP = ["__auth", "__actas"];
   function clearLocal() {
     const kill = [];
     for (let i = 0; i < localStorage.length; i++) {
       const full = localStorage.key(i);
-      if (full && full.indexOf("lingua.") === 0 && LOCAL_ONLY.indexOf(full.slice(7)) < 0) kill.push(full);
+      if (full && full.indexOf("lingua.") === 0 && LOCAL_ONLY.indexOf(full.slice(7)) < 0 && KEEP.indexOf(full.slice(7)) < 0) kill.push(full);
     }
     kill.forEach(k => localStorage.removeItem(k));
   }
@@ -71,13 +72,17 @@
   L.sb = sb;
   setTimeout(show, 10000); // never leave a blank page if the network is very slow
 
-  let uid = null, timer = null, pushing = false, again = false;
+  // uid = who is signed in; tid = whose progress we read and write (the student, in class mode)
+  let uid = null, tid = null, timer = null, pushing = false, again = false;
   async function push() {
-    if (!uid) return;
+    if (!tid) return;
     if (pushing) { again = true; return; }
     pushing = true;
     try {
-      const { error } = await sb.from("progress").upsert({ user_id: uid, data: collectLocal(), updated_at: new Date().toISOString() });
+      const cur = await sb.from("progress").select("data").eq("user_id", tid).maybeSingle();
+      const remote = (cur.data && cur.data.data) || {}, local = collectLocal(), merged = { ...remote };
+      Object.keys(local).forEach(k => { if (!remote[k] || (local[k].t || 0) >= (remote[k].t || 0)) merged[k] = local[k]; });
+      const { error } = await sb.from("progress").upsert({ user_id: tid, data: merged, updated_at: new Date().toISOString() });
       L.lastSync = error ? { ok: false, error: error.message, at: Date.now() } : { ok: true, at: Date.now() };
       document.dispatchEvent(new CustomEvent("lingua:sync", { detail: L.lastSync }));
     } catch (e) { L.lastSync = { ok: false, error: String(e), at: Date.now() }; }
@@ -85,11 +90,11 @@
     if (again) { again = false; push(); }
   }
   L.syncNow = push;
-  L.onSet = (k) => { if (!uid || !synced(k)) return; clearTimeout(timer); timer = setTimeout(push, 700); };
+  L.onSet = (k) => { if (!tid || !synced(k)) return; clearTimeout(timer); timer = setTimeout(push, 700); };
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden" && timer) { clearTimeout(timer); timer = null; push(); } });
 
   async function pull() {
-    const { data, error } = await sb.from("progress").select("data").eq("user_id", uid).maybeSingle();
+    const { data, error } = await sb.from("progress").select("data").eq("user_id", tid).maybeSingle();
     if (error) throw error;
     const remote = (data && data.data) || {}, local = collectLocal(), meta = lsGet("__meta") || {};
     let changedLocal = false, needPush = false;
@@ -107,13 +112,13 @@
   }
 
   async function loadProfile() {
-    const { data } = await sb.from("profiles").select("*").eq("id", uid).maybeSingle();
-    L.profile = data || { id: uid };
+    const { data } = await sb.from("profiles").select("*").eq("id", tid).maybeSingle();
+    L.profile = data || { id: tid };
     lsSet("__profile", L.profile);
     return L.profile;
   }
   L.saveProfile = async (fields) => {
-    const row = { ...fields, id: uid, updated_at: new Date().toISOString() };
+    const row = { ...fields, id: tid, updated_at: new Date().toISOString() };
     const { data, error } = await sb.from("profiles").upsert(row).select().maybeSingle();
     if (error) throw error;
     L.profile = data || row; lsSet("__profile", L.profile); decorate();
@@ -123,8 +128,8 @@
   L.homework = {
     cached: () => lsGet("__homework") || [],
     async list() {
-      if (!uid) return L.homework.cached();
-      const { data, error } = await sb.from("homework").select("*").eq("student_id", uid).order("created_at", { ascending: false });
+      if (!tid) return L.homework.cached();
+      const { data, error } = await sb.from("homework").select("*").eq("student_id", tid).order("created_at", { ascending: false });
       if (error) return L.homework.cached();
       lsSet("__homework", data || []); document.dispatchEvent(new CustomEvent("lingua:homework"));
       return data || [];
@@ -140,8 +145,8 @@
   L.classes = {
     cached: () => lsGet("__classes") || [],
     async list() {
-      if (!uid) return L.classes.cached();
-      const { data, error } = await sb.from("classes").select("*").eq("student_id", uid).order("starts_at", { ascending: false });
+      if (!tid) return L.classes.cached();
+      const { data, error } = await sb.from("classes").select("*").eq("student_id", tid).order("starts_at", { ascending: false });
       if (error) return L.classes.cached();
       lsSet("__classes", data || []); document.dispatchEvent(new CustomEvent("lingua:classes"));
       return data || [];
@@ -151,13 +156,13 @@
   async function syncLessons() {
     const { data, error } = await sb.from("lessons").select("id, data, published, updated_at").order("id");
     if (error) return false;
-    const before = JSON.stringify(lsGet("__lessons") || []), rows = (data || []).filter(r => r.published || L.isTeacher);
+    const before = JSON.stringify(lsGet("__lessons") || []), rows = (data || []).filter(r => r.published || (L.isTeacher && !L.actingAs));
     lsSet("__lessons", rows);
     return before !== JSON.stringify(rows);
   }
   // Lessons assigned to this student and their style. null = table not installed (show everything)
   async function syncSettings() {
-    const { data, error } = await sb.from("student_settings").select("lessons, theme").eq("student_id", uid).maybeSingle();
+    const { data, error } = await sb.from("student_settings").select("lessons, theme").eq("student_id", tid).maybeSingle();
     const now = error ? null : (data || { lessons: [], theme: "racing" });
     const before = JSON.stringify(lsGet("__settings") || null);
     lsSet("__settings", now);
@@ -195,10 +200,31 @@
     async saveSettings(row) { const { error } = await sb.from("student_settings").upsert({ ...row, updated_at: new Date().toISOString() }); if (error) throw error; },
     async deleteClass(id) { const { error } = await sb.from("classes").delete().eq("id", id); if (error) throw error; }
   };
+  // Class mode: the teacher runs a class on the student's account, so everything saves for the student
+  L.actAs = async (s, go) => {
+    if (timer) { clearTimeout(timer); timer = null; }
+    try { await push(); } catch (e) {}
+    clearLocal();
+    if (s) lsSet("__actas", { id: s.id, name: s.name }); else localStorage.removeItem("lingua.__actas");
+    lsSet("__teacher", true);
+    sessionStorage.removeItem("lingua.reloaded"); sessionStorage.removeItem("lingua.reloadedL");
+    location.href = root + (go || (s ? "index.html" : "teacher.html"));
+  };
+  function classBar() {
+    if (!L.actingAs || document.getElementById("classBar")) return;
+    const first = (L.actingAs.name || "your student").split(/\s+/)[0];
+    const bar = document.createElement("div");
+    bar.id = "classBar"; bar.className = "classbar";
+    bar.innerHTML = `<span class="dot" aria-hidden="true"></span><span><b>Class mode</b> · You’re teaching ${L.esc ? L.esc(first) : first}. Everything saves to ${L.esc ? L.esc(first) : first}’s account.</span><button type="button" class="btn sm" id="endClass">End class</button>`;
+    bar.querySelector("#endClass").onclick = () => L.actAs(null);
+    const put = () => { if (!bar.isConnected || document.body.firstElementChild !== bar) document.body.prepend(bar); };
+    put();
+    new MutationObserver(put).observe(document.body, { childList: true });
+  }
   L.signOut = async () => {
     if (timer) { clearTimeout(timer); await push(); }
     await sb.auth.signOut();
-    clearLocal();
+    clearLocal(); localStorage.removeItem("lingua.__actas");
     location.replace(root + "login.html");
   };
 
@@ -211,9 +237,14 @@
     }
     if (isLogin) { location.replace(root + (qs.get("next") || "index.html")); return null; }
     uid = session.user.id;
-    if (lsGet("__uid") && lsGet("__uid") !== uid) clearLocal();
-    lsSet("__uid", uid);
     L.user = session.user;
+    try { const r = await sb.rpc("is_teacher"); L.isTeacher = !r.error && r.data === true; } catch (e) { L.isTeacher = !!lsGet("__teacher"); }
+    const act = lsGet("__actas");
+    if (act && act.id && L.isTeacher) L.actingAs = act; else if (act) localStorage.removeItem("lingua.__actas");
+    tid = L.actingAs ? L.actingAs.id : uid;
+    if (lsGet("__uid") && lsGet("__uid") !== tid) clearLocal();
+    lsSet("__uid", tid);
+    lsSet("__teacher", L.isTeacher);
     try {
       await loadProfile();
       const changed = await pull();
@@ -224,12 +255,11 @@
       L.lastSync = { ok: false, error: e.message || String(e), at: Date.now() };
       console.warn("Lingua sync failed:", e);
     }
-    try { const r = await sb.rpc("is_teacher"); L.isTeacher = !r.error && r.data === true; } catch (e) { L.isTeacher = false; }
-    lsSet("__teacher", L.isTeacher);
     try { const c1 = await syncLessons(), c2 = await syncSettings().catch(() => false); if ((c1 || c2) && !sessionStorage.getItem("lingua.reloadedL")) { sessionStorage.setItem("lingua.reloadedL", "1"); location.reload(); return null; } } catch (e) {}
     sessionStorage.removeItem("lingua.reloadedL");
-    if (!(L.profile && L.profile.display_name) && page !== "perfil.html") { location.replace(root + "perfil.html?setup=1"); return null; }
-    decorate(); show();
+    if (L.isTeacher && !L.actingAs && page === "index.html" && !qs.has("preview")) { location.replace(root + "teacher.html"); return null; }
+    if (!L.actingAs && !(L.profile && L.profile.display_name) && page !== "perfil.html") { location.replace(root + "perfil.html?setup=1"); return null; }
+    decorate(); classBar(); show();
     L.homework.list().catch(() => {});
     L.classes.list().catch(() => {});
     return session.user;

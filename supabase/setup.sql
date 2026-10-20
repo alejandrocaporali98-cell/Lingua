@@ -146,3 +146,13 @@ revoke all on public.student_settings from anon, authenticated;
 grant select, insert, update, delete on public.student_settings to authenticated;
 -- Students who already exist keep seeing every lesson until you change it
 insert into public.student_settings (student_id, lessons) select id, null from public.profiles on conflict (student_id) do nothing;
+
+-- ─────────────────────────────────────────────────────────────
+-- Class mode: the teacher can run a class on a student's account (safe to run again)
+-- ─────────────────────────────────────────────────────────────
+drop policy if exists "Teachers insert progress" on public.progress;
+drop policy if exists "Teachers update progress" on public.progress;
+drop policy if exists "Teachers update profiles" on public.profiles;
+create policy "Teachers insert progress" on public.progress for insert to authenticated with check (public.is_teacher());
+create policy "Teachers update progress" on public.progress for update to authenticated using (public.is_teacher()) with check (public.is_teacher());
+create policy "Teachers update profiles" on public.profiles for update to authenticated using (public.is_teacher()) with check (public.is_teacher());
