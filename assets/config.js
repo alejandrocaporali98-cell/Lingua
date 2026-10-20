@@ -138,3 +138,42 @@ document.documentElement.style.setProperty("--scale", window.LINGUA.store.get("t
   };
   document.addEventListener("DOMContentLoaded", T.mount);
 })();
+
+// ── Student styles: each student gets an avatar, level names and wording that match what they love ──
+(function () {
+  const L = window.LINGUA;
+  L.THEMES = {
+    racing: { label: "Racing (F1)", avatar: "helmet", part: "helmet", number: "Racing number", visor: "Visor",
+      titles: ["Rookie", "Karting", "Formula 4", "Formula 3", "Formula 2", "F1 Driver", "Podium", "Race Winner", "World Champion", "Legend"],
+      editor: "Design your own racing helmet, or use your initial. Level up to unlock more designs.",
+      season: { title: "Your season", aria: "the course as a race track", move: "Pass a lesson (80%+) to move your helmet forward.", done: "Season complete!", unit: "checkpoints" },
+      lap: { first: "Your first lap time!", again: "Race again" },
+      badges: { first: "First lap", perfect: "Perfect lap", podium: "Podium", champion: "World champion", pole: "Pole position", mechanic: "Mechanic", level5: "Formula 2" } },
+    music: { label: "Music (guitar)", avatar: "guitar", part: "guitar", number: null, visor: "Pickguard",
+      titles: ["Bedroom Player", "Busker", "Open Mic", "Garage Band", "Opening Act", "Club Gig", "Studio Session", "Headliner", "Arena Tour", "Legend"],
+      editor: "Design your own guitar, or use your initial. Level up to unlock more designs.",
+      season: { title: "Your tour", aria: "the course as a concert tour", move: "Pass a lesson (80%+) to play the next show.", done: "Tour complete!", unit: "shows" },
+      lap: { first: "Your first record!", again: "Play again" },
+      badges: { first: "Sound check", perfect: "Perfect pitch", podium: "Top 3 hits", champion: "Platinum album", pole: "Fast fingers", mechanic: "Tuned up", level5: "Opening act" } },
+    cinema: { label: "Cinema (film)", avatar: "clapper", part: "clapperboard", number: "Take number", visor: null,
+      titles: ["Film Buff", "Extra", "Script Reader", "Camera Assistant", "Editor", "Screenwriter", "Cinematographer", "Director", "Festival Winner", "Auteur"],
+      editor: "Design your own clapperboard, or use your initial. Level up to unlock more designs.",
+      season: { title: "Your filmography", aria: "the course as a film shoot", move: "Pass a lesson (80%+) to wrap the next scene.", done: "That’s a wrap!", unit: "scenes" },
+      lap: { first: "Your first take!", again: "Another take" },
+      badges: { first: "Action!", perfect: "Perfect take", podium: "Trilogy", champion: "Best picture", pole: "Quick cut", mechanic: "Final cut", level5: "In the editing room" } },
+    riding: { label: "Horse riding", avatar: "riding", part: "riding helmet", number: "Competitor number", visor: null,
+      titles: ["Groom", "Walk", "Trot", "Canter", "Gallop", "Cross-country", "Show Jumper", "Dressage Rider", "Grand Prix", "Champion"],
+      editor: "Design your own riding helmet, or use your initial. Level up to unlock more designs.",
+      season: { title: "Your course", aria: "the course as a show-jumping course", move: "Pass a lesson (80%+) to clear the next jump.", done: "Clear round!", unit: "jumps" },
+      lap: { first: "Your first round!", again: "Ride again" },
+      badges: { first: "First ride", perfect: "Clear round", podium: "Three ribbons", champion: "Grand Prix", pole: "Fastest round", mechanic: "Well groomed", level5: "Gallop" } },
+    career: { label: "Social & career", avatar: "briefcase", part: "briefcase", number: null, visor: "Clasp",
+      titles: ["Newcomer", "Intern", "Junior", "Associate", "Analyst", "Specialist", "Senior", "Team Lead", "Manager", "Director"],
+      editor: "Design your own briefcase, or use your initial. Level up to unlock more designs.",
+      season: { title: "Your career path", aria: "the course as a career path", move: "Pass a lesson (80%+) to reach the next milestone.", done: "Path complete!", unit: "milestones" },
+      lap: { first: "Your first time!", again: "Try again" },
+      badges: { first: "First day", perfect: "Flawless", podium: "Three wins", champion: "Promotion", pole: "Fast learner", mechanic: "Problem solver", level5: "Analyst" } }
+  };
+  L.themeOf = key => L.THEMES[key] || L.THEMES.racing;
+  L.style = L.themeOf(L.settings && L.settings.theme);
+})();

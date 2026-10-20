@@ -220,7 +220,7 @@ function render() {
   const tops = (D.tp && D.tp.length ? D.tp : Object.keys(TOPICS)).filter(k => TOPICS[k]);
   const ex = k => k === "verbs" ? VERBS[lang][cur || "A1"] : k === "vocab" ? t.vocabEx(it) : TOPICS[k][lang][2];
   const ls = D.ls || [], name = (D.n || "").trim(), es = lang === "es";
-  const helmet = D.av && D.av.style !== "initial" && G.avatar ? G.avatar.svg(D.av, 84, { label: name }) : `<span class="ini">${esc((name[0] || "?").toUpperCase())}</span>`;
+  const helmet = D.av && D.av.style !== "initial" && G.avatar ? G.avatar.svg(D.av, 84, { label: name, kind: D.ak || "helmet" }) : `<span class="ini">${esc((name[0] || "?").toUpperCase())}</span>`;
   const secs = D.sc || [], passedN = secs.filter(x => x[1] >= 5).length, teacher = esc(G.maestroNombre || G.maestro);
   app.innerHTML = `<article class="doc">
     <header class="head"><span class="brand">${G.mark(24)}lingua</span>

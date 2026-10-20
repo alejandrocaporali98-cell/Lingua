@@ -111,7 +111,7 @@
 <script>
 const G = window.LINGUA, setup = new URLSearchParams(location.search).get("setup") === "1";
 document.getElementById("logo").innerHTML = G.logo;
-const INTERESTS = ["Formula 1", "JDM cars", "Anime", "Football", "Video games", "Music", "Movies & series", "Basketball", "Travel", "Food"];
+const INTERESTS = ["Formula 1", "JDM cars", "Anime", "Football", "Video games", "Music", "Guitar", "Movies & series", "Classic films", "Horse riding", "Going out with friends", "Work & career", "Basketball", "Travel", "Food"];
 const COLORS = ["#2346d0", "#0f766e", "#b45309", "#6d3fd6", "#15803d", "#be123c", "#1b1f2a"];
 const LV = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", "B2+": "Upper intermediate +" };
 
@@ -162,8 +162,8 @@ function render() {
 
   <section class="panel" aria-labelledby="avT">
     <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap">
-      <div><h2 id="avT">Your avatar</h2><p class="muted" style="font-size:.9em">Design your own racing helmet, or use your initial. Level up to unlock more designs 🔒</p></div>
-      <div class="seg" role="group" aria-label="Avatar style"><button type="button" data-style="helmet">Helmet</button><button type="button" data-style="initial">Initial</button></div>
+      <div><h2 id="avT">Your avatar</h2><p class="muted" style="font-size:.9em" id="avTxt"></p></div>
+      <div class="seg" role="group" aria-label="Avatar style"><button type="button" data-style="helmet" id="avKind">Helmet</button><button type="button" data-style="initial">Initial</button></div>
     </div>
     <div class="builder" id="builder"></div>
   </section>
@@ -225,7 +225,11 @@ function render() {
     document.getElementById("bigAv").innerHTML = G.avatar.svg(av, 84, o);
     const st = document.getElementById("stage"); if (st) st.innerHTML = G.avatar.svg(av, 200, o);
   }
+  function cap(x) { return x[0].toUpperCase() + x.slice(1); }
   function drawBuilder() {
+    const ST = G.style;
+    document.getElementById("avTxt").textContent = ST.editor;
+    document.getElementById("avKind").textContent = cap(ST.part.split(" ").pop());
     const A = G.avatar, b = document.getElementById("builder");
     document.querySelectorAll("[data-style]").forEach(x => x.setAttribute("aria-pressed", x.dataset.style === av.style));
     const need = (key, k) => key === "bg" ? 0 : G.game.needs(key, k) && av[key] !== k ? G.game.needs(key, k) : 0;
@@ -233,10 +237,10 @@ function render() {
     const tiles = (obj, key, labelOf) => `<div class="tiles">${Object.keys(obj).sort((a, b) => need(key, a) - need(key, b)).map(k => { const n = need(key, k); return `<button type="button" class="${n ? "locked" : ""}" aria-pressed="${av[key] === k}" ${n ? `data-lock="${n}" title="Unlocks at Level ${n}"` : `data-k="${key}" data-v="${k}"`}>${A.svg({ ...av, style: "helmet", [key]: k }, 48)}${n ? `<span class="lk">Level ${n}</span>` : labelOf(k)}</button>`; }).join("")}</div>`;
     const helmet = `
       <div class="opt-group"><b>Design</b>${tiles(A.DESIGNS, "design", k => A.DESIGNS[k])}</div>
-      <div class="opt-group"><b>Helmet color</b>${sw(A.SHELLS, "shell")}</div>
+      <div class="opt-group"><b>${cap(ST.part)} color</b>${sw(A.SHELLS, "shell")}</div>
       <div class="opt-group"><b>Accent color</b>${sw(A.SHELLS, "accent")}</div>
-      <div class="opt-group"><b>Visor</b>${tiles(A.VISORS, "visor", k => A.VISORS[k].label)}</div>
-      <div class="opt-group"><b>Racing number</b><div class="num"><button type="button" id="nDn" aria-label="Lower number">−</button><input id="nIn" type="number" min="0" max="99" inputmode="numeric" value="${av.number}" aria-label="Racing number"><button type="button" id="nUp" aria-label="Higher number">+</button></div></div>
+      ${ST.visor ? `<div class="opt-group"><b>${ST.visor}</b>${tiles(A.VISORS, "visor", k => A.VISORS[k].label)}</div>` : ""}
+      ${ST.number ? `<div class="opt-group"><b>${ST.number}</b><div class="num"><button type="button" id="nDn" aria-label="Lower number">−</button><input id="nIn" type="number" min="0" max="99" inputmode="numeric" value="${av.number}" aria-label="${ST.number}"><button type="button" id="nUp" aria-label="Higher number">+</button></div></div>` : ""}
       <div class="opt-group"><b>Background</b>${sw(A.BGS, "bg")}</div>`;
     const initial = `<div class="opt-group"><b>Color</b><div class="swatches" id="sw">${COLORS.map(c => `<button type="button" aria-label="Color ${c}" aria-pressed="${c === chosenColor}" data-c="${c}" style="background:${c}"></button>`).join("")}</div></div>`;
     b.innerHTML = `<div class="preview"><div class="stage" id="stage"></div>${av.style === "helmet" ? `<button type="button" class="btn sm" id="rand">Surprise me</button>` : ""}</div>

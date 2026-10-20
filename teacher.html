@@ -119,7 +119,8 @@ const b64 = obj => { const bytes = new TextEncoder().encode(JSON.stringify(obj))
 function studentOf(p) {
   const row = DATA.progress.find(x => x.user_id === p.id) || { data: {} }, d = row.data || {};
   const get = (k, def) => d[k] && "v" in d[k] ? d[k].v : def;
-  const game = G.game.stats(get);
+  const theme0 = DATA.settings ? ((DATA.settings.find(x => x.student_id === p.id) || {}).theme || "racing") : "racing";
+  const game = G.game.stats(get, theme0);
   const best = l => { let t = get("attempts." + l.id, []); const s = get("score." + l.id, null); if (!t.length && s) t = [s]; return t.length ? t.reduce((a, b) => b.ok / b.n > a.ok / a.n ? b : a) : null; };
   const set = DATA.settings ? (DATA.settings.find(x => x.student_id === p.id) || { student_id: p.id, lessons: [], theme: "racing" }) : null;
   const mine = set && Array.isArray(set.lessons) ? ready.filter(l => set.lessons.includes(l.id)) : ready;
@@ -128,11 +129,11 @@ function studentOf(p) {
   const passed = rows.filter(r => r.best && r.best.ok / r.best.n >= .8).length;
   const review = Object.values(get("review", {}) || {});
   const hw = DATA.homework.filter(h => h.student_id === p.id), pending = hw.filter(h => !h.done_at).length;
-  return { p, get, game, rows, mine, settings: set, avg, passed, review, hw, pending, placement: get("placement", null), avatar: get("avatar", null), updated: row.updated_at };
+  return { p, get, game, rows, mine, settings: set, theme: theme0, avg, passed, review, hw, pending, placement: get("placement", null), avatar: get("avatar", null), updated: row.updated_at };
 }
 function avatarOf(s, size) {
   const name = (s.p.display_name || "?").trim();
-  return s.avatar && s.avatar.style !== "initial" ? G.avatar.svg(s.avatar, size, { label: name }) : `<span style="background:${s.p.avatar_color || "#2346d0"};width:100%;height:100%;display:grid;place-items:center">${esc(name[0] || "?").toUpperCase()}</span>`;
+  return s.avatar && s.avatar.style !== "initial" ? G.avatar.svg(s.avatar, size, { label: name, kind: G.themeOf(s.theme).avatar }) : `<span style="background:${s.p.avatar_color || "#2346d0"};width:100%;height:100%;display:grid;place-items:center">${esc(name[0] || "?").toUpperCase()}</span>`;
 }
 
 function notTeacher() {
@@ -247,8 +248,10 @@ function lessonsPanel(s) {
   if (DATA.settings === null) return `<div class="panel"><h2>Lessons for this student</h2><p class="muted">To choose which lessons each student sees, run <b>supabase/student_settings.sql</b> in Supabase (SQL Editor → New query → paste → Run). Until then, every student sees every lesson.</p></div>`;
   const all = s.settings.lessons === null, on = new Set(s.settings.lessons || []);
   return `<div class="panel" id="lsPanel">
-    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:end"><div><h2>Lessons for this student</h2>
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:end"><div><h2>Lessons and style</h2>
       <p class="muted" style="font-size:.9em">${all ? "Sees every lesson." : on.size ? `Sees ${on.size} lesson${on.size === 1 ? "" : "s"}.` : "<b>No lessons yet.</b> Choose what this student will see."}</p></div></div>
+    <div class="field" style="max-width:360px"><label for="thSel">Style <span class="muted" style="font-weight:500">(avatar, level names and wording)</span></label>
+      <select id="thSel">${Object.entries(G.THEMES).map(([k, t]) => `<option value="${k}" ${k === (s.settings.theme || "racing") ? "selected" : ""}>${esc(t.label)} · ${esc(t.titles[0])} → ${esc(t.titles[9])}</option>`).join("")}</select></div>
     <div class="seg" role="radiogroup" aria-label="Lessons this student sees">
       <label><input type="radio" name="lsMode" value="all" ${all ? "checked" : ""}> Every lesson</label>
       <label><input type="radio" name="lsMode" value="some" ${all ? "" : "checked"}> Only the ones I choose</label></div>
@@ -256,7 +259,7 @@ function lessonsPanel(s) {
       ${G.modulos.map(m => { const ls = m.lecciones.filter(l => l.estado === "lista"); return ls.length ? `<div class="lsmod"><b>${esc(m.titulo)}</b>
         <div class="lsgrid">${ls.map(l => `<label class="lsrow"><input type="checkbox" value="${l.id}" ${on.has(l.id) ? "checked" : ""}><span class="lsdot" style="background:${l.color}"></span><span><b>${esc(l.id)}</b> · ${esc(l.titulo)}</span><span class="muted">${esc(l.nivel || "")}</span></label>`).join("")}</div></div>` : ""; }).join("")}
     </div>
-    <div class="actions"><button class="btn primary" id="lsSave">Save lessons</button></div>
+    <div class="actions"><button class="btn primary" id="lsSave">Save lessons and style</button></div>
   </div>`;
 }
 
@@ -330,7 +333,7 @@ function planLink(s) {
   const data = {
     v: 1, n: s.p.display_name || "Student", g: new Date().toISOString(),
     lv: pl ? pl.nivel : null, pd: pl ? pl.fecha : null, pp: pl && pl.partial ? 1 : 0, sc: pl ? (pl.secciones || []).map(x => [x.lvl, x.score]) : [],
-    av: s.avatar && s.avatar.style !== "initial" ? s.avatar : undefined, it: (s.p.interests || []).slice(0, 5), st: v("pS") || day(new Date()), f: +v("pF"), mn: +v("pM"), tp: [...document.querySelectorAll("#pTp [data-tp]")].filter(b => b.getAttribute("aria-pressed") === "true").map(b => b.dataset.tp),
+    av: s.avatar && s.avatar.style !== "initial" ? s.avatar : undefined, ak: G.themeOf(s.theme).avatar, it: (s.p.interests || []).slice(0, 5), st: v("pS") || day(new Date()), f: +v("pF"), mn: +v("pM"), tp: [...document.querySelectorAll("#pTp [data-tp]")].filter(b => b.getAttribute("aria-pressed") === "true").map(b => b.dataset.tp),
     dy, tm: dy.length ? v("pT") : "", ls: s.rows.map(r => [r.l.id, r.l.titulo, r.best && r.best.ok / r.best.n >= .8 ? 1 : 0]),
     c: v("pC").trim() || undefined
   };
@@ -435,7 +438,7 @@ function wireDetail(s) {
     const all = document.querySelector('[name="lsMode"]:checked').value === "all";
     const ids = [...document.querySelectorAll("#lsPick input:checked")].map(i => i.value);
     lsS.disabled = true;
-    try { await G.teacher.saveSettings({ student_id: s.p.id, lessons: all ? null : ids, theme: s.settings.theme || "racing" }); G.toast("<b>Lessons saved</b><span>" + esc(s.p.display_name || "The student") + " will see them next time they open Lingua.</span>"); await load(); }
+    try { await G.teacher.saveSettings({ student_id: s.p.id, lessons: all ? null : ids, theme: document.getElementById("thSel").value }); G.toast("<b>Saved</b><span>" + esc(s.p.display_name || "The student") + " will see them next time they open Lingua.</span>"); await load(); }
     catch (err) { G.toast("Couldn’t save: " + esc(err.message)); lsS.disabled = false; }
   };
   const ro = document.getElementById("rOpen"); if (ro) ro.onclick = () => window.open(reportLink(s), "_blank", "noopener");

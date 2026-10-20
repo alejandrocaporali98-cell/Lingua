@@ -216,8 +216,8 @@ function match() {
       G.game.award(10, { once: "match." + key + "." + G.game.today(), label: "Speed match" });
       G.count("match"); if (rec) { G.confetti(80); G.sfx("win"); }
       el.innerHTML = `<div class="panel center"><span style="font-size:2.4em">${rec ? "🏆" : "🏁"}</span><h2 style="font-size:1.6em">${t.toFixed(1)} seconds</h2>
-        <p class="muted">${rec ? (prev ? "New record! Before: " + prev.toFixed(1) + " s" : "Your first lap time!") : "Best time: " + prev.toFixed(1) + " s"}</p>
-        <div class="actions"><button class="btn primary" id="again">Race again</button></div></div>`;
+        <p class="muted">${rec ? (prev ? "New record! Before: " + prev.toFixed(1) + " s" : G.style.lap.first) : "Best time: " + prev.toFixed(1) + " s"}</p>
+        <div class="actions"><button class="btn primary" id="again">${G.style.lap.again}</button></div></div>`;
       document.getElementById("again").onclick = match;
     }
   }

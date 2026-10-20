@@ -96,7 +96,8 @@
 
   // ── XP, levels, streak, weekly goal ──
   const LEVELS = [0, 100, 250, 450, 700, 1000, 1400, 1900, 2500, 3200];
-  const TITLES = ["Rookie", "Karting", "Formula 4", "Formula 3", "Formula 2", "F1 Driver", "Podium", "Race Winner", "World Champion", "Legend"];
+  const STYLE = () => L.style || { titles: ["Rookie", "Karting", "Formula 4", "Formula 3", "Formula 2", "F1 Driver", "Podium", "Race Winner", "World Champion", "Legend"], part: "helmet", badges: {} };
+  const TITLES = STYLE().titles;
   const pad = n => String(n).padStart(2, "0");
   const dkey = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
   const today = () => dkey(new Date());
@@ -104,7 +105,8 @@
   const WEEK_GOAL = 4;
 
   // Works on any reader (this browser, or a student's synced data in the teacher panel)
-  function stats(get) {
+  function stats(get, themeKey) {
+    const titles = themeKey && L.themeOf ? L.themeOf(themeKey).titles : TITLES;
     const g = get("game", null) || { xp: 0, days: {} }, xp = g.xp || 0, days = g.days || {};
     let lv = 1; for (let i = 0; i < LEVELS.length; i++) if (xp >= LEVELS[i]) lv = i + 1;
     const floor = LEVELS[lv - 1], ceil = LEVELS[lv] || null;
@@ -116,7 +118,7 @@
     for (let i = 0; i < 7; i++) { const x = new Date(m); x.setDate(m.getDate() + i); week.push({ key: dkey(x), xp: days[dkey(x)] || 0, label: "MTWTFSS"[i], today: dkey(x) === today() }); }
     const best = Math.max(streak, g.best || 0);
     let last = null; Object.keys(days).forEach(k => { if (days[k] && (!last || k > last)) last = k; });
-    return { xp, level: lv, title: TITLES[lv - 1], floor, ceil, pct: ceil ? Math.round((xp - floor) / (ceil - floor) * 100) : 100,
+    return { xp, level: lv, title: titles[lv - 1], floor, ceil, pct: ceil ? Math.round((xp - floor) / (ceil - floor) * 100) : 100,
       streak, best, week, weekDays: week.filter(w => w.xp > 0).length, goal: WEEK_GOAL, todayXp: days[today()] || 0, last };
   }
   const mine = () => stats((k, d) => S.get(k, d));
@@ -136,7 +138,7 @@
     if (after.level > before.level) setTimeout(() => {
       L.confetti(); L.sfx("level");
       const un = unlockedAt(after.level);
-      L.toast(`<b>Level up! Level ${after.level} · ${after.title}</b>${un.length ? `<span>New for your helmet: ${un.join(", ")}</span>` : ""}`, "big");
+      L.toast(`<b>Level up! Level ${after.level} · ${after.title}</b>${un.length ? `<span>New for your ${STYLE().part}: ${un.join(", ")}</span>` : ""}`, "big");
     }, opt.label ? 700 : 0);
     // weekly goal bonus, once per week
     const wk = "week." + dkey(monday(new Date()));
@@ -155,7 +157,7 @@
     shell: { gold: 9 }, accent: { gold: 9 }
   };
   function unlockedAt(lv) {
-    const out = [], names = { design: "design", visor: "visor", shell: "helmet color", accent: "accent" };
+    const out = [], names = { design: "design", visor: (STYLE().visor || "visor").toLowerCase(), shell: "color", accent: "accent" };
     Object.keys(UNLOCK).forEach(kind => Object.keys(UNLOCK[kind]).forEach(k => { if (UNLOCK[kind][k] === lv && kind !== "accent") out.push(cap(k) + " " + names[kind]); }));
     return out;
   }
@@ -304,6 +306,13 @@
     { id: "homework", e: "📝", t: "On time", d: "Finish 5 homework tasks.", ok: c => (c.n.homework || 0) >= 5 },
     { id: "level5", e: "🏎️", t: "Formula 2", d: "Reach level 5.", ok: c => c.g.level >= 5 }
   ];
+  // Names (and a couple of icons) follow the student's style
+  (function () {
+    const st = STYLE(), names = st.badges || {};
+    const EMO = { music: { first: "🎸", level5: "🎤", mechanic: "🎛️" }, cinema: { first: "🎬", level5: "🎞️", mechanic: "✂️" }, riding: { first: "🐴", level5: "🏇", mechanic: "🪮" }, career: { first: "💼", level5: "📈", mechanic: "🧩" } };
+    const key = Object.keys(L.THEMES || {}).find(k => L.THEMES[k] === st), emo = EMO[key] || {};
+    BADGES.forEach(b => { if (names[b.id]) b.t = names[b.id]; if (emo[b.id]) b.e = emo[b.id]; });
+  })();
   function context(get) {
     const ready = lessonsReady(), g = stats(get), once = (get("game", null) || {}).once || {};
     const laps = ready.map(l => get("lap." + l.id, null)).concat(get("lap.all", null)).filter(Boolean);
