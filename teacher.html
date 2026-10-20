@@ -92,6 +92,12 @@
   .lsrow { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; font-size: .92em; }
   .lsrow:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); }
   .lsdot { width: 10px; height: 10px; border-radius: 3px; }
+  #lsEditBox[hidden] { display: none !important; }
+  .assigned { display: grid; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .arow { display: grid; grid-template-columns: 10px 40px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 9px 14px; font-size: .92em; }
+  .arow + .arow { border-top: 1px solid var(--line); }
+  .arow .aid { font-weight: 800; font-variant-numeric: tabular-nums; } .arow .at { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 520px) { .arow { grid-template-columns: 10px 34px minmax(0, 1fr) auto; } .arow > .muted { display: none; } }
   pre { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; overflow-x: auto; font-size: .85em; white-space: pre-wrap; word-break: break-all; }
   .empty { color: var(--mute); text-align: center; padding: 18px; }
 </style>
@@ -169,7 +175,7 @@ function render() {
       <div class="panel" style="padding:12px"><div class="roster">${list.map(s => `
         <button class="stu" data-id="${s.p.id}" aria-pressed="${s.p.id === SEL}">
           <span class="av">${avatarOf(s, 44)}</span>
-          <span style="min-width:0"><b>${esc(s.p.display_name || "New student")}</b><small>Active ${ago(s.updated)} · 🔥 ${s.game.streak}</small></span>
+          <span style="min-width:0"><b>${esc(s.p.display_name || "New student")}</b><small>${s.mine.length} lesson${s.mine.length === 1 ? "" : "s"} · Active ${ago(s.updated)}</small></span>
           ${s.pending ? `<span class="pill warn">${s.pending} to do</span>` : `<span class="pill">Lv ${s.game.level}</span>`}
         </button>`).join("")}</div></div>
       <div style="display:grid;gap:20px;min-width:0">${cur ? detail(cur) : ""}</div>
@@ -261,7 +267,10 @@ function lessonsPanel(s) {
   const all = s.settings.lessons === null, on = new Set(s.settings.lessons || []);
   return `<div class="panel" id="lsPanel">
     <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:end"><div><h2>Lessons and style</h2>
-      <p class="muted" style="font-size:.9em">${all ? "Sees every lesson." : on.size ? `Sees ${on.size} lesson${on.size === 1 ? "" : "s"}.` : "<b>No lessons yet.</b> Choose what this student will see."}</p></div></div>
+      <p class="muted" style="font-size:.9em">${all ? "Sees every lesson." : on.size ? `Sees ${on.size} lesson${on.size === 1 ? "" : "s"}.` : "<b>No lessons yet.</b> Choose what this student will see."}</p></div>
+      <button type="button" class="btn sm" id="lsEdit">Change lessons or style</button></div>
+    ${s.mine.length ? `<div class="assigned">${s.rows.map(r => { const ok = r.best && r.best.ok / r.best.n >= .8; return `<div class="arow"><span class="lsdot" style="background:${r.l.color}"></span><span class="aid">${esc(r.l.id)}</span><span class="at">${esc(r.l.titulo)}</span><span class="muted">${esc(r.l.nivel || "")}</span><span class="pill ${ok ? "good" : r.done ? "warn" : ""}">${ok ? "Passed" : r.done ? r.done + "/" + (r.l.secs || 5) + " sections" : "Not started"}</span></div>`; }).join("")}</div>` : ""}
+    <div id="lsEditBox" hidden style="display:grid;gap:14px">
     <div class="field" style="max-width:360px"><label for="thSel">Style <span class="muted" style="font-weight:500">(avatar, level names and wording)</span></label>
       <select id="thSel">${Object.entries(G.THEMES).map(([k, t]) => `<option value="${k}" ${k === (s.settings.theme || "racing") ? "selected" : ""}>${esc(t.label)} · ${esc(t.titles[0])} → ${esc(t.titles[9])}</option>`).join("")}</select></div>
     <div class="seg" role="radiogroup" aria-label="Lessons this student sees">
@@ -271,7 +280,8 @@ function lessonsPanel(s) {
       ${G.modulos.map(m => { const ls = m.lecciones.filter(l => l.estado === "lista"); return ls.length ? `<div class="lsmod"><b>${m.owner ? esc(m.owner) + " · " : ""}${esc(m.titulo)}</b>
         <div class="lsgrid">${ls.map(l => `<label class="lsrow"><input type="checkbox" value="${l.id}" ${on.has(l.id) ? "checked" : ""}><span class="lsdot" style="background:${l.color}"></span><span><b>${esc(l.id)}</b> · ${esc(l.titulo)}</span><span class="muted">${esc(l.nivel || "")}</span></label>`).join("")}</div></div>` : ""; }).join("")}
     </div>
-    <div class="actions"><button class="btn primary" id="lsSave">Save lessons and style</button></div>
+    <div class="actions"><button class="btn primary" id="lsSave">Save lessons and style</button><button type="button" class="btn ghost" id="lsCancel">Cancel</button></div>
+    </div>
   </div>`;
 }
 
@@ -445,6 +455,9 @@ function wireDetail(s) {
     const url = planLink(s), msg = (document.getElementById("pL").value === "es" ? "Plan de aprendizaje de inglés de " : "English learning plan for ") + (s.p.display_name || "") + ": " + url;
     navigator.clipboard.writeText(msg).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url));
   };
+  const lsE = document.getElementById("lsEdit"), lsBox = document.getElementById("lsEditBox");
+  if (lsE) lsE.onclick = () => { lsBox.hidden = false; lsE.hidden = true; };
+  const lsC = document.getElementById("lsCancel"); if (lsC) lsC.onclick = () => { lsBox.hidden = true; lsE.hidden = false; };
   document.querySelectorAll('[name="lsMode"]').forEach(r => r.onchange = () => { document.getElementById("lsPick").hidden = document.querySelector('[name="lsMode"]:checked').value === "all"; });
   const lsS = document.getElementById("lsSave"); if (lsS) lsS.onclick = async () => {
     const all = document.querySelector('[name="lsMode"]:checked').value === "all";
