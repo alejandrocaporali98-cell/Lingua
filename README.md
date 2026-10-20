@@ -58,6 +58,7 @@ assets/
   favicon.svg
 supabase/
   setup.sql          tables + row-level security (run once)
+  student_settings.sql  lessons assigned to each student (run once, after setup.sql)
 clases/
   leccion-01.html    one file per lesson (data only; the engine renders it)
 ```
@@ -115,3 +116,11 @@ Progress and results are stored in the browser (`localStorage`). On the deployed
 3. In the function's settings, turn **off** "Verify JWT" (the function checks that the caller is a teacher itself).
 
 The function reads Supabase's own secret key from its server environment. The secret key is never in the site or in this repo.
+
+## Several students
+
+Each student signs in with their own username and only sees the lessons you assign.
+
+1. Run `supabase/student_settings.sql` once in Supabase → SQL Editor. Students who already exist keep seeing every lesson.
+2. Create the account (Teacher panel → Student accounts, or Supabase → Authentication → Add user with `username@student.lingua.app` and “Auto confirm”).
+3. Teacher panel → pick the student → **Lessons for this student** → choose the lessons → **Save lessons**. New students see no lessons until you assign them.

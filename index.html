@@ -198,7 +198,9 @@
     ${lvl ? `<div class="actions"><a class="btn primary" href="${P.partial ? "examen.html" : "reporte.html"}">${P.partial ? "Continue the test" : "View full report"}</a><a class="btn ghost" href="${P.partial ? "reporte.html" : "examen.html"}">${P.partial ? "View report" : "Retake test"}</a></div>` : `<a class="btn primary" href="examen.html">Take the test</a>`}`;
 
   // Modules
-  document.getElementById("modules").innerHTML = C.modulos.map(m => `
+  if (!ready.length) document.getElementById("modules").innerHTML = `<div class="card" style="padding:28px;display:grid;gap:6px;justify-items:center;text-align:center">
+    <b style="font-size:1.1em">Your lessons are on the way</b><p class="muted" style="max-width:440px">${C.maestro} is preparing lessons made for you. They will show up here.</p></div>`;
+  else document.getElementById("modules").innerHTML = C.modulos.map(m => `
     <section class="module"><h3>${m.titulo}</h3><div class="lessons">${m.lecciones.map(l => {
       const soon = l.estado !== "lista", sc = C.store.get("score." + l.id, null), p = pct(l);
       const foot = soon ? `<span class="chip">Coming soon</span><span class="muted" style="font-size:.85em">${l.nivel}</span>`

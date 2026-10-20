@@ -168,7 +168,7 @@ function render() {
   app.innerHTML = `
     <div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Progress</span><h1>Diplomas</h1>
       <p class="muted">Pass a lesson’s final quiz with 80% or more and you get its diploma. You have <b style="color:var(--ink)">${got.length}</b> of ${lessons.length}.</p></div>
-    ${got.length ? "" : `<div class="empty">Your first diploma is waiting in <b>Lesson 01 · Driver Profile</b>. Get 16 of 20 on the final quiz to unlock it.</div>`}
+    ${got.length ? "" : `<div class="empty">${lessons.length ? `Your first diploma is waiting in <b>Lesson ${G.esc(lessons[0].id)} · ${G.esc(lessons[0].titulo)}</b>. Get 16 of 20 on the final quiz to unlock it.` : "Your diplomas will show up here when you pass your first lesson."}</div>`}
     <div class="gallery">${earned.map(({ l, d }) => d
       ? `<a class="dcard" href="#d${l.id}"><div class="mini" data-mini>${paper(l, d)}</div><b>Lesson ${l.id} · ${l.titulo}</b><span class="muted">Earned ${new Date(d.at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} · ${Math.round(d.ok / d.n * 100)}%</span></a>`
       : `<div class="dcard locked"><div class="mini"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><b style="color:var(--mute)">Lesson ${l.id} · ${l.titulo}</b><span class="muted">${l.estado === "lista" ? "Pass the final quiz with 80% to unlock" : "Coming soon"}</span></div>`).join("")}</div>`;

@@ -52,7 +52,13 @@ window.LINGUA.icons = {
   clock: '<circle cx="28" cy="30" r="16"/><path d="M28 21v9l6 4"/><path d="M23 9h10M28 9v5"/>',
   chat: '<path d="M10 14h36a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H24l-9 7v-7h-5a3 3 0 0 1-3-3V17a3 3 0 0 1 3-3z"/><path d="M18 24h20M18 30h12"/>',
   ball: '<circle cx="28" cy="28" r="17"/><path d="M28 19l8 6-3 9h-10l-3-9z"/><path d="M28 11v8M44 23l-8 2M39 42l-6-8M17 42l6-8M12 23l8 2"/>',
-  pad: '<path d="M14 20h28c5 0 8 4 9 9l1 7c1 5-4 8-8 4l-5-5H17l-5 5c-4 4-9 1-8-4l1-7c1-5 4-9 9-9z"/><path d="M17 26v6M14 29h6"/><circle cx="38" cy="27" r="1.5"/><circle cx="42" cy="31" r="1.5"/>'
+  pad: '<path d="M14 20h28c5 0 8 4 9 9l1 7c1 5-4 8-8 4l-5-5H17l-5 5c-4 4-9 1-8-4l1-7c1-5 4-9 9-9z"/><path d="M17 26v6M14 29h6"/><circle cx="38" cy="27" r="1.5"/><circle cx="42" cy="31" r="1.5"/>',
+  film: '<rect x="8" y="22" width="40" height="24" rx="3"/><path d="M8 22l38-9 2 7"/><path d="M17 20l5-8M28 17l5-8M39 14l4-7"/><path d="M8 30h40"/>',
+  music: '<path d="M22 40V14l22-5v26"/><circle cx="16" cy="40" r="6"/><circle cx="38" cy="35" r="6"/><path d="M22 21l22-5"/>',
+  guitar: '<path d="M33 23l11-11M40 8l8 8"/><path d="M30 26c-3-3-9-2-11 2-1 2-1 4-3 5-5 1-8 5-6 10 2 4 6 6 10 6 5 0 8-3 9-8 1-2 3-2 5-3 4-2 5-8 2-11z"/><circle cx="24" cy="38" r="3"/>',
+  book: '<path d="M10 12h14a4 4 0 0 1 4 4v28a3 3 0 0 0-3-3H10z"/><path d="M46 12H32a4 4 0 0 0-4 4v28a3 3 0 0 1 3-3h15z"/>',
+  plane: '<path d="M8 32l40-18-12 32-8-12z"/><path d="M28 34l20-20"/>',
+  food: '<path d="M10 30h36a18 18 0 0 1-36 0z"/><path d="M22 22c0-4 3-4 3-8M30 22c0-4 3-4 3-8"/><path d="M14 48h28"/>'
 };
 // Portada de lección: misma serie para todas (color, textura, título, ícono recortado)
 window.LINGUA.thumb = function (l, label) {
@@ -77,8 +83,19 @@ document.documentElement.style.setProperty("--scale", window.LINGUA.store.get("t
     nivel: r.data.nivel || "A2", min: 60, icono: r.data.icono || "chat", color: r.data.color || "#2346d0", estado: "lista", custom: true
   }));
   if (!extra.length) return;
-  const name = rows[0].data.modulo || "Module 3 · More lessons";
-  L.modulos.push({ titulo: name, lecciones: extra });
+  // Group by the module name set in the builder, in the order they first appear
+  const byMod = {};
+  extra.forEach(l => { const r = rows.find(x => x.id === l.id), m = (r.data.modulo || "").trim() || "Module 3 · More lessons"; (byMod[m] = byMod[m] || []).push(l); });
+  Object.keys(byMod).forEach(m => L.modulos.push({ titulo: m, lecciones: byMod[m] }));
+})();
+
+// Each student sees only the lessons the teacher assigned (lessons: null = every lesson)
+(function () {
+  const L = window.LINGUA, st = L.store.get("__settings", null);
+  L.settings = st || { lessons: null, theme: "racing" };
+  if (!st || !Array.isArray(st.lessons) || L.store.get("__teacher", false)) return;
+  const ok = new Set(st.lessons);
+  L.modulos = L.modulos.map(m => ({ ...m, lecciones: m.lecciones.filter(l => ok.has(l.id)) })).filter(m => m.lecciones.length);
 })();
 
 // ── Theme: "system" (follows the device), "light" or "dark". Saved per device. ──

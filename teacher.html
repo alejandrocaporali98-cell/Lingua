@@ -80,6 +80,14 @@
   .quick button { border: 1px dashed var(--line-2); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: .82em; font-weight: 700; color: var(--ink-2); }
   .quick button:hover { border-color: var(--brand); color: var(--brand-dark); }
   .quick button.on { border-style: solid; border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
+  .seg { display: flex; gap: 8px; flex-wrap: wrap; }
+  .seg label { display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line-2); border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: .9em; cursor: pointer; }
+  .seg label:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
+  .lsmod { display: grid; gap: 8px; } .lsmod > b { font-size: .85em; color: var(--mute); text-transform: uppercase; letter-spacing: .06em; }
+  .lsgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px; }
+  .lsrow { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; font-size: .92em; }
+  .lsrow:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); }
+  .lsdot { width: 10px; height: 10px; border-radius: 3px; }
   pre { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 14px; overflow-x: auto; font-size: .85em; white-space: pre-wrap; word-break: break-all; }
   .empty { color: var(--mute); text-align: center; padding: 18px; }
 </style>
@@ -113,12 +121,14 @@ function studentOf(p) {
   const get = (k, def) => d[k] && "v" in d[k] ? d[k].v : def;
   const game = G.game.stats(get);
   const best = l => { let t = get("attempts." + l.id, []); const s = get("score." + l.id, null); if (!t.length && s) t = [s]; return t.length ? t.reduce((a, b) => b.ok / b.n > a.ok / a.n ? b : a) : null; };
-  const rows = ready.map(l => { const t = get("attempts." + l.id, []), b = best(l), s = get("score." + l.id, null); return { l, done: get("done." + l.id, []).length, tries: t.length || (s ? 1 : 0), best: b, last: t[t.length - 1] || s }; });
+  const set = DATA.settings ? (DATA.settings.find(x => x.student_id === p.id) || { student_id: p.id, lessons: [], theme: "racing" }) : null;
+  const mine = set && Array.isArray(set.lessons) ? ready.filter(l => set.lessons.includes(l.id)) : ready;
+  const rows = mine.map(l => { const t = get("attempts." + l.id, []), b = best(l), s = get("score." + l.id, null); return { l, done: get("done." + l.id, []).length, tries: t.length || (s ? 1 : 0), best: b, last: t[t.length - 1] || s }; });
   const scored = rows.filter(r => r.best), avg = scored.length ? Math.round(scored.reduce((a, r) => a + r.best.ok / r.best.n, 0) / scored.length * 100) : null;
   const passed = rows.filter(r => r.best && r.best.ok / r.best.n >= .8).length;
   const review = Object.values(get("review", {}) || {});
   const hw = DATA.homework.filter(h => h.student_id === p.id), pending = hw.filter(h => !h.done_at).length;
-  return { p, get, game, rows, avg, passed, review, hw, pending, placement: get("placement", null), avatar: get("avatar", null), updated: row.updated_at };
+  return { p, get, game, rows, mine, settings: set, avg, passed, review, hw, pending, placement: get("placement", null), avatar: get("avatar", null), updated: row.updated_at };
 }
 function avatarOf(s, size) {
   const name = (s.p.display_name || "?").trim();
@@ -179,7 +189,7 @@ function detail(s) {
     <div class="kpis">
       <div class="kpi"><span class="v">🔥 ${g.streak}</span><span class="l">Day streak · best ${g.best}</span></div>
       <div class="kpi"><span class="v">${g.weekDays}/${g.goal}</span><span class="l">Days practiced this week</span></div>
-      <div class="kpi"><span class="v">${s.passed}/${ready.length}</span><span class="l">Lessons passed</span></div>
+      <div class="kpi"><span class="v">${s.passed}/${s.rows.length}</span><span class="l">Lessons passed</span></div>
       <div class="kpi"><span class="v">${s.avg == null ? "—" : s.avg + "%"}</span><span class="l">Average best score</span></div>
       <div class="kpi"><span class="v">${g.xp}</span><span class="l">XP · Level ${g.level} ${g.title}</span></div>
       <div class="kpi"><span class="v">${s.review.length}</span><span class="l">Questions to review</span></div>
@@ -187,6 +197,8 @@ function detail(s) {
       <div class="kpi"><span class="v" style="font-size:1.1em;padding-top:6px">${ago(s.updated)}</span><span class="l">Last activity</span></div>
     </div>
   </div>
+
+  ${lessonsPanel(s)}
 
   <div class="panel">
     <h2>Homework</h2>
@@ -197,7 +209,7 @@ function detail(s) {
     <form id="hwForm" style="display:grid;gap:12px;border-top:1px solid var(--line);padding-top:16px" novalidate>
       <b>Add homework</b>
       <div class="quick" id="quick">
-        ${ready.slice(0, 6).map(l => `<button type="button" data-t="Final quiz · Lesson ${l.id} ${l.titulo}" data-d="Do the final quiz again. Goal: 18 out of 20 or more." data-l="${l.id}">Quiz L${l.id}</button>`).join("")}
+        ${s.mine.slice(0, 6).map(l => `<button type="button" data-t="Final quiz · Lesson ${l.id} ${l.titulo}" data-d="Do the final quiz again. Goal: 18 out of 20 or more." data-l="${l.id}">Quiz L${l.id}</button>`).join("")}
         <button type="button" data-t="Practice your mistakes" data-d="Open Review and practice until the list is empty.">Review mistakes</button>
         <button type="button" data-t="10 minutes of LyricsTraining" data-d="Pick a song you like on Beginner mode.">LyricsTraining</button>
         <button type="button" data-t="Listen and repeat: My words" data-d="Open My words, listen to each word and say it out loud.">My words</button>
@@ -205,7 +217,7 @@ function detail(s) {
       <div class="field"><label for="hwT">Title</label><input id="hwT" maxlength="140" required></div>
       <div class="field"><label for="hwD">Details <span class="muted" style="font-weight:500">(optional)</span></label><textarea id="hwD" maxlength="1000"></textarea></div>
       <div class="grid2">
-        <div class="field"><label for="hwL">Lesson <span class="muted" style="font-weight:500">(optional)</span></label><select id="hwL"><option value="">None</option>${ready.map(l => `<option value="${l.id}">Lesson ${l.id} · ${l.titulo}</option>`).join("")}</select></div>
+        <div class="field"><label for="hwL">Lesson <span class="muted" style="font-weight:500">(optional)</span></label><select id="hwL"><option value="">None</option>${s.mine.map(l => `<option value="${l.id}">Lesson ${l.id} · ${l.titulo}</option>`).join("")}</select></div>
         <div class="field"><label for="hwDue">Due date</label><input id="hwDue" type="date"></div>
       </div>
       <div id="hwMsg" hidden></div>
@@ -231,6 +243,23 @@ function detail(s) {
   </div>`;
 }
 
+function lessonsPanel(s) {
+  if (DATA.settings === null) return `<div class="panel"><h2>Lessons for this student</h2><p class="muted">To choose which lessons each student sees, run <b>supabase/student_settings.sql</b> in Supabase (SQL Editor → New query → paste → Run). Until then, every student sees every lesson.</p></div>`;
+  const all = s.settings.lessons === null, on = new Set(s.settings.lessons || []);
+  return `<div class="panel" id="lsPanel">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:end"><div><h2>Lessons for this student</h2>
+      <p class="muted" style="font-size:.9em">${all ? "Sees every lesson." : on.size ? `Sees ${on.size} lesson${on.size === 1 ? "" : "s"}.` : "<b>No lessons yet.</b> Choose what this student will see."}</p></div></div>
+    <div class="seg" role="radiogroup" aria-label="Lessons this student sees">
+      <label><input type="radio" name="lsMode" value="all" ${all ? "checked" : ""}> Every lesson</label>
+      <label><input type="radio" name="lsMode" value="some" ${all ? "" : "checked"}> Only the ones I choose</label></div>
+    <div id="lsPick" ${all ? "hidden" : ""} style="display:grid;gap:14px">
+      ${G.modulos.map(m => { const ls = m.lecciones.filter(l => l.estado === "lista"); return ls.length ? `<div class="lsmod"><b>${esc(m.titulo)}</b>
+        <div class="lsgrid">${ls.map(l => `<label class="lsrow"><input type="checkbox" value="${l.id}" ${on.has(l.id) ? "checked" : ""}><span class="lsdot" style="background:${l.color}"></span><span><b>${esc(l.id)}</b> · ${esc(l.titulo)}</span><span class="muted">${esc(l.nivel || "")}</span></label>`).join("")}</div></div>` : ""; }).join("")}
+    </div>
+    <div class="actions"><button class="btn primary" id="lsSave">Save lessons</button></div>
+  </div>`;
+}
+
 function classesPanel(s) {
   if (DATA.classes === null) return `<div class="panel"><h2>Classes</h2><p class="muted">To schedule classes and write class notes, run the latest <b>supabase/setup.sql</b> (the “Classes” part) in Supabase.</p></div>`;
   const list = DATA.classes.filter(c => c.student_id === s.p.id).sort((a, b) => b.starts_at.localeCompare(a.starts_at));
@@ -242,7 +271,7 @@ function classesPanel(s) {
     <form id="clsForm" class="grid2" style="grid-template-columns:repeat(4,minmax(0,1fr));align-items:end" novalidate>
       <div class="field"><label for="cD">Date</label><input id="cD" type="date" value="${day(d0)}"></div>
       <div class="field"><label for="cT">Time</label><input id="cT" type="time" value="17:00"></div>
-      <div class="field"><label for="cL">Lesson</label><select id="cL"><option value="">—</option>${ready.map(l => `<option value="${l.id}">${l.id} · ${esc(l.titulo)}</option>`).join("")}</select></div>
+      <div class="field"><label for="cL">Lesson</label><select id="cL"><option value="">—</option>${s.mine.map(l => `<option value="${l.id}">${l.id} · ${esc(l.titulo)}</option>`).join("")}</select></div>
       <button class="btn primary" type="submit" id="cSave">Schedule class</button>
     </form>
     <div class="hw">${list.length ? list.map(c => `<div class="hw-item" style="grid-template-columns:minmax(0,1fr)">
@@ -400,6 +429,14 @@ function wireDetail(s) {
   const pc = document.getElementById("pCopy"); if (pc) pc.onclick = () => {
     const url = planLink(s), msg = (document.getElementById("pL").value === "es" ? "Plan de aprendizaje de inglés de " : "English learning plan for ") + (s.p.display_name || "") + ": " + url;
     navigator.clipboard.writeText(msg).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url));
+  };
+  document.querySelectorAll('[name="lsMode"]').forEach(r => r.onchange = () => { document.getElementById("lsPick").hidden = document.querySelector('[name="lsMode"]:checked').value === "all"; });
+  const lsS = document.getElementById("lsSave"); if (lsS) lsS.onclick = async () => {
+    const all = document.querySelector('[name="lsMode"]:checked').value === "all";
+    const ids = [...document.querySelectorAll("#lsPick input:checked")].map(i => i.value);
+    lsS.disabled = true;
+    try { await G.teacher.saveSettings({ student_id: s.p.id, lessons: all ? null : ids, theme: s.settings.theme || "racing" }); G.toast("<b>Lessons saved</b><span>" + esc(s.p.display_name || "The student") + " will see them next time they open Lingua.</span>"); await load(); }
+    catch (err) { G.toast("Couldn’t save: " + esc(err.message)); lsS.disabled = false; }
   };
   const ro = document.getElementById("rOpen"); if (ro) ro.onclick = () => window.open(reportLink(s), "_blank", "noopener");
   const rc = document.getElementById("rCopy"); if (rc) rc.onclick = () => {
