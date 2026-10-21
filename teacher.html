@@ -158,6 +158,54 @@
   .fu .dot.bad { background: var(--bad); } .fu .dot.warn { background: #d39a00; }
   .fu .what { color: var(--ink-2); min-width: 0; }
   @media (max-width: 520px) { .fu { grid-template-columns: 8px minmax(0, 1fr); row-gap: 2px; } .fu .what { grid-column: 2; } }
+  /* Today: next class first */
+  .tdgrid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .tdside { display: grid; gap: 18px; min-width: 0; }
+  .tdmain { display: grid; gap: 18px; min-width: 0; align-content: start; }
+  .tdfu { display: grid; gap: 10px; min-width: 0; } .tsec { font-size: 1.02em; font-weight: 800; }
+  @media (max-width: 1000px) { .tdgrid { grid-template-columns: 1fr; } }
+  .hero { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; min-width: 0; }
+  .hero-top { background: var(--adm-side); color: #fff; padding: 22px 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .hero-top .av { width: 56px; height: 56px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; font-weight: 800; font-size: 1.4em; color: #fff; flex: none; text-decoration: none; }
+  .hero-main { flex: 1; min-width: 200px; }
+  .hero-k { font-size: .74em; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #8b95a9; }
+  .hero-n { display: block; font-size: 1.5em; font-weight: 800; letter-spacing: -.02em; margin-top: 2px; color: #fff; text-decoration: none; } .hero-n:hover { text-decoration: underline; }
+  .hero-s { font-size: .9em; color: #c9d0de; margin-top: 2px; }
+  .hero-act { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hero-act .btn { min-height: 44px; }
+  .hero-act .btn.dk { background: transparent; border: 1px solid #3a4459; color: #fff; } .hero-act .btn.dk:hover { background: var(--adm-side-2); }
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .fact { padding: 16px 20px; display: grid; gap: 6px; align-content: start; border-left: 1px solid var(--line); min-width: 0; } .fact:first-child { border-left: 0; }
+  .flbl { font-size: .72em; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); }
+  .fact p { font-size: .9em; line-height: 1.45; } .fact small { font-size: .83em; color: var(--ink-2); }
+  .flink { font-size: .85em; font-weight: 700; color: var(--brand); text-decoration: none; } .flink:hover { text-decoration: underline; }
+  @media (max-width: 640px) { .facts { grid-template-columns: 1fr; } .fact { border-left: 0; border-top: 1px solid var(--line); } .fact:first-child { border-top: 0; } .hero-top { padding: 18px; } .hero-act { width: 100%; } .hero-act .btn { flex: 1; } }
+  .lplan { padding: 14px 20px; border-top: 1px solid var(--line); display: flex; gap: 8px 12px; flex-wrap: wrap; align-items: center; font-size: .9em; }
+  .lplan .lbl { font-weight: 700; color: var(--mute); } .lplan .ltema { color: var(--ink-2); flex: 1 1 260px; } .lplan .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .hero-empty { padding: 28px 24px; display: grid; gap: 10px; justify-items: start; }
+  .later { display: grid; gap: 12px; }
+  .lt { display: flex; align-items: center; gap: 12px; } .lt a { color: inherit; text-decoration: none; } .lt a:hover b { text-decoration: underline; }
+  .lt .av { width: 40px; height: 40px; border-radius: 10px; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; flex: none; }
+  .lt small { display: block; color: var(--mute); font-size: .82em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mcal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: .8em; font-variant-numeric: tabular-nums; }
+  .mcal b { color: var(--mute); font-size: .85em; padding-bottom: 2px; }
+  .mcal span { padding: 6px 0; border-radius: 6px; color: var(--mute); border: 1px solid transparent; }
+  .mcal .att { background: var(--ok-soft); color: var(--ok-ink); font-weight: 700; }
+  .mcal .mis { background: var(--bad-soft); color: var(--bad-ink); font-weight: 700; }
+  .mcal .sch { border-color: var(--line-2); color: var(--ink); font-weight: 700; }
+  .mcal .tod { background: var(--fill-brand); color: var(--on-fill); font-weight: 800; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: .78em; color: var(--ink-2); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; border: 1px solid var(--line-2); }
+  .legend i.att { background: var(--ok-soft); border-color: var(--ok); } .legend i.mis { background: var(--bad-soft); border-color: var(--bad); }
+  .fucards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .fuc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 10px; align-content: start; }
+  .fuc-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .fuc-h a { color: inherit; text-decoration: none; font-weight: 800; display: flex; align-items: center; gap: 8px; min-width: 0; } .fuc-h a:hover { text-decoration: underline; }
+  .fuc-h .av { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-size: .75em; flex: none; }
+  .fuc p { font-size: .9em; color: var(--ink-2); } .fuc .btn { justify-self: start; }
+  .rn { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; } .rn input { font: inherit; font-size: 1.1em; font-weight: 700; padding: 6px 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); min-width: 0; width: min(320px, 100%); }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .rnbtn { border: 0; background: transparent; color: var(--mute); font: inherit; font-size: .82em; font-weight: 700; padding: 4px 6px; border-radius: 6px; cursor: pointer; } .rnbtn:hover { color: var(--brand); background: var(--brand-soft); }
   .fu-note { font-size: .85em; color: var(--mute); padding: 10px 2px 0; border-top: 1px solid var(--line); } .fu-note a { color: var(--ink-2); }
   .prows { display: grid; gap: 8px; }
   .prow { display: grid; grid-template-columns: minmax(120px, 1.3fr) minmax(100px, 1fr) auto minmax(100px, 1fr) auto; gap: 8px; align-items: center; }
@@ -315,11 +363,13 @@ const adminOf = id => (DATA.admin || []).find(a => a.student_id === id) || { stu
 let Q = "";
 
 // Start a class: mark the scheduled class as attended (if there is one) and open the student's lesson
-async function startClass(s, c) {
+async function startClass(s, c, opt) {
+  opt = opt || {};
   const near = c || (DATA.classes || []).find(x => x.student_id === s.p.id && x.status === "scheduled" && Math.abs(new Date(x.starts_at) - Date.now()) < 3 * 3600e3);
   if (near) { try { await G.teacher.saveClass({ id: near.id, status: "attended" }); } catch (e) {} }
-  const l = near && near.lesson_id ? lessons.find(x => x.id === near.lesson_id) : null;
-  const go = (l && l.archivo) || (document.getElementById("scL") && document.getElementById("scL").value) || (s.mine[s.nextIdx] || {}).archivo || "index.html";
+  const l = near && near.lesson_id ? lessons.find(x => x.id === near.lesson_id) : opt.lesson || null;
+  let go = (l && l.archivo) || (document.getElementById("scL") && document.getElementById("scL").value) || (s.mine[s.nextIdx] || {}).archivo || "index.html";
+  if (opt.present && /^clases\//.test(go)) go += "?present=1";
   G.actAs({ id: s.p.id, name: s.p.display_name || "Student" }, go);
 }
 
@@ -386,40 +436,107 @@ function activityOf(s) {
 const agoShort = d => { const m = (Date.now() - new Date(d)) / 6e4; return m < 60 ? Math.max(1, Math.round(m)) + " min" : m < 1440 ? Math.round(m / 60) + " h" : Math.round(m / 1440) + " d"; };
 
 function todayView() {
-  const list = students(), byId = Object.fromEntries(list.map(s => [s.p.id, s])), t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  const list = students(), byId = Object.fromEntries(list.map(s => [s.p.id, s])), now = Date.now(), t0 = new Date(); t0.setHours(0, 0, 0, 0);
   const t1 = new Date(t0); t1.setDate(t1.getDate() + 1); const w1 = new Date(t0); w1.setDate(w1.getDate() + 7);
-  const cls = (DATA.classes || []).filter(c => byId[c.student_id]);
-  const today = cls.filter(c => new Date(c.starts_at) >= t0 && new Date(c.starts_at) < t1 && c.status !== "cancelled").sort((a, b) => a.starts_at.localeCompare(b.starts_at));
-  const week = cls.filter(c => c.status === "scheduled" && new Date(c.starts_at) >= t1 && new Date(c.starts_at) < w1).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
-  const alerts = list.flatMap(s => alertsOf(s).map(a => ({ s, a }))).sort((x, y) => ({ bad: 0, warn: 1, info: 2 })[x.a[0]] - ({ bad: 0, warn: 1, info: 2 })[y.a[0]]);
-  const acts = list.flatMap(activityOf).filter(e => e.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 14);
-  const active = list.filter(s => s.updated && Date.now() - new Date(s.updated) < 7 * 864e5).length, todo = list.reduce((a, s) => a + s.pending, 0);
+  const cls = (DATA.classes || []).filter(c => byId[c.student_id] && c.status !== "cancelled");
+  const today = cls.filter(c => new Date(c.starts_at) >= t0 && new Date(c.starts_at) < t1).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+  const upcoming = cls.filter(c => c.status === "scheduled" && new Date(c.starts_at) >= now - 3600e3).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+  const hero = upcoming[0] || null;
+  const alerts = list.flatMap(s => alertsOf(s).map(a => ({ s, a })));
+  const acts = list.flatMap(activityOf).filter(e => e.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 6);
   const ST = { scheduled: ["Scheduled", ""], attended: ["Done", "good"], missed: ["Missed", "warn"] };
-  // one row per student, worst issue first; "placement not taken" goes to a single summary line
+  // follow-up: one card per student, worst issue first; "placement not taken" goes to a single summary line
   const sev = { bad: 0, warn: 1, info: 2 }, byStu = {}, noPlacement = [];
   alerts.forEach(({ s, a }) => { if (a[1] === "Placement test not taken") { noPlacement.push(s); return; } (byStu[s.p.id] = byStu[s.p.id] || { s, items: [] }).items.push(a); });
-  const groups = Object.values(byStu).sort((x, y) => Math.min(...x.items.map(a => sev[a[0]])) - Math.min(...y.items.map(a => sev[a[0]])));
-  app.innerHTML = topBar("Today", new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })) + `
-    <p class="statline"><span><b>${today.length}</b> class${today.length === 1 ? "" : "es"} today</span><span><b>${week.length}</b> in the next 7 days</span><span><b>${active}</b> of ${list.length} students active this week</span><span><b>${todo}</b> homework pending</span></p>
-    ${DATA.rules === null ? setupNote("recurring classes, private notes and billing") : ""}
-    <div class="cols">
-      <div style="display:grid;gap:18px;align-content:start;min-width:0">
-        <div class="card"><div class="card-head"><h2>Today</h2><a class="btn sm" href="#schedule">Full schedule</a></div>
-          ${today.length ? `<div class="agenda">${today.map(c => { const s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : null; return `<div class="ag">
-            <span class="time">${hhmm(c.starts_at)}</span><span class="av">${avatarOf(s, 36)}</span>
-            <div style="min-width:0"><a href="#s/${s.p.id}"><b>${esc(s.p.display_name || "")}</b></a><small>${l ? esc(l.id + " · " + l.titulo) : esc(((s.mine[s.nextIdx] || {}).titulo) || "Next lesson")}</small></div>
-            ${c.status === "scheduled" ? `<button class="btn primary sm" data-sc="${c.id}">Start class</button>` : `<span class="tag ${(ST[c.status] || ["", ""])[1]}">${(ST[c.status] || [c.status])[0]}</span>`}</div>`; }).join("")}</div>`
-          : `<p class="empty">No classes today.${week.length ? ` Next: <b>${esc(byId[week[0].student_id].p.display_name || "")}</b>, ${when(week[0])}.` : ""}</p>`}
-        </div>
-        <div class="card"><div class="card-head"><h2>Follow up</h2></div>
-          ${groups.length || noPlacement.length ? `<div class="fup">${groups.map(g => { const w = Math.min(...g.items.map(a => sev[a[0]])); return `<a class="fu" href="#s/${g.s.p.id}/${g.items[0][2]}">
-            <span class="dot ${w === 0 ? "bad" : w === 1 ? "warn" : ""}"></span><b>${esc(g.s.p.display_name || "")}</b><span class="what">${g.items.map(a => esc(a[1])).join(" · ")}</span></a>`; }).join("")}
-            ${noPlacement.length ? `<p class="fu-note">Placement test pending: ${noPlacement.map(s => `<a href="#s/${s.p.id}">${esc((s.p.display_name || "").split(" ")[0])}</a>`).join(", ")}</p>` : ""}</div>`
-          : `<p class="empty">Nothing to follow up.</p>`}
-        </div>
+  const groups = Object.values(byStu).map(g => (g.items.sort((x, y) => sev[x[0]] - sev[y[0]]), g)).sort((x, y) => sev[x.items[0][0]] - sev[y.items[0][0]]);
+  const KIND = a => /quiz/.test(a[1]) ? ["Low score", "Review quiz", "overview"] : /^Homework/.test(a[1]) ? ["Homework", "Open homework", "homework"] : /signed in/.test(a[1]) ? ["Access", "Check account", "#accounts"] : /activity/.test(a[1]) ? ["Inactive", "Open profile", "overview"] : /lessons assigned/.test(a[1]) ? ["Lessons", "Assign lessons", "lessons"] : /Missed/.test(a[1]) ? ["Attendance", "Open classes", "classes"] : /review/.test(a[1]) ? ["Review", "See questions", "overview"] : ["Check", "Open profile", a[2] || "overview"];
+
+  // hero: the next class, with what you need to walk in prepared
+  let heroHtml;
+  if (hero) {
+    const s = byId[hero.student_id], start = new Date(hero.starts_at), l = hero.lesson_id ? lessons.find(x => x.id === hero.lesson_id) : s.mine[s.nextIdx];
+    const mins = Math.round((start - now) / 6e4), sameDay = day(start) === day(new Date()), tmr = day(start) === day(t1);
+    const k = mins <= 0 ? "Happening now" : sameDay ? `Next class · in ${mins >= 60 ? Math.floor(mins / 60) + " h " : ""}${mins % 60} min` : tmr ? "Next class · tomorrow" : "Next class · " + start.toLocaleDateString("en-US", { weekday: "long" });
+    const lastCls = (DATA.classes || []).filter(x => x.student_id === s.p.id && x.status === "attended" && new Date(x.starts_at) < now).sort((a, b) => b.starts_at.localeCompare(a.starts_at))[0];
+    const hw = s.hw.slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))[0], td = day(new Date());
+    const hwTag = !hw ? "" : hw.done_at ? `<span class="tag good">Delivered</span>` : hw.due && hw.due < td ? `<span class="tag bad">Overdue</span>` : `<span class="tag">Pending${hw.due ? " · due " + fmt(hw.due + "T12:00:00") : ""}</span>`;
+    const tries = s.rows.flatMap(r => (s.get("attempts." + r.l.id, []) || []).filter(a => a && a.at && a.n).map(a => ({ at: a.at, p: a.ok / a.n }))).sort((a, b) => String(a.at).localeCompare(String(b.at))).slice(-5);
+    let quiz = `<p>No quizzes yet.</p>`;
+    if (tries.length) {
+      const n = tries.length, X = i => 6 + (n > 1 ? i * 128 / (n - 1) : 64), Y = p => (36 - p * 30).toFixed(1);
+      const last = tries[n - 1].p, prev = n > 1 ? tries.slice(0, -1).reduce((a, t) => a + t.p, 0) / (n - 1) : last;
+      const trend = n < 2 ? "" : last - prev > .04 ? " · trending up" : prev - last > .04 ? " · trending down" : " · steady";
+      quiz = `<svg class="spark" width="140" height="40" viewBox="0 0 140 40" role="img" aria-label="Last ${n} quiz scores: ${tries.map(t => Math.round(t.p * 100) + "%").join(", ")}">
+        <line x1="0" y1="12" x2="140" y2="12" stroke="var(--line-2)" stroke-dasharray="3 3"></line>
+        ${n > 1 ? `<polyline points="${tries.map((t, i) => X(i) + "," + Y(t.p)).join(" ")}" fill="none" stroke="var(--brand)" stroke-width="2"></polyline>` : ""}
+        ${tries.map((t, i) => `<circle cx="${X(i)}" cy="${Y(t.p)}" r="3" fill="${t.p >= .8 ? "var(--brand)" : "var(--bad)"}"></circle>`).join("")}</svg>
+        <small>Latest ${Math.round(last * 100)}%${trend}</small>`;
+    }
+    const near = Math.abs(start - now) < 3 * 3600e3;
+    heroHtml = `<section class="hero">
+      <div class="hero-top">
+        <a class="av" href="#s/${s.p.id}" aria-label="${esc(s.p.display_name || "")}">${avatarOf(s, 56)}</a>
+        <div class="hero-main"><div class="hero-k">${k}</div><a class="hero-n" href="#s/${s.p.id}">${esc(s.p.display_name || "")}</a>
+          <div class="hero-s">${sameDay ? "" : esc(start.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })) + " · "}${hhmm(hero.starts_at)}${l ? " · Lesson " + esc(l.id) + " · " + esc(l.titulo) : ""}</div></div>
+        <div class="hero-act"><button class="btn dk" id="hPres" title="Open the lesson full screen to share it">Present</button><button class="btn primary" id="hStart">${near ? "Start class" : "Open lesson"}</button></div>
       </div>
-      <div class="card" style="align-content:start"><div class="card-head"><h2>Recent activity</h2></div>
-        ${acts.length ? `<div class="feed">${acts.map(e => `<div class="fe ${e.cls}"><span class="av">${avatarOf(e.s, 28)}</span><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}
+      <div class="facts">
+        <div class="fact"><span class="flbl">${lastCls ? "Last class · " + fmt(lastCls.starts_at) : "Last class"}</span>
+          <p>${lastCls ? (lastCls.notes ? esc(lastCls.notes.length > 160 ? lastCls.notes.slice(0, 157) + "…" : lastCls.notes) : "No notes from that class.") : "This is your first class together."}</p>
+          ${lastCls && !lastCls.notes ? `<a class="flink" href="#s/${s.p.id}/classes">Add notes</a>` : ""}</div>
+        <div class="fact"><span class="flbl">Homework</span>
+          ${hw ? `<span>${hwTag}</span><small>${esc(hw.title)}</small>` : `<p>No homework assigned.</p><a class="flink" href="#s/${s.p.id}/homework">Assign homework</a>`}</div>
+        <div class="fact"><span class="flbl">Last ${tries.length > 1 ? tries.length + " quizzes" : "quiz"}</span>${quiz}</div>
+      </div>
+      ${l ? `<div class="lplan"><span class="lbl">Lesson</span>${l.tema ? `<span class="ltema">${esc(l.tema)}</span>` : ""}<span class="chips">${[l.nivel, l.min ? l.min + " min" : "", l.secs ? l.secs + " sections" : ""].filter(Boolean).map(x => `<span class="tag">${esc(x)}</span>`).join("")}</span></div>` : ""}
+    </section>`;
+    setTimeout(() => {
+      const go = p => startClass(s, near ? hero : null, { lesson: l, present: p });
+      const a = document.getElementById("hStart"), b = document.getElementById("hPres");
+      if (a) a.onclick = () => { a.disabled = true; go(false); };
+      if (b) b.onclick = () => { b.disabled = true; go(true); };
+    }, 0);
+  } else {
+    heroHtml = `<section class="hero"><div class="hero-empty"><b>No classes scheduled</b><p class="muted">Set each student’s weekly classes and the next one will show up here, ready to start.</p><a class="btn primary" href="#schedule">Open schedule</a></div></section>`;
+  }
+
+  // side: the rest of today (or what's coming), month calendar, recent activity
+  const rest = today.filter(c => !hero || c.id !== hero.id), more = rest.length ? rest : upcoming.slice(1, 4);
+  const laterTitle = rest.length ? "Later today" : "Coming up";
+  const laterHtml = more.length ? more.map(c => { const s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : s.mine[s.nextIdx]; return `<div class="lt">
+      <span class="av">${avatarOf(s, 40)}</span>
+      <div style="min-width:0;flex:1"><a href="#s/${s.p.id}"><b>${rest.length ? "" : esc(new Date(c.starts_at).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })) + " · "}${hhmm(c.starts_at)} · ${esc((s.p.display_name || "").split(" ")[0])}</b></a><small>${l ? esc("Lesson " + l.id + " · " + l.titulo) : "Next lesson"}</small></div>
+      ${c.status === "scheduled" ? `<button class="btn sm" data-sc="${c.id}">Start</button>` : `<span class="tag ${(ST[c.status] || ["", ""])[1]}">${(ST[c.status] || [c.status])[0]}</span>`}</div>`; }).join("") : `<p class="muted" style="font-size:.9em">Nothing else scheduled this week.</p>`;
+  const y = t0.getFullYear(), m = t0.getMonth(), first = new Date(y, m, 1), off = (first.getDay() + 6) % 7, dim = new Date(y, m + 1, 0).getDate(), td = day(new Date());
+  const byDay = {}; cls.forEach(c => { const k = day(c.starts_at); (byDay[k] = byDay[k] || []).push(c); });
+  const cell = d => {
+    const k = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0"), cs = byDay[k] || [];
+    const st = k === td ? "tod" : cs.some(c => c.status === "missed") ? "mis" : cs.some(c => c.status === "attended") ? "att" : cs.length ? "sch" : "";
+    const tip = cs.map(c => hhmm(c.starts_at) + " " + ((byId[c.student_id].p.display_name || "").split(" ")[0])).join(", ");
+    return `<span class="${st}"${tip ? ` title="${esc(tip)}"` : ""}>${d}</span>`;
+  };
+  const cal = `<div class="mcal">${["M", "T", "W", "T", "F", "S", "S"].map(d => `<b>${d}</b>`).join("")}${"<span></span>".repeat(off)}${Array.from({ length: dim }, (_, i) => cell(i + 1)).join("")}</div>
+    <div class="legend"><span><i class="att"></i>Attended</span><span><i class="mis"></i>Missed</span><span><i class="sch"></i>Scheduled</span></div>`;
+
+  app.innerHTML = topBar("Today", `${new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} · ${today.length} class${today.length === 1 ? "" : "es"} · ${groups.length} to follow up`) + `
+    ${DATA.rules === null ? setupNote("recurring classes, private notes and billing") : ""}
+    <div class="tdgrid">
+      <div class="tdmain">
+      ${heroHtml}
+      <section class="tdfu"><h2 class="tsec">Follow up</h2>
+        ${groups.length ? `<div class="fucards">${groups.map(g => { const a = g.items[0], kd = KIND(a), w = sev[a[0]]; const href = kd[2][0] === "#" ? kd[2] : `#s/${g.s.p.id}/${kd[2]}`; return `<div class="fuc">
+          <div class="fuc-h"><a href="#s/${g.s.p.id}"><span class="av">${avatarOf(g.s, 28)}</span>${esc(g.s.p.display_name || "")}</a><span class="tag ${w === 0 ? "bad" : w === 1 ? "warn" : ""}">${kd[0]}</span></div>
+          <p>${g.items.map(x => esc(x[1])).join(" · ")}</p>
+          <a class="btn sm" href="${href}">${kd[1]}</a></div>`; }).join("")}</div>` : `<p class="empty card">Nothing to follow up.</p>`}
+        ${noPlacement.length ? `<p class="fu-note">Placement test pending: ${noPlacement.map(s => `<a href="#s/${s.p.id}">${esc((s.p.display_name || "").split(" ")[0])}</a>`).join(", ")}</p>` : ""}
+      </section>
+      </div>
+      <div class="tdside">
+        <div class="card"><h2>${laterTitle}</h2><div class="later">${laterHtml}</div></div>
+        <div class="card"><div class="card-head"><h2>${first.toLocaleDateString("en-US", { month: "long" })}</h2><a class="btn sm" href="#schedule">Schedule</a></div>${cal}</div>
+        <div class="card"><h2>Recent activity</h2>
+          ${acts.length ? `<div class="feed">${acts.map(e => `<div class="fe ${e.cls}"><span class="av">${avatarOf(e.s, 28)}</span><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}
+        </div>
       </div>
     </div>`;
   wireTop();
@@ -712,7 +829,7 @@ function studentView(s, tab) {
     <div class="card file">
       <div class="fhead">
         <span class="av">${avatarOf(s, 64)}</span>
-        <div style="min-width:0"><h1>${esc(s.p.display_name || "New student")}</h1>
+        <div style="min-width:0"><div class="rn" id="rnBox"><h1>${esc(s.p.display_name || "New student")}</h1><button type="button" class="rnbtn" id="rnBtn">Edit name</button></div>
           <p class="muted">${[s.p.age ? s.p.age + " years old" : "", G.themeOf(s.theme).label, pl ? "Level " + pl.nivel : "Placement not taken", "Active " + ago(s.updated)].filter(Boolean).map(esc).join(" · ")}</p>
           ${(s.p.interests || []).length ? `<div class="chips">${s.p.interests.map(i => `<span class="tag">${esc(i)}</span>`).join("")}</div>` : ""}</div>
         <div class="startbox">
@@ -726,6 +843,21 @@ function studentView(s, tab) {
     ${tab === "overview" ? overviewTab(s) : tab === "lessons" ? lessonsPanel(s) : tab === "classes" ? rulesBox(s.p.id) + classesPanel(s) : tab === "homework" ? homeworkTab(s) : tab === "billing" ? billingTab(s) : `<div class="card"><div class="card-head"><div><h2>Progress report</h2><p class="muted" style="font-size:.85em">Topics covered, strengths, areas of opportunity and trends, ready to export.</p></div><a class="btn primary" href="#reports/${s.p.id}/30">Open progress report</a></div></div>` + reportPanel(s) + planPanel(s)}`;
   if (tab === "lessons") { const e = document.getElementById("lsEdit"); if (e) setTimeout(() => e.click(), 0); }
   wireDetail(s);
+  const rb = document.getElementById("rnBtn");
+  if (rb) rb.onclick = () => {
+    const box = document.getElementById("rnBox");
+    box.innerHTML = `<label class="sr-only" for="rnIn">Student name</label><input id="rnIn" value="${esc(s.p.display_name || "")}" maxlength="60" autocomplete="off"><button type="button" class="btn primary sm" id="rnSave">Save</button><button type="button" class="btn ghost sm" id="rnX">Cancel</button>`;
+    const inp = document.getElementById("rnIn"); inp.focus(); inp.select();
+    const save = async () => {
+      const v = inp.value.trim().replace(/\s+/g, " ");
+      if (!v || v === s.p.display_name) return render();
+      try { await G.teacher.update("profiles", s.p.id, { display_name: v }); G.toast(`<b>Name updated</b><span>${esc(v)}</span>`); await load(); }
+      catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
+    };
+    document.getElementById("rnSave").onclick = save;
+    document.getElementById("rnX").onclick = () => render();
+    inp.onkeydown = e => { if (e.key === "Enter") save(); if (e.key === "Escape") render(); };
+  };
   if (tab === "classes") wireRules();
   if (tab === "billing") { wireBilling(s); wireProposal(s); }
   const nb = document.getElementById("pnSave");

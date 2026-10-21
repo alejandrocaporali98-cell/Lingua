@@ -335,6 +335,7 @@
     if ((e.shiftKey || pres) && k === "arrowleft") { go(st.sec - 1); pt(); }
   });
   drawToc(); draw();
+  if (new URLSearchParams(location.search).get("present") === "1") setTimeout(() => present(true), 0);
   if (G.decorate) G.decorate();
   if (G.theme && G.theme.mount) G.theme.mount();
   if (G.menu && G.menu.mount) G.menu.mount();
