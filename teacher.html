@@ -27,11 +27,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
+<link rel="stylesheet" href="assets/informe.css">
 <script src="assets/config.js"></script>
 <script src="assets/game.js"></script>
 <script src="assets/avatar.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
+<script src="assets/placement-data.js"></script>
+<script src="assets/informe.js"></script>
 <style>
   /* Teacher admin: its own look, separate from the student site */
   :root { --adm-side: #0f1420; --adm-side-2: #1a2131; --adm-side-ink: #c9d0de; --adm-bg: #f3f4f7; }
@@ -161,6 +164,8 @@
   .prow select, .prow input { font: inherit; padding: 8px 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); min-width: 0; }
   @media (max-width: 560px) { .prow { grid-template-columns: 1fr 1fr; } .prow > span { display: none; } .prow select { grid-column: 1 / -1; } }
   .seg input[type=checkbox] { accent-color: var(--brand); }
+  .rp-export textarea { font: inherit; }
+  #rpPrev { padding: 26px 28px; } @media (max-width: 560px) { #rpPrev { padding: 16px; } }
   .note-setup { background: var(--badge-soft); border: 1px solid var(--badge-line); color: var(--badge-ink); border-radius: 10px; padding: 12px 14px; font-size: .9em; }
   .agenda { display: grid; }
   .ag { display: grid; grid-template-columns: 74px 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
@@ -210,6 +215,7 @@
       <a href="#today" data-v="today"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>Today</a>
       <a href="#students" data-v="students"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Students</a>
       <a href="#schedule" data-v="schedule"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Schedule</a>
+      <a href="#reports" data-v="reports"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Reports</a>
       <a href="#billing" data-v="billing"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Billing</a>
       <a href="#accounts" data-v="accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Accounts</a>
       <span class="adm-sep"></span>
@@ -334,7 +340,7 @@ async function fillFromRules() {
 
 function render() {
   const h = (location.hash || "#today").slice(1).split("/");
-  const v = h[0] === "s" ? "students" : (["today", "students", "schedule", "billing", "accounts"].includes(h[0]) ? h[0] : "today");
+  const v = h[0] === "s" ? "students" : (["today", "students", "schedule", "reports", "billing", "accounts"].includes(h[0]) ? h[0] : "today");
   document.querySelectorAll("#admNav [data-v]").forEach(a => a.classList.toggle("on", a.dataset.v === v));
   document.getElementById("mtitle").textContent = h[0] === "s" ? "Student" : v[0].toUpperCase() + v.slice(1);
   const me = G.profile || {}; document.getElementById("me").innerHTML = `<b>${esc(me.display_name || G.maestroNombre || "Teacher")}</b><small>Teacher</small>`;
@@ -342,6 +348,7 @@ function render() {
   if (v === "students") return listView();
   if (v === "schedule") return scheduleView();
   if (v === "billing") return billingView(h[1]);
+  if (v === "reports") return reportsView(h[1], h[2]);
   if (v === "accounts") return accountsView();
   return todayView();
 }
@@ -508,6 +515,55 @@ function scheduleView() {
   app.querySelectorAll("[data-cx]").forEach(b => b.onclick = async () => { b.disabled = true; try { await G.teacher.saveClass({ id: b.dataset.cx, status: "cancelled" }); await load(); } catch (err) { G.toast("Couldn’t save: " + esc(err.message)); } });
 }
 
+// ── Reports: analytics per student, comparison across students, export ──
+const RP_CTX = () => ({ classes: DATA.classes || [], homework: DATA.homework || [], analyzePlacement: LinguaReport.analyzePlacement });
+const RP_LABEL = { "30": "Last 30 days", "90": "Last 3 months", month: "This month", prev: "Last month", all: "All time" };
+let RPC = "", RPL = "es";
+function reportsView(id, period) {
+  const list = students(); period = LinguaReport.periods.includes(period) ? period : "30";
+  const s = id && id !== "all" ? list.find(x => x.p.id === id) : null;
+  const ctl = `<select id="rpS" aria-label="Student"><option value="all">All students</option>${list.map(x => `<option value="${x.p.id}" ${s && x.p.id === s.p.id ? "selected" : ""}>${esc(x.p.display_name || "")}</option>`).join("")}</select>
+    <select id="rpP" aria-label="Period">${LinguaReport.periods.map(p => `<option value="${p}" ${p === period ? "selected" : ""}>${RP_LABEL[p]}</option>`).join("")}</select>`;
+  if (!s) {
+    const rows = list.map(x => ({ x, D: LinguaReport.compute(x, period, RP_CTX()) }));
+    app.innerHTML = topBar("Reports", "Compare your students, then open one to see topics, strengths, areas of opportunity and trends.", ctl) + `
+      <div class="card"><div class="card-head"><h2>${RP_LABEL[period]}</h2><button class="btn sm" id="rpCsv">Download CSV</button></div>
+      <div class="tbl"><table class="crm" style="min-width:900px"><thead><tr><th>Student</th><th class="r">Classes</th><th class="r">Practice days</th><th class="r">Lessons passed</th><th class="r">Avg. quiz</th><th>Trend</th><th class="r">Points</th><th class="r">To review</th><th class="r"></th></tr></thead>
+      <tbody>${rows.map(({ x, D }) => `<tr data-row="${x.p.id}" tabindex="0"><td><div class="who"><span class="av">${avatarOf(x, 30)}</span><b>${esc(x.p.display_name || "")}</b></div></td>
+        <td class="r num">${D.k.cls[0]}${D.k.cls[1] ? `<small class="muted"> · ${D.k.cls[1]} missed</small>` : ""}</td><td class="r num">${D.k.days}</td><td class="r num">${D.k.passed}<small class="muted"> · ${D.k.done}/${D.k.lessons}</small></td>
+        <td class="r num">${D.k.avg == null ? "—" : D.k.avg + "%"}</td><td>${D.tr == null ? `<span class="muted">—</span>` : D.tr > 3 ? `<span class="tag good">▲ ${D.tr}</span>` : D.tr < -3 ? `<span class="tag bad">▼ ${-D.tr}</span>` : `<span class="tag">● steady</span>`}</td>
+        <td class="r num">${D.k.xp}</td><td class="r num">${D.k.rv}</td><td class="r"><a class="btn sm" href="#reports/${x.p.id}/${period}">Open</a></td></tr>`).join("")}</tbody></table></div></div>`;
+    wireTop(); wireRp(period);
+    app.querySelectorAll("tr[data-row]").forEach(tr => tr.onclick = e => { if (!e.target.closest("a, button")) location.hash = "#reports/" + tr.dataset.row + "/" + period; });
+    document.getElementById("rpCsv").onclick = () => {
+      const head = ["Student", "Period", "From", "To", "Classes attended", "Classes missed", "Practice days", "Lessons passed", "Lessons passed (total)", "Lessons assigned", "Average quiz %", "Trend (pts)", "Points", "Homework done", "Homework assigned", "Questions to review"];
+      const lines = rows.map(({ x, D }) => [x.p.display_name || "", RP_LABEL[period], D.f, D.t, D.k.cls[0], D.k.cls[1], D.k.days, D.k.passed, D.k.done, D.k.lessons, D.k.avg ?? "", D.tr ?? "", D.k.xp, D.k.hw[0], D.k.hw[1], D.k.rv]);
+      const csv = [head, ...lines].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv" })); a.download = `lingua-students-${day(new Date())}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    };
+    return;
+  }
+  const D = LinguaReport.compute(s, period, RP_CTX());
+  app.innerHTML = topBar("Reports", "", ctl) + `
+    <div class="card rp-export"><div class="card-head"><div><h2>Export for ${esc((s.p.display_name || "").split(" ")[0])}</h2><p class="muted" style="font-size:.85em">A report that opens without signing in, in Spanish or English. Send the link or save it as PDF.</p></div></div>
+      <div class="grid2" style="grid-template-columns:200px minmax(0,1fr);align-items:start">
+        <div class="field"><label for="rpL">Language</label><select id="rpL"><option value="es" ${RPL === "es" ? "selected" : ""}>Spanish</option><option value="en" ${RPL === "en" ? "selected" : ""}>English</option></select></div>
+        <div class="field"><label for="rpC">Your comment <span class="muted" style="font-weight:500">(optional)</span></label><textarea id="rpC" maxlength="800" style="min-height:64px">${esc(RPC)}</textarea></div>
+      </div>
+      <div class="actions"><button class="btn primary" id="rpOpen">Open report</button><button class="btn" id="rpCopy">Copy link for WhatsApp</button></div></div>
+    <div class="card" id="rpPrev">${LinguaReport.render({ ...D, c: RPC }, "en", { teacher: G.maestroNombre || G.maestro })}</div>`;
+  wireTop(); wireRp(period);
+  const link = () => { RPC = document.getElementById("rpC").value.trim(); RPL = document.getElementById("rpL").value; return location.origin + location.pathname.replace(/teacher\.html$/, "") + "informe.html?d=" + b64({ ...D, c: RPC || undefined, te: G.maestroNombre || G.maestro }) + "&lang=" + RPL; };
+  document.getElementById("rpC").oninput = e => { RPC = e.target.value; };
+  document.getElementById("rpL").onchange = e => { RPL = e.target.value; };
+  document.getElementById("rpOpen").onclick = () => window.open(link(), "_blank", "noopener");
+  document.getElementById("rpCopy").onclick = () => { const url = link(); navigator.clipboard.writeText((RPL === "es" ? "Reporte de avance de inglés de " : "English progress report for ") + (s.p.display_name || "") + ": " + url).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url)); };
+}
+function wireRp(period) {
+  document.getElementById("rpS").onchange = e => location.hash = "#reports/" + e.target.value + "/" + document.getElementById("rpP").value;
+  document.getElementById("rpP").onchange = e => location.hash = "#reports/" + document.getElementById("rpS").value + "/" + e.target.value;
+}
+
 // ── Billing ──
 function billOf(s, m) {
   const a = adminOf(s.p.id), cls = (DATA.classes || []).filter(c => c.student_id === s.p.id && monthKey(c.starts_at) === m);
@@ -664,7 +720,7 @@ function studentView(s, tab) {
       </div>
       <nav class="tabs" role="tablist">${TABS.map(([k, t]) => `<a role="tab" href="#s/${s.p.id}/${k}" aria-selected="${k === tab}" class="${k === tab ? "on" : ""}">${t}${k === "homework" && s.pending ? ` <span class="tag warn">${s.pending}</span>` : ""}</a>`).join("")}</nav>
     </div>
-    ${tab === "overview" ? overviewTab(s) : tab === "lessons" ? lessonsPanel(s) : tab === "classes" ? rulesBox(s.p.id) + classesPanel(s) : tab === "homework" ? homeworkTab(s) : tab === "billing" ? billingTab(s) : reportPanel(s) + planPanel(s)}`;
+    ${tab === "overview" ? overviewTab(s) : tab === "lessons" ? lessonsPanel(s) : tab === "classes" ? rulesBox(s.p.id) + classesPanel(s) : tab === "homework" ? homeworkTab(s) : tab === "billing" ? billingTab(s) : `<div class="card"><div class="card-head"><div><h2>Progress report</h2><p class="muted" style="font-size:.85em">Topics covered, strengths, areas of opportunity and trends, ready to export.</p></div><a class="btn primary" href="#reports/${s.p.id}/30">Open progress report</a></div></div>` + reportPanel(s) + planPanel(s)}`;
   if (tab === "lessons") { const e = document.getElementById("lsEdit"); if (e) setTimeout(() => e.click(), 0); }
   wireDetail(s);
   if (tab === "classes") wireRules();

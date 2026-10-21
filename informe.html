@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lingua · Reporte de avance</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/lingua.css">
+<link rel="stylesheet" href="assets/informe.css">
+<style>
+  html, body { background: var(--bg); } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { max-width: 940px; margin: 24px auto 60px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 36px 40px; }
+  @media (max-width: 640px) { .page { margin: 0; border: 0; border-radius: 0; padding: 22px 16px 40px; } }
+  .tools { display: flex; gap: 8px; align-items: center; } .lang { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+  .lang button { border: 0; background: var(--surface); padding: 6px 11px; font-weight: 700; font-size: .82em; color: var(--ink); } .lang button.on { background: var(--inverse); color: var(--on-inverse); }
+  @media print { html, body { background: #fff; } .page { margin: 0; border: 0; padding: 0; max-width: none; } @page { size: letter; margin: 14mm; } }
+</style>
+</head>
+<body>
+<div class="page" id="app"></div>
+<script src="assets/placement-data.js"></script>
+<script src="assets/informe.js"></script>
+<script>
+(function () {
+  const qp = new URLSearchParams(location.search), app = document.getElementById("app");
+  let lang = qp.get("lang") === "en" ? "en" : "es";
+  function decode(s) { try { const b = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return null; } }
+  const D = decode(qp.get("d") || "");
+  function draw() {
+    document.documentElement.lang = lang;
+    if (!D) { app.innerHTML = `<p>${lang === "es" ? "Este enlace no tiene los datos del reporte." : "This link has no report data."}</p>`; return; }
+    const t = LinguaReport.T[lang];
+    document.title = "Lingua · " + t.title + " · " + D.n;
+    app.innerHTML = LinguaReport.render(D, lang, { teacher: D.te, tools: `<div class="tools noprint"><div class="lang"><button data-l="es" class="${lang === "es" ? "on" : ""}">ES</button><button data-l="en" class="${lang === "en" ? "on" : ""}">EN</button></div><button class="btn sm" id="pr">${t.print}</button></div>` });
+    app.querySelectorAll("[data-l]").forEach(b => b.onclick = () => { lang = b.dataset.l; draw(); });
+    document.getElementById("pr").onclick = () => window.print();
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
