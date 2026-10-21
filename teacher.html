@@ -135,15 +135,55 @@
   pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow-x: auto; font-size: .85em; white-space: pre-wrap; word-break: break-all; }
   .empty { color: var(--mute); text-align: center; padding: 18px; }
   .btn { border-radius: 8px; }
+  .tag.bad { background: var(--bad-soft); color: var(--bad-ink); border-color: transparent; }
+  .cols { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 1000px) { .cols { grid-template-columns: 1fr; } }
+  .adm-top select { font: inherit; padding: 7px 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .note-setup { background: var(--badge-soft); border: 1px solid var(--badge-line); color: var(--badge-ink); border-radius: 10px; padding: 12px 14px; font-size: .9em; }
+  .agenda { display: grid; }
+  .ag { display: grid; grid-template-columns: 74px 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+  .ag:first-child { border-top: 0; }
+  .ag .time { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .ag .av, .al .av, .fe .av, .rule .av { border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; flex: none; }
+  .ag .av { width: 36px; height: 36px; } .ag a { color: inherit; text-decoration: none; } .ag small { display: block; color: var(--mute); font-size: .8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 520px) { .ag { grid-template-columns: 58px minmax(0, 1fr) auto; } .ag .av { display: none; } }
+  .dayg { display: grid; gap: 4px; } .dayg + .dayg { margin-top: 8px; }
+  .dlabel { font-size: .72em; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--mute); padding-top: 6px; }
+  .alerts { display: grid; gap: 6px; }
+  .al { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 12px; border-radius: 8px; text-decoration: none; color: var(--ink); background: var(--bg); border-left: 3px solid var(--line-2); font-size: .9em; }
+  .al:not(:has(.av)) { grid-template-columns: minmax(0, 1fr) auto; }
+  .al .av { width: 26px; height: 26px; font-size: .75em; }
+  .al.bad { border-left-color: var(--bad); } .al.warn { border-left-color: #d39a00; } .al.info { border-left-color: var(--brand); }
+  .al .go { color: var(--mute); font-weight: 800; } .al:hover { background: color-mix(in srgb, var(--brand) 6%, var(--bg)); }
+  .feed { display: grid; }
+  .fe { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); font-size: .9em; }
+  .fe:first-child { border-top: 0; } .fe:not(:has(.av)) { grid-template-columns: 1fr; }
+  .fe .av { width: 28px; height: 28px; font-size: .75em; } .fe small { color: var(--mute); font-size: .78em; }
+  .fe.good p::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); margin-right: 7px; vertical-align: 1px; }
+  .rules { display: grid; gap: 6px; }
+  .rule { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: .9em; }
+  .rule.off { opacity: .55; } .rule .av { width: 28px; height: 28px; font-size: .75em; }
+  .ruleform { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; align-items: end; border-top: 1px solid var(--line); padding-top: 14px; }
+  .ruleform select, .ruleform input { font: inherit; }
+  .pnotes { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; width: 100%; min-height: 150px; resize: vertical; }
+  .only-narrow { display: none; }
+  @media (max-width: 760px) { .only-wide { display: none; } .only-narrow { display: grid; } }
+  .cards { gap: 10px; }
+  .scard { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 10px; }
+  .scard .who { text-decoration: none; color: inherit; } .scard .who .av { width: 44px; height: 44px; } .scard .who small { display: block; }
+  .scard .prog .bar { flex: 1; width: auto; }
+  .scard .rowact .btn { flex: 1; justify-content: center; } .scard .rowact { display: flex; }
 </style>
 </head>
 <body>
 <div class="adm">
   <aside class="adm-side" aria-label="Teacher navigation">
-    <a class="adm-brand" href="teacher.html#students"><span id="mark"></span><span><b>lingua</b><small>Teacher admin</small></span></a>
+    <a class="adm-brand" href="teacher.html#today"><span id="mark"></span><span><b>lingua</b><small>Teacher admin</small></span></a>
     <nav class="adm-nav" id="admNav">
+      <a href="#today" data-v="today"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>Today</a>
       <a href="#students" data-v="students"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Students</a>
       <a href="#schedule" data-v="schedule"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Schedule</a>
+      <a href="#billing" data-v="billing"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Billing</a>
       <a href="#accounts" data-v="accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Accounts</a>
       <span class="adm-sep"></span>
       <a href="builder.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Lesson builder</a>
@@ -209,8 +249,12 @@ on conflict do nothing;</pre>
   document.getElementById("copy").onclick = () => navigator.clipboard.writeText(document.getElementById("sql").textContent).then(() => G.toast("SQL copied"));
 }
 
-// ── Views: #students (table), #s/<id>/<tab> (student file), #schedule, #accounts ──
+// ── Views: #today, #students, #s/<id>/<tab>, #schedule, #billing, #accounts ──
 const STYLE_ICON = k => G.avatar.svg({ style: "helmet", shell: "blue", accent: "yellow", design: "stripes", visor: "smoke", number: 7, bg: "fog" }, 26, { kind: G.themeOf(k).avatar, label: G.themeOf(k).label });
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONEY = (n, cur) => (cur || "MXN") + " " + Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+const monthKey = d => day(d).slice(0, 7);
+const monthName = m => new Date(m + "-15").toLocaleDateString("en-US", { month: "long", year: "numeric" });
 function students() {
   return DATA.profiles.filter(p => p.id !== (G.user && G.user.id)).map(studentOf).sort((a, b) => (a.p.display_name || "").localeCompare(b.p.display_name || ""));
 }
@@ -219,54 +263,184 @@ function nextClass(id) {
   return (DATA.classes || []).filter(c => c.student_id === id && c.status === "scheduled" && new Date(c.starts_at) >= now).sort((a, b) => a.starts_at.localeCompare(b.starts_at))[0] || null;
 }
 const when = c => new Date(c.starts_at).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+const hhmm = d => new Date(d).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+const adminOf = id => (DATA.admin || []).find(a => a.student_id === id) || { student_id: id, notes: "", billing: "per_class", rate: 0, currency: "MXN" };
 let Q = "";
+
+// Start a class: mark the scheduled class as attended (if there is one) and open the student's lesson
+async function startClass(s, c) {
+  const near = c || (DATA.classes || []).find(x => x.student_id === s.p.id && x.status === "scheduled" && Math.abs(new Date(x.starts_at) - Date.now()) < 3 * 3600e3);
+  if (near) { try { await G.teacher.saveClass({ id: near.id, status: "attended" }); } catch (e) {} }
+  const l = near && near.lesson_id ? lessons.find(x => x.id === near.lesson_id) : null;
+  const go = (l && l.archivo) || (document.getElementById("scL") && document.getElementById("scL").value) || (s.mine[s.nextIdx] || {}).archivo || "index.html";
+  G.actAs({ id: s.p.id, name: s.p.display_name || "Student" }, go);
+}
+
+// Recurring classes: keep the next 14 days filled in
+async function fillFromRules() {
+  if (!DATA.rules || !DATA.classes) return false;
+  const want = [], now = new Date();
+  DATA.rules.filter(r => r.active).forEach(r => {
+    for (let k = 0; k < 14; k++) {
+      const d = new Date(now); d.setDate(now.getDate() + k);
+      if (d.getDay() !== r.weekday) continue;
+      const [hh, mm] = r.time.split(":").map(Number); d.setHours(hh, mm, 0, 0);
+      if (d < now) continue;
+      const exists = DATA.classes.some(c => c.student_id === r.student_id && Math.abs(new Date(c.starts_at) - d) < 60e3);
+      if (!exists) want.push({ student_id: r.student_id, starts_at: d.toISOString(), rule_id: r.id });
+    }
+  });
+  if (!want.length) return false;
+  try { await G.teacher.insert("classes", want); return true; } catch (e) { console.warn(e); return false; }
+}
+
 function render() {
-  const h = (location.hash || "#students").slice(1).split("/");
-  const v = h[0] === "s" ? "students" : (["students", "schedule", "accounts"].includes(h[0]) ? h[0] : "students");
+  const h = (location.hash || "#today").slice(1).split("/");
+  const v = h[0] === "s" ? "students" : (["today", "students", "schedule", "billing", "accounts"].includes(h[0]) ? h[0] : "today");
   document.querySelectorAll("#admNav [data-v]").forEach(a => a.classList.toggle("on", a.dataset.v === v));
   const me = G.profile || {}; document.getElementById("me").innerHTML = `<b>${esc(me.display_name || G.maestroNombre || "Teacher")}</b><small>Teacher</small>`;
   if (h[0] === "s" && h[1]) { const s = students().find(x => x.p.id === h[1]); if (s) { SEL = s.p.id; return studentView(s, h[2] || "overview"); } }
+  if (v === "students") return listView();
   if (v === "schedule") return scheduleView();
+  if (v === "billing") return billingView(h[1]);
   if (v === "accounts") return accountsView();
-  return listView();
+  return todayView();
 }
 function topBar(title, sub, actions) {
   return `<div class="adm-top"><div><h1>${title}</h1>${sub ? `<p>${sub}</p>` : ""}</div><div class="actions">${actions || ""}<button class="btn sm" id="reload">Refresh</button></div></div>`;
 }
 function wireTop() { const r = document.getElementById("reload"); if (r) r.onclick = load; }
+const setupNote = what => `<div class="note-setup"><b>One-time setup:</b> to use ${what}, run <b>supabase/admin.sql</b> in Supabase (SQL Editor → New query → paste → Run).</div>`;
 
-function listView() {
-  const list = students(), wk = Date.now() + 7 * 864e5, now = Date.now() - 3600e3;
-  const up = (DATA.classes || []).filter(c => c.status === "scheduled" && new Date(c.starts_at) >= now && new Date(c.starts_at) <= wk).length;
+// ── Alerts and activity ──
+function alertsOf(s) {
+  const out = [], today = day(new Date()), d = s.updated ? Math.floor((Date.now() - new Date(s.updated)) / 864e5) : null;
+  if (!s.mine.length) out.push(["warn", "No lessons assigned", "lessons"]);
+  if (s.mine.length && (d === null || d >= 7)) out.push(["warn", d === null ? "Hasn’t signed in yet" : `No activity in ${d} days`, "overview"]);
+  s.hw.filter(h => !h.done_at && h.due && h.due < today).forEach(h => out.push(["bad", `Homework overdue: ${h.title}`, "homework"]));
+  s.rows.filter(r => r.last && r.last.ok / r.last.n < .8 && !(r.best && r.best.ok / r.best.n >= .8)).forEach(r => out.push(["bad", `Lesson ${r.l.id}: last quiz ${Math.round(r.last.ok / r.last.n * 100)}%`, "overview"]));
+  if (s.review.length >= 10) out.push(["warn", `${s.review.length} questions to review`, "overview"]);
+  const m = monthKey(new Date()), missed = (DATA.classes || []).filter(c => c.student_id === s.p.id && c.status === "missed" && monthKey(c.starts_at) === m).length;
+  if (missed >= 2) out.push(["warn", `Missed ${missed} classes this month`, "classes"]);
+  if (!s.placement && s.mine.length) out.push(["info", "Placement test not taken", "overview"]);
+  return out;
+}
+function activityOf(s) {
+  const ev = [], get = s.get, name = (s.p.display_name || "").split(" ")[0];
+  s.rows.forEach(r => (get("attempts." + r.l.id, []) || []).forEach(a => a.at && ev.push([a.at, `${a.ok / a.n >= .8 ? "passed" : "took"} the final quiz of <b>${esc(r.l.titulo)}</b> · ${Math.round(a.ok / a.n * 100)}%`, a.ok / a.n >= .8 ? "good" : ""])));
+  s.hw.filter(h => h.done_at).forEach(h => ev.push([h.done_at, `finished homework <b>${esc(h.title)}</b>`, "good"]));
+  const pl = s.placement; if (pl && pl.fecha) ev.push([pl.fecha + "T12:00:00", `took the placement test · ${esc(pl.nivel)}`, ""]);
+  (G.badges ? G.badges.earned(get) : []).filter(b => b.at).forEach(b => ev.push([b.at, `earned the badge <b>${esc(b.t)}</b>`, ""]));
+  (DATA.classes || []).filter(c => c.student_id === s.p.id && c.status === "attended").forEach(c => ev.push([c.starts_at, `had a class with you`, ""]));
+  return ev.map(e => ({ at: e[0], html: `<b>${esc(name)}</b> ${e[1]}`, cls: e[2], s }));
+}
+const agoShort = d => { const m = (Date.now() - new Date(d)) / 6e4; return m < 60 ? Math.max(1, Math.round(m)) + " min" : m < 1440 ? Math.round(m / 60) + " h" : Math.round(m / 1440) + " d"; };
+
+function todayView() {
+  const list = students(), byId = Object.fromEntries(list.map(s => [s.p.id, s])), t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  const t1 = new Date(t0); t1.setDate(t1.getDate() + 1); const w1 = new Date(t0); w1.setDate(w1.getDate() + 7);
+  const cls = (DATA.classes || []).filter(c => byId[c.student_id]);
+  const today = cls.filter(c => new Date(c.starts_at) >= t0 && new Date(c.starts_at) < t1 && c.status !== "cancelled").sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+  const week = cls.filter(c => c.status === "scheduled" && new Date(c.starts_at) >= t1 && new Date(c.starts_at) < w1).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+  const alerts = list.flatMap(s => alertsOf(s).map(a => ({ s, a }))).sort((x, y) => ({ bad: 0, warn: 1, info: 2 })[x.a[0]] - ({ bad: 0, warn: 1, info: 2 })[y.a[0]]);
+  const acts = list.flatMap(activityOf).filter(e => e.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 14);
   const active = list.filter(s => s.updated && Date.now() - new Date(s.updated) < 7 * 864e5).length, todo = list.reduce((a, s) => a + s.pending, 0);
-  const rows = list.filter(s => !Q || (s.p.display_name || "").toLowerCase().includes(Q.toLowerCase()));
-  app.innerHTML = topBar("Students", `${list.length} student${list.length === 1 ? "" : "s"}`) + `
+  const greet = new Date().getHours() < 12 ? "Good morning" : new Date().getHours() < 19 ? "Good afternoon" : "Good evening";
+  const ST = { scheduled: ["Scheduled", ""], attended: ["Done", "good"], missed: ["Missed", "warn"] };
+  app.innerHTML = topBar(`${greet}, ${esc((G.profile && G.profile.display_name || G.maestro).split(" ")[0])}`, new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })) + `
     <div class="stats">
-      <div class="stat"><span>Students</span><b>${list.length}</b></div>
-      <div class="stat"><span>Active this week</span><b>${active}</b></div>
-      <div class="stat"><span>Classes next 7 days</span><b>${up}</b></div>
+      <div class="stat"><span>Classes today</span><b>${today.length}</b></div>
+      <div class="stat"><span>Next 7 days</span><b>${week.length}</b></div>
+      <div class="stat"><span>Active this week</span><b>${active}<small>/${list.length}</small></b></div>
       <div class="stat"><span>Homework pending</span><b>${todo}</b></div>
     </div>
+    ${DATA.rules === null ? setupNote("recurring classes, private notes and billing") : ""}
+    <div class="cols">
+      <div style="display:grid;gap:18px;align-content:start;min-width:0">
+        <div class="card"><div class="card-head"><h2>Today</h2><a class="btn sm" href="#schedule">Full schedule</a></div>
+          ${today.length ? `<div class="agenda">${today.map(c => { const s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : null; return `<div class="ag">
+            <span class="time">${hhmm(c.starts_at)}</span><span class="av">${avatarOf(s, 36)}</span>
+            <div style="min-width:0"><a href="#s/${s.p.id}"><b>${esc(s.p.display_name || "")}</b></a><small>${l ? esc(l.id + " · " + l.titulo) : esc(((s.mine[s.nextIdx] || {}).titulo) || "Next lesson")}</small></div>
+            ${c.status === "scheduled" ? `<button class="btn primary sm" data-sc="${c.id}">Start class</button>` : `<span class="tag ${(ST[c.status] || ["", ""])[1]}">${(ST[c.status] || [c.status])[0]}</span>`}</div>`; }).join("")}</div>`
+          : `<p class="empty">No classes today.${week.length ? ` Next: <b>${esc(byId[week[0].student_id].p.display_name || "")}</b>, ${when(week[0])}.` : ""}</p>`}
+        </div>
+        <div class="card"><div class="card-head"><h2>Needs attention</h2><span class="muted" style="font-size:.85em">${alerts.length} item${alerts.length === 1 ? "" : "s"}</span></div>
+          ${alerts.length ? `<div class="alerts">${alerts.slice(0, 12).map(({ s, a }) => `<a class="al ${a[0]}" href="#s/${s.p.id}/${a[2]}"><span class="av">${avatarOf(s, 26)}</span><span><b>${esc((s.p.display_name || "").split(" ")[0])}</b> · ${esc(a[1])}</span><span class="go">›</span></a>`).join("")}</div>` : `<p class="empty">All good. Nothing needs your attention.</p>`}
+        </div>
+      </div>
+      <div class="card" style="align-content:start"><div class="card-head"><h2>Recent activity</h2></div>
+        ${acts.length ? `<div class="feed">${acts.map(e => `<div class="fe ${e.cls}"><span class="av">${avatarOf(e.s, 28)}</span><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}
+      </div>
+    </div>`;
+  wireTop();
+  app.querySelectorAll("[data-sc]").forEach(b => b.onclick = () => { const c = cls.find(x => x.id === b.dataset.sc); b.disabled = true; startClass(byId[c.student_id], c); });
+}
+
+function listView() {
+  const list = students();
+  const rows = list.filter(s => !Q || (s.p.display_name || "").toLowerCase().includes(Q.toLowerCase()));
+  const nc = s => nextClass(s.p.id), pct = s => s.rows.length ? Math.round(s.passed / s.rows.length * 100) : 0;
+  app.innerHTML = topBar("Students", `${list.length} student${list.length === 1 ? "" : "s"}`) + `
     <div class="card">
       <div class="card-head"><input type="search" id="q" placeholder="Search students" value="${esc(Q)}" aria-label="Search students"></div>
-      ${list.length ? `<div class="tbl"><table class="crm">
-        <thead><tr><th>Student</th><th>Style</th><th>Level</th><th>Progress</th><th>XP</th><th>Next class</th><th>Homework</th><th>Last active</th><th class="r"></th></tr></thead>
-        <tbody>${rows.map(s => { const nc = nextClass(s.p.id), pct = s.rows.length ? Math.round(s.passed / s.rows.length * 100) : 0; return `<tr data-row="${s.p.id}" tabindex="0">
+      ${list.length ? `<div class="tbl only-wide"><table class="crm">
+        <thead><tr><th>Student</th><th>Style</th><th>Level</th><th>Progress</th><th>XP</th><th>Next class</th><th>Alerts</th><th>Last active</th><th class="r"></th></tr></thead>
+        <tbody>${rows.map(s => { const n = nc(s), al = alertsOf(s).filter(a => a[0] !== "info"); return `<tr data-row="${s.p.id}" tabindex="0">
           <td><div class="who"><span class="av">${avatarOf(s, 34)}</span><span><b>${esc(s.p.display_name || "New student")}</b><small>${s.p.age ? s.p.age + " y/o" : ""}</small></span></div></td>
           <td><span class="sty">${STYLE_ICON(s.theme)}${esc(G.themeOf(s.theme).label.split(" (")[0])}</span></td>
           <td>${s.placement ? `<span class="tag">${esc(s.placement.nivel)}</span>` : `<span class="muted">—</span>`}</td>
-          <td><div class="prog"><span class="bar"><i style="width:${pct}%"></i></span><small>${s.passed}/${s.rows.length}</small></div></td>
+          <td><div class="prog"><span class="bar"><i style="width:${pct(s)}%"></i></span><small>${s.passed}/${s.rows.length}</small></div></td>
           <td class="num">${s.game.xp}<small class="muted"> · Lv ${s.game.level}</small></td>
-          <td>${nc ? `<span class="nowrap">${when(nc)}</span>` : `<span class="muted">—</span>`}</td>
-          <td>${s.pending ? `<span class="tag warn">${s.pending} pending</span>` : `<span class="muted">—</span>`}</td>
+          <td>${n ? `<span class="nowrap">${when(n)}</span>` : `<span class="muted">—</span>`}</td>
+          <td>${al.length ? `<span class="tag ${al.some(a => a[0] === "bad") ? "bad" : "warn"}">${al.length}</span>` : `<span class="muted">—</span>`}</td>
           <td class="muted nowrap">${ago(s.updated)}</td>
           <td class="r"><div class="rowact"><button class="btn primary sm" data-start="${s.p.id}">Start class</button><a class="btn sm" href="#s/${s.p.id}">Open</a></div></td>
-        </tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No students yet. Create one in Accounts.</p>`}
+        </tr>`; }).join("")}</tbody></table></div>
+      <div class="cards only-narrow">${rows.map(s => { const n = nc(s), al = alertsOf(s).filter(a => a[0] !== "info"); return `<div class="scard">
+        <a class="who" href="#s/${s.p.id}"><span class="av">${avatarOf(s, 44)}</span><span style="min-width:0"><b>${esc(s.p.display_name || "New student")}</b><small>${esc(G.themeOf(s.theme).label.split(" (")[0])}${s.placement ? " · " + esc(s.placement.nivel) : ""} · Lv ${s.game.level}</small></span>${al.length ? `<span class="tag ${al.some(a => a[0] === "bad") ? "bad" : "warn"}" style="margin-left:auto">${al.length}</span>` : ""}</a>
+        <div class="prog"><span class="bar"><i style="width:${pct(s)}%"></i></span><small>${s.passed}/${s.rows.length} lessons passed</small></div>
+        <p class="muted" style="font-size:.85em">${n ? "Next class: " + when(n) : "No class scheduled"} · Active ${ago(s.updated)}</p>
+        <div class="rowact"><button class="btn primary sm" data-start="${s.p.id}">Start class</button><a class="btn sm" href="#s/${s.p.id}">Open</a></div></div>`; }).join("")}</div>`
+      : `<p class="empty">No students yet. Create one in Accounts.</p>`}
     </div>`;
   wireTop();
   const q = document.getElementById("q"); if (q) q.oninput = () => { Q = q.value; const pos = q.selectionStart; listView(); const n = document.getElementById("q"); n.focus(); n.setSelectionRange(pos, pos); };
   app.querySelectorAll("tr[data-row]").forEach(tr => { const go = () => location.hash = "#s/" + tr.dataset.row; tr.onclick = e => { if (!e.target.closest("button, a")) go(); }; tr.onkeydown = e => { if (e.key === "Enter" && e.target === tr) go(); }; });
-  app.querySelectorAll("[data-start]").forEach(b => b.onclick = () => { const s = list.find(x => x.p.id === b.dataset.start); b.disabled = true; G.actAs({ id: s.p.id, name: s.p.display_name || "Student" }, (s.mine[s.nextIdx] || {}).archivo || "index.html"); });
+  app.querySelectorAll("[data-start]").forEach(b => b.onclick = () => { b.disabled = true; startClass(list.find(x => x.p.id === b.dataset.start)); });
+}
+
+function rulesBox(onlyId) {
+  if (DATA.rules === null) return setupNote("recurring classes");
+  const list = students(), byId = Object.fromEntries(list.map(s => [s.p.id, s]));
+  const rules = DATA.rules.filter(r => byId[r.student_id] && (!onlyId || r.student_id === onlyId)).sort((a, b) => a.weekday - b.weekday || a.time.localeCompare(b.time));
+  return `<div class="card"><div class="card-head"><div><h2>Weekly classes</h2><p class="muted" style="font-size:.85em">Classes that repeat every week. The schedule fills itself for the next 14 days.</p></div></div>
+    ${rules.length ? `<div class="rules">${rules.map(r => `<div class="rule ${r.active ? "" : "off"}">${onlyId ? "" : `<span class="av">${avatarOf(byId[r.student_id], 28)}</span><b>${esc((byId[r.student_id].p.display_name || "").split(" ")[0])}</b>`}
+      <span>Every <b>${DAYS[r.weekday]}</b> at <b>${hhmm("2000-01-01T" + r.time)}</b> · ${r.minutes} min</span>
+      <span class="rowact" style="margin-left:auto"><button class="btn ghost sm" data-rtog="${r.id}" data-on="${r.active ? 1 : 0}">${r.active ? "Pause" : "Resume"}</button><button class="btn ghost sm" data-rdel="${r.id}">Delete</button></span></div>`).join("")}</div>` : `<p class="empty">No weekly classes yet.</p>`}
+    <form id="ruleForm" class="ruleform" novalidate>
+      ${onlyId ? `<input type="hidden" id="rS" value="${onlyId}">` : `<div class="field"><label for="rS">Student</label><select id="rS">${list.map(s => `<option value="${s.p.id}">${esc(s.p.display_name || "")}</option>`).join("")}</select></div>`}
+      <div class="field"><label for="rD">Day</label><select id="rD">${DAYS.map((d, i) => `<option value="${i}" ${i === 1 ? "selected" : ""}>${d}</option>`).join("")}</select></div>
+      <div class="field"><label for="rT">Time</label><input id="rT" type="time" value="19:00"></div>
+      <div class="field"><label for="rM">Length</label><select id="rM">${[45, 60, 90, 120].map(m => `<option value="${m}" ${m === 60 ? "selected" : ""}>${m} min</option>`).join("")}</select></div>
+      <button class="btn primary" type="submit">Add weekly class</button>
+    </form></div>`;
+}
+function wireRules() {
+  const f = document.getElementById("ruleForm");
+  if (f) f.onsubmit = async e => {
+    e.preventDefault();
+    const row = { student_id: document.getElementById("rS").value, weekday: +document.getElementById("rD").value, time: document.getElementById("rT").value || "19:00", minutes: +document.getElementById("rM").value };
+    try { await G.teacher.insert("class_rules", [row]); G.toast("<b>Weekly class added</b><span>The schedule fills itself for the next 14 days.</span>"); await load(); } catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
+  };
+  document.querySelectorAll("[data-rtog]").forEach(b => b.onclick = async () => { try { await G.teacher.update("class_rules", b.dataset.rtog, { active: b.dataset.on !== "1" }); await load(); } catch (err) { G.toast("Couldn’t save: " + esc(err.message)); } });
+  document.querySelectorAll("[data-rdel]").forEach(b => b.onclick = async () => {
+    if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "Tap again"; setTimeout(() => { if (b.isConnected) { b.dataset.armed = ""; b.textContent = "Delete"; } }, 3000); return; }
+    try {
+      const now = new Date().toISOString(), future = (DATA.classes || []).filter(c => c.rule_id === b.dataset.rdel && c.status === "scheduled" && c.starts_at > now);
+      for (const c of future) await G.teacher.deleteClass(c.id);
+      await G.teacher.remove("class_rules", b.dataset.rdel); await load();
+    } catch (err) { G.toast("Couldn’t delete: " + esc(err.message)); }
+  });
 }
 
 function scheduleView() {
@@ -275,15 +449,105 @@ function scheduleView() {
   const up = cls.filter(c => c.status === "scheduled" && new Date(c.starts_at) >= now).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
   const past = cls.filter(c => !(c.status === "scheduled" && new Date(c.starts_at) >= now)).sort((a, b) => b.starts_at.localeCompare(a.starts_at)).slice(0, 15);
   const ST = { scheduled: ["Scheduled", ""], attended: ["Attended", "good"], missed: ["Missed", "warn"], cancelled: ["Cancelled", ""] };
-  const row = (c, start) => { const s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : null; return `<tr>
-    <td class="nowrap">${when(c)}</td><td><div class="who"><span class="av">${avatarOf(s, 28)}</span><a href="#s/${s.p.id}/classes"><b>${esc(s.p.display_name || "")}</b></a></div></td>
-    <td>${l ? esc(l.id + " · " + l.titulo) : `<span class="muted">—</span>`}</td><td><span class="tag ${ST[c.status][1]}">${ST[c.status][0]}</span></td>
-    <td class="r">${start ? `<button class="btn primary sm" data-sc="${c.id}">Start class</button>` : ""}</td></tr>`; };
-  app.innerHTML = topBar("Schedule", "Upcoming and recent classes for every student. Schedule new ones from a student’s file.") + `
-    <div class="card"><div class="card-head"><h2>Upcoming</h2></div>${up.length ? `<div class="tbl"><table class="crm"><thead><tr><th>When</th><th>Student</th><th>Lesson</th><th>Status</th><th></th></tr></thead><tbody>${up.map(c => row(c, true)).join("")}</tbody></table></div>` : `<p class="empty">No upcoming classes.</p>`}</div>
-    <div class="card"><div class="card-head"><h2>Recent</h2></div>${past.length ? `<div class="tbl"><table class="crm"><thead><tr><th>When</th><th>Student</th><th>Lesson</th><th>Status</th><th></th></tr></thead><tbody>${past.map(c => row(c, false)).join("")}</tbody></table></div>` : `<p class="empty">No classes yet.</p>`}</div>`;
+  const groups = {}; up.forEach(c => { const k = day(c.starts_at); (groups[k] = groups[k] || []).push(c); });
+  const item = c => { const s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : null; return `<div class="ag">
+    <span class="time">${hhmm(c.starts_at)}</span><span class="av">${avatarOf(s, 32)}</span>
+    <div style="min-width:0"><a href="#s/${s.p.id}/classes"><b>${esc(s.p.display_name || "")}</b></a><small>${l ? esc(l.id + " · " + l.titulo) : "Next lesson"}${c.rule_id ? " · weekly" : ""}</small></div>
+    <span class="rowact">${c.status === "scheduled" ? `<button class="btn primary sm" data-sc="${c.id}">Start</button><button class="btn ghost sm" data-cx="${c.id}">Cancel</button>` : `<span class="tag ${ST[c.status][1]}">${ST[c.status][0]}</span>`}</span></div>`; };
+  app.innerHTML = topBar("Schedule", "Every student’s classes in one place.") + `
+    <div class="cols">
+      <div class="card" style="align-content:start"><div class="card-head"><h2>Upcoming</h2></div>
+        ${up.length ? Object.keys(groups).map(k => `<div class="dayg"><span class="dlabel">${new Date(k + "T12:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</span><div class="agenda">${groups[k].map(item).join("")}</div></div>`).join("") : `<p class="empty">No upcoming classes. Add weekly classes on the right.</p>`}
+      </div>
+      <div style="display:grid;gap:18px;align-content:start;min-width:0">${rulesBox()}
+        <div class="card"><div class="card-head"><h2>Recent</h2></div>${past.length ? `<div class="agenda">${past.map(item).join("")}</div>` : `<p class="empty">No classes yet.</p>`}</div>
+      </div>
+    </div>`;
+  wireTop(); wireRules();
+  app.querySelectorAll("[data-sc]").forEach(b => b.onclick = () => { const c = cls.find(x => x.id === b.dataset.sc); b.disabled = true; startClass(byId[c.student_id], c); });
+  app.querySelectorAll("[data-cx]").forEach(b => b.onclick = async () => { b.disabled = true; try { await G.teacher.saveClass({ id: b.dataset.cx, status: "cancelled" }); await load(); } catch (err) { G.toast("Couldn’t save: " + esc(err.message)); } });
+}
+
+// ── Billing ──
+function billOf(s, m) {
+  const a = adminOf(s.p.id), cls = (DATA.classes || []).filter(c => c.student_id === s.p.id && monthKey(c.starts_at) === m);
+  const attended = cls.filter(c => c.status === "attended").length, scheduled = cls.filter(c => c.status === "scheduled").length;
+  const due = a.billing === "free" ? 0 : a.billing === "monthly" ? Number(a.rate) : attended * Number(a.rate);
+  const paid = (DATA.payments || []).filter(p => p.student_id === s.p.id && p.month === m).reduce((t, p) => t + Number(p.amount), 0);
+  const status = a.billing === "free" ? ["Free", ""] : due === 0 && paid === 0 ? ["—", ""] : paid >= due ? ["Paid", "good"] : paid > 0 ? ["Partial", "warn"] : ["Pending", "bad"];
+  return { a, attended, scheduled, due, paid, status };
+}
+function billingView(m) {
+  if (DATA.admin === null || DATA.payments === null) { app.innerHTML = topBar("Billing", "") + setupNote("billing"); wireTop(); return; }
+  m = m && /^\d{4}-\d{2}$/.test(m) ? m : monthKey(new Date());
+  const list = students(), months = [0, 1, 2, 3, 4, 5].map(k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return monthKey(d); });
+  const rows = list.map(s => ({ s, b: billOf(s, m) })), cur = (rows.find(r => r.b.a.currency) || { b: { a: { currency: "MXN" } } }).b.a.currency;
+  const tot = rows.reduce((t, r) => ({ due: t.due + r.b.due, paid: t.paid + r.b.paid, cls: t.cls + r.b.attended }), { due: 0, paid: 0, cls: 0 });
+  app.innerHTML = topBar("Billing", "Classes given and payments, by month.", `<select id="bm" aria-label="Month">${months.map(k => `<option value="${k}" ${k === m ? "selected" : ""}>${monthName(k)}</option>`).join("")}</select>`) + `
+    <div class="stats">
+      <div class="stat"><span>Classes given</span><b>${tot.cls}</b></div>
+      <div class="stat"><span>Expected</span><b>${MONEY(tot.due, cur)}</b></div>
+      <div class="stat"><span>Received</span><b>${MONEY(tot.paid, cur)}</b></div>
+      <div class="stat"><span>Outstanding</span><b>${MONEY(Math.max(0, tot.due - tot.paid), cur)}</b></div>
+    </div>
+    <div class="card"><div class="tbl"><table class="crm" style="min-width:820px">
+      <thead><tr><th>Student</th><th>Plan</th><th class="r">Classes</th><th class="r">Expected</th><th class="r">Paid</th><th>Status</th><th class="r"></th></tr></thead>
+      <tbody>${rows.map(({ s, b }) => `<tr>
+        <td><a class="who" href="#s/${s.p.id}/billing" style="text-decoration:none;color:inherit"><span class="av">${avatarOf(s, 30)}</span><b>${esc(s.p.display_name || "")}</b></a></td>
+        <td class="muted">${b.a.billing === "free" ? "Free" : !Number(b.a.rate) ? `<a href="#s/${s.p.id}/billing">Set plan</a>` : b.a.billing === "monthly" ? MONEY(b.a.rate, b.a.currency) + " / month" : MONEY(b.a.rate, b.a.currency) + " / class"}</td>
+        <td class="r num">${b.attended}${b.scheduled ? `<small class="muted"> +${b.scheduled}</small>` : ""}</td>
+        <td class="r num">${MONEY(b.due, b.a.currency)}</td><td class="r num">${MONEY(b.paid, b.a.currency)}</td>
+        <td><span class="tag ${b.status[1] === "bad" ? "bad" : b.status[1]}">${b.status[0]}</span></td>
+        <td class="r">${b.a.billing === "free" ? "" : `<button class="btn sm" data-pay="${s.p.id}" data-amt="${Math.max(0, b.due - b.paid)}">Record payment</button>`}</td></tr>`).join("")}</tbody></table></div>
+      <p class="muted" style="font-size:.84em">Classes counts attended classes (+ still scheduled this month). Set each student’s plan in their file → Billing.</p></div>`;
   wireTop();
-  app.querySelectorAll("[data-sc]").forEach(b => b.onclick = () => { const c = cls.find(x => x.id === b.dataset.sc), s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : null; b.disabled = true; G.actAs({ id: s.p.id, name: s.p.display_name || "Student" }, l ? l.archivo : "index.html"); });
+  document.getElementById("bm").onchange = e => location.hash = "#billing/" + e.target.value;
+  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = async () => {
+    const v = window.prompt("Amount received for " + monthName(m) + ":", b.dataset.amt);
+    if (v === null) return; const amount = Number(String(v).replace(/[^0-9.]/g, ""));
+    if (!(amount >= 0)) return G.toast("Write a number");
+    try { await G.teacher.insert("payments", [{ student_id: b.dataset.pay, month: m, amount }]); G.toast("<b>Payment recorded</b>"); await load(); } catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
+  });
+}
+function billingTab(s) {
+  if (DATA.admin === null || DATA.payments === null) return setupNote("billing");
+  const a = adminOf(s.p.id), pays = (DATA.payments || []).filter(p => p.student_id === s.p.id);
+  const months = [0, 1, 2, 3, 4, 5].map(k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return monthKey(d); });
+  return `<div class="card"><h2>Plan</h2>
+    <div class="grid2" style="grid-template-columns:repeat(3,minmax(0,1fr));align-items:end">
+      <div class="field"><label for="bP">How they pay</label><select id="bP"><option value="per_class" ${a.billing === "per_class" ? "selected" : ""}>Per class</option><option value="monthly" ${a.billing === "monthly" ? "selected" : ""}>Monthly fee</option><option value="free" ${a.billing === "free" ? "selected" : ""}>Free</option></select></div>
+      <div class="field"><label for="bR">Amount</label><input id="bR" type="number" min="0" step="10" value="${Number(a.rate) || ""}" inputmode="decimal"></div>
+      <div class="field"><label for="bC">Currency</label><select id="bC">${["MXN", "USD"].map(c => `<option ${a.currency === c ? "selected" : ""}>${c}</option>`).join("")}</select></div>
+    </div>
+    <div class="actions"><button class="btn primary sm" id="bSave">Save plan</button></div></div>
+    <div class="card"><h2>By month</h2><div class="tbl"><table style="min-width:520px"><thead><tr><th>Month</th><th class="r">Classes</th><th class="r">Expected</th><th class="r">Paid</th><th>Status</th></tr></thead>
+      <tbody>${months.map(m => { const b = billOf(s, m); return `<tr><td>${monthName(m)}</td><td class="r">${b.attended}</td><td class="r">${MONEY(b.due, a.currency)}</td><td class="r">${MONEY(b.paid, a.currency)}</td><td><span class="tag ${b.status[1]}">${b.status[0]}</span></td></tr>`; }).join("")}</tbody></table></div></div>
+    <div class="card"><h2>Payments</h2>
+      ${pays.length ? `<div class="hw">${pays.map(p => `<div class="hw-item"><div><b>${MONEY(p.amount, a.currency)}</b> · ${monthName(p.month)}<br><small>Received ${fmt(p.paid_on + "T12:00")}${p.note ? " · " + esc(p.note) : ""}</small></div><button class="btn ghost sm" data-pdel="${p.id}">Delete</button></div>`).join("")}</div>` : `<p class="empty">No payments recorded.</p>`}
+      <form id="payForm" class="ruleform" novalidate>
+        <div class="field"><label for="pM2">Month</label><select id="pM2">${months.map(m => `<option value="${m}">${monthName(m)}</option>`).join("")}</select></div>
+        <div class="field"><label for="pA">Amount</label><input id="pA" type="number" min="0" step="10" inputmode="decimal" value="${a.billing === "monthly" ? Number(a.rate) || "" : ""}"></div>
+        <div class="field"><label for="pN">Note <span class="muted" style="font-weight:500">(optional)</span></label><input id="pN" maxlength="300"></div>
+        <button class="btn primary" type="submit">Record payment</button>
+      </form></div>`;
+}
+function wireBilling(s) {
+  const bs = document.getElementById("bSave");
+  if (bs) bs.onclick = async () => {
+    try { await G.teacher.upsert("student_admin", { ...adminOf(s.p.id), student_id: s.p.id, billing: document.getElementById("bP").value, rate: Number(document.getElementById("bR").value) || 0, currency: document.getElementById("bC").value, updated_at: new Date().toISOString() }); G.toast("Plan saved"); await load(); }
+    catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
+  };
+  const pf = document.getElementById("payForm");
+  if (pf) pf.onsubmit = async e => {
+    e.preventDefault(); const amount = Number(document.getElementById("pA").value);
+    if (!(amount >= 0) || document.getElementById("pA").value === "") return G.toast("Write the amount");
+    try { await G.teacher.insert("payments", [{ student_id: s.p.id, month: document.getElementById("pM2").value, amount, note: document.getElementById("pN").value.trim() || null }]); G.toast("<b>Payment recorded</b>"); await load(); }
+    catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
+  };
+  document.querySelectorAll("[data-pdel]").forEach(b => b.onclick = async () => {
+    if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "Tap again"; setTimeout(() => { if (b.isConnected) { b.dataset.armed = ""; b.textContent = "Delete"; } }, 3000); return; }
+    try { await G.teacher.remove("payments", b.dataset.pdel); await load(); } catch (err) { G.toast("Couldn’t delete: " + esc(err.message)); }
+  });
 }
 
 function accountsView() {
@@ -291,9 +555,9 @@ function accountsView() {
   wireTop(); wireAccounts();
 }
 
-const TABS = [["overview", "Overview"], ["lessons", "Lessons & style"], ["classes", "Classes"], ["homework", "Homework"], ["reports", "Reports"]];
+const TABS = [["overview", "Overview"], ["lessons", "Lessons & style"], ["classes", "Classes"], ["homework", "Homework"], ["billing", "Billing"], ["reports", "Reports"]];
 function studentView(s, tab) {
-  const g = s.game, pl = s.placement, first = esc((s.p.display_name || "this student").split(" ")[0]);
+  const pl = s.placement, first = esc((s.p.display_name || "this student").split(" ")[0]);
   app.innerHTML = `
     <a class="back" href="#students">← All students</a>
     <div class="card file">
@@ -310,21 +574,36 @@ function studentView(s, tab) {
       </div>
       <nav class="tabs" role="tablist">${TABS.map(([k, t]) => `<a role="tab" href="#s/${s.p.id}/${k}" aria-selected="${k === tab}" class="${k === tab ? "on" : ""}">${t}${k === "homework" && s.pending ? ` <span class="tag warn">${s.pending}</span>` : ""}</a>`).join("")}</nav>
     </div>
-    ${tab === "overview" ? overviewTab(s) : tab === "lessons" ? lessonsPanel(s) : tab === "classes" ? classesPanel(s) : tab === "homework" ? homeworkTab(s) : reportPanel(s) + planPanel(s)}`;
+    ${tab === "overview" ? overviewTab(s) : tab === "lessons" ? lessonsPanel(s) : tab === "classes" ? rulesBox(s.p.id) + classesPanel(s) : tab === "homework" ? homeworkTab(s) : tab === "billing" ? billingTab(s) : reportPanel(s) + planPanel(s)}`;
   if (tab === "lessons") { const e = document.getElementById("lsEdit"); if (e) setTimeout(() => e.click(), 0); }
   wireDetail(s);
+  if (tab === "classes") wireRules();
+  if (tab === "billing") wireBilling(s);
+  const nb = document.getElementById("pnSave");
+  if (nb) nb.onclick = async () => {
+    nb.disabled = true;
+    try { await G.teacher.upsert("student_admin", { ...adminOf(s.p.id), student_id: s.p.id, notes: document.getElementById("pnText").value.trim() || null, updated_at: new Date().toISOString() }); G.toast("Notes saved"); await load(); }
+    catch (err) { G.toast("Couldn’t save: " + esc(err.message)); nb.disabled = false; }
+  };
 }
 function overviewTab(s) {
   const g = s.game, pl = s.placement;
   const status = r => !r.best ? `<span class="tag">Not started</span>` : r.best.ok / r.best.n >= .8 ? `<span class="tag good">Passed</span>` : `<span class="tag warn">Practicing</span>`;
   const byLesson = {}; s.review.forEach(q => byLesson[q.l] = (byLesson[q.l] || 0) + 1);
-  return `<div class="stats">
+  const al = alertsOf(s), acts = activityOf(s).filter(e => e.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 8), adm = adminOf(s.p.id);
+  return `${al.length ? `<div class="card"><h2>Needs attention</h2><div class="alerts">${al.map(a => `<a class="al ${a[0]}" href="#s/${s.p.id}/${a[2]}"><span>${esc(a[1])}</span><span class="go">›</span></a>`).join("")}</div></div>` : ""}
+    <div class="stats">
       <div class="stat"><span>Lessons passed</span><b>${s.passed}<small>/${s.rows.length}</small></b></div>
       <div class="stat"><span>Average best score</span><b>${s.avg == null ? "—" : s.avg + "%"}</b></div>
       <div class="stat"><span>XP · Level ${g.level}</span><b>${g.xp}</b><small class="muted">${esc(g.title)}</small></div>
       <div class="stat"><span>Practice this week</span><b>${g.weekDays}<small>/${g.goal} days</small></b><small class="muted">Streak ${g.streak} · best ${g.best}</small></div>
       <div class="stat"><span>Placement</span><b>${pl ? esc(pl.nivel) : "—"}</b><small class="muted">${pl ? fmt(pl.fecha + "T12:00") : "Not taken"}</small></div>
       <div class="stat"><span>Questions to review</span><b>${s.review.length}</b></div>
+    </div>
+    <div class="cols">
+      <div class="card"><div class="card-head"><h2>Private notes</h2><span class="muted" style="font-size:.8em">Only you see these</span></div>
+        ${DATA.admin === null ? setupNote("private notes") : `<textarea id="pnText" class="pnotes" maxlength="5000" placeholder="What’s hard for them, topics they enjoy, things to follow up…">${esc(adm.notes || "")}</textarea><div class="actions"><button class="btn sm primary" id="pnSave">Save notes</button>${adm.updated_at ? `<span class="muted" style="font-size:.8em">Saved ${ago(adm.updated_at)}</span>` : ""}</div>`}</div>
+      <div class="card"><div class="card-head"><h2>Recent activity</h2></div>${acts.length ? `<div class="feed">${acts.map(e => `<div class="fe ${e.cls}"><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}</div>
     </div>
     <div class="card"><div class="card-head"><h2>Lessons</h2><a class="btn sm" href="#s/${s.p.id}/lessons">Change lessons or style</a></div>
       ${s.rows.length ? `<div class="tbl"><table class="crm"><thead><tr><th>Lesson</th><th>Sections</th><th class="r">Attempts</th><th class="r">Last</th><th class="r">Best</th><th class="r">To review</th><th>Status</th></tr></thead>
@@ -569,10 +848,10 @@ function wireDetail(s) {
     catch (err) { G.toast("Couldn’t save: " + esc(err.message)); lsS.disabled = false; }
   };
   const who = { id: s.p.id, name: s.p.display_name || "Student" };
-  const sg = document.getElementById("scGo"); if (sg) sg.onclick = () => { sg.disabled = true; G.actAs(who, document.getElementById("scL").value); };
+  const sg = document.getElementById("scGo"); if (sg) sg.onclick = () => { sg.disabled = true; startClass(s); };
   document.querySelectorAll("[data-startcls]").forEach(b => b.onclick = () => {
-    const c = (DATA.classes || []).find(x => x.id === b.dataset.startcls), l = c && c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : null;
-    b.disabled = true; G.actAs(who, l ? l.archivo : "index.html");
+    const c = (DATA.classes || []).find(x => x.id === b.dataset.startcls);
+    b.disabled = true; startClass(s, c);
   });
   const ro = document.getElementById("rOpen"); if (ro) ro.onclick = () => window.open(reportLink(s), "_blank", "noopener");
   const rc = document.getElementById("rCopy"); if (rc) rc.onclick = () => {
@@ -602,7 +881,11 @@ function wireDetail(s) {
 }
 
 async function load() {
-  try { DATA = await G.teacher.load(); if (ACC === null && !ACCERR) await loadAccounts(); render(); }
+  try {
+    DATA = await G.teacher.load();
+    if (await fillFromRules()) DATA = await G.teacher.load();
+    if (ACC === null && !ACCERR) await loadAccounts(); render();
+  }
   catch (e) { app.innerHTML = `<div class="panel"><h2>We couldn’t load your students</h2><p class="muted">${esc(e.message || e)}</p></div>`; }
 }
 G.ready.then(() => {
