@@ -156,6 +156,11 @@
   .fu .what { color: var(--ink-2); min-width: 0; }
   @media (max-width: 520px) { .fu { grid-template-columns: 8px minmax(0, 1fr); row-gap: 2px; } .fu .what { grid-column: 2; } }
   .fu-note { font-size: .85em; color: var(--mute); padding: 10px 2px 0; border-top: 1px solid var(--line); } .fu-note a { color: var(--ink-2); }
+  .prows { display: grid; gap: 8px; }
+  .prow { display: grid; grid-template-columns: minmax(120px, 1.3fr) minmax(100px, 1fr) auto minmax(100px, 1fr) auto; gap: 8px; align-items: center; }
+  .prow select, .prow input { font: inherit; padding: 8px 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); min-width: 0; }
+  @media (max-width: 560px) { .prow { grid-template-columns: 1fr 1fr; } .prow > span { display: none; } .prow select { grid-column: 1 / -1; } }
+  .seg input[type=checkbox] { accent-color: var(--brand); }
   .note-setup { background: var(--badge-soft); border: 1px solid var(--badge-line); color: var(--badge-ink); border-radius: 10px; padding: 12px 14px; font-size: .9em; }
   .agenda { display: grid; }
   .ag { display: grid; grid-template-columns: 74px 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
@@ -544,8 +549,58 @@ function billingView(m) {
     try { await G.teacher.insert("payments", [{ student_id: b.dataset.pay, month: m, amount }]); G.toast("<b>Payment recorded</b>"); await load(); } catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
   });
 }
+const COND = "Todas las clases se pagan por adelantado. Las clases canceladas con 24 horas de anticipación se reprograman sin costo.";
+let PROP = null;
+function proposalCard(s) {
+  const a = adminOf(s.p.id), rules = (DATA.rules || []).filter(r => r.student_id === s.p.id && r.active);
+  const end = (t, m) => { const [h, mm] = t.split(":").map(Number), x = h * 60 + mm + m; return String(Math.floor(x / 60) % 24).padStart(2, "0") + ":" + String(x % 60).padStart(2, "0"); };
+  if (!PROP || PROP.id !== s.p.id) PROP = { id: s.p.id, rows: rules.length ? rules.map(r => [r.weekday, r.time, end(r.time, r.minutes)]) : [[1, "19:00", "20:00"]] };
+  return `<div class="card" id="propCard"><div class="card-head"><div><h2>Cost proposal</h2><p class="muted" style="font-size:.85em">A one-page proposal in Spanish with the weekly schedule, the cost breakdown and the payment options. Opens without signing in, so you can send the link or save it as PDF.</p></div></div>
+    <div class="field"><span style="font-weight:700;font-size:.9em">Weekly schedule</span>
+      <div class="prows">${PROP.rows.map((r, i) => `<div class="prow" data-i="${i}">
+        <select aria-label="Day" data-k="0">${DAYS.map((d, k) => `<option value="${k}" ${k === +r[0] ? "selected" : ""}>${d}</option>`).join("")}</select>
+        <input type="time" aria-label="Starts" data-k="1" value="${r[1]}"><span class="muted">to</span><input type="time" aria-label="Ends" data-k="2" value="${r[2]}">
+        <button type="button" class="btn ghost sm" data-prm="${i}" aria-label="Remove day" ${PROP.rows.length === 1 ? "disabled" : ""}>Remove</button></div>`).join("")}</div>
+      <div><button type="button" class="btn sm" id="pAdd">+ Add a day</button></div></div>
+    <div class="grid2" style="grid-template-columns:repeat(4,minmax(0,1fr));align-items:end">
+      <div class="field"><label for="ppR">Rate per hour</label><input id="ppR" type="number" min="0" step="10" inputmode="decimal" value="${a.billing === "per_class" && Number(a.rate) ? Number(a.rate) : 200}"></div>
+      <div class="field"><label for="ppD">Monthly discount</label><input id="ppD" type="number" min="0" step="10" inputmode="decimal" value="200"></div>
+      <div class="field"><label for="ppC">Currency</label><select id="ppC">${["MXN", "USD"].map(c => `<option ${a.currency === c ? "selected" : ""}>${c}</option>`).join("")}</select></div>
+      <div class="field"><label for="ppV">Valid for</label><select id="ppV">${[15, 30, 60].map(v => `<option value="${v}" ${v === 30 ? "selected" : ""}>${v} days</option>`).join("")}</select></div>
+    </div>
+    <div class="field"><span style="font-weight:700;font-size:.9em">Payment options</span><div class="seg"><label><input type="checkbox" id="ppW" checked> Weekly</label><label><input type="checkbox" id="ppM" checked> Monthly</label></div></div>
+    <div class="field"><label for="ppT">Conditions</label><textarea id="ppT" maxlength="600">${esc(COND)}</textarea></div>
+    <p class="muted" id="ppSum" style="font-size:.9em"></p>
+    <div class="actions"><button class="btn primary" id="ppOpen">Open proposal</button><button class="btn" id="ppCopy">Copy link for WhatsApp</button><button class="btn ghost" id="ppPlan">Use monthly price as their plan</button></div></div>`;
+}
+function proposalData(s) {
+  const rows = [...document.querySelectorAll("#propCard .prow")].map(r => [+r.querySelector('[data-k="0"]').value, r.querySelector('[data-k="1"]').value || "19:00", r.querySelector('[data-k="2"]').value || "20:00"]);
+  return { n: s.p.display_name || "Alumno", dt: day(new Date()), v: +document.getElementById("ppV").value, s: rows, r: Number(document.getElementById("ppR").value) || 0, disc: Number(document.getElementById("ppD").value) || 0,
+    cur: document.getElementById("ppC").value, c: document.getElementById("ppT").value.trim() || COND, ow: document.getElementById("ppW").checked ? 1 : 0, om: document.getElementById("ppM").checked ? 1 : 0 };
+}
+function proposalNumbers(d) {
+  const mins = d.s.reduce((t, r) => { const [a1, a2] = r[1].split(":").map(Number), [b1, b2] = r[2].split(":").map(Number); return t + Math.max(0, b1 * 60 + b2 - a1 * 60 - a2); }, 0);
+  const weekly = d.r * mins / 60, month = weekly * 4; return { weekly, month, monthPrice: month - d.disc, classes: d.s.length * 4 };
+}
+const proposalLink = s => location.origin + location.pathname.replace(/teacher\.html$/, "") + "propuesta.html?d=" + b64(proposalData(s));
+function wireProposal(s) {
+  const card = document.getElementById("propCard"); if (!card) return;
+  const sync = () => { PROP.rows = proposalData(s).s; const d = proposalData(s), k = proposalNumbers(d); document.getElementById("ppSum").innerHTML = `Weekly <b>${MONEY(k.weekly, d.cur)}</b> · Month (${k.classes} classes) <b>${MONEY(k.month, d.cur)}</b>${d.disc ? ` · With discount <b>${MONEY(k.monthPrice, d.cur)}</b>` : ""}`; };
+  card.querySelectorAll("input, select, textarea").forEach(x => x.addEventListener("input", sync));
+  document.getElementById("pAdd").onclick = () => { sync(); PROP.rows.push([6, "09:00", "10:00"]); const keep = proposalData(s); render(); restore(keep); };
+  card.querySelectorAll("[data-prm]").forEach(b => b.onclick = () => { sync(); PROP.rows.splice(+b.dataset.prm, 1); const keep = proposalData(s); render(); restore(keep); });
+  function restore(k) { const f = id => document.getElementById(id); f("ppR").value = k.r; f("ppD").value = k.disc; f("ppC").value = k.cur; f("ppV").value = k.v; f("ppW").checked = !!k.ow; f("ppM").checked = !!k.om; f("ppT").value = k.c; f("propCard").scrollIntoView({ block: "start" }); }
+  document.getElementById("ppOpen").onclick = () => window.open(proposalLink(s), "_blank", "noopener");
+  document.getElementById("ppCopy").onclick = () => { const url = proposalLink(s); navigator.clipboard.writeText("Propuesta de clases de inglés para " + (s.p.display_name || "") + ": " + url).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url)); };
+  document.getElementById("ppPlan").onclick = async () => {
+    const d = proposalData(s), k = proposalNumbers(d);
+    try { await G.teacher.upsert("student_admin", { ...adminOf(s.p.id), student_id: s.p.id, billing: "monthly", rate: k.monthPrice, currency: d.cur, updated_at: new Date().toISOString() }); G.toast(`<b>Plan saved</b><span>${MONEY(k.monthPrice, d.cur)} per month</span>`); await load(); }
+    catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
+  };
+  sync();
+}
 function billingTab(s) {
-  if (DATA.admin === null || DATA.payments === null) return setupNote("billing");
+  if (DATA.admin === null || DATA.payments === null) return setupNote("billing") + proposalCard(s);
   const a = adminOf(s.p.id), pays = (DATA.payments || []).filter(p => p.student_id === s.p.id);
   const months = [0, 1, 2, 3, 4, 5].map(k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return monthKey(d); });
   return `<div class="card"><h2>Plan</h2>
@@ -564,7 +619,7 @@ function billingTab(s) {
         <div class="field"><label for="pA">Amount</label><input id="pA" type="number" min="0" step="10" inputmode="decimal" value="${a.billing === "monthly" ? Number(a.rate) || "" : ""}"></div>
         <div class="field"><label for="pN">Note <span class="muted" style="font-weight:500">(optional)</span></label><input id="pN" maxlength="300"></div>
         <button class="btn primary" type="submit">Record payment</button>
-      </form></div>`;
+      </form></div>` + proposalCard(s);
 }
 function wireBilling(s) {
   const bs = document.getElementById("bSave");
@@ -613,7 +668,7 @@ function studentView(s, tab) {
   if (tab === "lessons") { const e = document.getElementById("lsEdit"); if (e) setTimeout(() => e.click(), 0); }
   wireDetail(s);
   if (tab === "classes") wireRules();
-  if (tab === "billing") wireBilling(s);
+  if (tab === "billing") { wireBilling(s); wireProposal(s); }
   const nb = document.getElementById("pnSave");
   if (nb) nb.onclick = async () => {
     nb.disabled = true;

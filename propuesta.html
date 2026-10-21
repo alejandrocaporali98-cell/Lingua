@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clases de Inglés · Propuesta de costos</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<style>
+  :root { --ink: #111; --mute: #6b6b6b; --line: #e3e3e3; --blue: #2233e6; --black: #0d0d0d; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #e9e9ec; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .bar { max-width: 816px; margin: 18px auto 0; display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px; }
+  .bar button { font: inherit; font-size: 14px; font-weight: 700; padding: 9px 16px; border-radius: 8px; border: 1px solid #c9c9cf; background: #fff; cursor: pointer; }
+  .bar button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .sheet { width: 816px; min-height: 1056px; margin: 12px auto 40px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.12); display: flex; flex-direction: column; }
+  @media (max-width: 840px) { .sheet { width: 100%; min-height: 0; margin: 10px 0 30px; } }
+  header { background: var(--black); color: #fff; padding: 52px 60px 50px; display: flex; justify-content: space-between; gap: 24px; }
+  header h1 { font-size: 34px; font-weight: 800; letter-spacing: .5px; }
+  .kick { font-size: 10.5px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--blue); margin-top: 14px; }
+  header .r { text-align: right; display: grid; gap: 10px; align-content: start; }
+  header .date { font-size: 15px; font-weight: 700; }
+  header .val { font-size: 9.5px; letter-spacing: 2.5px; text-transform: uppercase; color: #9a9a9a; }
+  main { padding: 34px 60px 40px; display: grid; gap: 30px; flex: 1; align-content: start; }
+  .intro h2 { font-size: 16px; font-weight: 700; } .intro p { font-size: 11px; color: #444; margin-top: 6px; }
+  .sec { display: grid; gap: 4px; }
+  .sh { display: flex; align-items: center; gap: 10px; font-size: 11.5px; font-weight: 800; letter-spacing: 3.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .sh .n { color: var(--blue); } .sh::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .row { display: grid; grid-template-columns: 120px 1fr auto; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 11.5px; }
+  .row b { font-weight: 700; } .row .m { color: #555; } .row .tag { font-size: 8.5px; letter-spacing: 2px; color: #9a9a9a; text-transform: uppercase; }
+  .row.tot { border-bottom: 0; } .row.tot .tag { color: var(--blue); font-weight: 800; font-size: 9.5px; }
+  .cost { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 11.5px; color: #555; }
+  .cost span:last-child { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .cost.strong { color: var(--ink); font-weight: 700; } .cost.strong.blue span:last-child { color: var(--blue); font-weight: 800; }
+  .cost.total { border-bottom: 0; border-top: 1.5px solid var(--ink); font-weight: 700; color: var(--ink); }
+  .opts { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 20px; margin-top: 8px; }
+  @media (max-width: 640px) { .opts { grid-template-columns: 1fr; } header { padding: 34px 24px; flex-direction: column; } header .r { text-align: left; } main { padding: 26px 24px 30px; } }
+  .opt { position: relative; border: 1.5px solid #dcdcdc; border-radius: 10px; padding: 28px 22px 26px; display: grid; gap: 4px; align-content: start; }
+  .opt.feat { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .opt .k { font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #555; margin-bottom: 10px; }
+  .opt.feat .k { color: #dfe3ff; }
+  .opt .p { display: flex; align-items: baseline; gap: 10px; } .opt .p b { font-size: 34px; font-weight: 800; letter-spacing: -.5px; }
+  .opt .p s { font-size: 12px; opacity: .8; }
+  .opt .u { font-size: 10.5px; color: #555; } .opt.feat .u { color: #dfe3ff; }
+  .opt ul { list-style: none; display: grid; gap: 9px; margin-top: 18px; font-size: 10.5px; }
+  .opt li { display: grid; grid-template-columns: 12px 1fr; } .opt li::before { content: "•"; color: inherit; opacity: .6; }
+  .save { position: absolute; top: -12px; right: 20px; background: #fff; color: var(--blue); font-size: 9px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; padding: 6px 16px; border-radius: 0 0 10px 10px; border: 1.5px solid var(--blue); border-top: 0; }
+  .opt.feat .save { top: 0; border-radius: 0 0 10px 10px; transform: translateY(-1px); }
+  footer { margin: 0 60px 44px; background: var(--black); color: #fff; border-radius: 10px; padding: 22px 22px 18px; display: grid; gap: 10px; }
+  @media (max-width: 640px) { footer { margin: 0 24px 30px; } }
+  footer .k { font-size: 9px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; }
+  footer p { font-size: 10.5px; line-height: 1.6; max-width: 380px; color: #e6e6e6; white-space: pre-wrap; }
+  footer small { justify-self: end; font-size: 8.5px; color: #9a9a9a; }
+  .missing { padding: 60px; font-size: 15px; }
+  @media print {
+    html, body { background: #fff; } .bar { display: none; }
+    .sheet { width: auto; height: 100vh; min-height: 0; margin: 0; box-shadow: none; overflow: hidden; }
+    header { padding: 40px 56px 38px; } main { padding: 26px 56px 20px; gap: 22px; } footer { margin: 0 56px 34px; break-inside: avoid; }
+    @page { size: letter; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="bar"><button type="button" class="primary" id="pr">Imprimir o guardar PDF</button></div>
+<div class="sheet" id="doc"></div>
+<script>
+function decode(s) { try { const b = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return null; } }
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const D = decode(new URLSearchParams(location.search).get("d") || ""), doc = document.getElementById("doc");
+const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+const money = n => "$" + Number(n).toLocaleString("en-US", { maximumFractionDigits: 2 });
+const hrs = h => (Number.isInteger(h) ? h : h.toFixed(1).replace(/\.0$/, "")) + (h === 1 ? " hora" : " horas");
+const hShort = h => (Number.isInteger(h) ? h : h.toFixed(1).replace(/\.0$/, "")) + " H";
+const t12 = t => { let [h, m] = t.split(":").map(Number); const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12; return `${h}:${String(m).padStart(2, "0")} ${ap}`; };
+const span = (a, b) => { const [h1, m1] = a.split(":").map(Number), [h2, m2] = b.split(":").map(Number); return Math.max(0, (h2 * 60 + m2 - h1 * 60 - m1) / 60); };
+const words = n => ["cero", "una", "dos", "tres", "cuatro", "cinco", "seis", "siete"][n] || String(n);
+if (!D || !D.s || !D.s.length) doc.innerHTML = `<p class="missing">Este enlace no tiene los datos de la propuesta.</p>`;
+else {
+  const ses = D.s.map(x => ({ d: x[0], a: x[1], b: x[2], h: span(x[1], x[2]) })).sort((x, y) => ((x.d + 6) % 7) - ((y.d + 6) % 7) || x.a.localeCompare(y.a));
+  const n = ses.length, H = ses.reduce((t, x) => t + x.h, 0), rate = Number(D.r) || 0, weekly = rate * H, perMonth = n * 4, monthFull = weekly * 4, disc = Math.max(0, Number(D.disc) || 0), monthPrice = monthFull - disc;
+  const allOneHour = ses.every(x => x.h === 1), dt = new Date((D.dt || new Date().toISOString().slice(0, 10)) + "T12:00");
+  const showW = D.ow !== 0, showM = D.om !== 0, cols = (showW ? 1 : 0) + (showM ? 1 : 0);
+  document.title = `Clases de Inglés · Propuesta de costos · ${D.n}`;
+  doc.innerHTML = `
+    <header><div><h1>CLASES DE INGLÉS</h1><p class="kick">Propuesta de costos</p></div>
+      <div class="r"><span class="date">${dt.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric" })}</span><span class="val">Vigencia: ${Number(D.v) || 30} días</span><span class="kick" style="margin-top:0">Para: ${esc((D.n || "").toUpperCase())}</span></div></header>
+    <main>
+      <div class="intro"><h2>Programa de clases mensual</h2><p>Clases de inglés bajo un esquema fijo de ${hrs(H)} por semana, repartidas en ${n === 1 ? "una sesión" : words(n) + " sesiones"}. Mes de 30 días · ${perMonth} clases.</p></div>
+      <section class="sec"><div class="sh"><span class="n">1</span>· Horario semanal</div>
+        ${ses.map(x => `<div class="row"><b>${DIAS[x.d]}</b><span class="m">${t12(x.a).replace(/ (AM|PM)$/, "")} – ${t12(x.b)}</span><span class="tag">1 clase · ${hShort(x.h)}</span></div>`).join("")}
+        <div class="row tot"><b style="grid-column:1/3">Total por semana</b><span class="tag">${n} ${n === 1 ? "clase" : "clases"} · ${hShort(H)}</span></div></section>
+      <section class="sec"><div class="sh"><span class="n">2</span>· Desglose de costos</div>
+        <div class="cost"><span>Clases por semana</span><span>${n} ${n === 1 ? "clase" : "clases"}</span></div>
+        <div class="cost"><span>${allOneHour ? "Tarifa por clase (1 hora)" : "Tarifa por hora"}</span><span>${money(rate)}</span></div>
+        <div class="cost"><span>Horas por semana</span><span>× ${Number.isInteger(H) ? H : H.toFixed(1)} h</span></div>
+        <div class="cost strong blue"><span>Costo por semana</span><span>${money(weekly)}</span></div>
+        <div class="cost total"><span>Costo por mes (30 días · ${perMonth} clases × ${money(allOneHour ? rate : weekly / n)})</span><span>${money(monthFull)}</span></div></section>
+      ${cols ? `<section class="sec"><div class="sh"><span class="n">3</span>· Elige tu forma de pago</div>
+        <div class="opts" style="--cols:${cols}">
+          ${showW ? `<div class="opt"><span class="k">Opción A · Semanal</span><div class="p"><b>${money(weekly)}</b></div><span class="u">cada semana</span>
+            <ul><li>Pagas semana a semana</li><li>Sin compromiso mensual</li><li>Ideal para empezar</li></ul></div>` : ""}
+          ${showM ? `<div class="opt feat">${disc ? `<span class="save">Ahorras ${money(disc)}</span>` : ""}<span class="k">Opción ${showW ? "B" : "A"} · Mensual</span><div class="p"><b>${money(monthPrice)}</b>${disc ? `<s>${money(monthFull)}</s>` : ""}</div><span class="u">al mes (30 días) · pago por adelantado</span>
+            <ul>${disc ? `<li>Ahorras ${money(disc)} al mes</li>` : ""}<li>${perMonth} clases en el mes (${n} por semana)</li><li>Conservas tu mismo horario cada semana</li></ul></div>` : ""}
+        </div></section>` : ""}
+    </main>
+    <footer><span class="k">Condiciones</span><p>${esc(D.c || "Todas las clases se pagan por adelantado. Las clases canceladas con 24 horas de anticipación se reprograman sin costo.")}</p><small>${(D.cur || "MXN") === "USD" ? "Precios en dólares estadounidenses (USD)." : "Precios en pesos mexicanos (MXN)."}</small></footer>`;
+}
+document.getElementById("pr").onclick = () => window.print();
+</script>
+</body>
+</html>
