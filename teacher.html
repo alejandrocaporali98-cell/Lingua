@@ -139,14 +139,24 @@
   .cols { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; align-items: start; }
   @media (max-width: 1000px) { .cols { grid-template-columns: 1fr; } }
   .adm-top select { font: inherit; padding: 7px 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .statline { display: flex; flex-wrap: wrap; gap: 6px 22px; color: var(--ink-2); font-size: .95em; padding: 2px 2px 4px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+  .statline b { color: var(--ink); font-weight: 800; font-variant-numeric: tabular-nums; margin-right: 3px; }
+  .fup { display: grid; }
+  .fu { display: grid; grid-template-columns: 8px auto minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 10px 2px; border-top: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: .92em; }
+  .fu:first-child { border-top: 0; } .fu:hover b { text-decoration: underline; }
+  .fu .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); align-self: center; }
+  .fu .dot.bad { background: var(--bad); } .fu .dot.warn { background: #d39a00; }
+  .fu .what { color: var(--ink-2); min-width: 0; }
+  @media (max-width: 520px) { .fu { grid-template-columns: 8px minmax(0, 1fr); row-gap: 2px; } .fu .what { grid-column: 2; } }
+  .fu-note { font-size: .85em; color: var(--mute); padding: 10px 2px 0; border-top: 1px solid var(--line); } .fu-note a { color: var(--ink-2); }
   .note-setup { background: var(--badge-soft); border: 1px solid var(--badge-line); color: var(--badge-ink); border-radius: 10px; padding: 12px 14px; font-size: .9em; }
   .agenda { display: grid; }
   .ag { display: grid; grid-template-columns: 74px 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
   .ag:first-child { border-top: 0; }
-  .ag .time { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .ag .time { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .ag .av, .al .av, .fe .av, .rule .av { border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; flex: none; }
   .ag .av { width: 36px; height: 36px; } .ag a { color: inherit; text-decoration: none; } .ag small { display: block; color: var(--mute); font-size: .8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  @media (max-width: 520px) { .ag { grid-template-columns: 58px minmax(0, 1fr) auto; } .ag .av { display: none; } }
+  @media (max-width: 520px) { .ag { grid-template-columns: 70px minmax(0, 1fr) auto; font-size: .95em; } .ag .av { display: none; } }
   .dayg { display: grid; gap: 4px; } .dayg + .dayg { margin-top: 8px; }
   .dlabel { font-size: .72em; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--mute); padding-top: 6px; }
   .alerts { display: grid; gap: 6px; }
@@ -345,15 +355,13 @@ function todayView() {
   const alerts = list.flatMap(s => alertsOf(s).map(a => ({ s, a }))).sort((x, y) => ({ bad: 0, warn: 1, info: 2 })[x.a[0]] - ({ bad: 0, warn: 1, info: 2 })[y.a[0]]);
   const acts = list.flatMap(activityOf).filter(e => e.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 14);
   const active = list.filter(s => s.updated && Date.now() - new Date(s.updated) < 7 * 864e5).length, todo = list.reduce((a, s) => a + s.pending, 0);
-  const greet = new Date().getHours() < 12 ? "Good morning" : new Date().getHours() < 19 ? "Good afternoon" : "Good evening";
   const ST = { scheduled: ["Scheduled", ""], attended: ["Done", "good"], missed: ["Missed", "warn"] };
-  app.innerHTML = topBar(`${greet}, ${esc((G.profile && G.profile.display_name || G.maestro).split(" ")[0])}`, new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })) + `
-    <div class="stats">
-      <div class="stat"><span>Classes today</span><b>${today.length}</b></div>
-      <div class="stat"><span>Next 7 days</span><b>${week.length}</b></div>
-      <div class="stat"><span>Active this week</span><b>${active}<small>/${list.length}</small></b></div>
-      <div class="stat"><span>Homework pending</span><b>${todo}</b></div>
-    </div>
+  // one row per student, worst issue first; "placement not taken" goes to a single summary line
+  const sev = { bad: 0, warn: 1, info: 2 }, byStu = {}, noPlacement = [];
+  alerts.forEach(({ s, a }) => { if (a[1] === "Placement test not taken") { noPlacement.push(s); return; } (byStu[s.p.id] = byStu[s.p.id] || { s, items: [] }).items.push(a); });
+  const groups = Object.values(byStu).sort((x, y) => Math.min(...x.items.map(a => sev[a[0]])) - Math.min(...y.items.map(a => sev[a[0]])));
+  app.innerHTML = topBar("Today", new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })) + `
+    <p class="statline"><span><b>${today.length}</b> class${today.length === 1 ? "" : "es"} today</span><span><b>${week.length}</b> in the next 7 days</span><span><b>${active}</b> of ${list.length} students active this week</span><span><b>${todo}</b> homework pending</span></p>
     ${DATA.rules === null ? setupNote("recurring classes, private notes and billing") : ""}
     <div class="cols">
       <div style="display:grid;gap:18px;align-content:start;min-width:0">
@@ -364,8 +372,11 @@ function todayView() {
             ${c.status === "scheduled" ? `<button class="btn primary sm" data-sc="${c.id}">Start class</button>` : `<span class="tag ${(ST[c.status] || ["", ""])[1]}">${(ST[c.status] || [c.status])[0]}</span>`}</div>`; }).join("")}</div>`
           : `<p class="empty">No classes today.${week.length ? ` Next: <b>${esc(byId[week[0].student_id].p.display_name || "")}</b>, ${when(week[0])}.` : ""}</p>`}
         </div>
-        <div class="card"><div class="card-head"><h2>Needs attention</h2><span class="muted" style="font-size:.85em">${alerts.length} item${alerts.length === 1 ? "" : "s"}</span></div>
-          ${alerts.length ? `<div class="alerts">${alerts.slice(0, 12).map(({ s, a }) => `<a class="al ${a[0]}" href="#s/${s.p.id}/${a[2]}"><span class="av">${avatarOf(s, 26)}</span><span><b>${esc((s.p.display_name || "").split(" ")[0])}</b> · ${esc(a[1])}</span><span class="go">›</span></a>`).join("")}</div>` : `<p class="empty">All good. Nothing needs your attention.</p>`}
+        <div class="card"><div class="card-head"><h2>Follow up</h2></div>
+          ${groups.length || noPlacement.length ? `<div class="fup">${groups.map(g => { const w = Math.min(...g.items.map(a => sev[a[0]])); return `<a class="fu" href="#s/${g.s.p.id}/${g.items[0][2]}">
+            <span class="dot ${w === 0 ? "bad" : w === 1 ? "warn" : ""}"></span><b>${esc(g.s.p.display_name || "")}</b><span class="what">${g.items.map(a => esc(a[1])).join(" · ")}</span></a>`; }).join("")}
+            ${noPlacement.length ? `<p class="fu-note">Placement test pending: ${noPlacement.map(s => `<a href="#s/${s.p.id}">${esc((s.p.display_name || "").split(" ")[0])}</a>`).join(", ")}</p>` : ""}</div>`
+          : `<p class="empty">Nothing to follow up.</p>`}
         </div>
       </div>
       <div class="card" style="align-content:start"><div class="card-head"><h2>Recent activity</h2></div>
