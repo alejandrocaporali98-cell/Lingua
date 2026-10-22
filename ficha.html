@@ -86,7 +86,6 @@
         ${lines.map(l => `<div class="line"><span>${esc(l[0])}</span><span>${esc(l[1])}</span></div>`).join("")}
         <div class="line"><span>Emitida el ${esc(date(D.e))}</span><span></span></div></div>
       <div class="total"><span class="lab">Total a pagar</span><b>${esc(money(D.a))}</b></div>
-      ${D.du ? `<span class="due">Fecha límite · ${esc(date(D.du))}</span>` : ""}
       ${rows.length ? `<div style="display:grid;gap:12px"><div class="sh">Datos para transferencia</div>
         <div class="bank">${rows.map(r => `<div class="row ${r[2] === "clabe" ? "big" : ""}"><span>${r[0]}</span><b>${esc(r[1])}</b>${r[3] ? `<button type="button" class="cp" data-cp="${esc(r[3])}">Copiar</button>` : "<i></i>"}</div>`).join("")}
           <div class="row ref"><span>Concepto / referencia</span><b>${esc(D.f)}</b><button type="button" class="cp" data-cp="${esc(D.f)}">Copiar</button></div></div></div>` : ""}
