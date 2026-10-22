@@ -431,6 +431,78 @@
     }
   };
 
+  // ── Voice recorder: record, listen back, record again ──
+  L.recorder = function (box, opt) {
+    opt = opt || {}; const max = opt.max || 180;
+    const can = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+    let rec = null, chunks = [], t0 = 0, tick = null, stream = null, blob = null, secs = 0, url = null;
+    const MIC = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+    const api = { get blob() { return blob; }, get seconds() { return secs; }, reset() { blob = null; draw(); }, note(html) { const n = box.querySelector(".rec-note"); if (n) n.innerHTML = html; } };
+    function draw(state) {
+      if (!can) { box.innerHTML = `<p class="rec-note muted">Voice recording isn’t available in this browser.</p>`; return; }
+      box.innerHTML = state === "rec"
+        ? `<button type="button" class="btn rec on" data-r="stop" aria-label="Stop recording"><i class="rdot" aria-hidden="true"></i>Stop · <span class="num" data-t>0:00</span></button><span class="rec-note"></span>`
+        : blob ? `<div class="rec-done"><audio controls preload="metadata" src="${url}"></audio>${opt.again === false ? "" : `<button type="button" class="btn ghost sm" data-r="again">Record again</button>`}</div><span class="rec-note"></span>`
+        : `<button type="button" class="btn rec" data-r="start">${MIC}${opt.label || "Record"}</button><span class="rec-note"></span>`;
+      const b = box.querySelector("[data-r]"); if (!b) return;
+      b.onclick = () => b.dataset.r === "stop" ? stop() : start();
+    }
+    async function start() {
+      try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+      catch (e) { L.toast("<b>Microphone blocked</b><span>Allow the microphone for this site to record.</span>"); return; }
+      const type = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm", "audio/ogg"].find(t => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || "";
+      try { rec = new MediaRecorder(stream, type ? { mimeType: type } : undefined); } catch (e) { rec = new MediaRecorder(stream); }
+      chunks = [];
+      rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+      rec.onstop = () => {
+        stream.getTracks().forEach(t => t.stop()); clearInterval(tick);
+        secs = Math.max(1, Math.round((Date.now() - t0) / 1000));
+        blob = new Blob(chunks, { type: (rec.mimeType || type || "audio/webm") });
+        if (url) URL.revokeObjectURL(url); url = URL.createObjectURL(blob); draw();
+        opt.onDone && opt.onDone(blob, secs, api);
+      };
+      rec.start(250); t0 = Date.now(); draw("rec");
+      tick = setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000), el = box.querySelector("[data-t]"); if (el) el.textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); if (s >= max) stop(); }, 250);
+    }
+    function stop() { clearInterval(tick); if (rec && rec.state !== "inactive") rec.stop(); }
+    draw(); return api;
+  };
+
+  // ── Sheet: a panel from the bottom on phones, a centered dialog on wide screens ──
+  L.sheet = function (html, opt) {
+    opt = opt || {}; L.sheet.close();
+    const opener = document.activeElement, w = document.createElement("div");
+    w.className = "lsheet-wrap"; w.innerHTML = `<div class="lsheet-scrim" data-x></div><div class="lsheet" role="dialog" aria-modal="true" aria-label="${esc(opt.label || "Details")}"><i class="lsheet-grab" aria-hidden="true"></i><button type="button" class="lsheet-x" data-x aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button><div class="lsheet-body">${html}</div></div>`;
+    document.body.appendChild(w); document.body.classList.add("lsheet-open");
+    requestAnimationFrame(() => w.classList.add("in"));
+    const close = () => { L.sheet.close(); opener && opener.focus && opener.focus(); };
+    w.querySelectorAll("[data-x]").forEach(x => x.onclick = close);
+    w.onkeydown = e => {
+      if (e.key === "Escape") { e.preventDefault(); close(); return; }
+      if (e.key !== "Tab") return;
+      const fs = [...w.querySelectorAll(".lsheet button, .lsheet a, .lsheet input, .lsheet textarea, .lsheet audio")].filter(x => !x.disabled); const a = fs[0], z = fs[fs.length - 1];
+      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+    };
+    const f = w.querySelector(".lsheet-body [autofocus], .lsheet-body button, .lsheet-body a, .lsheet-body textarea"); (f || w.querySelector(".lsheet-x")).focus();
+    return w.querySelector(".lsheet-body");
+  };
+  L.sheet.close = () => { const w = document.querySelector(".lsheet-wrap"); if (w) w.remove(); document.body.classList.remove("lsheet-open"); };
+
+  // ── Calendar link sheet (teacher or student) ──
+  L.calendarSheet = async function () {
+    if (!L.calendar) { L.toast("Sign in to get your calendar link."); return; }
+    let links; try { links = await L.calendar.link(); } catch (e) { L.toast("<b>Calendar link isn’t ready</b><span>Your teacher needs to finish a quick setup.</span>"); return; }
+    const body = L.sheet(`<h2 class="lsheet-t">Add classes to your calendar</h2>
+      <p class="muted" style="font-size:.92em">Your classes show up in your calendar and update by themselves when the schedule changes.</p>
+      <div class="lsheet-acts">
+        <a class="btn primary" href="${links.webcal}">iPhone, iPad or Mac</a>
+        <a class="btn" href="${links.google}" target="_blank" rel="noopener">Google Calendar</a>
+        <button type="button" class="btn ghost" id="calCopy">Copy link</button>
+      </div><p class="muted" id="calMsg" style="font-size:.85em"></p>`, { label: "Calendar" });
+    body.querySelector("#calCopy").onclick = () => navigator.clipboard.writeText(links.https).then(() => L.toast("Link copied"), () => window.prompt("Copy this link:", links.https));
+    fetch(links.https).then(r => r.text()).then(t => { if (!/BEGIN:VCALENDAR/.test(t)) body.querySelector("#calMsg").textContent = "The calendar helper isn’t installed yet, so the link won’t work until it is."; }).catch(() => {});
+  };
+
   // ── Install as an app (PWA) ──
   L.install = { prompt: null, ios: /iphone|ipad|ipod/i.test(navigator.userAgent), standalone: (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true };
   window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); L.install.prompt = e; document.dispatchEvent(new CustomEvent("lingua:installable")); });

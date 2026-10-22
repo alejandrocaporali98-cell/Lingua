@@ -268,9 +268,17 @@
   function drawTalk() {
     const K = C.talk, teacher = G.isTeacher || !!G.actingAs;
     stage.innerHTML = head(K.title || "Talk about it", K.text || "No right answers here. Speak freely and let your teacher correct as you go.") + `
-      <div class="panel" style="display:grid;gap:14px"><ol class="talkq">${K.questions.map(q => `<li>${G.esc(q)} ${G.sayBtn(q, "Listen")}</li>`).join("")}</ol></div>
+      <div class="panel" style="display:grid;gap:14px">${G.voice && G.voice.ok ? `<p class="muted" style="font-size:.88em">Record your answers. Your teacher can listen to them later, and you’ll hear how much you improve.</p>` : ""}<ol class="talkq">${K.questions.map((q, i) => `<li><span>${G.esc(q)} ${G.sayBtn(q, "Listen")}</span>${G.voice && G.voice.ok ? `<div class="tq-rec" data-q="${i}"></div>` : ""}</li>`).join("")}</ol></div>
       ${K.kit && K.kit.length ? `<div class="panel" style="display:grid;gap:10px"><span class="eyebrow">Useful phrases</span><div class="bank">${K.kit.map(k => `<span>${G.esc(k)}</span>`).join("")}</div></div>` : ""}
       ${teacher && K.notes && K.notes.length ? `<div class="panel tnotes" style="display:grid;gap:8px"><span class="eyebrow">Teacher notes · only you see this</span><ul>${K.notes.map(n => `<li>${G.esc(n)}</li>`).join("")}</ul></div>` : ""}` + pager();
+    stage.querySelectorAll(".tq-rec").forEach(box => {
+      const q = K.questions[+box.dataset.q];
+      G.recorder(box, { label: "Record your answer", max: 180, onDone: async (blob, secs, api) => {
+        api.note("Saving…");
+        try { const path = await G.voice.upload(blob, "lesson-" + C.id); await G.voice.save({ lesson_id: C.id, prompt: q.slice(0, 500), path, seconds: secs }); api.note("Saved for your teacher ✓"); G.game && G.game.award(3, { once: "rec." + C.id + "." + box.dataset.q, silent: true }); }
+        catch (e) { api.note(/relation|schema|bucket|not found/i.test(e.message || "") ? "Recording works, but saving needs a quick setup from your teacher." : "Couldn’t save it. Check your internet and try again."); }
+      } });
+    });
   }
 
   // ── 5 Quiz final ──

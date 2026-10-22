@@ -124,3 +124,11 @@ Each student signs in with their own username and only sees the lessons you assi
 1. Run `supabase/student_settings.sql` once in Supabase → SQL Editor. Students who already exist keep seeing every lesson.
 2. Create the account (Teacher panel → Student accounts, or Supabase → Authentication → Add user with `username@student.lingua.app` and “Auto confirm”).
 3. Teacher panel → pick the student → **Lessons for this student** → choose the lessons → **Save lessons**. New students see no lessons until you assign them.
+
+## v3 setup (homework answers, voice, reminders, calendar)
+
+1. **SQL:** run `supabase/v3.sql` once in Supabase → SQL Editor. It adds homework answers and grades, the private `voice` audio storage, the `recordings` table, WhatsApp numbers and calendar links, and assigns lessons 301/311 to Derek and Erick.
+2. **Accounts helper:** Supabase → Edge Functions → Deploy a new function → Via Editor → name `admin-users` → paste `supabase/functions/admin-users/index.ts` → Deploy. In its Details, turn **Verify JWT** off.
+3. **Calendar helper:** same steps with the name `calendar` and `supabase/functions/calendar/index.ts`. Turn **Verify JWT** off (calendar apps can't sign in; each person's secret link is the key).
+
+Neither function needs any key pasted in: Supabase gives them their own.

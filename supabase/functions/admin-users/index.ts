@@ -51,6 +51,9 @@ Deno.serve(async (req) => {
       if (error) return json({ error: error.message }, 400);
       const name = String(body.display_name || "").trim().slice(0, 40);
       if (name) await admin.from("profiles").upsert({ id: data.user.id, display_name: name, updated_at: new Date().toISOString() });
+      // Start the student with no lessons and the chosen style (the teacher assigns lessons next)
+      const theme = /^(racing|music|cinema|riding|career)$/.test(String(body.theme || "")) ? String(body.theme) : "racing";
+      await admin.from("student_settings").upsert({ student_id: data.user.id, lessons: [], theme });
       return json({ user: { id: data.user.id, email: data.user.email } });
     }
     case "password": {

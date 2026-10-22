@@ -118,6 +118,16 @@
   .hw-row p { color: var(--ink-2); font-size: .88em; }
   .hw-row small { color: var(--mute); font-size: .8em; font-weight: 600; }
   .hw-row small.late { color: var(--bad); }
+  .hw-open { display: grid; grid-template-columns: auto minmax(0, 1fr) 18px; gap: 10px; align-items: center; width: 100%; padding: 12px 0; border: 0; border-top: 1px solid var(--line); background: none; font: inherit; color: var(--ink); text-align: left; cursor: pointer; }
+  .hw-open svg { width: 18px; height: 18px; fill: none; stroke: var(--mute); stroke-width: 2; stroke-linecap: round; }
+  .hw-open b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .hw-open small { color: var(--mute); font-size: .8em; font-weight: 600; } .hw-open small.late { color: var(--bad); }
+  .hw-open:hover b { text-decoration: underline; }
+  .hst { font-size: .72em; font-weight: 800; padding: 3px 8px; border-radius: 6px; background: var(--bg); color: var(--ink-2); border: 1px solid var(--line); white-space: nowrap; }
+  .hst.good { background: var(--ok-soft); color: var(--ok-ink); border-color: transparent; } .hst.sent { background: var(--brand-soft); color: var(--brand-dark); border-color: transparent; } .hst.late { background: var(--bad-soft); color: var(--bad-ink); border-color: transparent; }
+  .hw-fb { background: var(--ok-soft); border-radius: 12px; padding: 12px 14px; display: grid; gap: 4px; } .hw-fb p { color: var(--ink); }
+  .hw-grade { font-size: 1.8em; font-weight: 800; color: var(--ok-ink); line-height: 1; } .hw-grade small { font-size: .45em; color: var(--ok-ink); }
+  .hw-mine { background: var(--bg); border-radius: 12px; padding: 12px 14px; display: grid; gap: 6px; } .hw-mine p { white-space: pre-wrap; }
+  .hw-mine audio, .hw-fb audio { width: 100%; height: 40px; }
   footer { border-top: 1px solid var(--line); background: var(--surface); padding-block: 22px; }
   footer .container { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--mute); font-size: .88em; }
 </style>
@@ -250,13 +260,49 @@
     C.fx.ticker(document.querySelector("[data-tk-x]"), g.xp, { from: p0.xp, dur: 1100 });
     prevG = g;
   }
+  // Homework: open a task, answer it in writing or with a voice note, see the teacher's feedback
+  const hwState = h => h.reviewed_at ? ["Reviewed" + (h.grade != null ? " · " + h.grade : ""), "good"] : h.submitted_at ? ["Sent", "sent"] : h.done_at ? ["Done", "good"] : h.due && new Date(h.due + "T23:59") < new Date() ? ["Late", "late"] : ["To do", ""];
+  const hwDone = id => { C.sfx("win"); C.confetti(70); if (C.game.award(15, { once: "hw." + id, label: "Homework done" })) C.count("homework"); };
+  async function hwOpen(h) {
+    if (!h) return;
+    const lesson = h.lesson_id ? all.find(l => l.id === h.lesson_id) : null, st = hwState(h), canEdit = !h.reviewed_at;
+    const body = C.sheet(`<div style="display:grid;gap:6px;padding-right:44px"><span class="hst ${st[1]}" style="justify-self:start">${st[0]}</span><h2 class="lsheet-t" style="padding:0">${C.esc(h.title)}</h2>
+        ${h.details ? `<p style="color:var(--ink-2)">${C.esc(h.details)}</p>` : ""}
+        <span class="muted" style="font-size:.85em">${h.due ? "Due " + new Date(h.due + "T12:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) : "No due date"}${lesson ? ` · <a href="${lesson.archivo}">Open lesson ${lesson.id}</a>` : ""}</span></div>
+      ${h.reviewed_at ? `<div class="hw-fb"><span class="eyebrow">Feedback from ${C.esc(C.maestro)}</span>${h.grade != null ? `<b class="hw-grade">${h.grade}<small>/100</small></b>` : ""}${h.feedback ? `<p>${C.esc(h.feedback)}</p>` : ""}</div>` : ""}
+      ${h.submitted_at ? `<div class="hw-mine"><span class="eyebrow">Your answer · sent ${new Date(h.submitted_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>${h.answer ? `<p>${C.esc(h.answer)}</p>` : ""}${h.audio_path ? `<div data-aud="${C.esc(h.audio_path)}"><span class="muted" style="font-size:.85em">Loading your voice note…</span></div>` : ""}</div>` : ""}
+      ${canEdit ? `<div class="field"><label for="hwA">${h.submitted_at ? "Change your answer" : "Your answer"} <span class="muted" style="font-weight:500">(optional)</span></label><textarea id="hwA" maxlength="4000" rows="4" placeholder="Write your answer in English">${C.esc(h.answer || "")}</textarea></div>
+        <div class="voice-box"><span style="font-weight:700;font-size:.9em">Voice note <span class="muted" style="font-weight:500">(optional, up to 3 minutes)</span></span><div id="hwRec"></div></div>
+        <div class="lsheet-acts"><button type="button" class="btn primary" id="hwSend">${h.submitted_at ? "Send again" : "Send to " + C.esc(C.maestro)}</button>${!h.done_at ? `<button type="button" class="btn ghost" id="hwDoneOnly">Mark as done without an answer</button>` : ""}</div>
+        <p id="hwMsg" class="muted" style="font-size:.88em" role="status"></p>` : ""}`, { label: "Homework" });
+    body.querySelectorAll("[data-aud]").forEach(async el => { try { el.innerHTML = `<audio controls preload="metadata" src="${await C.voice.url(el.dataset.aud)}"></audio>`; } catch (e) { el.innerHTML = `<span class="muted" style="font-size:.85em">Couldn’t load the voice note.</span>`; } });
+    if (!canEdit) return;
+    const rec = C.voice && C.voice.ok ? C.recorder(body.querySelector("#hwRec"), { label: "Record a voice note", max: 180 }) : (body.querySelector(".voice-box").hidden = true, null);
+    const msg = t => body.querySelector("#hwMsg").textContent = t;
+    body.querySelector("#hwSend").onclick = async e => {
+      const answer = body.querySelector("#hwA").value.trim(), blob = rec && rec.blob;
+      if (!answer && !blob && !h.audio_path) { msg("Write an answer or record a voice note first."); return; }
+      e.currentTarget.disabled = true; msg(blob ? "Uploading your voice note…" : "Sending…");
+      try {
+        const fields = { answer: answer || null };
+        if (blob) fields.audio_path = await C.voice.upload(blob, "homework");
+        await C.homework.submit(h.id, fields);
+        C.sheet.close(); C.toast(`<b>Sent to ${C.esc(C.maestro)}</b><span>You’ll see the feedback here.</span>`); hwDone(h.id); todo();
+      } catch (err) {
+        e.currentTarget.disabled = false;
+        msg(/column|schema|bucket|not found/i.test(err.message || "") ? "Your teacher needs to finish a quick setup before you can send answers. You can mark it as done for now." : "We couldn’t send it. Check your internet and try again.");
+      }
+    };
+    const d = body.querySelector("#hwDoneOnly");
+    if (d) d.onclick = async () => { d.disabled = true; try { await C.homework.setDone(h.id, true); C.sheet.close(); hwDone(h.id); todo(); } catch (e) { d.disabled = false; msg("We couldn’t save that. Try again."); } };
+  }
   // Homework and review
   function todo() {
     const n = C.review.count(), hw = C.homework ? C.homework.cached() : [], pend = hw.filter(h => !h.done_at);
     const due = h => { if (!h.due) return ""; const d = new Date(h.due + "T23:59"), late = !h.done_at && d < new Date(); return `<small class="${late ? "late" : ""}">${late ? "Late · " : "Due "}${d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</small>`; };
     const hwCard = C.cloudEnabled ? `<div class="card"><h3 class="ihead"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6M9 4a2 2 0 0 0-2 2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-1a2 2 0 0 0-2-2M9 4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M8.5 13l2.5 2.5 4.5-5"/></svg>Homework ${pend.length ? `<span class="chip new">${pend.length} to do</span>` : ""}</h3>
-      ${hw.length ? hw.slice(0, 6).map(h => `<label class="hw-row ${h.done_at ? "done" : ""}"><input type="checkbox" data-hw="${h.id}" ${h.done_at ? "checked" : ""}>
-        <span style="min-width:0"><b>${C.esc(h.title)}</b>${h.details ? `<p>${C.esc(h.details)}</p>` : ""}${due(h)}</span></label>`).join("")
+      ${hw.length ? hw.slice(0, 6).map(h => { const st = hwState(h); return `<button type="button" class="hw-open" data-hwopen="${h.id}">
+        <span class="hst ${st[1]}">${st[0]}</span><span style="min-width:0"><b>${C.esc(h.title)}</b>${due(h)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>`; }).join("")
         : `<p class="muted" style="font-size:.92em">No homework right now. Your teacher adds it here after class.</p>`}</div>` : "";
     const cls = C.classes ? C.classes.cached() : [], now = Date.now();
     const upcoming = cls.filter(k => k.status === "scheduled" && new Date(k.starts_at).getTime() > now - 3600e3).sort((a, b) => a.starts_at.localeCompare(b.starts_at))[0];
@@ -267,6 +313,7 @@
         <span style="min-width:0"><b>${dt(upcoming.starts_at).toLocaleDateString("en-US", { weekday: "long" })} · ${dt(upcoming.starts_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</b>${when(upcoming.starts_at) ? ` <span class="chip new">${when(upcoming.starts_at)}</span>` : ""}
         <br><span class="muted" style="font-size:.9em">${upcoming.lesson_id ? "Lesson " + C.esc(upcoming.lesson_id) + " · " : ""}${C.esc(upcoming.title || "Class with " + C.maestro)}</span></span></div>`
         : `<p class="muted" style="font-size:.92em">Your teacher hasn’t scheduled the next class yet.</p>`}
+      ${C.calendar ? `<button type="button" class="btn ghost sm" id="calBtn" style="justify-self:start;padding-left:0">Add my classes to my calendar</button>` : ""}
       ${lastNote ? `<div style="border-top:1px solid var(--line);padding-top:10px;display:grid;gap:4px"><span class="eyebrow">From your last class · ${dt(lastNote.starts_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
         <p style="font-size:.92em;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${C.esc(lastNote.notes || lastNote.words)}</p><a href="notes.html" style="font-size:.88em;font-weight:700">All class notes →</a></div>` : ""}</div>` : "";
     document.getElementById("todo").innerHTML = classCard + hwCard;
@@ -275,12 +322,8 @@
       <div style="display:flex;align-items:baseline;gap:10px"><span class="v" data-tk-r>${n}</span><span class="sub">${n ? `question${n === 1 ? "" : "s"} to review from your quizzes` : "No mistakes to review. Great job!"}</span></div>
       <div class="actions">${n ? `<a class="btn primary" href="review.html">Practice now</a>` : ""}<a class="btn ${n ? "ghost" : ""}" href="practice.html">Practice games</a></div>`;
     if (!todo.once) { todo.once = 1; C.fx.ticker(document.querySelector("[data-tk-r]"), n, { dur: 700 }); }
-    document.querySelectorAll("[data-hw]").forEach(x => x.onchange = async () => {
-      x.disabled = true;
-      try { await C.homework.setDone(x.dataset.hw, x.checked); if (x.checked) { C.sfx("win"); C.confetti(70); if (C.game.award(15, { once: "hw." + x.dataset.hw, label: "Homework done" })) C.count("homework"); } }
-      catch (e) { x.checked = !x.checked; C.toast("We couldn’t save that. Try again."); }
-      todo();
-    });
+    const cb = document.getElementById("calBtn"); if (cb) cb.onclick = () => C.calendarSheet();
+    document.querySelectorAll("[data-hwopen]").forEach(b => b.onclick = () => hwOpen((C.homework.cached() || []).find(h => h.id === b.dataset.hwopen)));
   }
   // The course as a race track: one checkpoint per lesson, your helmet at the next one
   function season() {

@@ -158,6 +158,15 @@
   .fu .dot.bad { background: var(--bad); } .fu .dot.warn { background: #d39a00; }
   .fu .what { color: var(--ink-2); min-width: 0; }
   @media (max-width: 520px) { .fu { grid-template-columns: 8px minmax(0, 1fr); row-gap: 2px; } .fu .what { grid-column: 2; } }
+  .hwr { align-items: start; }
+  .hw-ans { background: var(--bg); border-radius: 8px; padding: 10px 12px; display: grid; gap: 8px; } .hw-ans p { white-space: pre-wrap; color: var(--ink); font-size: .95em; }
+  .hw-ans audio, .vrow audio { height: 38px; max-width: 100%; }
+  .hw-fbf { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: end; } .hw-fbf textarea { min-height: 44px; }
+  @media (max-width: 640px) { .hw-fbf { grid-template-columns: 1fr 1fr; } .hw-fbf .field:first-child { grid-column: 1 / -1; } }
+  .vgrp { display: grid; gap: 6px; } .vgrp + .vgrp { margin-top: 12px; }
+  .vrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+  .vrow b { display: block; font-size: .95em; } .vrow small { color: var(--mute); font-size: .8em; }
+  @media (max-width: 560px) { .vrow { grid-template-columns: 1fr; } }
   /* Reports overview */
   .insl { display: grid; }
   .ins { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 0; border-top: 1px solid var(--line); font-size: .92em; line-height: 1.45; color: var(--ink-2); }
@@ -331,6 +340,7 @@
   .ib svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .ib:hover { border-color: var(--brand); color: var(--brand); }
   .ib.pri { background: var(--fill-brand); border-color: var(--fill-brand); color: var(--on-fill); } .ib.pri:hover { background: var(--fill-brand-hover); color: var(--on-fill); }
+  .ib.wa { color: #128c4a; } .ib.wa:hover { color: #0b6b37; }
   .ib.gh { border-color: transparent; color: var(--mute); } .ib.gh:hover { background: var(--bg); color: var(--ink); }
   .srch { position: relative; display: block; } .srch svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: none; stroke: var(--mute); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
   .card-head .srch input[type=search] { width: 100%; max-width: 420px; padding-left: 38px; height: 44px; }
@@ -354,6 +364,7 @@
   .sh-act { display: flex; align-items: center; gap: 14px; min-height: 54px; padding: 0 16px; border-top: 1px solid var(--line); color: var(--ink); text-decoration: none; font-weight: 600; }
   .sh-act svg { width: 20px; height: 20px; color: var(--brand); } .sh-act span { flex: 1; white-space: nowrap; } .sh-act small { font-size: .8em; color: var(--mute); font-weight: 600; text-align: right; max-width: 52%; }
   .sh-act:hover { background: var(--bg); }
+  .sh-wa > svg { color: #128c4a !important; } .sh-wa:hover { background: none; } .sh-wab { display: flex; gap: 6px; } .sh-wab .btn { min-height: 36px; }
   body.sheet-open { overflow: hidden; }
   @media (min-width: 761px) { .only-narrow { display: none !important; } }
 </style>
@@ -426,8 +437,8 @@ function studentOf(p) {
   const scored = rows.filter(r => r.best), avg = scored.length ? Math.round(scored.reduce((a, r) => a + r.best.ok / r.best.n, 0) / scored.length * 100) : null;
   const passed = rows.filter(r => r.best && r.best.ok / r.best.n >= .8).length;
   const review = Object.values(get("review", {}) || {});
-  const hw = DATA.homework.filter(h => h.student_id === p.id), pending = hw.filter(h => !h.done_at).length;
-  return { p, get, game, rows, mine, settings: set, theme: theme0, nextIdx: Math.max(0, rows.findIndex(r => !(r.best && r.best.ok / r.best.n >= .8))), avg, passed, review, hw, pending, placement: get("placement", null), avatar: get("avatar", null), updated: row.updated_at };
+  const hw = DATA.homework.filter(h => h.student_id === p.id), pending = hw.filter(h => !h.done_at).length, toReview = hw.filter(h => h.submitted_at && !h.reviewed_at).length;
+  return { p, get, game, rows, mine, settings: set, theme: theme0, toReview, nextIdx: Math.max(0, rows.findIndex(r => !(r.best && r.best.ok / r.best.n >= .8))), avg, passed, review, hw, pending, placement: get("placement", null), avatar: get("avatar", null), updated: row.updated_at };
 }
 function avatarOf(s, size) {
   const name = (s.p.display_name || "?").trim();
@@ -464,7 +475,7 @@ function nextClass(id) {
 }
 const when = c => new Date(c.starts_at).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 const hhmm = d => new Date(d).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-const adminOf = id => (DATA.admin || []).find(a => a.student_id === id) || { student_id: id, notes: "", billing: "per_class", rate: 0, currency: "MXN" };
+const adminOf = id => (DATA.admin || []).find(a => a.student_id === id) || { student_id: id, notes: "", billing: "per_class", rate: 0, currency: "MXN", phone: null, parent_phone: null };
 let Q = "";
 
 // Start a class: mark the scheduled class as attended (if there is one) and open the student's lesson
@@ -522,6 +533,7 @@ function alertsOf(s) {
   if (!s.mine.length) out.push(["warn", "No lessons assigned", "lessons"]);
   if (s.mine.length && (d === null || d >= 7)) out.push(["warn", d === null ? "Hasn’t signed in yet" : `No activity in ${d} days`, "overview"]);
   s.hw.filter(h => !h.done_at && h.due && h.due < today).forEach(h => out.push(["bad", `Homework overdue: ${h.title}`, "homework"]));
+  s.hw.filter(h => h.submitted_at && !h.reviewed_at).forEach(h => out.push(["warn", `Homework to review: ${h.title}`, "homework"]));
   s.rows.filter(r => r.last && r.last.ok / r.last.n < .8 && !(r.best && r.best.ok / r.best.n >= .8)).forEach(r => out.push(["bad", `Lesson ${r.l.id}: last quiz ${Math.round(r.last.ok / r.last.n * 100)}%`, "overview"]));
   if (s.review.length >= 10) out.push(["warn", `${s.review.length} questions to review`, "overview"]);
   const m = monthKey(new Date()), missed = (DATA.classes || []).filter(c => c.student_id === s.p.id && c.status === "missed" && monthKey(c.starts_at) === m).length;
@@ -596,7 +608,7 @@ function todayView() {
     return `<div class="tc"><span class="tt">${today.length ? "" : `<small>${esc(d.toLocaleDateString("en-US", { weekday: "short" }) + " " + d.getDate())}</small>`}<b>${hhmm(c.starts_at)}</b></span>
       <span class="av">${avatarOf(s, 36)}</span>
       <div style="min-width:0"><a href="#s/${s.p.id}"><b>${esc(s.p.display_name || "")}</b></a><small>${l ? esc("Lesson " + l.id + " · " + l.titulo) : "Next lesson"}</small></div>
-      ${c.status === "scheduled" ? `<button class="btn sm ${Math.abs(d - now) < 3 * 3600e3 ? "primary" : ""}" data-sc="${c.id}">Start</button>` : `<span class="tag ${(ST[c.status] || ["", ""])[1]}">${(ST[c.status] || [c.status])[0]}</span>`}</div>`; }).join("");
+      ${c.status === "scheduled" ? `<div class="rowact">${d > now ? `<a class="ib gh wa" href="${waLink(adminOf(s.p.id).phone || adminOf(s.p.id).parent_phone, reminder(s, "class", adminOf(s.p.id).phone || !adminOf(s.p.id).parent_phone ? "student" : "parent", c))}" target="_blank" rel="noopener" aria-label="Send ${esc((s.p.display_name || "").split(" ")[0])} a reminder on WhatsApp">${WA}</a>` : ""}<button class="btn sm ${Math.abs(d - now) < 3 * 3600e3 ? "primary" : ""}" data-sc="${c.id}">Start</button></div>` : `<span class="tag ${(ST[c.status] || ["", ""])[1]}">${(ST[c.status] || [c.status])[0]}</span>`}</div>`; }).join("");
 
   // this week: classes per day, Monday to Sunday
   const wDays = Array.from({ length: 7 }, (_, k) => { const a = new Date(wk0); a.setDate(a.getDate() + k); return a; });
@@ -699,6 +711,27 @@ function listView() {
   app.querySelectorAll("[data-more]").forEach(b => b.onclick = () => actionSheet(list.find(x => x.p.id === b.dataset.more), F[b.dataset.more], b));
 }
 
+// ── WhatsApp reminders: to students in English, to parents in Spanish ──
+const WA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.5-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 8.6c.2 2.6 2.2 5 5 5.8l1-1.2 1.7.8-.2 1.3c-.2.5-.8.8-1.4.7-3.6-.6-6.5-3.5-7-7.1 0-.6.2-1.1.7-1.3l1.3-.3.8 1.7z"/></svg>';
+function waLink(phone, text) { let d = String(phone || "").replace(/\D/g, ""); if (d.length === 10) d = "52" + d; return "https://wa.me/" + d + "?text=" + encodeURIComponent(text); }
+function reminder(s, kind, who, item) {
+  const first = (s.p.display_name || "").split(" ")[0], me = G.maestro || "Alejandro", site = location.origin + location.pathname.replace(/teacher\.html$/, "");
+  if (kind === "class") {
+    const d = new Date(item.starts_at), dd = Math.round((new Date(d.toDateString()) - new Date(new Date().toDateString())) / 864e5);
+    const en = dd === 0 ? "today" : dd === 1 ? "tomorrow" : "on " + d.toLocaleDateString("en-US", { weekday: "long" });
+    const es = dd === 0 ? "hoy" : dd === 1 ? "mañana" : "el " + d.toLocaleDateString("es-MX", { weekday: "long" });
+    return who === "parent" ? `Hola, le recuerdo que ${first} tiene clase de inglés ${es} a las ${d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" })}. ¡Saludos! – ${me}`
+      : `Hi ${first}! Just a reminder: we have English class ${en} at ${hhmm(item.starts_at)}. See you there! – ${me}`;
+  }
+  const due = item.due ? new Date(item.due + "T12:00") : null;
+  return who === "parent" ? `Hola, le comparto que ${first} tiene pendiente la tarea de inglés “${item.title}”${due ? ` para el ${due.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })}` : ""}. La puede entregar en Lingua: ${site} ¡Gracias! – ${me}`
+    : `Hi ${first}! Don’t forget your homework: “${item.title}”${due ? `, due ${due.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}` : ""}. You can send your answer in Lingua: ${site} – ${me}`;
+}
+function remindRow(s, kind, item, label) {
+  const a = adminOf(s.p.id);
+  return `<div class="sh-act sh-wa">${WA}<span>${label}</span><span class="sh-wab"><a class="btn sm" href="${waLink(a.phone, reminder(s, kind, "student", item))}" target="_blank" rel="noopener">Student</a>${a.parent_phone ? `<a class="btn sm" href="${waLink(a.parent_phone, reminder(s, kind, "parent", item))}" target="_blank" rel="noopener">Parent</a>` : ""}</span></div>`;
+}
+
 // "⋯" menu: a sheet from the bottom on phones, a small dialog on wide screens
 function actionSheet(s, f, opener) {
   closeSheet();
@@ -713,6 +746,8 @@ function actionSheet(s, f, opener) {
       <div class="sh-head"><span class="av">${avatarOf(s, 44)}</span><div style="flex:1;min-width:0"><b id="shName">${esc(s.p.display_name || "")}</b><small>${esc(G.themeOf(s.theme).label.split(" (")[0])} · ${f.n ? "Next " + new Date(f.n.starts_at).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit" }) : "No class scheduled"}</small></div>
         <button type="button" class="sh-x" data-x aria-label="Close">${I('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div>
       <div class="sh-main"><button type="button" class="btn primary" id="shStart">${I('<path d="M8 5v14l11-7z"/>')}Start class</button><button type="button" class="btn" id="shPres">${I('<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>')}Present</button></div>
+      ${f.n ? remindRow(s, "class", f.n, "Remind about the class") : ""}
+      ${(() => { const h = s.hw.filter(x => !x.done_at).sort((a, b) => String(a.due || "9").localeCompare(String(b.due || "9")))[0]; return h ? remindRow(s, "homework", h, "Remind about homework") : ""; })()}
       <a class="sh-act" href="#s/${s.p.id}/homework">${I('<path d="M9 4h6a2 2 0 0 1 2 2h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1a2 2 0 0 1 2-2z"/><path d="M8.5 13l2.5 2.5 4.5-5"/>')}<span>Assign homework</span><small>${s.pending ? `<span class="warnt">${s.pending} pending</span>` : "None pending"}</small></a>
       <a class="sh-act" href="#s/${s.p.id}/classes">${I('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>')}<span>Schedule a class</span><small>${esc(ruleTxt)}</small></a>
       <a class="sh-act" href="#reports/${s.p.id}/30">${I('<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>')}<span>Progress report</span></a>
@@ -782,7 +817,7 @@ function scheduleView() {
     <span class="time">${hhmm(c.starts_at)}</span><span class="av">${avatarOf(s, 32)}</span>
     <div style="min-width:0"><a href="#s/${s.p.id}/classes"><b>${esc(s.p.display_name || "")}</b></a><small>${l ? esc(l.id + " · " + l.titulo) : "Next lesson"}${c.rule_id ? " · weekly" : ""}</small></div>
     <span class="rowact">${c.status === "scheduled" ? `<button class="btn primary sm" data-sc="${c.id}">Start</button><button class="btn ghost sm" data-cx="${c.id}">Cancel</button>` : `<span class="tag ${ST[c.status][1]}">${ST[c.status][0]}</span>`}</span></div>`; };
-  app.innerHTML = topBar("Schedule", "Every student’s classes in one place.") + `
+  app.innerHTML = topBar("Schedule", "Every student’s classes in one place.", `<button class="btn sm" id="calBtn">Calendar link</button>`) + `
     <div class="cols">
       <div class="card" style="align-content:start"><div class="card-head"><h2>Upcoming</h2></div>
         ${up.length ? Object.keys(groups).map(k => `<div class="dayg"><span class="dlabel">${new Date(k + "T12:00").toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</span><div class="agenda">${groups[k].map(item).join("")}</div></div>`).join("") : `<p class="empty">No upcoming classes. Add weekly classes on the right.</p>`}
@@ -791,7 +826,7 @@ function scheduleView() {
         <div class="card"><div class="card-head"><h2>Recent</h2></div>${past.length ? `<div class="agenda">${past.map(item).join("")}</div>` : `<p class="empty">No classes yet.</p>`}</div>
       </div>
     </div>`;
-  wireTop(); wireRules();
+  wireTop(); wireRules(); document.getElementById("calBtn").onclick = () => G.calendarSheet();
   app.querySelectorAll("[data-sc]").forEach(b => b.onclick = () => { const c = cls.find(x => x.id === b.dataset.sc); b.disabled = true; startClass(byId[c.student_id], c); });
   app.querySelectorAll("[data-cx]").forEach(b => b.onclick = async () => { b.disabled = true; try { await G.teacher.saveClass({ id: b.dataset.cx, status: "cancelled" }); await load(); } catch (err) { G.toast("Couldn’t save: " + esc(err.message)); } });
 }
@@ -1014,7 +1049,7 @@ function billingTab(s) {
     <div class="card"><h2>By month</h2><div class="tbl"><table style="min-width:520px"><thead><tr><th>Month</th><th class="r">Classes</th><th class="r">Expected</th><th class="r">Paid</th><th>Status</th></tr></thead>
       <tbody>${months.map(m => { const b = billOf(s, m); return `<tr><td>${monthName(m)}</td><td class="r">${b.attended}</td><td class="r">${MONEY(b.due, a.currency)}</td><td class="r">${MONEY(b.paid, a.currency)}</td><td><span class="tag ${b.status[1]}">${b.status[0]}</span></td></tr>`; }).join("")}</tbody></table></div></div>
     <div class="card"><h2>Payments</h2>
-      ${pays.length ? `<div class="hw">${pays.map(p => `<div class="hw-item"><div><b>${MONEY(p.amount, a.currency)}</b> · ${monthName(p.month)}<br><small>Received ${fmt(p.paid_on + "T12:00")}${p.note ? " · " + esc(p.note) : ""}</small></div><button class="btn ghost sm" data-pdel="${p.id}">Delete</button></div>`).join("")}</div>` : `<p class="empty">No payments recorded.</p>`}
+      ${pays.length ? `<div class="hw">${pays.map(p => `<div class="hw-item"><div><b>${MONEY(p.amount, a.currency)}</b> · ${monthName(p.month)}<br><small>Received ${fmt(p.paid_on + "T12:00")}${p.note ? " · " + esc(p.note) : ""}</small></div><div class="rowact"><button class="btn sm" data-rcpt="${p.id}">Receipt</button><button class="btn ghost sm" data-pdel="${p.id}">Delete</button></div></div>`).join("")}</div>` : `<p class="empty">No payments recorded.</p>`}
       <form id="payForm" class="ruleform" novalidate>
         <div class="field"><label for="pM2">Month</label><select id="pM2">${months.map(m => `<option value="${m}">${monthName(m)}</option>`).join("")}</select></div>
         <div class="field"><label for="pA">Amount</label><input id="pA" type="number" min="0" step="10" inputmode="decimal" value="${a.billing === "monthly" ? Number(a.rate) || "" : ""}"></div>
@@ -1022,7 +1057,14 @@ function billingTab(s) {
         <button class="btn primary" type="submit">Record payment</button>
       </form></div>` + proposalCard(s);
 }
+function receiptLink(s, p) {
+  const a = adminOf(s.p.id), b = billOf(s, p.month);
+  const D = { no: "R-" + p.month.replace("-", "") + "-" + String(p.id).replace(/-/g, "").slice(0, 4).toUpperCase(), n: s.p.display_name || "", m: new Date(p.month + "-15").toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
+    d: p.paid_on, a: Number(p.amount), cur: a.currency || "MXN", pl: a.billing, k: b.attended, r: Number(a.rate) || 0, nt: p.note || "", ow: G.maestroNombre || G.maestro, du: b.due, pt: b.paid };
+  return location.origin + location.pathname.replace(/teacher\.html$/, "") + "recibo.html?d=" + b64(D);
+}
 function wireBilling(s) {
+  app.querySelectorAll("[data-rcpt]").forEach(b => b.onclick = () => { const p = (DATA.payments || []).find(x => x.id === b.dataset.rcpt); if (p) window.open(receiptLink(s, p), "_blank", "noopener"); });
   const bs = document.getElementById("bSave");
   if (bs) bs.onclick = async () => {
     try { await G.teacher.upsert("student_admin", { ...adminOf(s.p.id), student_id: s.p.id, billing: document.getElementById("bP").value, rate: Number(document.getElementById("bR").value) || 0, currency: document.getElementById("bC").value, updated_at: new Date().toISOString() }); G.toast("Plan saved"); await load(); }
@@ -1046,7 +1088,7 @@ function accountsView() {
   wireTop(); wireAccounts();
 }
 
-const TABS = [["overview", "Overview"], ["lessons", "Lessons & style"], ["classes", "Classes"], ["homework", "Homework"], ["billing", "Billing"], ["reports", "Reports"]];
+const TABS = [["overview", "Overview"], ["lessons", "Lessons & style"], ["classes", "Classes"], ["homework", "Homework"], ["voice", "Voice"], ["billing", "Billing"], ["reports", "Reports"]];
 function studentView(s, tab) {
   const pl = s.placement, first = esc((s.p.display_name || "this student").split(" ")[0]);
   app.innerHTML = `
@@ -1063,9 +1105,9 @@ function studentView(s, tab) {
             <button class="btn primary" id="scGo">Start class</button></div>
         </div>
       </div>
-      <nav class="tabs" role="tablist">${TABS.map(([k, t]) => `<a role="tab" href="#s/${s.p.id}/${k}" aria-selected="${k === tab}" class="${k === tab ? "on" : ""}">${t}${k === "homework" && s.pending ? ` <span class="tag warn">${s.pending}</span>` : ""}</a>`).join("")}</nav>
+      <nav class="tabs" role="tablist">${TABS.map(([k, t]) => `<a role="tab" href="#s/${s.p.id}/${k}" aria-selected="${k === tab}" class="${k === tab ? "on" : ""}">${t}${k === "homework" && s.toReview ? ` <span class="tag warn">${s.toReview}</span>` : k === "homework" && s.pending ? ` <span class="tag">${s.pending}</span>` : ""}</a>`).join("")}</nav>
     </div>
-    ${tab === "overview" ? overviewTab(s) : tab === "lessons" ? lessonsPanel(s) : tab === "classes" ? rulesBox(s.p.id) + classesPanel(s) : tab === "homework" ? homeworkTab(s) : tab === "billing" ? billingTab(s) : `<div class="card"><div class="card-head"><div><h2>Progress report</h2><p class="muted" style="font-size:.85em">Topics covered, strengths, areas of opportunity and trends, ready to export.</p></div><a class="btn primary" href="#reports/${s.p.id}/30">Open progress report</a></div></div>` + reportPanel(s) + planPanel(s)}`;
+    ${tab === "overview" ? overviewTab(s) : tab === "lessons" ? lessonsPanel(s) : tab === "classes" ? rulesBox(s.p.id) + classesPanel(s) : tab === "homework" ? homeworkTab(s) : tab === "voice" ? `<div class="panel"><div><h2>Voice recordings</h2><p class="muted" style="font-size:.88em">Answers recorded in lessons and voice notes sent with homework. Compare month to month to hear the progress.</p></div><div id="voiceList"><p class="muted">Loading…</p></div></div>` : tab === "billing" ? billingTab(s) : `<div class="card"><div class="card-head"><div><h2>Progress report</h2><p class="muted" style="font-size:.85em">Topics covered, strengths, areas of opportunity and trends, ready to export.</p></div><a class="btn primary" href="#reports/${s.p.id}/30">Open progress report</a></div></div>` + reportPanel(s) + planPanel(s)}`;
   if (tab === "lessons") { const e = document.getElementById("lsEdit"); if (e) setTimeout(() => e.click(), 0); }
   wireDetail(s);
   const rb = document.getElementById("rnBtn");
@@ -1085,6 +1127,9 @@ function studentView(s, tab) {
   };
   if (tab === "classes") wireRules();
   if (tab === "billing") { wireBilling(s); wireProposal(s); }
+  if (tab === "homework") wireHwReview(s);
+  if (tab === "voice") voiceTab(s);
+  wireContact(s);
   const nb = document.getElementById("pnSave");
   if (nb) nb.onclick = async () => {
     nb.disabled = true;
@@ -1109,6 +1154,12 @@ function overviewTab(s) {
     <div class="cols">
       <div class="card"><div class="card-head"><h2>Private notes</h2><span class="muted" style="font-size:.8em">Only you see these</span></div>
         ${DATA.admin === null ? setupNote("private notes") : `<textarea id="pnText" class="pnotes" maxlength="5000" placeholder="What’s hard for them, topics they enjoy, things to follow up…">${esc(adm.notes || "")}</textarea><div class="actions"><button class="btn sm primary" id="pnSave">Save notes</button>${adm.updated_at ? `<span class="muted" style="font-size:.8em">Saved ${ago(adm.updated_at)}</span>` : ""}</div>`}</div>
+      ${DATA.admin === null ? "" : `<div class="card"><div class="card-head"><h2>WhatsApp for reminders</h2><span class="muted" style="font-size:.8em">Only you see these</span></div>
+        <form id="ctForm" class="grid2" style="align-items:end" novalidate>
+          <div class="field"><label for="ctP">Student</label><input id="ctP" type="tel" inputmode="tel" autocomplete="off" placeholder="81 1234 5678" value="${esc(adm.phone || "")}"></div>
+          <div class="field"><label for="ctPP">Parent or guardian</label><input id="ctPP" type="tel" inputmode="tel" autocomplete="off" placeholder="81 1234 5678" value="${esc(adm.parent_phone || "")}"></div>
+          <div class="actions" style="grid-column:1/-1"><button class="btn sm" type="submit">Save numbers</button><span class="muted" style="font-size:.8em">Messages to students go in English, to parents in Spanish.</span></div>
+        </form></div>`}
       <div class="card"><div class="card-head"><h2>Recent activity</h2></div>${acts.length ? `<div class="feed">${acts.map(e => `<div class="fe ${e.cls}"><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}</div>
     </div>
     <div class="card"><div class="card-head"><h2>Lessons</h2><a class="btn sm" href="#s/${s.p.id}/lessons">Change lessons or style</a></div>
@@ -1125,10 +1176,15 @@ function overviewTab(s) {
 function homeworkTab(s) {
   return `<div class="panel">
     <h2>Homework</h2>
-    <div class="hw">${s.hw.length ? s.hw.map(h => `<div class="hw-item">
-      <div style="min-width:0"><b>${h.done_at ? "✅ " : ""}${esc(h.title)}</b>${h.details ? `<p>${esc(h.details)}</p>` : ""}
-        <small>${h.done_at ? "Done " + fmt(h.done_at) : h.due ? "Due " + fmt(h.due + "T12:00") : "No due date"}${h.lesson_id ? " · Lesson " + esc(h.lesson_id) : ""}</small></div>
-      <button class="btn ghost sm" data-del="${h.id}" aria-label="Delete homework">Delete</button></div>`).join("") : `<p class="empty">No homework yet.</p>`}</div>
+    <div class="hw">${s.hw.length ? s.hw.map(h => { const st = h.reviewed_at ? ["Reviewed" + (h.grade != null ? " · " + h.grade : ""), "good"] : h.submitted_at ? ["To review", "warn"] : h.done_at ? ["Done", "good"] : h.due && h.due < day(new Date()) ? ["Late", "bad"] : ["Pending", ""];
+      return `<div class="hw-item hwr">
+      <div style="min-width:0;display:grid;gap:6px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="tag ${st[1]}">${st[0]}</span><b>${esc(h.title)}</b></div>${h.details ? `<p>${esc(h.details)}</p>` : ""}
+        <small>${h.submitted_at ? "Sent " + fmt(h.submitted_at) : h.done_at ? "Done " + fmt(h.done_at) : h.due ? "Due " + fmt(h.due + "T12:00") : "No due date"}${h.lesson_id ? " · Lesson " + esc(h.lesson_id) : ""}</small>
+        ${h.submitted_at ? `<div class="hw-ans">${h.answer ? `<p>${esc(h.answer)}</p>` : ""}${h.audio_path ? `<div data-aud="${esc(h.audio_path)}"><button type="button" class="btn sm" data-play>Play voice note</button></div>` : ""}</div>
+          <form class="hw-fbf" data-fb="${h.id}" novalidate><div class="field"><label for="fb-${h.id}">Feedback</label><textarea id="fb-${h.id}" maxlength="2000" rows="2" placeholder="What went well, what to fix">${esc(h.feedback || "")}</textarea></div>
+            <div class="field" style="max-width:110px"><label for="gr-${h.id}">Grade</label><input id="gr-${h.id}" type="number" min="0" max="100" inputmode="numeric" value="${h.grade ?? ""}" placeholder="0–100"></div>
+            <button class="btn primary sm" type="submit">${h.reviewed_at ? "Update feedback" : "Send feedback"}</button></form>` : ""}</div>
+      <button class="btn ghost sm" data-del="${h.id}" aria-label="Delete homework">Delete</button></div>`; }).join("") : `<p class="empty">No homework yet.</p>`}</div>
     <form id="hwForm" style="display:grid;gap:12px;border-top:1px solid var(--line);padding-top:16px" novalidate>
       <b>Add homework</b>
       <div class="quick" id="quick">
@@ -1149,6 +1205,51 @@ function homeworkTab(s) {
   </div>`;
 }
 
+function wireHwReview(s) {
+  app.querySelectorAll("[data-aud] [data-play]").forEach(b => b.onclick = async () => {
+    const box = b.parentElement; b.disabled = true;
+    try { box.innerHTML = `<audio controls autoplay preload="metadata" src="${await G.voice.url(box.dataset.aud)}"></audio>`; } catch (e) { box.innerHTML = `<span class="muted">Couldn’t load the voice note.</span>`; }
+  });
+  app.querySelectorAll("[data-fb]").forEach(f => f.onsubmit = async e => {
+    e.preventDefault(); const id = f.dataset.fb, fb = f.querySelector("textarea").value.trim(), gv = f.querySelector("input").value.trim(), g = gv === "" ? null : Math.max(0, Math.min(100, Math.round(+gv)));
+    if (!fb && g == null) { G.toast("Write feedback or a grade first"); return; }
+    const b = f.querySelector("button"); b.disabled = true;
+    try { await G.teacher.update("homework", id, { feedback: fb || null, grade: g, reviewed_at: new Date().toISOString() }); G.toast(`<b>Feedback sent</b><span>${esc((s.p.display_name || "").split(" ")[0])} will see it in Lingua.</span>`); await load(); }
+    catch (err) { b.disabled = false; G.toast(/column|schema/i.test(err.message) ? "Run supabase/v3.sql first (one-time setup)." : "Couldn’t save: " + esc(err.message)); }
+  });
+}
+// Voice: every recording the student made in lessons, newest first
+async function voiceTab(s) {
+  const box = document.getElementById("voiceList"); if (!box) return;
+  let recs;
+  try { recs = await G.voice.of(s.p.id); }
+  catch (e) { box.innerHTML = `<p class="muted">To keep voice recordings, run <b>supabase/v3.sql</b> in Supabase once (SQL Editor → New query → paste → Run).</p>`; return; }
+  if (!recs.length) { box.innerHTML = `<p class="empty">No recordings yet. They show up here when ${esc((s.p.display_name || "").split(" ")[0])} records an answer in “Over to you” or a voice note in homework.</p>`; return; }
+  const hwAud = s.hw.filter(h => h.audio_path).map(h => ({ id: "hw-" + h.id, created_at: h.submitted_at, prompt: "Homework · " + h.title, path: h.audio_path, hw: true }));
+  const all = recs.concat(hwAud).sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+  const groups = {}; all.forEach(r => { const k = monthKey(r.created_at); (groups[k] = groups[k] || []).push(r); });
+  box.innerHTML = Object.keys(groups).map(k => `<div class="vgrp"><span class="dlabel">${monthName(k)}</span>${groups[k].map(r => `<div class="vrow">
+      <div style="min-width:0"><b>${esc(r.prompt || "Recording")}</b><small>${fmt(r.created_at)}${r.lesson_id ? " · Lesson " + esc(r.lesson_id) : ""}${r.seconds ? " · " + Math.round(r.seconds) + " s" : ""}</small></div>
+      <div class="rowact" data-aud="${esc(r.path)}"><button type="button" class="btn sm" data-play>Play</button>${r.hw ? "" : `<button type="button" class="btn ghost sm" data-vdel="${r.id}">Delete</button>`}</div></div>`).join("")}</div>`).join("");
+  box.querySelectorAll("[data-play]").forEach(b => b.onclick = async () => {
+    const wrap = b.parentElement; b.disabled = true;
+    try { b.outerHTML = `<audio controls autoplay preload="metadata" src="${await G.voice.url(wrap.dataset.aud)}"></audio>`; } catch (e) { b.disabled = false; G.toast("Couldn’t load it"); }
+  });
+  box.querySelectorAll("[data-vdel]").forEach(b => b.onclick = async () => {
+    if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "Tap again"; return; }
+    try { await G.voice.remove(recs.find(r => r.id === b.dataset.vdel)); voiceTab(s); } catch (e) { G.toast("Couldn’t delete: " + esc(e.message)); }
+  });
+}
+// WhatsApp numbers for reminders
+function wireContact(s) {
+  const f = document.getElementById("ctForm"); if (!f) return;
+  f.onsubmit = async e => {
+    e.preventDefault(); const b = f.querySelector("button"); b.disabled = true;
+    const clean = v => v.replace(/[^\d+]/g, "").slice(0, 20) || null;
+    try { await G.teacher.upsert("student_admin", { ...adminOf(s.p.id), student_id: s.p.id, phone: clean(document.getElementById("ctP").value), parent_phone: clean(document.getElementById("ctPP").value), updated_at: new Date().toISOString() }); G.toast("Numbers saved"); await load(); }
+    catch (err) { b.disabled = false; G.toast(/column|schema/i.test(err.message) ? "Run supabase/v3.sql first (one-time setup)." : "Couldn’t save: " + esc(err.message)); }
+  };
+}
 function lessonsPanel(s) {
   if (DATA.settings === null) return `<div class="panel"><h2>Lessons for this student</h2><p class="muted">To choose which lessons each student sees, run <b>supabase/student_settings.sql</b> in Supabase (SQL Editor → New query → paste → Run). Until then, every student sees every lesson.</p></div>`;
   const all = s.settings.lessons === null, on = new Set(s.settings.lessons || []);
@@ -1275,11 +1376,12 @@ function accounts() {
     <div style="display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap"><div><h2>Student accounts</h2><p class="muted" style="font-size:.9em">Create a student and change passwords. Students sign in with the username.</p></div>
       ${ACC ? `<button class="btn ghost sm" id="accReload">Refresh list</button>` : ""}</div>
     ${ACCERR && ACCERR.missing ? setup : ACCERR ? `<div class="alert bad">${esc(ACCERR.message)}</div>` : ""}
-    <form id="accForm" class="grid2" style="grid-template-columns:repeat(4,minmax(0,1fr));align-items:end" novalidate>
+    <form id="accForm" class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));align-items:end" novalidate>
       <div class="field"><label for="aN">Name</label><input id="aN" maxlength="40" autocomplete="off"></div>
       <div class="field"><label for="aU">Username</label><input id="aU" maxlength="40" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
-      <div class="field"><label for="aP">Password</label><input id="aP" type="text" minlength="8" maxlength="72" autocomplete="new-password"></div>
-      <button class="btn primary" type="submit" id="aSave">Create account</button>
+      <div class="field"><label for="aP">Password</label><div style="display:flex;gap:6px"><input id="aP" type="text" minlength="8" maxlength="72" autocomplete="new-password" style="min-width:0;flex:1"><button type="button" class="btn ghost sm" id="aGen" title="Make a password">Make one</button></div></div>
+      <div class="field"><label for="aT">Style</label><select id="aT">${Object.keys(G.THEMES || { racing: 1 }).map(k => `<option value="${k}">${esc(G.themeOf(k).label.split(" (")[0])}</option>`).join("")}</select></div>
+      <button class="btn primary" type="submit" id="aSave" style="grid-column:1/-1;justify-self:start">Create account</button>
     </form>
     <div id="aMsg" hidden></div>
     ${ACC ? `<div class="hw">${ACC.filter(u => u.id !== (G.user && G.user.id)).map(u => `<div class="hw-item">
@@ -1298,9 +1400,10 @@ function wireAccounts() {
     if (!/^[a-z0-9._-]{3,40}$/.test(user)) return msg("bad", "Username: 3–40 letters, numbers, dots or dashes (like emiliano.sanchez).");
     if (pw.length < 8) return msg("bad", "Password: at least 8 characters.");
     const b = document.getElementById("aSave"); b.disabled = true;
-    try { await G.admin("create", { username: user, password: pw, display_name: name }); G.toast(`<b>Account created</b><span>Username: ${esc(user)}</span>`); await loadAccounts(); await load(); }
+    try { await G.admin("create", { username: user, password: pw, display_name: name, theme: document.getElementById("aT").value }); G.toast(`<b>Account created</b><span>Username: ${esc(user)} · now assign their lessons</span>`); await loadAccounts(); await load(); }
     catch (err) { msg("bad", err.missing ? "Install the accounts helper first (see the note above)." : "We couldn’t create it: " + err.message); if (err.missing) { ACCERR = err; } b.disabled = false; }
   });
+  const gen = document.getElementById("aGen"); if (gen) gen.onclick = () => { const w = ["river", "piano", "rocket", "tiger", "camera", "garden", "planet", "guitar", "saddle", "summit"], n = () => w[Math.floor(Math.random() * w.length)]; document.getElementById("aP").value = n() + "-" + n() + "-" + (10 + Math.floor(Math.random() * 90)); };
   document.querySelectorAll("[data-pw]").forEach(b => b.onclick = async () => {
     const inp = document.querySelector(`[data-pwfor="${b.dataset.pw}"]`), pw = inp.value;
     if (pw.length < 8) { G.toast("Password: at least 8 characters"); inp.focus(); return; }

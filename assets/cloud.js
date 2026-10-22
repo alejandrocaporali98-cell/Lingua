@@ -62,6 +62,7 @@
   if (!L.cloudEnabled) {
     L.homework = { cached: () => [], list: async () => [], setDone: async () => {} };
     L.classes = { cached: () => [], list: async () => [] };
+    L.voice = { ok: false }; L.calendar = null;
     L.ready = Promise.resolve(null);
     show();
     document.addEventListener("DOMContentLoaded", decorate);
@@ -139,6 +140,40 @@
       if (error) throw error;
       lsSet("__homework", L.homework.cached().map(h => h.id === id ? { ...h, done_at: done ? new Date().toISOString() : null } : h));
       document.dispatchEvent(new CustomEvent("lingua:homework"));
+    }
+  };
+  // Answer a homework task (text and/or a voice note); it also counts as done
+  L.homework.submit = async (id, fields) => {
+    const row = { ...fields, submitted_at: new Date().toISOString(), done_at: new Date().toISOString() };
+    const { error } = await sb.from("homework").update(row).eq("id", id);
+    if (error) throw error;
+    lsSet("__homework", L.homework.cached().map(h => h.id === id ? { ...h, ...row } : h));
+    document.dispatchEvent(new CustomEvent("lingua:homework"));
+  };
+  // Voice notes: private files in the "voice" bucket, inside the student's own folder
+  L.voice = {
+    get ok() { return !!tid; },
+    async upload(blob, kind) {
+      const type = (blob.type || "audio/webm").split(";")[0], ext = /mp4|m4a|aac/.test(type) ? "m4a" : /ogg/.test(type) ? "ogg" : /mpeg/.test(type) ? "mp3" : /wav/.test(type) ? "wav" : "webm";
+      const path = `${tid}/${kind || "voice"}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      const { error } = await sb.storage.from("voice").upload(path, blob, { contentType: /m4a/.test(ext) ? "audio/mp4" : type, upsert: false });
+      if (error) throw error;
+      return path;
+    },
+    async url(path) { const { data, error } = await sb.storage.from("voice").createSignedUrl(path, 3600); if (error) throw error; return data.signedUrl; },
+    async save(row) { const { data, error } = await sb.from("recordings").insert({ ...row, student_id: tid }).select(); if (error) throw error; return data && data[0]; },
+    async mine(lessonId) { let q = sb.from("recordings").select("*").eq("student_id", tid).order("created_at", { ascending: false }); if (lessonId) q = q.eq("lesson_id", lessonId); const { data, error } = await q; if (error) throw error; return data || []; },
+    async of(studentId) { const { data, error } = await sb.from("recordings").select("*").eq("student_id", studentId).order("created_at", { ascending: false }); if (error) throw error; return data || []; },
+    async remove(rec) { await sb.storage.from("voice").remove([rec.path]); const { error } = await sb.from("recordings").delete().eq("id", rec.id); if (error) throw error; }
+  };
+  // Calendar: a private link that calendar apps keep in sync (see the "calendar" Edge Function)
+  L.calendar = {
+    async link() {
+      const me = uid; let { data, error } = await sb.from("cal_tokens").select("token").eq("owner", me).maybeSingle();
+      if (error) throw error;
+      if (!data) { const r = await sb.from("cal_tokens").insert({ owner: me }).select("token").single(); if (r.error) throw r.error; data = r.data; }
+      const https = cfg.url.replace(/\/$/, "") + "/functions/v1/calendar?t=" + data.token;
+      return { https, webcal: https.replace(/^https:/, "webcal:"), google: "https://calendar.google.com/calendar/r?cid=" + encodeURIComponent(https.replace(/^https:/, "webcal:")) };
     }
   };
   // Classes: schedule, attendance and notes (the teacher writes them, the student reads their own)

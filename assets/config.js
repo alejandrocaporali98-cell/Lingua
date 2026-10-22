@@ -93,6 +93,13 @@ window.LINGUA = {
     ]},
     { titulo: "Listening", owner: "Domeniko", lecciones: [
       {"id": "224", "archivo": "clases/leccion-224.html", "titulo": "Understanding Native Speed", "tema": "Natives don't say words one by one — they run them together and swallow the weak ones.", "nivel": "B1", "min": 90, "icono": "music", "color": "#6d3fd6", "estado": "lista", "secs": 8}
+    ]},
+    // ── Derek and Erick (C1) ──
+    { titulo: "C1 · Film", owner: "Derek", lecciones: [
+      {"id": "301", "archivo": "clases/leccion-301.html", "titulo": "Talking Like a Filmmaker", "tema": "Directors don't say a scene was \"good\" — they talk about pacing, framing and what lands.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 8}
+    ]},
+    { titulo: "C1 · Music", owner: "Erick", lecciones: [
+      {"id": "311", "archivo": "clases/leccion-311.html", "titulo": "Talking Shop: Sound, Gear & Playing", "tema": "Musicians don't say a song is \"nice\" — they talk about tone, groove and what makes it hit.", "nivel": "C1", "min": 90, "icono": "guitar", "color": "#0f766e", "estado": "lista", "secs": 8}
     ]}
   ],
 

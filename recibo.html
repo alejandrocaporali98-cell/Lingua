@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clases de Inglés · Recibo de pago</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<style>
+  :root { --ink: #111; --mute: #6b6b6b; --line: #e3e3e3; --blue: #2233e6; --black: #0d0d0d; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #e9e9ec; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .bar { max-width: 816px; margin: 18px auto 0; display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px; }
+  .bar button { font: inherit; font-size: 14px; font-weight: 700; padding: 9px 16px; border-radius: 8px; border: 1px solid #c9c9cf; background: #fff; cursor: pointer; min-height: 44px; }
+  .bar button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .doc { width: 816px; margin: 12px auto 40px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.12); }
+  @media (max-width: 840px) { .doc { width: 100%; margin: 10px 0 30px; } }
+  header { background: var(--black); color: #fff; padding: 46px 60px 42px; display: flex; justify-content: space-between; gap: 24px; }
+  header h1 { font-size: 30px; font-weight: 800; letter-spacing: .5px; }
+  .kick { font-size: 10.5px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #8f9bff; margin-top: 12px; }
+  header .r { text-align: right; display: grid; gap: 8px; align-content: start; }
+  header .no { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  header .lbl { font-size: 9.5px; letter-spacing: 2.5px; text-transform: uppercase; color: #9a9a9a; }
+  main { padding: 34px 60px 26px; display: grid; gap: 26px; }
+  .who { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .lab { font-size: 9.5px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--mute); }
+  .who b { display: block; font-size: 17px; margin-top: 6px; }
+  .sh { display: flex; align-items: center; gap: 10px; font-size: 11.5px; font-weight: 800; letter-spacing: 3.5px; text-transform: uppercase; }
+  .sh::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .line { display: grid; grid-template-columns: 1fr auto; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; color: #444; }
+  .line span:last-child { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1.5px solid var(--ink); padding-top: 14px; }
+  .total .lab { color: var(--ink); }
+  .total b { font-size: 34px; font-weight: 800; letter-spacing: -.5px; color: var(--blue); font-variant-numeric: tabular-nums; }
+  .paid { display: inline-flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #12754a; border: 1.5px solid #12754a; border-radius: 6px; padding: 6px 10px; justify-self: start; }
+  .paid.part { color: #a35f00; border-color: #a35f00; }
+  .note { font-size: 12px; color: #444; line-height: 1.6; white-space: pre-wrap; }
+  .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 30px 60px 50px; align-items: end; }
+  .sign .s { border-top: 1px solid var(--ink); padding-top: 8px; font-size: 11.5px; }
+  .sign .s b { display: block; font-size: 13px; }
+  .sign small { font-size: 10px; color: var(--mute); line-height: 1.5; }
+  @media (max-width: 640px) { header { padding: 32px 24px; flex-direction: column; } header .r { text-align: left; } main { padding: 26px 24px 20px; } .sign { padding: 24px 24px 34px; grid-template-columns: 1fr; gap: 20px; } .who { grid-template-columns: 1fr; } }
+  .missing { padding: 60px; font-size: 15px; }
+  @media print { html, body { background: #fff; } .bar { display: none; } .doc { width: auto; margin: 0; box-shadow: none; } @page { size: letter; margin: 0; } }
+</style>
+</head>
+<body>
+<div class="bar"><button type="button" class="primary" onclick="window.print()">Guardar como PDF</button></div>
+<div class="doc" id="doc"></div>
+<script>
+(function () {
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  let D = null;
+  try { const q = new URLSearchParams(location.search).get("d"); const b = atob(q.replace(/-/g, "+").replace(/_/g, "/")); D = JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) {}
+  const doc = document.getElementById("doc");
+  if (!D) { doc.innerHTML = `<p class="missing">Este enlace de recibo no es válido.</p>`; return; }
+  const cur = D.cur || "MXN", money = n => "$" + Number(n || 0).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " " + cur;
+  const date = d => new Date(d + "T12:00").toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" });
+  const lines = [];
+  if (D.pl === "per_class" && D.k) lines.push([`${D.k} clase${D.k === 1 ? "" : "s"} × ${money(D.r)}`, money(D.k * D.r)]);
+  if (D.pl === "monthly") lines.push(["Mensualidad", money(D.r)]);
+  document.title = `Recibo ${D.no} · ${D.n}`;
+  doc.innerHTML = `
+    <header><div><h1>RECIBO DE PAGO</h1><div class="kick">Clases de inglés</div></div>
+      <div class="r"><span class="lbl">Folio</span><span class="no">${esc(D.no)}</span><span class="lbl">Fecha de pago</span><span class="no">${esc(date(D.d))}</span></div></header>
+    <main>
+      <div class="who"><div><span class="lab">Recibido de</span><b>${esc(D.n)}</b></div><div><span class="lab">Concepto</span><b>Clases de inglés · ${esc(D.m)}</b></div></div>
+      <div style="display:grid;gap:2px"><div class="sh">Detalle</div>
+        ${lines.map(l => `<div class="line"><span>${esc(l[0])}</span><span>${esc(l[1])}</span></div>`).join("")}
+        <div class="line"><span>Pago recibido</span><span>${esc(money(D.a))}</span></div></div>
+      <div class="total"><span class="lab">Total pagado</span><b>${esc(money(D.a))}</b></div>
+      ${D.du > 0 && D.pt < D.du ? `<div style="display:grid;gap:8px"><div class="line" style="border-top:1px solid var(--line)"><span>Pagado en ${esc(D.m)}</span><span>${esc(money(D.pt))} de ${esc(money(D.du))}</span></div><div class="line"><span><b>Saldo pendiente</b></span><span><b>${esc(money(D.du - D.pt))}</b></span></div></div><span class="paid part">Pago parcial</span>` : `<span class="paid">Pagado</span>`}
+      ${D.nt ? `<p class="note">${esc(D.nt)}</p>` : ""}
+    </main>
+    <div class="sign"><div class="s"><b>${esc(D.ow || "")}</b>Recibió</div><small>Gracias por tu confianza. Este recibo confirma el pago de las clases indicadas.</small></div>`;
+})();
+</script>
+</body>
+</html>

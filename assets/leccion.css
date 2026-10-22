@@ -135,3 +135,6 @@ body.present .pctl:hover, body.present .pctl:focus-within { opacity: 1; }
 .pctl button { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 800; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
 .pctl button:hover { background: rgba(255,255,255,.14); }
 .pctl span { padding: 0 6px; font-weight: 700; white-space: nowrap; }
+
+.talkq li { display: grid; gap: 8px; }
+.tq-rec { margin-bottom: 4px; }
