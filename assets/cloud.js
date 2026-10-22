@@ -227,17 +227,19 @@
   // Teacher panel: read every student (allowed only for accounts in the "teachers" table)
   L.teacher = {
     async load() {
-      const [p, g, h, c, st, ru, ad, pa, sf] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
+      const [p, g, h, c, st, ru, ad, pa, sf, ch, bi] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
         sb.from("classes").select("*").order("starts_at", { ascending: false }), sb.from("student_settings").select("*"),
-        sb.from("class_rules").select("*"), sb.from("student_admin").select("*"), sb.from("payments").select("*").order("paid_on", { ascending: false }), sb.from("staff").select("*")]);
+        sb.from("class_rules").select("*"), sb.from("student_admin").select("*"), sb.from("payments").select("*").order("paid_on", { ascending: false }), sb.from("staff").select("*"),
+        sb.from("charges").select("*").order("created_at", { ascending: false }), sb.from("billing_info").select("*")]);
       const err = p.error || g.error || h.error; if (err) throw err;
       return { profiles: p.data || [], progress: g.data || [], homework: h.data || [], classes: c.error ? null : (c.data || []), settings: st.error ? null : (st.data || []),
-        rules: ru.error ? null : (ru.data || []), admin: ad.error ? null : (ad.data || []), payments: pa.error ? null : (pa.data || []), staff: sf.error ? null : (sf.data || []) };
+        rules: ru.error ? null : (ru.data || []), admin: ad.error ? null : (ad.data || []), payments: pa.error ? null : (pa.data || []), staff: sf.error ? null : (sf.data || []),
+        charges: ch.error ? null : (ch.data || []), bank: bi.error ? null : ((bi.data || [])[0] || {}) };
     },
     async addHomework(row) { const { data, error } = await sb.from("homework").insert(row).select(); if (error) throw error; return data; },
     async deleteHomework(id) { const { error } = await sb.from("homework").delete().eq("id", id); if (error) throw error; },
     async saveClass(row) { const q = row.id ? sb.from("classes").update(row).eq("id", row.id) : sb.from("classes").insert(row); const { error } = await q; if (error) throw error; },
-    async insert(table, rows) { const { error } = await sb.from(table).insert(rows); if (error) throw error; },
+    async insert(table, rows) { const { data, error } = await sb.from(table).insert(rows).select(); if (error) throw error; return data; },
     async upsert(table, row) { const { error } = await sb.from(table).upsert(row); if (error) throw error; },
     async update(table, id, row) { const { error } = await sb.from(table).update(row).eq("id", id); if (error) throw error; },
     async remove(table, id) { const { error } = await sb.from(table).delete().eq("id", id); if (error) throw error; },

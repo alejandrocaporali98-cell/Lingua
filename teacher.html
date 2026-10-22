@@ -207,7 +207,7 @@ function render() {
   if (h[0] === "s" && h[1]) { const s = students().find(x => x.p.id === h[1]); if (s) { SEL = s.p.id; return studentView(s, h[2] || "overview"); } }
   if (v === "students") return listView();
   if (v === "schedule") return scheduleView();
-  if (v === "billing") return billingView(h[1]);
+  if (v === "billing") return billingView(h[1], h[2], h[3]);
   if (v === "reports") return reportsView(h[1], h[2]);
   if (v === "accounts") return accountsView();
   return todayView();
@@ -644,20 +644,172 @@ function billOf(s, m) {
   const status = a.billing === "free" ? ["Free", ""] : due === 0 && paid === 0 ? ["—", ""] : paid >= due ? ["Paid", "good"] : paid > 0 ? ["Partial", "warn"] : ["Pending", "bad"];
   return { a, attended, scheduled, due, paid, status };
 }
-function billingView(m) {
+// ── Billing: overview, payments with transfer screenshots, payment slips, bank details ──
+// (the same things the office panel does; documents for families stay in Spanish)
+const METHOD = { transfer: "Transfer", cash: "Cash", deposit: "Deposit", card: "Card", other: "Other" };
+const SITE = () => location.origin + location.pathname.replace(/teacher\.html$/, "");
+const sById = id => students().find(s => s.p.id === id);
+const phoneOf = id => { const a = adminOf(id); return a.parent_phone || a.phone || ""; };
+const esMonth = (m, o) => new Date(m + "-15T12:00").toLocaleDateString("es-MX", o || { month: "long", year: "numeric" });
+const esMoney = (n, cur) => "$" + Number(n || 0).toLocaleString("es-MX", { maximumFractionDigits: 2 }) + ((cur || "MXN") === "MXN" ? "" : " " + cur);
+const esDate = d => new Date(String(d).length === 10 ? d + "T12:00" : d).toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" });
+const ICO = (d, sz) => `<svg width="${sz || 15}" height="${sz || 15}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const fullMonths = (n, from) => Array.from({ length: n }, (_, k) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + (from || 0) - k); return monthKey(d); });
+const monthOpts = (m, n) => fullMonths(n || 8, 1).map(k => `<option value="${k}" ${k === m ? "selected" : ""}>${monthName(k)}</option>`).join("");
+const v4Note = () => `<div class="note-setup"><b>One-time setup:</b> run <b>supabase/v4.sql</b> in Supabase (SQL Editor → New query → paste → Run) to use payment slips, bank details and transfer screenshots.</div>`;
+const bMsg = (el, t) => { el.className = "alert bad"; el.textContent = t; el.hidden = false; };
+const $b = id => document.getElementById(id);
+
+// What to charge: monthly fee, or every class of the month (taken + still scheduled) for per-class plans
+function suggestedPay(s, m) {
+  const b = billOf(s, m), a = b.a;
+  if (a.billing === "free") return { amount: 0, k: 0, how: "Free plan" };
+  if (a.billing === "monthly") return { amount: Math.max(0, Number(a.rate) - b.paid), k: b.attended + b.scheduled, how: "Monthly fee " + MONEY(a.rate, a.currency) + (b.paid ? " − paid " + MONEY(b.paid, a.currency) : "") };
+  const k = b.attended + b.scheduled; return { amount: Math.max(0, k * Number(a.rate) - b.paid), k, how: `${k} class${k === 1 ? "" : "es"} × ${MONEY(a.rate, a.currency)}` + (b.paid ? " − paid " + MONEY(b.paid, a.currency) : "") };
+}
+function slipLink(ch) {
+  const s = sById(ch.student_id), a = adminOf(ch.student_id), bk = DATA.bank || {}, sg = s ? suggestedPay(s, ch.month) : { k: 0 };
+  const D = { f: ch.folio, n: s ? s.p.display_name : "", c: ch.concept || "", m: esMonth(ch.month), a: Number(ch.amount), cur: a.currency || "MXN",
+    du: ch.due || "", e: day(ch.created_at || new Date()), pl: a.billing, r: Number(a.rate) || 0, k: sg.k, nt: ch.note || "", ow: G.maestroNombre || G.maestro,
+    b: { bank: bk.bank || "", holder: bk.holder || "", clabe: bk.clabe || "", account: bk.account || "", card: bk.card || "", to: bk.send_to || "", ins: bk.instructions || "" } };
+  return SITE() + "ficha.html?d=" + b64(D);
+}
+const firstOf = s => (s && s.p.display_name || "").split(" ")[0];
+const slipText = ch => { const s = sById(ch.student_id), a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${firstOf(s)} (${esMonth(ch.month, { month: "long" })}): ${esMoney(ch.amount, a.currency)}${ch.due ? ", con fecha límite el " + esDate(ch.due) : ""}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; };
+const receiptText = p => { const s = sById(p.student_id), a = adminOf(p.student_id); return `Hola, recibimos su pago de ${esMoney(p.amount, a.currency)} por las clases de inglés de ${firstOf(s)} (${esMonth(p.month, { month: "long" })}). ¡Gracias! Aquí está su recibo: ${receiptLink(s, p)}`; };
+
+// A pop-up sheet (bottom sheet on phones, centered on computers)
+function sheet(title, sub, body) {
+  closeSheet();
+  const w = document.createElement("div"); w.id = "sheet";
+  w.innerHTML = `<div class="sh-scrim" data-x></div><div class="asheet" role="dialog" aria-modal="true" aria-labelledby="shT"><i class="sh-grab" aria-hidden="true"></i>
+    <div class="sh-head"><div style="flex:1;min-width:0"><b id="shT">${title}</b>${sub ? `<small>${sub}</small>` : ""}</div><button type="button" class="sh-x" data-x aria-label="Close">${ICO('<path d="M6 6l12 12M18 6L6 18"/>', 18)}</button></div>
+    <div class="sh-body">${body}</div></div>`;
+  document.body.appendChild(w); document.body.classList.add("sheet-open");
+  w.querySelectorAll("[data-x]").forEach(x => x.onclick = closeSheet);
+  w.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+  requestAnimationFrame(() => w.classList.add("in"));
+  setTimeout(() => { const f = w.querySelector(".sh-body input:not([type=file]), .sh-body select, .sh-body .btn"); f && f.focus(); }, 60);
+  return w;
+}
+async function showProof(path) {
+  const w = sheet("Transfer screenshot", "", `<p class="hint">Loading…</p>`);
+  try {
+    const url = await G.office.proofUrl(path), pdf = /\.pdf$/i.test(path);
+    w.querySelector(".sh-body").innerHTML = (pdf ? `<p>It’s a PDF file.</p>` : `<img class="proofimg" src="${esc(url)}" alt="Screenshot of the payment">`) + `<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener">${pdf ? "Open PDF" : "Open full size"}</a>`;
+  } catch (e) { w.querySelector(".sh-body").innerHTML = `<div class="alert bad">Couldn’t open it: ${esc(e.message)}</div>`; }
+}
+
+// Record a payment (with the transfer screenshot)
+function paySheet(pre) {
+  pre = pre || {};
+  const list = students(); if (!list.length) return G.toast("No students yet");
+  const sid = pre.sid || list[0].p.id, m = pre.m || monthKey(new Date());
+  const w = sheet("Record payment", "Add the transfer screenshot if you have it", `
+    <div class="field"><label for="pyS">Student</label><select id="pyS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
+    <div class="grid2"><div class="field"><label for="pyM">Month it pays</label><select id="pyM">${monthOpts(m)}</select></div><div class="field"><label for="pyA">Amount</label><input id="pyA" type="number" min="0" step="10" inputmode="decimal"></div></div>
+    <p class="hint" id="pyHint"></p>
+    <div class="grid2"><div class="field"><label for="pyD">Paid on</label><input id="pyD" type="date" value="${day(new Date())}"></div>
+      <div class="field"><label for="pyW">Method</label><select id="pyW">${Object.entries(METHOD).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div></div>
+    <div class="field"><label for="pyR">Reference or tracking key <span class="muted" style="font-weight:500">(optional)</span></label><input id="pyR" maxlength="80" autocomplete="off"></div>
+    <label class="drop" id="pyDrop"><input id="pyF" type="file" accept="image/*,application/pdf">${ICO('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>', 26)}<span id="pyFL">Upload the transfer screenshot</span><small class="hint">Photo or screenshot (or a PDF)</small></label>
+    <div class="field"><label for="pyN">Note <span class="muted" style="font-weight:500">(optional)</span></label><input id="pyN" maxlength="300"></div>
+    <div id="pyMsg" hidden></div>
+    <button class="btn primary" id="pySave">Save payment</button>`);
+  const fill = () => { const s = sById($b("pyS").value), mm = $b("pyM").value, b = billOf(s, mm), sg = suggestedPay(s, mm); $b("pyA").value = pre.amount != null && s.p.id === sid && mm === m ? pre.amount : sg.amount || ""; $b("pyHint").textContent = b.a.billing === "free" ? "This student doesn’t pay." : `${sg.how} · Paid for ${monthName(mm)}: ${MONEY(b.paid, b.a.currency)}`; };
+  $b("pyS").onchange = fill; $b("pyM").onchange = fill; fill();
+  $b("pyF").onchange = () => {
+    const f = $b("pyF").files[0]; if (!f) return;
+    $b("pyFL").textContent = f.name;
+    const old = $b("pyDrop").querySelector("img"); if (old) old.remove();
+    if (/^image\//.test(f.type)) { const im = document.createElement("img"); im.alt = "Preview"; im.src = URL.createObjectURL(f); $b("pyDrop").prepend(im); }
+  };
+  $b("pySave").onclick = async () => {
+    const amount = Number(String($b("pyA").value).replace(/[^0-9.]/g, "")), msg = $b("pyMsg");
+    if (!(amount > 0)) return bMsg(msg, "Write the amount.");
+    const btn = $b("pySave"); btn.disabled = true; btn.textContent = "Saving…";
+    try {
+      const f = $b("pyF").files[0], id = $b("pyS").value;
+      const proof = f ? await G.office.uploadProof(f, id) : null;
+      const row = { student_id: id, month: $b("pyM").value, amount, paid_on: $b("pyD").value || day(new Date()), method: $b("pyW").value, reference: $b("pyR").value.trim() || null, note: $b("pyN").value.trim() || null, proof_path: proof };
+      const saved = await G.teacher.insert("payments", [row]);
+      await load();
+      const p = (saved && saved[0]) || (DATA.payments || []).find(x => x.student_id === id && Number(x.amount) === amount && x.month === row.month), s = sById(id), ph = phoneOf(id);
+      w.querySelector(".sh-body").innerHTML = `<div class="okbox"><span class="ic">${ICO('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 28)}</span><b>Payment recorded</b><span class="hint">${esc(s.p.display_name)} · ${MONEY(amount, adminOf(id).currency)} · ${monthName(row.month)}</span>
+        <div class="okacts"><a class="btn" id="okR" href="${p ? esc(receiptLink(s, p)) : "#"}" target="_blank" rel="noopener">Open receipt</a>${p ? `<a class="btn primary" href="${esc(waLink(ph, receiptText(p)))}" target="_blank" rel="noopener">Send by WhatsApp</a>` : ""}</div>
+        ${ph ? "" : `<small class="hint">No phone saved: WhatsApp will let you pick the contact.</small>`}</div>`;
+    } catch (e) { btn.disabled = false; btn.textContent = "Save payment"; bMsg(msg, "Couldn’t save: " + (e.message || e)); }
+  };
+}
+function addProof(p) {
+  const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*,application/pdf";
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return;
+    G.toast("Uploading the screenshot…");
+    try { const path = await G.office.uploadProof(f, p.student_id); await G.teacher.update("payments", p.id, { proof_path: path }); if (p.proof_path) G.office.removeProof(p.proof_path); G.toast("<b>Screenshot saved</b>"); await load(); }
+    catch (e) { G.toast("Couldn’t upload: " + esc(e.message)); }
+  };
+  inp.click();
+}
+function payRow(p, showName) {
+  const s = sById(p.student_id), a = adminOf(p.student_id); if (!s) return "";
+  return `<div class="li">${showName ? `<span class="av">${avatarOf(s, 38)}</span>` : ""}<div class="m"><b>${showName ? esc(s.p.display_name) : MONEY(p.amount, a.currency) + " · " + monthName(p.month)}</b><small>${showName ? MONEY(p.amount, a.currency) + " · " + monthName(p.month) + " · " : ""}Paid ${fmt(p.paid_on + "T12:00")}${p.method ? " · " + METHOD[p.method] : ""}${p.reference ? " · Ref. " + esc(p.reference) : ""}${p.note ? " · " + esc(p.note) : ""}</small></div>
+    <span class="acts">${p.proof_path ? `<button class="btn sm" data-pf="${esc(p.proof_path)}">${ICO('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>')} Screenshot</button>` : `<button class="btn sm ghost" data-pfadd="${p.id}">+ Screenshot</button>`}<a class="btn sm" href="${esc(receiptLink(s, p))}" target="_blank" rel="noopener">Receipt</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(p.student_id), receiptText(p)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-pdel="${p.id}">Delete</button></span></div>`;
+}
+function wirePays() {
+  app.querySelectorAll("[data-pf]").forEach(b => b.onclick = () => showProof(b.dataset.pf));
+  app.querySelectorAll("[data-pfadd]").forEach(b => b.onclick = () => addProof((DATA.payments || []).find(p => p.id === b.dataset.pfadd)));
+  app.querySelectorAll("[data-pdel]").forEach(b => b.onclick = async () => {
+    if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "Tap again"; setTimeout(() => { if (b.isConnected) { b.dataset.armed = ""; b.textContent = "Delete"; } }, 3000); return; }
+    const p = (DATA.payments || []).find(x => x.id === b.dataset.pdel); if (!p) return;
+    try { await G.teacher.remove("payments", p.id); if (p.proof_path) G.office.removeProof(p.proof_path); G.toast("Payment deleted"); await load(); } catch (e) { G.toast("Couldn’t delete: " + esc(e.message)); }
+  });
+  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => paySheet({ sid: b.dataset.pay, m: b.dataset.m, amount: b.dataset.amt != null ? Number(b.dataset.amt) : null }));
+}
+function slipState(ch) {
+  const s = sById(ch.student_id), paid = s ? billOf(s, ch.month).paid : 0;
+  if (paid >= Number(ch.amount) && Number(ch.amount) > 0) return ["Paid", "good"];
+  if (ch.due && ch.due < day(new Date())) return ["Overdue", "bad"];
+  return paid > 0 ? ["Partly paid", "warn"] : ["Pending", ""];
+}
+function slipRow(ch, showName) {
+  const s = sById(ch.student_id), a = adminOf(ch.student_id), st = slipState(ch); if (!s) return "";
+  return `<div class="li"><div class="m"><b>${esc(ch.folio)}${showName ? " · " + esc(s.p.display_name) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}${ch.due ? " · due " + fmt(ch.due + "T12:00") : ""}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b><span class="tag ${st[1]}">${st[0]}</span></span>
+    <span class="acts"><a class="btn sm" href="${esc(slipLink(ch))}" target="_blank" rel="noopener">Open</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(ch.student_id), slipText(ch)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-copy="${ch.id}">Copy link</button><button class="btn sm ghost" data-chdel="${ch.id}">Delete</button></span></div>`;
+}
+function wireSlips() {
+  app.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => { const ch = DATA.charges.find(x => x.id === b.dataset.copy), u = slipLink(ch); navigator.clipboard.writeText(u).then(() => G.toast("<b>Link copied</b>"), () => window.prompt("Copy this link:", u)); });
+  app.querySelectorAll("[data-chdel]").forEach(b => b.onclick = async () => {
+    if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "Tap again"; setTimeout(() => { if (b.isConnected) { b.dataset.armed = ""; b.textContent = "Delete"; } }, 3000); return; }
+    try { await G.teacher.remove("charges", b.dataset.chdel); G.toast("Slip deleted"); await load(); } catch (e) { G.toast("Couldn’t delete: " + esc(e.message)); }
+  });
+}
+
+const BTABS = [["", "Overview"], ["payments", "Payments"], ["slips", "Slips"], ["bank", "Bank details"]];
+const billingNav = cur => `<nav class="subtabs" aria-label="Billing">${BTABS.map(([k, t]) => `<a href="#billing${k ? "/" + k : ""}" class="${k === cur ? "on" : ""}" ${k === cur ? 'aria-current="page"' : ""}>${t}</a>`).join("")}</nav>`;
+function billingView(a1, a2, a3) {
+  if (a1 === "payments") return billingPayments(a2, a3);
+  if (a1 === "slips") return billingSlips(a2, a3);
+  if (a1 === "bank") return billingBank();
+  return billingOverview(a1);
+}
+function billingOverview(m) {
   if (DATA.admin === null || DATA.payments === null) { app.innerHTML = topBar("Billing", "") + setupNote("billing"); wireTop(); return; }
   m = m && /^\d{4}-\d{2}$/.test(m) ? m : monthKey(new Date());
   const list = students(), months = [0, 1, 2, 3, 4, 5].map(k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return monthKey(d); });
   const rows = list.map(s => ({ s, b: billOf(s, m) })), cur = (rows.find(r => r.b.a.currency) || { b: { a: { currency: "MXN" } } }).b.a.currency;
   const tot = rows.reduce((t, r) => ({ due: t.due + r.b.due, paid: t.paid + r.b.paid, cls: t.cls + r.b.attended }), { due: 0, paid: 0, cls: 0 });
-  app.innerHTML = topBar("Billing", "Classes given and payments, by month.", `<select id="bm" aria-label="Month">${months.map(k => `<option value="${k}" ${k === m ? "selected" : ""}>${monthName(k)}</option>`).join("")}</select>`) + `
+  app.innerHTML = topBar("Billing", "Classes given, payments, slips and bank details.", `<select id="bm" aria-label="Month">${months.map(k => `<option value="${k}" ${k === m ? "selected" : ""}>${monthName(k)}</option>`).join("")}</select><button class="btn primary sm" id="bPayNew">Record payment</button>`) + billingNav("") + `
     <div class="stats">
       <div class="stat"><span>Classes given</span><b>${tot.cls}</b></div>
       <div class="stat"><span>Expected</span><b>${MONEY(tot.due, cur)}</b></div>
       <div class="stat"><span>Received</span><b>${MONEY(tot.paid, cur)}</b></div>
       <div class="stat"><span>Outstanding</span><b>${MONEY(Math.max(0, tot.due - tot.paid), cur)}</b></div>
     </div>
-    <div class="card"><div class="tbl"><table class="crm" style="min-width:820px">
+    <div class="card only-narrow">${rows.map(({ s, b }) => `<div class="li"><span class="av">${avatarOf(s, 38)}</span><div class="m"><a href="#s/${s.p.id}/billing" style="color:inherit;text-decoration:none"><b>${esc(s.p.display_name || "")}</b></a><small>${b.a.billing === "free" ? "Free" : !Number(b.a.rate) ? "No plan yet" : b.a.billing === "monthly" ? MONEY(b.a.rate, b.a.currency) + " / month" : MONEY(b.a.rate, b.a.currency) + " / class"} · ${b.attended} class${b.attended === 1 ? "" : "es"}${b.scheduled ? ` +${b.scheduled}` : ""}</small></div>
+        <span class="v"><b>${MONEY(b.paid, b.a.currency)} <small class="muted">of ${MONEY(b.due, b.a.currency)}</small></b><span class="tag ${b.status[1]}">${b.status[0]}</span></span>
+        ${b.a.billing === "free" ? "" : !Number(b.a.rate) ? `<span class="acts"><a class="btn sm" href="#s/${s.p.id}/billing">Set plan</a></span>` : `<span class="acts">${DATA.charges !== null ? `<a class="btn sm ghost" href="#billing/slips/${s.p.id}/${m}">Slip</a>` : ""}<button class="btn sm" data-pay="${s.p.id}" data-m="${m}" data-amt="${Math.max(0, b.due - b.paid)}">Record payment</button></span>`}</div>`).join("") || `<p class="empty">No students yet.</p>`}</div>
+    <div class="card only-wide"><div class="tbl"><table class="crm" style="min-width:880px">
       <thead><tr><th>Student</th><th>Plan</th><th class="r">Classes</th><th class="r">Expected</th><th class="r">Paid</th><th>Status</th><th class="r"></th></tr></thead>
       <tbody>${rows.map(({ s, b }) => `<tr>
         <td><a class="who" href="#s/${s.p.id}/billing" style="text-decoration:none;color:inherit"><span class="av">${avatarOf(s, 30)}</span><b>${esc(s.p.display_name || "")}</b></a></td>
@@ -665,16 +817,100 @@ function billingView(m) {
         <td class="r num">${b.attended}${b.scheduled ? `<small class="muted"> +${b.scheduled}</small>` : ""}</td>
         <td class="r num">${MONEY(b.due, b.a.currency)}</td><td class="r num">${MONEY(b.paid, b.a.currency)}</td>
         <td><span class="tag ${b.status[1] === "bad" ? "bad" : b.status[1]}">${b.status[0]}</span></td>
-        <td class="r">${b.a.billing === "free" ? "" : `<button class="btn sm" data-pay="${s.p.id}" data-amt="${Math.max(0, b.due - b.paid)}">Record payment</button>`}</td></tr>`).join("")}</tbody></table></div>
+        <td class="r" style="white-space:nowrap">${b.a.billing === "free" ? "" : `${DATA.charges !== null ? `<a class="btn sm ghost" href="#billing/slips/${s.p.id}/${m}">Slip</a> ` : ""}<button class="btn sm" data-pay="${s.p.id}" data-m="${m}" data-amt="${Math.max(0, b.due - b.paid)}">Record payment</button>`}</td></tr>`).join("")}</tbody></table></div>
       <p class="muted" style="font-size:.84em">Classes counts attended classes (+ still scheduled this month). Set each student’s plan in their file → Billing.</p></div>`;
+  wireTop(); wirePays();
+  $b("bm").onchange = e => location.hash = "#billing/" + e.target.value;
+  $b("bPayNew").onclick = () => paySheet({ m });
+}
+function billingPayments(m, sid) {
+  const list = students(), all = m === "all";
+  m = all ? "all" : /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
+  const pays = (DATA.payments || []).filter(p => sById(p.student_id) && (all || p.month === m) && (!sid || p.student_id === sid));
+  const total = pays.reduce((t, p) => t + Number(p.amount), 0), withProof = pays.filter(p => p.proof_path).length;
+  app.innerHTML = topBar("Billing", "Payments received, receipts and transfer screenshots.", `<button class="btn primary sm" id="pNew">Record payment</button>`) + billingNav("payments") + `
+    ${DATA.payments === null ? setupNote("billing") : DATA.charges === null ? v4Note() : ""}
+    <div class="card"><div class="card-head"><div class="filters"><select id="pM" aria-label="Month paid"><option value="all" ${all ? "selected" : ""}>All months</option>${monthOpts(m, 12)}</select>
+      <select id="pS" aria-label="Student"><option value="">All students</option>${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
+      <span class="hint">${pays.length} payment${pays.length === 1 ? "" : "s"} · <b style="color:var(--ink)">${MONEY(total)}</b>${pays.length ? ` · ${withProof} with screenshot` : ""}</span></div>
+      ${pays.length ? pays.map(p => payRow(p, true)).join("") : `<p class="empty">No payments ${all ? "recorded" : "for " + monthName(m)}.</p>`}</div>`;
   wireTop();
-  document.getElementById("bm").onchange = e => location.hash = "#billing/" + e.target.value;
-  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = async () => {
-    const v = window.prompt("Amount received for " + monthName(m) + ":", b.dataset.amt);
-    if (v === null) return; const amount = Number(String(v).replace(/[^0-9.]/g, ""));
-    if (!(amount >= 0)) return G.toast("Write a number");
-    try { await G.teacher.insert("payments", [{ student_id: b.dataset.pay, month: m, amount }]); G.toast("<b>Payment recorded</b>"); await load(); } catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
-  });
+  const go = () => location.hash = "#billing/payments/" + $b("pM").value + ($b("pS").value ? "/" + $b("pS").value : "");
+  $b("pM").onchange = go; $b("pS").onchange = go;
+  $b("pNew").onclick = () => paySheet({ sid, m: all ? null : m });
+  wirePays();
+}
+function billingSlips(sid, m) {
+  const list = students(), bk = DATA.bank || {}, noBank = !bk.clabe && !bk.account && !bk.card;
+  sid = sById(sid) ? sid : (list[0] && list[0].p.id); m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
+  const ch = (DATA.charges || []).filter(c => sById(c.student_id));
+  app.innerHTML = topBar("Billing", "Payment slips with your bank details, in Spanish, for families to pay.") + billingNav("slips") + `
+    ${DATA.charges === null ? v4Note() : noBank ? `<div class="alert info">Before sending slips, add your <a href="#billing/bank">bank details</a> (bank, account holder and CLABE).</div>` : ""}
+    <div class="cols">
+      <div class="card" id="newSlip"><h2>New payment slip</h2>
+        ${list.length ? `<div class="grid2"><div class="field"><label for="fS">Student</label><select id="fS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
+          <div class="field"><label for="fM">Month</label><select id="fM">${monthOpts(m)}</select></div></div>
+        <div class="field"><label for="fC">Concept <span class="muted" style="font-weight:500">(prints on the slip, in Spanish)</span></label><input id="fC" maxlength="140"></div>
+        <div class="grid2"><div class="field"><label for="fA">Amount to pay</label><input id="fA" type="number" min="0" step="10" inputmode="decimal"></div><div class="field"><label for="fD">Pay by</label><input id="fD" type="date"></div></div>
+        <p class="hint" id="fHint"></p>
+        <div class="field"><label for="fN">Note <span class="muted" style="font-weight:500">(optional, in Spanish)</span></label><input id="fN" maxlength="300" placeholder="Ej. Incluye la clase de reposición del día 12"></div>
+        <div id="fMsg" hidden></div>
+        <div class="actions"><button class="btn primary" id="fSave" ${DATA.charges === null ? "disabled" : ""}>Create slip</button></div>` : `<p class="empty">No students yet.</p>`}</div>
+      <div class="card"><div class="card-head"><h2>Slips sent</h2></div>${ch.length ? ch.map(c => slipRow(c, true)).join("") : `<p class="empty">No slips yet.</p>`}</div>
+    </div>`;
+  wireTop(); wireSlips();
+  if (!list.length) return;
+  const dueDef = () => { const [y, mo] = $b("fM").value.split("-").map(Number), d5 = new Date(y, mo - 1, 5); return day(d5 > new Date() ? d5 : new Date(Date.now() + 3 * 864e5)); };
+  const fill = () => { const s = sById($b("fS").value), mm = $b("fM").value, sg = suggestedPay(s, mm); $b("fC").value = "Clases de inglés · " + esMonth(mm); $b("fA").value = sg.amount || ""; $b("fD").value = dueDef(); $b("fHint").textContent = sg.how + "."; };
+  $b("fS").onchange = fill; $b("fM").onchange = fill; fill();
+  $b("fSave").onclick = async () => {
+    const id = $b("fS").value, mm = $b("fM").value, amount = Number($b("fA").value), msg = $b("fMsg");
+    if (!(amount > 0)) return bMsg(msg, "Write the amount to pay.");
+    const s = sById(id), n = (s.p.display_name || "X").trim().split(/\s+/), initials = ((n[0][0] || "X") + (n[1] ? n[1][0] : n[0][1] || "")).toUpperCase().normalize("NFD").replace(/[^A-Z]/g, "");
+    const seq = (DATA.charges || []).filter(c => c.month === mm).length + 1;
+    const row = { student_id: id, month: mm, folio: `F-${mm.replace("-", "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $b("fC").value.trim() || null, amount, due: $b("fD").value || null, note: $b("fN").value.trim() || null };
+    const btn = $b("fSave"); btn.disabled = true;
+    try {
+      const saved = await G.teacher.insert("charges", [row]); await load();
+      const c = (saved && saved[0]) || { ...row, created_at: new Date().toISOString() };
+      sheet("Slip created", esc(c.folio), `<div class="okbox"><span class="ic">${ICO('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 28)}</span><b>${esc(s.p.display_name)} · ${MONEY(amount, adminOf(id).currency)}</b><span class="hint">${c.due ? "Pay by " + fmt(c.due + "T12:00") : ""}</span>
+        <div class="okacts"><a class="btn" href="${esc(slipLink(c))}" target="_blank" rel="noopener">Open slip</a><a class="btn primary" href="${esc(waLink(phoneOf(id), slipText(c)))}" target="_blank" rel="noopener">Send by WhatsApp</a></div></div>`);
+    } catch (e) { btn.disabled = false; bMsg(msg, "Couldn’t create it: " + (e.message || e)); }
+  };
+}
+function billingBank() {
+  const bk = DATA.bank || {};
+  app.innerHTML = topBar("Billing", "Your bank details print on every payment slip so families can transfer.") + billingNav("bank") + `
+    ${DATA.bank === null ? v4Note() : ""}
+    <div class="cols">
+      <div class="card"><form id="bkForm" style="display:grid;gap:12px" novalidate>
+        <div class="grid2"><div class="field"><label for="bkB">Bank</label><input id="bkB" maxlength="60" value="${esc(bk.bank || "")}" placeholder="e.g. BBVA"></div>
+          <div class="field"><label for="bkH">Account holder</label><input id="bkH" maxlength="120" value="${esc(bk.holder || "")}" autocomplete="off"></div></div>
+        <div class="field"><label for="bkC">CLABE (18 digits)</label><input id="bkC" inputmode="numeric" maxlength="22" value="${esc(bk.clabe || "")}" autocomplete="off"></div>
+        <div class="grid2"><div class="field"><label for="bkA">Account number <span class="muted" style="font-weight:500">(optional)</span></label><input id="bkA" inputmode="numeric" maxlength="20" value="${esc(bk.account || "")}" autocomplete="off"></div>
+          <div class="field"><label for="bkK">Card for deposits <span class="muted" style="font-weight:500">(optional)</span></label><input id="bkK" inputmode="numeric" maxlength="19" value="${esc(bk.card || "")}" autocomplete="off"></div></div>
+        <div class="field"><label for="bkT">Send the receipt to</label><input id="bkT" maxlength="120" value="${esc(bk.send_to || "")}" placeholder="Ej. WhatsApp 81 1234 5678"></div>
+        <div class="field"><label for="bkI">Instructions <span class="muted" style="font-weight:500">(optional, in Spanish)</span></label><textarea id="bkI" maxlength="600">${esc(bk.instructions || "Escribe el folio de la ficha en el concepto de la transferencia.")}</textarea></div>
+        <div id="bkMsg" hidden></div>
+        <div class="actions"><button class="btn primary" type="submit" ${DATA.bank === null ? "disabled" : ""}>Save bank details</button>${bk.updated_at ? `<span class="hint">Saved ${fmt(bk.updated_at)}</span>` : ""}</div></form></div>
+      <div class="card"><h2>How it looks on the slip</h2><div class="bankprev" id="bkPrev"></div><p class="hint">Only you, the office account and whoever gets a slip see these details. Shared with the office panel.</p></div>
+    </div>`;
+  wireTop();
+  const digits = v => v.replace(/\D/g, ""), group = (v, n) => v.replace(new RegExp(`(.{${n}})`, "g"), "$1 ").trim();
+  const prev = () => {
+    const r = [["Banco", $b("bkB").value.trim()], ["Titular", $b("bkH").value.trim()], ["CLABE", group(digits($b("bkC").value), 4)], ["Cuenta", digits($b("bkA").value)], ["Tarjeta", group(digits($b("bkK").value), 4)], ["Comprobante a", $b("bkT").value.trim()]].filter(x => x[1]);
+    $b("bkPrev").innerHTML = r.length ? r.map(x => `<div><span>${x[0]}</span><b>${esc(x[1])}</b></div>`).join("") : `<span>Nothing yet.</span>`;
+  };
+  $b("bkForm").querySelectorAll("input,textarea").forEach(x => x.addEventListener("input", prev)); prev();
+  $b("bkForm").onsubmit = async e => {
+    e.preventDefault();
+    const msg = $b("bkMsg"), clabe = digits($b("bkC").value), card = digits($b("bkK").value), acct = digits($b("bkA").value);
+    if (clabe && clabe.length !== 18) return bMsg(msg, `The CLABE needs 18 digits (it has ${clabe.length}).`);
+    if (card && !(card.length === 16 || card.length === 15)) return bMsg(msg, "The card needs 16 digits.");
+    if (!clabe && !acct && !card) return bMsg(msg, "Write at least the CLABE, the account or the card.");
+    try { await G.teacher.upsert("billing_info", { id: 1, bank: $b("bkB").value.trim() || null, holder: $b("bkH").value.trim() || null, clabe: clabe || null, account: acct || null, card: card || null, send_to: $b("bkT").value.trim() || null, instructions: $b("bkI").value.trim() || null, updated_at: new Date().toISOString() }); G.toast("<b>Bank details saved</b>"); await load(); }
+    catch (err) { bMsg(msg, "Couldn’t save: " + (err.message || err)); }
+  };
 }
 const COND = "Todas las clases se pagan por adelantado. Las clases canceladas con 24 horas de anticipación se reprograman sin costo.";
 let PROP = null;
@@ -739,14 +975,9 @@ function billingTab(s) {
     <div class="actions"><button class="btn primary sm" id="bSave">Save plan</button></div></div>
     <div class="card"><h2>By month</h2><div class="tbl"><table style="min-width:520px"><thead><tr><th>Month</th><th class="r">Classes</th><th class="r">Expected</th><th class="r">Paid</th><th>Status</th></tr></thead>
       <tbody>${months.map(m => { const b = billOf(s, m); return `<tr><td>${monthName(m)}</td><td class="r">${b.attended}</td><td class="r">${MONEY(b.due, a.currency)}</td><td class="r">${MONEY(b.paid, a.currency)}</td><td><span class="tag ${b.status[1]}">${b.status[0]}</span></td></tr>`; }).join("")}</tbody></table></div></div>
-    <div class="card"><h2>Payments</h2>
-      ${pays.length ? `<div class="hw">${pays.map(p => `<div class="hw-item"><div><b>${MONEY(p.amount, a.currency)}</b> · ${monthName(p.month)}<br><small>Received ${fmt(p.paid_on + "T12:00")}${p.method ? " · " + ({ transfer: "Transfer", cash: "Cash", deposit: "Deposit", card: "Card", other: "Other" })[p.method] : ""}${p.reference ? " · Ref. " + esc(p.reference) : ""}${p.note ? " · " + esc(p.note) : ""}</small></div><div class="rowact">${p.proof_path ? `<button class="btn sm ghost" data-proof="${esc(p.proof_path)}">Proof</button>` : ""}<button class="btn sm" data-rcpt="${p.id}">Receipt</button><button class="btn ghost sm" data-pdel="${p.id}">Delete</button></div></div>`).join("")}</div>` : `<p class="empty">No payments recorded.</p>`}
-      <form id="payForm" class="ruleform" novalidate>
-        <div class="field"><label for="pM2">Month</label><select id="pM2">${months.map(m => `<option value="${m}">${monthName(m)}</option>`).join("")}</select></div>
-        <div class="field"><label for="pA">Amount</label><input id="pA" type="number" min="0" step="10" inputmode="decimal" value="${a.billing === "monthly" ? Number(a.rate) || "" : ""}"></div>
-        <div class="field"><label for="pN">Note <span class="muted" style="font-weight:500">(optional)</span></label><input id="pN" maxlength="300"></div>
-        <button class="btn primary" type="submit">Record payment</button>
-      </form></div>` + proposalCard(s);
+    <div class="card"><div class="card-head"><h2>Payments</h2><div class="actions"><button class="btn primary sm" data-pay="${s.p.id}" data-m="${monthKey(new Date())}">Record payment</button>${DATA.charges !== null ? `<a class="btn sm" href="#billing/slips/${s.p.id}">New payment slip</a>` : ""}</div></div>
+      ${pays.length ? pays.map(p => payRow(p, false)).join("") : `<p class="empty">No payments recorded.</p>`}</div>
+    ${DATA.charges !== null ? `<div class="card"><div class="card-head"><h2>Payment slips</h2></div>${(() => { const cs = DATA.charges.filter(c => c.student_id === s.p.id); return cs.length ? cs.map(c => slipRow(c, false)).join("") : `<p class="empty">No slips yet. <a href="#billing/slips/${s.p.id}">Create one</a></p>`; })()}</div>` : ""}` + proposalCard(s);
 }
 function receiptLink(s, p) {
   const a = adminOf(s.p.id), b = billOf(s, p.month);
@@ -755,24 +986,12 @@ function receiptLink(s, p) {
   return location.origin + location.pathname.replace(/teacher\.html$/, "") + "recibo.html?d=" + b64(D);
 }
 function wireBilling(s) {
-  app.querySelectorAll("[data-rcpt]").forEach(b => b.onclick = () => { const p = (DATA.payments || []).find(x => x.id === b.dataset.rcpt); if (p) window.open(receiptLink(s, p), "_blank", "noopener"); });
-  app.querySelectorAll("[data-proof]").forEach(b => b.onclick = async () => { const w = window.open("", "_blank"); try { const u = await G.teacher.proofUrl(b.dataset.proof); if (w) w.location = u; else location.href = u; } catch (e) { if (w) w.close(); G.toast("Couldn’t open the proof: " + esc(e.message)); } });
+  wirePays(); wireSlips();
   const bs = document.getElementById("bSave");
   if (bs) bs.onclick = async () => {
     try { await G.teacher.upsert("student_admin", { ...adminOf(s.p.id), student_id: s.p.id, billing: document.getElementById("bP").value, rate: Number(document.getElementById("bR").value) || 0, currency: document.getElementById("bC").value, updated_at: new Date().toISOString() }); G.toast("Plan saved"); await load(); }
     catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
   };
-  const pf = document.getElementById("payForm");
-  if (pf) pf.onsubmit = async e => {
-    e.preventDefault(); const amount = Number(document.getElementById("pA").value);
-    if (!(amount >= 0) || document.getElementById("pA").value === "") return G.toast("Write the amount");
-    try { await G.teacher.insert("payments", [{ student_id: s.p.id, month: document.getElementById("pM2").value, amount, note: document.getElementById("pN").value.trim() || null }]); G.toast("<b>Payment recorded</b>"); await load(); }
-    catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
-  };
-  document.querySelectorAll("[data-pdel]").forEach(b => b.onclick = async () => {
-    if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "Tap again"; setTimeout(() => { if (b.isConnected) { b.dataset.armed = ""; b.textContent = "Delete"; } }, 3000); return; }
-    try { await G.teacher.remove("payments", b.dataset.pdel); await load(); } catch (err) { G.toast("Couldn’t delete: " + esc(err.message)); }
-  });
 }
 
 function accountsView() {
