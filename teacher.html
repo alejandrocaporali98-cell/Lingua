@@ -158,6 +158,40 @@
   .fu .dot.bad { background: var(--bad); } .fu .dot.warn { background: #d39a00; }
   .fu .what { color: var(--ink-2); min-width: 0; }
   @media (max-width: 520px) { .fu { grid-template-columns: 8px minmax(0, 1fr); row-gap: 2px; } .fu .what { grid-column: 2; } }
+  /* Today: dashboard with charts */
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 1000px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; min-width: 0; }
+  .klbl { font-size: .7em; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); }
+  .kval { display: flex; justify-content: space-between; align-items: end; gap: 8px; min-height: 34px; }
+  .kval b { font-size: 1.7em; font-weight: 800; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; } .kval b small { font-size: .5em; color: var(--mute); font-weight: 700; margin-left: 2px; }
+  .spk { flex: none; max-width: 45%; height: auto; }
+  .ksub { font-size: .78em; font-weight: 700; color: var(--mute); } .ksub.up { color: var(--ok); } .ksub.down { color: var(--dev); } .ksub a { color: var(--brand); }
+  .segs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; margin-top: 4px; } .segs i { height: 8px; border-radius: 2px; background: var(--line); } .segs i.on { background: var(--ok); } .segs i.part { background: #d39a00; }
+  @media (max-width: 560px) { .kpi { padding: 12px; } .kval b { font-size: 1.45em; } .spk { width: 64px; } }
+  .dgrid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 1000px) { .dgrid { grid-template-columns: 1fr; } }
+  .tcs { display: grid; }
+  .tc { display: grid; grid-template-columns: 70px 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
+  .tc:first-child { border-top: 0; } .tc .tt { font-variant-numeric: tabular-nums; white-space: nowrap; font-size: .92em; }
+  .tc .av { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; }
+  .tc a { color: inherit; text-decoration: none; } .tc small { display: block; color: var(--mute); font-size: .8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 520px) { .tc { grid-template-columns: 62px minmax(0, 1fr) auto; } .tc .av { display: none; } }
+  .wbars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; height: 120px; }
+  .wb { display: grid; justify-items: center; align-content: end; gap: 4px; height: 100%; }
+  .wb i { width: 68%; max-width: 34px; border-radius: 4px 4px 0 0; background: var(--line); } .wb i.done { background: var(--ok); } .wb i.today { background: var(--fill-brand); } .wb i.sched { background: var(--line-2); } .wb i.missed { background: var(--bad); } .wb i.none { background: var(--line); border-radius: 2px; }
+  .wb small { font-size: .72em; font-weight: 700; color: var(--mute); } .wb.is-today small { color: var(--brand); font-weight: 800; }
+  .wb .wn { font-size: .72em; font-weight: 800; color: var(--ink-2); min-height: 1em; }
+  .legend i.done { background: var(--ok); border-color: var(--ok); } .legend i.today { background: var(--fill-brand); border-color: var(--fill-brand); } .legend i.sched { background: var(--line-2); } .legend i.missed { background: var(--bad); border-color: var(--bad); }
+  .qbs { display: grid; gap: 10px; position: relative; }
+  .qb { display: grid; grid-template-columns: 84px minmax(0, 1fr) 44px; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-size: .92em; }
+  .qb b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .qb:hover b { text-decoration: underline; }
+  .qt { position: relative; height: 14px; border-radius: 4px; background: var(--bg); }
+  .qt::after { content: ""; position: absolute; top: -4px; bottom: -4px; left: 80%; border-left: 1px dashed var(--mute); }
+  .qt i { display: block; height: 100%; border-radius: 4px; } .qt i.ok { background: var(--ok); } .qt i.mid { background: #d39a00; } .qt i.low { background: var(--bad); }
+  .qv { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .allgood { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; background: var(--ok-soft); color: var(--ok-ink); font-weight: 700; font-size: .92em; }
+  .allgood svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   /* Today: next class first */
   .tdgrid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr); gap: 18px; align-items: start; }
   .tdside { display: grid; gap: 18px; min-width: 0; }
@@ -441,111 +475,90 @@ const agoShort = d => { const m = (Date.now() - new Date(d)) / 6e4; return m < 6
 
 function todayView() {
   const list = students(), byId = Object.fromEntries(list.map(s => [s.p.id, s])), now = Date.now(), t0 = new Date(); t0.setHours(0, 0, 0, 0);
-  const t1 = new Date(t0); t1.setDate(t1.getDate() + 1); const w1 = new Date(t0); w1.setDate(w1.getDate() + 7);
+  const t1 = new Date(t0); t1.setDate(t1.getDate() + 1);
   const cls = (DATA.classes || []).filter(c => byId[c.student_id] && c.status !== "cancelled");
   const today = cls.filter(c => new Date(c.starts_at) >= t0 && new Date(c.starts_at) < t1).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
   const upcoming = cls.filter(c => c.status === "scheduled" && new Date(c.starts_at) >= now - 3600e3).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
-  const hero = upcoming[0] || null;
-  const alerts = list.flatMap(s => alertsOf(s).map(a => ({ s, a })));
-  const acts = list.flatMap(activityOf).filter(e => e.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 6);
-  const practiced = list.filter(s => s.updated && day(s.updated) === day(new Date()));
   const ST = { scheduled: ["Scheduled", ""], attended: ["Done", "good"], missed: ["Missed", "warn"] };
-  // follow-up: one card per student, worst issue first; "placement not taken" goes to a single summary line
   const sev = { bad: 0, warn: 1, info: 2 }, byStu = {}, noPlacement = [];
-  alerts.forEach(({ s, a }) => { if (a[1] === "Placement test not taken") { noPlacement.push(s); return; } (byStu[s.p.id] = byStu[s.p.id] || { s, items: [] }).items.push(a); });
+  list.forEach(s => alertsOf(s).forEach(a => { if (a[1] === "Placement test not taken") { noPlacement.push(s); return; } (byStu[s.p.id] = byStu[s.p.id] || { s, items: [] }).items.push(a); }));
   const groups = Object.values(byStu).map(g => (g.items.sort((x, y) => sev[x[0]] - sev[y[0]]), g)).sort((x, y) => sev[x.items[0][0]] - sev[y.items[0][0]]);
-  const KIND = a => /quiz/.test(a[1]) ? ["Low score", "Review quiz", "overview"] : /^Homework/.test(a[1]) ? ["Homework", "Open homework", "homework"] : /signed in/.test(a[1]) ? ["Access", "Check account", "#accounts"] : /activity/.test(a[1]) ? ["Inactive", "Open profile", "overview"] : /lessons assigned/.test(a[1]) ? ["Lessons", "Assign lessons", "lessons"] : /Missed/.test(a[1]) ? ["Attendance", "Open classes", "classes"] : /review/.test(a[1]) ? ["Review", "See questions", "overview"] : ["Check", "Open profile", a[2] || "overview"];
 
-  // hero: the next class, with what you need to walk in prepared
-  let heroHtml;
-  if (hero) {
-    const s = byId[hero.student_id], start = new Date(hero.starts_at), l = hero.lesson_id ? lessons.find(x => x.id === hero.lesson_id) : s.mine[s.nextIdx];
-    const mins = Math.round((start - now) / 6e4), sameDay = day(start) === day(new Date()), tmr = day(start) === day(t1);
-    const k = mins <= 0 ? "Happening now" : sameDay ? `Next class · in ${mins >= 60 ? Math.floor(mins / 60) + " h " : ""}${mins % 60} min` : tmr ? "Next class · tomorrow" : "Next class · " + start.toLocaleDateString("en-US", { weekday: "long" });
-    const lastCls = (DATA.classes || []).filter(x => x.student_id === s.p.id && x.status === "attended" && new Date(x.starts_at) < now).sort((a, b) => b.starts_at.localeCompare(a.starts_at))[0];
-    const hw = s.hw.slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))[0], td = day(new Date());
-    const hwTag = !hw ? "" : hw.done_at ? `<span class="tag good">Delivered</span>` : hw.due && hw.due < td ? `<span class="tag bad">Overdue</span>` : `<span class="tag">Pending${hw.due ? " · due " + fmt(hw.due + "T12:00:00") : ""}</span>`;
-    const tries = s.rows.flatMap(r => (s.get("attempts." + r.l.id, []) || []).filter(a => a && a.at && a.n).map(a => ({ at: a.at, p: a.ok / a.n }))).sort((a, b) => String(a.at).localeCompare(String(b.at))).slice(-5);
-    let quiz = `<p>No quizzes yet.</p>`;
-    if (tries.length) {
-      const n = tries.length, X = i => 6 + (n > 1 ? i * 128 / (n - 1) : 64), Y = p => (36 - p * 30).toFixed(1);
-      const last = tries[n - 1].p, prev = n > 1 ? tries.slice(0, -1).reduce((a, t) => a + t.p, 0) / (n - 1) : last;
-      const trend = n < 2 ? "" : last - prev > .04 ? " · trending up" : prev - last > .04 ? " · trending down" : " · steady";
-      quiz = `<svg class="spark" width="140" height="40" viewBox="0 0 140 40" role="img" aria-label="Last ${n} quiz scores: ${tries.map(t => Math.round(t.p * 100) + "%").join(", ")}">
-        <line x1="0" y1="12" x2="140" y2="12" stroke="var(--line-2)" stroke-dasharray="3 3"></line>
-        ${n > 1 ? `<polyline points="${tries.map((t, i) => X(i) + "," + Y(t.p)).join(" ")}" fill="none" stroke="var(--brand)" stroke-width="2"></polyline>` : ""}
-        ${tries.map((t, i) => `<circle cx="${X(i)}" cy="${Y(t.p)}" r="3" fill="${t.p >= .8 ? "var(--brand)" : "var(--bad)"}"></circle>`).join("")}</svg>
-        <small>Latest ${Math.round(last * 100)}%${trend}</small>`;
-    }
-    const near = Math.abs(start - now) < 3 * 3600e3;
-    heroHtml = `<section class="hero">
-      <div class="hero-top">
-        <a class="av" href="#s/${s.p.id}" aria-label="${esc(s.p.display_name || "")}">${avatarOf(s, 56)}</a>
-        <div class="hero-main"><div class="hero-k">${k}</div><a class="hero-n" href="#s/${s.p.id}">${esc(s.p.display_name || "")}</a>
-          <div class="hero-s">${sameDay ? "" : esc(start.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })) + " · "}${hhmm(hero.starts_at)}${l ? " · Lesson " + esc(l.id) + " · " + esc(l.titulo) : ""}</div></div>
-        <div class="hero-act"><button class="btn dk" id="hPres" title="Open the lesson full screen to share it">Present</button><button class="btn primary" id="hStart">${near ? "Start class" : "Open lesson"}</button></div>
-      </div>
-      <div class="facts">
-        <div class="fact"><span class="flbl">${lastCls ? "Last class · " + fmt(lastCls.starts_at) : "Last class"}</span>
-          <p>${lastCls ? (lastCls.notes ? esc(lastCls.notes.length > 160 ? lastCls.notes.slice(0, 157) + "…" : lastCls.notes) : "No notes from that class.") : "This is your first class together."}</p>
-          ${lastCls && !lastCls.notes ? `<a class="flink" href="#s/${s.p.id}/classes">Add notes</a>` : ""}</div>
-        <div class="fact"><span class="flbl">Homework</span>
-          ${hw ? `<span>${hwTag}</span><small>${esc(hw.title)}</small>` : `<p>No homework assigned.</p><a class="flink" href="#s/${s.p.id}/homework">Assign homework</a>`}</div>
-        <div class="fact"><span class="flbl">Last ${tries.length > 1 ? tries.length + " quizzes" : "quiz"}</span>${quiz}</div>
-      </div>
-      ${l ? `<div class="lplan"><span class="lbl">Lesson</span>${l.tema ? `<span class="ltema">${esc(l.tema)}</span>` : ""}<span class="chips">${[l.nivel, l.min ? l.min + " min" : "", l.secs ? l.secs + " sections" : ""].filter(Boolean).map(x => `<span class="tag">${esc(x)}</span>`).join("")}</span></div>` : ""}
-    </section>`;
-    setTimeout(() => {
-      const go = p => startClass(s, near ? hero : null, { lesson: l, present: p });
-      const a = document.getElementById("hStart"), b = document.getElementById("hPres");
-      if (a) a.onclick = () => { a.disabled = true; go(false); };
-      if (b) b.onclick = () => { b.disabled = true; go(true); };
-    }, 0);
-  } else {
-    heroHtml = `<section class="hero"><div class="hero-empty"><b>No classes scheduled</b><p class="muted">Set each student’s weekly classes and the next one will show up here, ready to start.</p><a class="btn primary" href="#schedule">Open schedule</a></div></section>`;
-  }
-
-  // side: the rest of today (or what's coming), month calendar, recent activity
-  const rest = today.filter(c => !hero || c.id !== hero.id), more = rest.length ? rest : upcoming.slice(1, 4);
-  const laterTitle = rest.length ? "Later today" : "Coming up";
-  const laterHtml = more.length ? more.map(c => { const s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : s.mine[s.nextIdx]; return `<div class="lt">
-      <span class="av">${avatarOf(s, 40)}</span>
-      <div style="min-width:0;flex:1"><a href="#s/${s.p.id}"><b>${rest.length ? "" : esc(new Date(c.starts_at).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })) + " · "}${hhmm(c.starts_at)} · ${esc((s.p.display_name || "").split(" ")[0])}</b></a><small>${l ? esc("Lesson " + l.id + " · " + l.titulo) : "Next lesson"}</small></div>
-      ${c.status === "scheduled" ? `<button class="btn sm" data-sc="${c.id}">Start</button>` : `<span class="tag ${(ST[c.status] || ["", ""])[1]}">${(ST[c.status] || [c.status])[0]}</span>`}</div>`; }).join("") : `<p class="muted" style="font-size:.9em">Nothing else scheduled this week.</p>`;
-  const y = t0.getFullYear(), m = t0.getMonth(), first = new Date(y, m, 1), off = (first.getDay() + 6) % 7, dim = new Date(y, m + 1, 0).getDate(), td = day(new Date());
-  const byDay = {}; cls.forEach(c => { const k = day(c.starts_at); (byDay[k] = byDay[k] || []).push(c); });
-  const cell = d => {
-    const k = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0"), cs = byDay[k] || [];
-    const st = k === td ? "tod" : cs.some(c => c.status === "missed") ? "mis" : cs.some(c => c.status === "attended") ? "att" : cs.length ? "sch" : "";
-    const tip = cs.map(c => hhmm(c.starts_at) + " " + ((byId[c.student_id].p.display_name || "").split(" ")[0])).join(", ");
-    return `<span class="${st}"${tip ? ` title="${esc(tip)}"` : ""}>${d}</span>`;
+  // weeks: Monday-start buckets for the last 8 weeks (oldest first)
+  const wk0 = new Date(t0); wk0.setDate(wk0.getDate() - ((wk0.getDay() + 6) % 7));
+  const weeks = Array.from({ length: 8 }, (_, k) => { const a = new Date(wk0); a.setDate(a.getDate() - 7 * (7 - k)); const b = new Date(a); b.setDate(b.getDate() + 7); return [a, b]; });
+  const inW = (d, w) => { const x = new Date(d); return x >= w[0] && x < w[1]; };
+  const spark = (vals, color, label) => {
+    const v = vals.map((x, i) => [i, x]).filter(p => p[1] != null);
+    if (v.length < 2) return "";
+    const lo = Math.min(...v.map(p => p[1])), hi = Math.max(...v.map(p => p[1])), rng = hi - lo || 1;
+    const pts = v.map(([i, x]) => [(i / (vals.length - 1)) * 92 + 2, 28 - ((x - lo) / rng) * 22]);
+    const last = pts[pts.length - 1];
+    return `<svg class="spk" width="96" height="32" viewBox="0 0 96 32" role="img" aria-label="${esc(label)}"><polyline points="${pts.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline><circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="${color}"></circle></svg>`;
   };
-  const cal = `<div class="mcal">${["M", "T", "W", "T", "F", "S", "S"].map(d => `<b>${d}</b>`).join("")}${"<span></span>".repeat(off)}${Array.from({ length: dim }, (_, i) => cell(i + 1)).join("")}</div>
-    <div class="legend"><span><i class="att"></i>Attended</span><span><i class="mis"></i>Missed</span><span><i class="sch"></i>Scheduled</span></div>`;
 
-  app.innerHTML = topBar("Today", `${new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} · ${today.length} class${today.length === 1 ? "" : "es"} · ${groups.length} to follow up`) + `
+  // KPI 1: classes this month vs last month
+  const m0 = monthKey(new Date()), pm = (() => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 1); return monthKey(d); })();
+  const cM = cls.filter(c => monthKey(c.starts_at) === m0 && c.status !== "missed").length, cP = cls.filter(c => monthKey(c.starts_at) === pm && c.status !== "missed").length;
+  const cSpark = weeks.map(w => cls.filter(c => c.status === "attended" && inW(c.starts_at, w)).length);
+  // KPI 2: quiz average (each student's average of their best scores) and its weekly trend
+  const avgs = list.map(s => s.avg).filter(x => x != null), qAvg = avgs.length ? Math.round(avgs.reduce((a, b) => a + b, 0) / avgs.length) : null;
+  const tries = list.flatMap(s => s.rows.flatMap(r => (s.get("attempts." + r.l.id, []) || []).filter(a => a && a.at && a.n)));
+  const qSpark = weeks.map(w => { const t = tries.filter(a => inW(a.at, w)); return t.length ? t.reduce((x, a) => x + a.ok / a.n, 0) / t.length * 100 : null; });
+  // KPI 3: homework finished on time (only homework with a due date that is done or already past due)
+  const tdK = day(new Date()), hwAll = (DATA.homework || []).filter(h => byId[h.student_id] && h.due && (h.done_at || h.due < tdK));
+  const onTime = h => h.done_at && day(h.done_at) <= h.due, hPct = hwAll.length ? Math.round(hwAll.filter(onTime).length / hwAll.length * 100) : null;
+  const hSpark = weeks.map(w => { const hs = hwAll.filter(h => inW(h.due + "T12:00:00", w)); return hs.length ? hs.filter(onTime).length / hs.length * 100 : null; });
+  const hTrend = (() => { const v = hSpark.filter(x => x != null); return v.length >= 3 && v[v.length - 1] < v[v.length - 2] && v[v.length - 2] < v[v.length - 3] ? "down" : v.length >= 2 && v[v.length - 1] > v[v.length - 2] ? "up" : ""; })();
+  // KPI 4: payments this month for students on a paid plan
+  const billable = DATA.admin === null ? null : list.map(s => billOf(s, m0)).filter(b => b.a.billing !== "free" && b.due > 0);
+  const paidN = billable ? billable.filter(b => b.paid >= b.due).length : 0;
+
+  const kpi = (label, val, unit, sub, subCls, chart) => `<div class="kpi"><span class="klbl">${label}</span><div class="kval"><b>${val}${unit ? `<small>${unit}</small>` : ""}</b>${chart || ""}</div><small class="ksub ${subCls || ""}">${sub}</small></div>`;
+  const kpis = [
+    kpi("Classes this month", cM, "", cP ? `${cM - cP >= 0 ? "+" : ""}${cM - cP} vs ${new Date(pm + "-15").toLocaleDateString("en-US", { month: "long" })}` : "Attended and scheduled", cM - cP > 0 ? "up" : "", spark(cSpark, "var(--brand)", "Classes per week, last 8 weeks")),
+    kpi("Average quiz", qAvg == null ? "—" : qAvg, qAvg == null ? "" : "%", "Pass mark 80%", "", spark(qSpark, "var(--brand)", "Average quiz score per week")),
+    kpi("Homework on time", hPct == null ? "—" : hPct, hPct == null ? "" : "%", hPct == null ? "No homework with a due date yet" : hTrend === "down" ? "Down 2 weeks in a row" : `${hwAll.filter(onTime).length} of ${hwAll.length} on time`, hTrend === "down" ? "down" : "", spark(hSpark, hTrend === "down" ? "var(--dev)" : "var(--brand)", "Homework on time per week")),
+    billable === null ? kpi(`${new Date().toLocaleDateString("en-US", { month: "long" })} payments`, "—", "", `<a href="#billing">Set up billing</a>`) :
+      kpi(`${new Date().toLocaleDateString("en-US", { month: "long" })} payments`, paidN, billable.length ? ` of ${billable.length} paid` : "", billable.length ? `<span class="segs">${billable.map(b => `<i class="${b.paid >= b.due ? "on" : b.paid > 0 ? "part" : ""}"></i>`).join("")}</span>` : `<a href="#billing">No paid plans this month</a>`)
+  ].join("");
+
+  // classes list: today, or the next ones when there's nothing today
+  const showList = today.length ? today : upcoming.slice(0, 3);
+  const classRows = showList.map(c => { const s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : s.mine[s.nextIdx], d = new Date(c.starts_at);
+    return `<div class="tc"><b class="tt">${today.length ? "" : esc(d.toLocaleDateString("en-US", { weekday: "short" })) + " "}${hhmm(c.starts_at)}</b>
+      <span class="av">${avatarOf(s, 36)}</span>
+      <div style="min-width:0"><a href="#s/${s.p.id}"><b>${esc(s.p.display_name || "")}</b></a><small>${l ? esc("Lesson " + l.id + " · " + l.titulo) : "Next lesson"}</small></div>
+      ${c.status === "scheduled" ? `<button class="btn sm ${Math.abs(d - now) < 3 * 3600e3 ? "primary" : ""}" data-sc="${c.id}">Start</button>` : `<span class="tag ${(ST[c.status] || ["", ""])[1]}">${(ST[c.status] || [c.status])[0]}</span>`}</div>`; }).join("");
+
+  // this week: classes per day, Monday to Sunday
+  const wDays = Array.from({ length: 7 }, (_, k) => { const a = new Date(wk0); a.setDate(a.getDate() + k); return a; });
+  const perDay = wDays.map(d => cls.filter(c => day(c.starts_at) === day(d)));
+  const maxN = Math.max(1, ...perDay.map(x => x.length));
+  const wTotal = perDay.reduce((a, x) => a + x.length, 0);
+  const bars = wDays.map((d, k) => { const cs = perDay[k], isT = day(d) === tdK;
+    const kind = !cs.length ? "none" : isT ? "today" : cs.some(c => c.status === "missed") ? "missed" : cs.every(c => c.status === "attended") ? "done" : "sched";
+    return `<div class="wb ${isT ? "is-today" : ""}" title="${esc(cs.map(c => hhmm(c.starts_at) + " " + (byId[c.student_id].p.display_name || "").split(" ")[0]).join(", ") || "No classes")}"><span class="wn">${cs.length || ""}</span><i class="${kind}" style="height:${cs.length ? Math.round(cs.length / maxN * 74) + 8 : 3}px"></i><small>${d.toLocaleDateString("en-US", { weekday: "short" })}</small></div>`; }).join("");
+
+  // quiz average by student
+  const qRows = list.slice().sort((a, b) => (b.avg ?? -1) - (a.avg ?? -1)).map(s => `<a class="qb" href="#s/${s.p.id}"><b>${esc((s.p.display_name || "").split(" ")[0])}</b><span class="qt">${s.avg != null ? `<i class="${s.avg >= 80 ? "ok" : s.avg >= 60 ? "mid" : "low"}" style="width:${s.avg}%"></i>` : ""}</span><span class="qv">${s.avg != null ? s.avg + "%" : "—"}</span></a>`).join("");
+
+  app.innerHTML = topBar("Today", new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })) + `
     ${DATA.rules === null ? setupNote("recurring classes, private notes and billing") : ""}
-    <div class="tdgrid">
-      <div class="tdmain">
-      ${heroHtml}
-      <section class="tdfu"><h2 class="tsec">Follow up</h2>
-        ${groups.length ? `<div class="fucards">${groups.map(g => { const a = g.items[0], kd = KIND(a), w = sev[a[0]]; const href = kd[2][0] === "#" ? kd[2] : `#s/${g.s.p.id}/${kd[2]}`; return `<div class="fuc">
-          <div class="fuc-h"><a href="#s/${g.s.p.id}"><span class="av">${avatarOf(g.s, 28)}</span>${esc(g.s.p.display_name || "")}</a><span class="tag ${w === 0 ? "bad" : w === 1 ? "warn" : ""}">${kd[0]}</span></div>
-          <p>${g.items.map(x => esc(x[1])).join(" · ")}</p>
-          <a class="btn sm" href="${href}">${kd[1]}</a></div>`; }).join("")}</div>` : `<p class="empty card">Nothing to follow up.</p>`}
-        ${noPlacement.length ? `<p class="fu-note">Placement test pending: ${noPlacement.map(s => `<a href="#s/${s.p.id}">${esc((s.p.display_name || "").split(" ")[0])}</a>`).join(", ")}</p>` : ""}
-      </section>
-      </div>
-      <div class="tdside">
-        <div class="card"><div class="card-head"><h2>Practiced today</h2><span class="muted" style="font-size:.85em">${practiced.length} of ${list.length}</span></div>
-          ${practiced.length ? `<div class="avs">${practiced.slice(0, 6).map((s, i) => `<a class="av fx-in" style="--i:${i}" href="#s/${s.p.id}" title="${esc(s.p.display_name || "")}" aria-label="${esc(s.p.display_name || "")}">${avatarOf(s, 40)}</a>`).join("")}${practiced.length > 6 ? `<span class="av more">+${practiced.length - 6}</span>` : ""}</div>
-          <p class="muted" style="font-size:.88em">${practiced.map(s => esc((s.p.display_name || "").split(" ")[0])).join(", ")}</p>` : `<p class="muted" style="font-size:.9em">No one has practiced yet today.</p>`}</div>
-        <div class="card"><h2>${laterTitle}</h2><div class="later">${laterHtml}</div></div>
-        <div class="card"><div class="card-head"><h2>${first.toLocaleDateString("en-US", { month: "long" })}</h2><a class="btn sm" href="#schedule">Schedule</a></div>${cal}</div>
-        <div class="card"><h2>Recent activity</h2>
-          ${acts.length ? `<div class="feed">${acts.map((e, i) => `<div class="fe ${e.cls} fx-in" style="--i:${i}"><span class="av">${avatarOf(e.s, 28)}</span><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}
-        </div>
-      </div>
+    <div class="kpis">${kpis}</div>
+    <div class="dgrid">
+      <div class="card"><div class="card-head"><h2>${today.length ? "Today’s classes" : "Next classes"}</h2><a class="btn sm" href="#schedule">Schedule</a></div>
+        ${classRows ? `<div class="tcs">${classRows}</div>` : `<p class="empty">No classes scheduled. <a href="#schedule">Set weekly classes</a></p>`}</div>
+      <div class="card"><div class="card-head"><h2>This week</h2><span class="muted" style="font-size:.85em">${wTotal} class${wTotal === 1 ? "" : "es"}</span></div>
+        <div class="wbars">${bars}</div>
+        <div class="legend"><span><i class="done"></i>Done</span><span><i class="today"></i>Today</span><span><i class="sched"></i>Scheduled</span><span><i class="missed"></i>Missed</span></div></div>
+      <div class="card"><div class="card-head"><h2>Quiz average by student</h2><span class="muted" style="font-size:.8em">dashed line = 80% pass mark</span></div>
+        ${list.length ? `<div class="qbs">${qRows}</div>` : `<p class="empty">No students yet.</p>`}</div>
+      <div class="card"><div class="card-head"><h2>Follow up</h2></div>
+        ${groups.length ? `<div class="fup">${groups.map(g => { const w = sev[g.items[0][0]]; return `<a class="fu" href="#s/${g.s.p.id}/${g.items[0][2]}">
+          <span class="dot ${w === 0 ? "bad" : w === 1 ? "warn" : ""}"></span><b>${esc((g.s.p.display_name || "").split(" ")[0])}</b><span class="what">${g.items.map(a => esc(a[1])).join(" · ")}</span></a>`; }).join("")}</div>`
+          : `<p class="allgood"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>All caught up</p>`}
+        ${noPlacement.length ? `<p class="fu-note">Placement test pending: ${noPlacement.map(s => `<a href="#s/${s.p.id}">${esc((s.p.display_name || "").split(" ")[0])}</a>`).join(", ")}</p>` : ""}</div>
     </div>`;
   wireTop();
   app.querySelectorAll("[data-sc]").forEach(b => b.onclick = () => { const c = cls.find(x => x.id === b.dataset.sc); b.disabled = true; startClass(byId[c.student_id], c); });
