@@ -146,7 +146,7 @@ window.LINGUA.mark = function (s) {
   s = s || 30;
   return `<svg class="mark" width="${s}" height="${s}" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2346d0"/><path d="M8.5 9h15a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5H16l-4.5 4v-4h-3A2.5 2.5 0 0 1 6 19v-7.5A2.5 2.5 0 0 1 8.5 9z" fill="#fff"/><circle cx="20.5" cy="15.25" r="2.4" fill="#f5c518"/></svg>`;
 };
-window.LINGUA.logo = window.LINGUA.mark(30) + '<span class="wordmark">lingua</span>';
+window.LINGUA.logo = window.LINGUA.mark(30) + '<span class="wordmark">Lingua</span>';
 document.documentElement.style.setProperty("--scale", window.LINGUA.store.get("textSize", 1));
 
 // Lessons made in the lesson builder (saved in Supabase, cached here) join the course as a new module
