@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lingua · Sign in</title>
-<meta name="description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
+<meta name="description" content="One-to-one English classes built around what you love, with lessons, pronunciation practice, quizzes and diplomas.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Lingua">
 <meta property="og:title" content="Lingua · Sign in">
-<meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
-<meta property="og:image" content="https://lingua-english-class.netlify.app/assets/og.png">
+<meta property="og:description" content="One-to-one English classes built around what you love, with lessons, pronunciation practice, quizzes and diplomas.">
+<meta property="og:image" content="https://alejandrocaporali98-cell.github.io/Lingua/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -32,46 +32,109 @@
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
 <style>
-  body { min-height: 100vh; display: grid; grid-template-rows: 1fr auto; }
-  .stage { display: grid; place-items: center; padding-block: 48px; position: relative; overflow: hidden; }
-  .stage::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(color-mix(in srgb, var(--brand) 16%, transparent) 1.2px, transparent 1.5px); background-size: 18px 18px; -webkit-mask-image: radial-gradient(ellipse at center, transparent 30%, #000 75%); mask-image: radial-gradient(ellipse at center, transparent 30%, #000 75%); }
-  .box { position: relative; width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 32px; box-shadow: var(--shadow); display: grid; gap: 20px; }
-  @media (max-width: 480px) { .box { padding: 24px 20px; } }
-  .box .logo { font-size: 1.25em; }
-  .box h1 { font-size: 1.6em; font-weight: 800; }
-  .pw { position: relative; }
-  .pw input { padding-right: 74px; }
-  .pw button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: none; font-weight: 700; font-size: .82em; color: var(--brand); padding: 6px 8px; border-radius: 6px; }
-  .btn.block { width: 100%; padding-block: 13px; }
-  footer { text-align: center; color: var(--mute); font-size: .85em; padding-block: 20px; }
+  body { background: var(--surface); }
+  .topbar { position: sticky; top: 0; z-index: 30; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 60px; padding: 0 max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px)); background: var(--surface); box-shadow: 0 2px 8px rgba(27,31,42,.08), 0 1px 0 var(--line); }
+  .topbar .logo { grid-column: 2; }
+  .topbar .help { grid-column: 3; justify-self: end; color: var(--ink-2); font-weight: 700; font-size: .9em; text-decoration: none; padding: 10px 8px; border-radius: 8px; } .topbar .help:hover { color: var(--brand); }
+  .stage { max-width: 460px; margin: 0 auto; padding: 32px 20px 48px; display: grid; gap: 22px; }
+  .art { width: 100%; max-width: 380px; height: auto; justify-self: center; color: var(--ink); }
+  .stage h1 { text-align: center; font-size: 1.45em; font-weight: 800; letter-spacing: -.02em; line-height: 1.25; text-wrap: balance; }
+  form { display: grid; gap: 14px; }
+  .fl { position: relative; }
+  .fl input { font: inherit; font-size: 1em; color: var(--ink); background: var(--surface); width: 100%; height: 60px; padding: 24px 15px 6px; border: 1px solid var(--ink-2); border-radius: 8px; }
+  .fl input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .fl label { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--ink); pointer-events: none; transition: top .15s ease, font-size .15s ease, color .15s ease; }
+  .fl input:focus + label, .fl input:not(:placeholder-shown) + label, .fl input:-webkit-autofill + label { top: 17px; font-size: .74em; color: var(--mute); }
+  .fl.pw input { padding-right: 76px; }
+  .fl.pw button { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); border: 0; background: none; font: inherit; font-weight: 700; font-size: .88em; color: var(--brand); padding: 10px; border-radius: 6px; cursor: pointer; }
+  #go { width: 100%; height: 56px; font-size: 1.02em; border-radius: 8px; }
+  .or { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; color: var(--mute); font-size: .9em; } .or::before, .or::after { content: ""; height: 1px; background: var(--line-2); }
+  .helpbox { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; text-align: center; font-size: .95em; }
+  .helpbox p { padding: 18px 16px; color: var(--ink-2); } .helpbox p + p { border-top: 1px solid var(--line); }
+  .helpbox b { color: var(--ink); } .helpbox a { color: var(--brand); font-weight: 800; text-underline-offset: 4px; }
+  .foot { background: #1b1d29; color: #fff; padding: 0 max(20px, env(safe-area-inset-right, 0px)) max(28px, env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); }
+  .foot > * { max-width: 1080px; margin: 0 auto; }
+  .f-hero { padding: 40px 0 34px; border-bottom: 1px solid #3a3d4d; display: grid; gap: 24px; }
+  .f-hero h2 { font-size: 1.35em; font-weight: 800; line-height: 1.3; letter-spacing: -.01em; max-width: 560px; } .f-hero h2 span { color: #a9b8ff; }
+  .f-themes { display: flex; flex-wrap: wrap; gap: 14px 26px; }
+  .f-th { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; color: #d6dae4; }
+  .f-th i { width: 44px; height: 44px; border-radius: 12px; border: 1px solid #3a3d4d; display: grid; place-items: center; }
+  .f-th svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .f-acc { padding: 34px 0 10px; }
+  .f-acc h2 { font-size: 1.2em; font-weight: 800; margin-bottom: 10px; }
+  .f-acc details { border-bottom: 1px solid #3a3d4d; }
+  .f-acc summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 20px 0; font-weight: 700; font-size: 1.05em; } .f-acc summary::-webkit-details-marker { display: none; }
+  .f-acc summary svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; transition: transform .2s; } .f-acc details[open] summary svg { transform: rotate(180deg); }
+  .f-acc details p { color: #c4c8d4; line-height: 1.55; padding: 0 0 20px; max-width: 640px; }
+  .f-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; padding: 40px 0; border-bottom: 1px solid #3a3d4d; }
+  @media (max-width: 720px) { .f-cols { grid-template-columns: 1fr; gap: 34px; } }
+  .f-cols h3 { font-size: 1.05em; font-weight: 800; margin-bottom: 14px; }
+  .f-cols ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; } .f-cols li, .f-cols a { color: #d6dae4; text-decoration: none; } .f-cols a:hover { color: #fff; text-decoration: underline; }
+  .f-end { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding-top: 26px; color: #c4c8d4; font-size: .92em; }
+  .f-end .logo { color: #fff; }
+  @media (prefers-reduced-motion: reduce) { .fl label, .f-acc summary svg { transition: none; } }
 </style>
 </head>
-<body class="gutter">
+<body>
+<header class="topbar">
+  <a class="logo" href="index.html" id="logo" aria-label="Lingua home"></a>
+  <a class="help" href="#help">Help</a>
+</header>
 <main class="stage">
-  <form class="box" id="form" novalidate>
-    <a class="logo" href="index.html" id="logo"></a>
-    <div style="display:grid;gap:6px">
-      <h1>Sign in</h1>
-      <p class="muted">Welcome to your English course. Use the username and password your teacher gave you.</p>
-    </div>
-    <div id="msg" hidden></div>
-    <div class="field">
+  <svg class="art" viewBox="0 0 360 170" role="img" aria-label="Drawings of a guitar, a film clapper, a horseshoe, a briefcase, a racing helmet, a book and a speech bubble saying Hi">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(46 108)"><circle r="30" fill="currentColor"/><text y="9" text-anchor="middle" font-size="25" font-weight="800" stroke="none" style="fill:var(--surface)" font-family="Plus Jakarta Sans, sans-serif">Aa</text></g>
+    <g transform="translate(112 120) rotate(-25)"><path d="M0,-20 C8,-20 11,-14 9,-8 C17,-4 18,8 14,16 C9,26 -9,26 -14,16 C-18,8 -17,-4 -9,-8 C-11,-14 -8,-20 0,-20 Z"/><circle cy="4" r="4" fill="currentColor"/><path d="M0,-20 V-54"/><rect x="-5" y="-66" width="10" height="12" rx="2"/></g>
+    <path d="M118 24 l-10 -8 M114 40 h-13 M118 56 l-10 8"/>
+    <g transform="translate(162 50) rotate(-6)"><path d="M-32,-22 h64 a8 8 0 0 1 8 8 v24 a8 8 0 0 1 -8 8 h-30 l-14 12 v-12 h-20 a8 8 0 0 1 -8 -8 v-24 a8 8 0 0 1 8 -8 z" style="fill:var(--fill-brand)"/><text x="-8" y="7" text-anchor="middle" font-size="19" font-weight="800" stroke="none" fill="#fff" font-family="Plus Jakarta Sans, sans-serif">Hi!</text><circle cx="20" cy="0" r="4.5" fill="#f5c518" stroke="none"/></g>
+    <g transform="translate(264 46) rotate(-10)"><rect x="-30" y="-6" width="60" height="36" rx="3"/><path d="M-30,-8 L30,-8 L34,-22 L-26,-22 Z"/><path d="M-18,-8 L-10,-22 L0,-22 L-8,-8 Z M6,-8 L14,-22 L24,-22 L16,-8 Z" fill="currentColor"/><circle cx="-14" cy="12" r="5" fill="currentColor"/><path d="M0,18 L8,4 L16,18 Z" fill="currentColor"/></g>
+    <g transform="translate(334 34) rotate(14)"><rect x="-16" y="-10" width="32" height="24" rx="3"/><path d="M-6,-10 v-5 h12 v5 M-16,1 h32"/></g>
+    <g transform="translate(180 138) rotate(-8)"><path d="M-22,12 C-22,-6 -10,-17 3,-17 C16,-17 23,-7 23,4 L23,12 Z"/><path d="M4,-7 H23 V3 H4 Z" fill="currentColor"/><path d="M-22,12 H23"/></g>
+    <g transform="translate(254 130) rotate(4)"><path d="M-30,-14 C-18,-20 -6,-18 0,-12 C6,-18 18,-20 30,-14 V18 C18,12 6,14 0,20 C-6,14 -18,12 -30,18 Z M0,-12 V20 M-22,-4 C-15,-7 -9,-6 -6,-4 M-22,6 C-15,3 -9,4 -6,6 M8,-4 C12,-6 18,-7 22,-4"/></g>
+    <g transform="translate(326 114) rotate(-18)"><path d="M-13,24 V2 A13 13 0 0 1 13 2 V24" stroke-width="8"/><g stroke="none" style="fill:var(--surface)"><circle cx="-13" cy="12" r="1.8"/><circle cx="-12" cy="-4" r="1.8"/><circle cx="12" cy="-4" r="1.8"/><circle cx="13" cy="12" r="1.8"/></g></g>
+  </g>
+</svg>
+  <h1>Sign in to continue your English journey</h1>
+  <div id="msg" hidden></div>
+  <form id="form" novalidate>
+    <div class="fl">
+      <input id="user" name="username" placeholder=" " autocomplete="username" autocapitalize="off" spellcheck="false" required>
       <label for="user">Username</label>
-      <input id="user" name="username" autocomplete="username" autocapitalize="off" spellcheck="false" required>
     </div>
-    <div class="field">
+    <div class="fl pw">
+      <input id="pass" name="password" type="password" placeholder=" " autocomplete="current-password" required>
       <label for="pass">Password</label>
-      <div class="pw"><input id="pass" name="password" type="password" autocomplete="current-password" required><button type="button" id="eye" aria-label="Show password">Show</button></div>
+      <button type="button" id="eye" aria-label="Show password">Show</button>
     </div>
-    <button class="btn primary block" id="go" type="submit">Sign in</button>
-    <p class="muted" style="font-size:.88em;text-align:center">Forgot your password? Ask your teacher to reset it.</p>
+    <button class="btn primary" id="go" type="submit">Sign in</button>
   </form>
+  <div class="or" id="help">Need help?</div>
+  <div class="helpbox">
+    <p>Forgot your password? <b>Ask your teacher to reset it.</b></p>
+    <p>New student? <a href="#about">See what you’ll practice</a></p>
+  </div>
 </main>
-<footer id="foot"></footer>
+<footer class="foot">
+  <section class="f-hero">
+    <h2>Every lesson is written around <span>what you love</span>.</h2>
+    <div class="f-themes"><span class="f-th"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15a8 8 0 0 1 16 0v3H4z"/><path d="M12 11h8"/></svg></i>Racing</span><span class="f-th"><i><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="15" r="5"/><path d="M12.5 11.5L20 4M18 3l3 3"/></svg></i>Music</span><span class="f-th"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="1"/><path d="M3 9l1.5-5h15L21 9M9 4L7.5 9M15 4l-1.5 5"/></svg></i>Cinema</span><span class="f-th"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 20v-8a5 5 0 0 1 10 0v8"/><path d="M5 20h4M15 20h4"/></svg></i>Riding</span><span class="f-th"><i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 13h18"/></svg></i>Career</span></div>
+  </section>
+  <section class="f-acc" id="about">
+    <h2>What you’ll practice</h2>
+    <details><summary>Pronunciation and diction<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><p>Speak clearly and confidently: the sounds Spanish speakers find hardest, rhythm and intonation. Practice with the microphone, which checks every word.</p></details><details><summary>Verbs and tenses<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><p>From the present simple to the perfect tenses, always with examples about your own topics.</p></details><details><summary>Phrasal verbs<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><p>The two-word verbs used all the time in real English and rarely taught at school: get up, find out, give up, come back.</p></details><details><summary>Vocabulary<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><p>Useful words and phrases organized by topic, starting with what you like. Your own word list with audio and search.</p></details><details><summary>Conversation and fluency<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><p>Talk more and pause less: give your opinion, tell stories and ask questions, with role-plays in class and on the platform.</p></details><details><summary>Listening<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary><p>Understand real English at normal speed through dictations, songs, videos and series.</p></details>
+  </section>
+  <section class="f-cols">
+    <div><h3>Your course</h3><ul><li><a href="index.html">My lessons</a></li><li><a href="practice.html">Practice</a></li><li><a href="diplomas.html">Diplomas</a></li><li><a href="resources.html">Resources</a></li></ul></div>
+    <div><h3>Classes</h3><ul><li>One-to-one online classes</li><li>Lessons, quizzes and diplomas</li><li>Progress reports for families</li></ul></div>
+    <div><h3>Help</h3><ul><li>Forgot your password? Ask your teacher.</li><li><a href="teacher.html">Teacher panel</a></li></ul></div>
+  </section>
+  <div class="f-end"><span class="logo" id="flogo"></span><span id="fcopy"></span></div>
+</footer>
 <script>
   const G = window.LINGUA, f = document.getElementById("form"), msg = document.getElementById("msg");
   document.getElementById("logo").innerHTML = G.logo;
-  document.getElementById("foot").textContent = "Lingua · Instructor: " + G.maestro;
+  document.getElementById("flogo").innerHTML = G.logo;
+  document.getElementById("fcopy").textContent = "© " + new Date().getFullYear() + " Lingua · Instructor: " + (G.maestroNombre || G.maestro);
   const say = (cls, html) => { msg.className = "alert " + cls; msg.innerHTML = html; msg.hidden = false; };
   document.getElementById("eye").onclick = (e) => {
     const p = document.getElementById("pass"), on = p.type === "password";
