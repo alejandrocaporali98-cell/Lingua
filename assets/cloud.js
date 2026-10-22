@@ -227,12 +227,12 @@
   // Teacher panel: read every student (allowed only for accounts in the "teachers" table)
   L.teacher = {
     async load() {
-      const [p, g, h, c, st, ru, ad, pa] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
+      const [p, g, h, c, st, ru, ad, pa, sf] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
         sb.from("classes").select("*").order("starts_at", { ascending: false }), sb.from("student_settings").select("*"),
-        sb.from("class_rules").select("*"), sb.from("student_admin").select("*"), sb.from("payments").select("*").order("paid_on", { ascending: false })]);
+        sb.from("class_rules").select("*"), sb.from("student_admin").select("*"), sb.from("payments").select("*").order("paid_on", { ascending: false }), sb.from("staff").select("*")]);
       const err = p.error || g.error || h.error; if (err) throw err;
       return { profiles: p.data || [], progress: g.data || [], homework: h.data || [], classes: c.error ? null : (c.data || []), settings: st.error ? null : (st.data || []),
-        rules: ru.error ? null : (ru.data || []), admin: ad.error ? null : (ad.data || []), payments: pa.error ? null : (pa.data || []) };
+        rules: ru.error ? null : (ru.data || []), admin: ad.error ? null : (ad.data || []), payments: pa.error ? null : (pa.data || []), staff: sf.error ? null : (sf.data || []) };
     },
     async addHomework(row) { const { data, error } = await sb.from("homework").insert(row).select(); if (error) throw error; return data; },
     async deleteHomework(id) { const { error } = await sb.from("homework").delete().eq("id", id); if (error) throw error; },
@@ -241,8 +241,45 @@
     async upsert(table, row) { const { error } = await sb.from(table).upsert(row); if (error) throw error; },
     async update(table, id, row) { const { error } = await sb.from(table).update(row).eq("id", id); if (error) throw error; },
     async remove(table, id) { const { error } = await sb.from(table).delete().eq("id", id); if (error) throw error; },
+    async removeBy(table, col, val) { const { error } = await sb.from(table).delete().eq(col, val); if (error) throw error; },
+    async proofUrl(path) { const { data, error } = await sb.storage.from("comprobantes").createSignedUrl(path, 3600); if (error) throw error; return data.signedUrl; },
     async saveSettings(row) { const { error } = await sb.from("student_settings").upsert({ ...row, updated_at: new Date().toISOString() }); if (error) throw error; },
     async deleteClass(id) { const { error } = await sb.from("classes").delete().eq("id", id); if (error) throw error; }
+  };
+  // Office panel (admin.html): names, classes, plans, payments, slips, bank details and transfer screenshots
+  L.office = {
+    async load() {
+      const q = (t, f) => (f ? f(sb.from(t).select("*")) : sb.from(t).select("*"));
+      const [p, c, st, ru, ad, pa, sf, te, ch, bi] = await Promise.all([q("profiles"), q("classes", x => x.order("starts_at", { ascending: true })), q("student_settings"), q("class_rules"),
+        q("student_admin"), q("payments", x => x.order("paid_on", { ascending: false })), q("staff"), q("teachers"), q("charges", x => x.order("created_at", { ascending: false })), q("billing_info")]);
+      if (p.error) throw p.error;
+      const ok = r => r.error ? null : (r.data || []);
+      return { profiles: p.data || [], classes: ok(c), settings: ok(st), rules: ok(ru), admin: ok(ad), payments: ok(pa), staff: ok(sf) || [], teachers: ok(te) || [], charges: ok(ch), bank: bi.error ? null : ((bi.data || [])[0] || {}) };
+    },
+    async insert(table, rows) { const { data, error } = await sb.from(table).insert(rows).select(); if (error) throw error; return data; },
+    async upsert(table, row) { const { error } = await sb.from(table).upsert(row); if (error) throw error; },
+    async update(table, id, row) { const { error } = await sb.from(table).update(row).eq("id", id); if (error) throw error; },
+    async remove(table, id) { const { error } = await sb.from(table).delete().eq("id", id); if (error) throw error; },
+    // Transfer screenshots: big photos are shrunk to a sharp JPEG first so they upload fast
+    async uploadProof(file, studentId) {
+      let blob = file, ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+      if (/^image\/(png|jpeg|webp)$/.test(file.type) && file.size > 900e3) {
+        try {
+          const img = await createImageBitmap(file), k = Math.min(1, 1800 / Math.max(img.width, img.height));
+          const cv = document.createElement("canvas"); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+          cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+          const small = await new Promise(r => cv.toBlob(r, "image/jpeg", .86));
+          if (small && small.size < file.size) { blob = small; ext = "jpg"; }
+        } catch (e) {}
+      }
+      if (!/^(jpe?g|png|webp|heic|heif|pdf)$/.test(ext)) ext = file.type === "application/pdf" ? "pdf" : "jpg";
+      const path = `${studentId}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      const { error } = await sb.storage.from("comprobantes").upload(path, blob, { contentType: blob.type || file.type, upsert: false });
+      if (error) throw error;
+      return path;
+    },
+    async proofUrl(path) { const { data, error } = await sb.storage.from("comprobantes").createSignedUrl(path, 3600); if (error) throw error; return data.signedUrl; },
+    async removeProof(path) { try { await sb.storage.from("comprobantes").remove([path]); } catch (e) {} }
   };
   // Class mode: the teacher runs a class on the student's account, so everything saves for the student
   L.actAs = async (s, go) => {
@@ -283,6 +320,8 @@
     uid = session.user.id;
     L.user = session.user;
     try { const r = await sb.rpc("is_teacher"); L.isTeacher = !r.error && r.data === true; } catch (e) { L.isTeacher = !!lsGet("__teacher"); }
+    // Office account (administración): payments, classes and slips only
+    try { const r = await sb.rpc("is_admin"); L.isAdmin = !L.isTeacher && !r.error && r.data === true; } catch (e) { L.isAdmin = false; }
     const act = lsGet("__actas");
     if (act && act.id && L.isTeacher) L.actingAs = act; else if (act) localStorage.removeItem("lingua.__actas");
     tid = L.actingAs ? L.actingAs.id : uid;
@@ -302,7 +341,8 @@
     try { const c1 = await syncLessons(), c2 = await syncSettings().catch(() => false); if ((c1 || c2) && !sessionStorage.getItem("lingua.reloadedL")) { sessionStorage.setItem("lingua.reloadedL", "1"); location.reload(); return null; } } catch (e) {}
     sessionStorage.removeItem("lingua.reloadedL");
     if (L.isTeacher && !L.actingAs && page === "index.html" && !qs.has("preview")) { location.replace(root + "teacher.html"); return null; }
-    if (!L.actingAs && !(L.profile && L.profile.display_name) && page !== "perfil.html") { location.replace(root + "perfil.html?setup=1"); return null; }
+    if (L.isAdmin && page !== "admin.html") { location.replace(root + "admin.html"); return null; }
+    if (!L.isAdmin && !L.actingAs && !(L.profile && L.profile.display_name) && page !== "perfil.html") { location.replace(root + "perfil.html?setup=1"); return null; }
     decorate(); classBar(); show();
     L.homework.list().catch(() => {});
     L.classes.list().catch(() => {});

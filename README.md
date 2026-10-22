@@ -132,3 +132,9 @@ Each student signs in with their own username and only sees the lessons you assi
 3. **Calendar helper:** same steps with the name `calendar` and `supabase/functions/calendar/index.ts`. Turn **Verify JWT** off (calendar apps can't sign in; each person's secret link is the key).
 
 Neither function needs any key pasted in: Supabase gives them their own.
+
+## v4 setup (office account: administración)
+
+1. **SQL:** run `supabase/v4.sql` once in Supabase → SQL Editor. It adds the `staff` table (office role), what the office may see and change (names, classes, weekly schedule, plans, payments — no lessons, quizzes or homework), payment method/reference/screenshot, the bank details row (`billing_info`), payment slips (`charges`) and the private `comprobantes` storage for transfer screenshots.
+2. **Account:** Teacher panel → Accounts → create the account with **Role: Office · payments & schedule**. That person signs in and lands on `admin.html` (in Spanish): Inicio, Alumnos, Agenda, Pagos, Fichas de pago, Datos bancarios.
+3. Bank details are typed in the office panel → Datos bancarios (or by the teacher there too). They print on each payment slip (`ficha.html`), which opens without signing in so it can be sent by WhatsApp.

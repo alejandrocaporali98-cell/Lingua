@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="es" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Administración</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0f1420">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Lingua">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<link rel="stylesheet" href="assets/panel.css">
+<style>
+  /* Office panel extras */
+  .li { display: flex; align-items: center; gap: 12px; padding: 12px 2px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .li:first-child { border-top: 0; }
+  .li .ini { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff; flex: none; font-size: .9em; }
+  .li .m { flex: 1 1 200px; min-width: 0; } .li .m b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .li .m small { color: var(--mute); font-size: .82em; font-weight: 600; }
+  .li .v { text-align: right; display: grid; gap: 3px; justify-items: end; } .li .v b { font-variant-numeric: tabular-nums; }
+  .li .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  a.li { color: inherit; text-decoration: none; } a.li:hover { background: var(--bg); }
+  @media (max-width: 600px) { .li .m { flex: 1 1 0; } .li .acts { flex-basis: 100%; justify-content: flex-start; padding-left: 50px; gap: 4px; } .li .acts.np { padding-left: 0; } .li .acts .btn.sm { padding-left: 10px; padding-right: 10px; } }
+  .day-h { font-size: .78em; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); padding: 14px 2px 4px; }
+  .day-h.today { color: var(--brand); }
+  .wk { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .wk b { font-size: .95em; }
+  .hint { font-size: .85em; color: var(--mute); }
+  .bankprev { border: 1px dashed var(--line-2); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; font-size: .92em; }
+  .bankprev div { display: flex; justify-content: space-between; gap: 12px; } .bankprev span { color: var(--mute); }
+  .bankprev b { font-variant-numeric: tabular-nums; text-align: right; overflow-wrap: anywhere; }
+  .sh-body { display: grid; gap: 12px; padding: 0 16px 16px; }
+  .sh-body .field textarea { min-height: 60px; }
+  .drop { display: grid; place-items: center; gap: 6px; text-align: center; border: 2px dashed var(--line-2); border-radius: 12px; padding: 16px; cursor: pointer; color: var(--ink-2); font-weight: 700; font-size: .9em; }
+  .drop:hover, .drop:focus-within { border-color: var(--brand); color: var(--brand-dark); }
+  .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .drop img { max-width: 100%; max-height: 200px; border-radius: 8px; }
+  .proofimg { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 10px; background: var(--bg); }
+  .thumbbtn { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); display: grid; place-items: center; color: var(--ink-2); cursor: pointer; flex: none; }
+  .thumbbtn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .okbox { display: grid; gap: 10px; justify-items: center; text-align: center; padding: 8px 0 4px; }
+  .okbox .ic { width: 54px; height: 54px; border-radius: 50%; background: var(--ok-soft); color: var(--ok-ink); display: grid; place-items: center; }
+  .okbox .ic svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .okacts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; } .okacts .btn { min-height: 46px; }
+  .stat.hl b { color: var(--bad-ink); }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .filters select { font: inherit; padding: 7px 10px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--surface); color: var(--ink); max-width: 100%; }
+  .cnt { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 99px; background: var(--bad-soft); color: var(--bad-ink); font-size: .72em; font-weight: 800; margin-left: auto; }
+</style>
+</head>
+<body>
+<div class="adm">
+  <header class="adm-mbar">
+    <button type="button" class="adm-burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="admSide"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <span id="mmark"></span><b id="mtitle">Inicio</b>
+  </header>
+  <div class="adm-scrim" id="scrim" hidden></div>
+  <aside class="adm-side" id="admSide" aria-label="Menú de administración">
+    <a class="adm-brand" href="admin.html#inicio"><span id="mark"></span><span><b>Lingua</b><small>Administración</small></span></a>
+    <nav class="adm-nav" id="admNav">
+      <a href="#inicio" data-v="inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>Inicio</a>
+      <a href="#alumnos" data-v="alumnos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Alumnos</a>
+      <a href="#agenda" data-v="agenda"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Agenda<span class="cnt" id="cntAg" hidden></span></a>
+      <a href="#pagos" data-v="pagos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Pagos</a>
+      <a href="#fichas" data-v="fichas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>Fichas de pago</a>
+      <a href="#banco" data-v="banco"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M4 10h16M12 3l9 5H3z"/><path d="M6 10v8M10 10v8M14 10v8M18 10v8"/></svg>Datos bancarios</a>
+      <span class="adm-sep" id="tSep" hidden></span>
+      <a href="teacher.html" id="tLink" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Teacher panel</a>
+    </nav>
+    <div class="adm-foot">
+      <span class="adm-me" id="me"></span>
+      <button type="button" class="adm-ico" id="themeBtn" aria-label="Modo oscuro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+      <button type="button" class="adm-ico" id="outBtn" aria-label="Cerrar sesión"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+    </div>
+  </aside>
+  <main class="adm-main"><div class="adm-wrap" id="app"></div></main>
+</div>
+<script>
+const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
+const $ = id => document.getElementById(id);
+$("mark").innerHTML = G.mark(30); $("mmark").innerHTML = G.mark(26);
+const navOpen = on => { document.body.classList.toggle("nav-open", on); $("scrim").hidden = !on; $("burger").setAttribute("aria-expanded", on); };
+$("burger").onclick = () => navOpen(!document.body.classList.contains("nav-open"));
+$("scrim").onclick = () => navOpen(false);
+document.querySelectorAll("#admNav a").forEach(a => a.addEventListener("click", () => navOpen(false)));
+$("themeBtn").onclick = () => G.theme && G.theme.toggle();
+$("outBtn").onclick = () => G.signOut && G.signOut();
+
+// ── Formats ──
+const day = d => { const x = new Date(d); return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0"); };
+const monthKey = d => day(d).slice(0, 7);
+const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
+const monthName = m => cap(new Date(m + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }));
+const monthShort = m => cap(new Date(m + "-15T12:00").toLocaleDateString("es-MX", { month: "long" }));
+const MONEY = (n, cur) => "$" + Number(n || 0).toLocaleString("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + ((cur || "MXN") === "MXN" ? "" : " " + cur);
+const dShort = d => new Date(String(d).length === 10 ? d + "T12:00" : d).toLocaleDateString("es-MX", { day: "numeric", month: "short" });
+const dLong = d => new Date(String(d).length === 10 ? d + "T12:00" : d).toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" });
+const hhmm = d => new Date(d).toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" });
+const DAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+const METHOD = { transfer: "Transferencia", cash: "Efectivo", deposit: "Depósito", card: "Tarjeta", other: "Otro" };
+const STATUS = { scheduled: ["Programada", ""], attended: ["Tomada", "good"], missed: ["Faltó", "bad"], cancelled: ["Cancelada", "warn"] };
+const PLAN = { per_class: "Por clase", monthly: "Mensualidad", free: "Sin costo" };
+const b64 = obj => { const bytes = new TextEncoder().encode(JSON.stringify(obj)); let bin = ""; bytes.forEach(c => bin += String.fromCharCode(c)); return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+const site = () => location.origin + location.pathname.replace(/admin\.html$/, "");
+const waLink = (phone, text) => { let d = String(phone || "").replace(/\D/g, ""); if (d.length === 10) d = "52" + d; return "https://wa.me/" + d + "?text=" + encodeURIComponent(text); };
+const COLORS = ["#2346d0", "#0f766e", "#be123c", "#7c3aed", "#c2410c", "#0369a1", "#15803d"];
+const ini = s => { const n = (s.p.display_name || "?").trim().split(/\s+/); const k = [...(s.p.id || "")].reduce((t, c) => t + c.charCodeAt(0), 0); return `<span class="ini" style="background:${COLORS[k % COLORS.length]}">${esc((n[0][0] || "?") + (n[1] ? n[1][0] : "")).toUpperCase()}</span>`; };
+const I = d => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+const months = (n, from) => Array.from({ length: n }, (_, k) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + (from || 0) - k); return monthKey(d); });
+
+// ── Data ──
+let DATA = null;
+const students = () => {
+  const me = G.user && G.user.id, staff = new Set((DATA.staff || []).map(x => x.user_id)), tch = new Set((DATA.teachers || []).map(x => x.user_id));
+  return DATA.profiles.filter(p => p.id !== me && !staff.has(p.id) && !tch.has(p.id)).map(p => ({ p })).sort((a, b) => (a.p.display_name || "").localeCompare(b.p.display_name || ""));
+};
+const byId = id => students().find(s => s.p.id === id);
+const adminOf = id => (DATA.admin || []).find(a => a.student_id === id) || { student_id: id, billing: "per_class", rate: 0, currency: "MXN", phone: null, parent_phone: null };
+const clsOf = (id, m) => (DATA.classes || []).filter(c => c.student_id === id && (!m || monthKey(c.starts_at) === m));
+function billOf(id, m) {
+  const a = adminOf(id), cls = clsOf(id, m);
+  const attended = cls.filter(c => c.status === "attended").length, missed = cls.filter(c => c.status === "missed").length, cancelled = cls.filter(c => c.status === "cancelled").length, scheduled = cls.filter(c => c.status === "scheduled").length;
+  const due = a.billing === "free" ? 0 : a.billing === "monthly" ? Number(a.rate) : attended * Number(a.rate);
+  const paid = (DATA.payments || []).filter(p => p.student_id === id && p.month === m).reduce((t, p) => t + Number(p.amount), 0);
+  const status = a.billing === "free" ? ["Sin costo", ""] : due === 0 && paid === 0 ? ["—", ""] : paid >= due ? ["Pagado", "good"] : paid > 0 ? ["Parcial", "warn"] : ["Pendiente", "bad"];
+  return { a, attended, missed, cancelled, scheduled, due, paid, bal: Math.max(0, due - paid), status };
+}
+// What to charge on a slip: monthly fee, or every class of the month (taken + still scheduled) for per-class plans
+function suggested(id, m) {
+  const b = billOf(id, m), a = b.a;
+  if (a.billing === "free") return { amount: 0, k: 0, how: "Sin costo" };
+  if (a.billing === "monthly") return { amount: Math.max(0, Number(a.rate) - b.paid), k: b.attended + b.scheduled, how: "Mensualidad " + MONEY(a.rate, a.currency) + (b.paid ? " − pagado " + MONEY(b.paid, a.currency) : "") };
+  const k = b.attended + b.scheduled; return { amount: Math.max(0, k * Number(a.rate) - b.paid), k, how: `${k} clase${k === 1 ? "" : "s"} × ${MONEY(a.rate, a.currency)}` + (b.paid ? " − pagado " + MONEY(b.paid, a.currency) : "") };
+}
+const unmarked = () => (DATA.classes || []).filter(c => c.status === "scheduled" && new Date(c.starts_at) < Date.now() - 3600e3 && byId(c.student_id));
+
+async function fillFromRules() {
+  if (!DATA.rules || !DATA.classes) return false;
+  const want = [], now = new Date();
+  DATA.rules.filter(r => r.active).forEach(r => {
+    for (let k = 0; k < 14; k++) {
+      const d = new Date(now); d.setDate(now.getDate() + k);
+      if (d.getDay() !== r.weekday) continue;
+      const [hh, mm] = r.time.split(":").map(Number); d.setHours(hh, mm, 0, 0);
+      if (d < now) continue;
+      if (!DATA.classes.some(c => c.student_id === r.student_id && Math.abs(new Date(c.starts_at) - d) < 60e3)) want.push({ student_id: r.student_id, starts_at: d.toISOString(), rule_id: r.id });
+    }
+  });
+  if (!want.length) return false;
+  try { await G.office.insert("classes", want); return true; } catch (e) { console.warn(e); return false; }
+}
+async function load() {
+  try {
+    DATA = await G.office.load();
+    if (await fillFromRules()) DATA = await G.office.load();
+    const first = !!app.querySelector(".skl"); render();
+    if (first) { app.classList.add("fade-in"); setTimeout(() => app.classList.remove("fade-in"), 600); }
+  } catch (e) { app.innerHTML = `<div class="card"><h2>No pudimos cargar la información</h2><p class="muted">${esc(e.message || e)}</p><div class="actions"><button class="btn" onclick="location.reload()">Intentar de nuevo</button></div></div>`; }
+}
+
+// ── Layout helpers ──
+const topBar = (title, sub, actions) => `<div class="adm-top"><div><h1>${title}</h1>${sub ? `<p>${sub}</p>` : ""}</div><div class="actions">${actions || ""}</div></div>`;
+const monthSel = (id, m, n) => `<select id="${id}" aria-label="Mes">${months(n || 12, 1).map(k => `<option value="${k}" ${k === m ? "selected" : ""}>${monthName(k)}</option>`).join("")}</select>`;
+const tag = st => `<span class="tag ${st[1]}">${st[0]}</span>`;
+const clsActs = c => `<span class="acts">${c.status !== "attended" ? `<button class="btn sm" data-cs="attended" data-c="${c.id}">Tomada</button>` : ""}${c.status !== "missed" ? `<button class="btn sm ghost" data-cs="missed" data-c="${c.id}">Faltó</button>` : ""}${c.status !== "cancelled" ? `<button class="btn sm ghost" data-cs="cancelled" data-c="${c.id}">Cancelar</button>` : `<button class="btn sm ghost" data-cs="scheduled" data-c="${c.id}">Reactivar</button>`}<button class="btn sm ghost" data-mv="${c.id}">Reagendar</button></span>`;
+const clsRow = (c, showName) => { const s = byId(c.student_id); return `<div class="li">${showName && s ? ini(s) : ""}<div class="m"><b>${showName && s ? esc(s.p.display_name) : cap(dLong(c.starts_at))}</b><small>${showName ? cap(dLong(c.starts_at)) + " · " : ""}${hhmm(c.starts_at)}${c.rule_id ? " · horario fijo" : ""}</small></div>${tag(STATUS[c.status] || ["", ""])}${clsActs(c)}</div>`; };
+function wireClassActs() {
+  app.querySelectorAll("[data-cs]").forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try { await G.office.update("classes", b.dataset.c, { status: b.dataset.cs }); G.toast(`<b>Clase ${STATUS[b.dataset.cs][0].toLowerCase()}</b>`); await load(); } catch (e) { G.toast("No se pudo guardar: " + esc(e.message)); b.disabled = false; }
+  });
+  app.querySelectorAll("[data-mv]").forEach(b => b.onclick = () => moveSheet((DATA.classes || []).find(c => c.id === b.dataset.mv)));
+}
+const setupNote = () => `<div class="alert info">Falta un paso de instalación: Alejandro tiene que correr <b>supabase/v4.sql</b> en Supabase.</div>`;
+
+// ── Sheets (pop-ups) ──
+function closeSheet() { const w = $("sheet"); if (w) w.remove(); document.body.classList.remove("sheet-open"); }
+window.addEventListener("hashchange", closeSheet);
+function sheet(title, sub, body) {
+  closeSheet();
+  const w = document.createElement("div"); w.id = "sheet";
+  w.innerHTML = `<div class="sh-scrim" data-x></div><div class="asheet" role="dialog" aria-modal="true" aria-labelledby="shT"><i class="sh-grab" aria-hidden="true"></i>
+    <div class="sh-head"><div style="flex:1;min-width:0"><b id="shT">${title}</b>${sub ? `<small>${sub}</small>` : ""}</div><button type="button" class="sh-x" data-x aria-label="Cerrar">${I('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div>
+    <div class="sh-body">${body}</div></div>`;
+  document.body.appendChild(w); document.body.classList.add("sheet-open");
+  w.querySelectorAll("[data-x]").forEach(x => x.onclick = closeSheet);
+  w.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+  requestAnimationFrame(() => w.classList.add("in"));
+  setTimeout(() => { const f = w.querySelector("input:not([type=file]), select, button.btn"); f && f.focus(); }, 60);
+  return w;
+}
+function moveSheet(c) {
+  if (!c) return; const s = byId(c.student_id), d = new Date(c.starts_at);
+  const w = sheet("Reagendar clase", esc(s ? s.p.display_name : ""), `
+    <div class="grid2"><div class="field"><label for="mvD">Fecha</label><input id="mvD" type="date" value="${day(d)}"></div><div class="field"><label for="mvT">Hora</label><input id="mvT" type="time" value="${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}"></div></div>
+    <button class="btn primary" id="mvSave">Guardar</button>`);
+  w.querySelector("#mvSave").onclick = async () => {
+    const v = $("mvD").value, t = $("mvT").value; if (!v || !t) return G.toast("Escoge fecha y hora");
+    try { await G.office.update("classes", c.id, { starts_at: new Date(v + "T" + t).toISOString(), status: "scheduled" }); closeSheet(); G.toast("<b>Clase reagendada</b>"); await load(); } catch (e) { G.toast("No se pudo guardar: " + esc(e.message)); }
+  };
+}
+
+// ── Receipts, slips and proofs ──
+function receiptLink(p) {
+  const s = byId(p.student_id), a = adminOf(p.student_id), b = billOf(p.student_id, p.month);
+  const D = { no: "R-" + p.month.replace("-", "") + "-" + String(p.id).replace(/-/g, "").slice(0, 4).toUpperCase(), n: s ? s.p.display_name : "", m: new Date(p.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
+    d: p.paid_on, a: Number(p.amount), cur: a.currency || "MXN", pl: a.billing, k: b.attended, r: Number(a.rate) || 0, nt: p.note || "", ow: G.maestroNombre || G.maestro, du: b.due, pt: b.paid, mt: p.method || "", rf: p.reference || "" };
+  return site() + "recibo.html?d=" + b64(D);
+}
+function slipLink(ch) {
+  const s = byId(ch.student_id), a = adminOf(ch.student_id), bk = DATA.bank || {}, sg = suggested(ch.student_id, ch.month);
+  const D = { f: ch.folio, n: s ? s.p.display_name : "", c: ch.concept || "", m: new Date(ch.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }), a: Number(ch.amount), cur: a.currency || "MXN",
+    du: ch.due || "", e: day(ch.created_at || new Date()), pl: a.billing, r: Number(a.rate) || 0, k: sg.k, nt: ch.note || "", ow: G.maestroNombre || G.maestro,
+    b: { bank: bk.bank || "", holder: bk.holder || "", clabe: bk.clabe || "", account: bk.account || "", card: bk.card || "", to: bk.send_to || "", ins: bk.instructions || "" } };
+  return site() + "ficha.html?d=" + b64(D);
+}
+const firstName = s => (s && s.p.display_name || "").split(" ")[0];
+function slipText(ch) { const s = byId(ch.student_id), a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${firstName(s)} (${monthShort(ch.month).toLowerCase()}): ${MONEY(ch.amount, a.currency)}${ch.due ? ", con fecha límite el " + dLong(ch.due) : ""}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; }
+function receiptText(p) { const s = byId(p.student_id), a = adminOf(p.student_id); return `Hola, recibimos su pago de ${MONEY(p.amount, a.currency)} por las clases de inglés de ${firstName(s)} (${monthShort(p.month).toLowerCase()}). ¡Gracias! Aquí está su recibo: ${receiptLink(p)}`; }
+const phoneOf = id => { const a = adminOf(id); return a.parent_phone || a.phone || ""; };
+async function showProof(path) {
+  const w = sheet("Comprobante", "", `<p class="hint">Cargando…</p>`);
+  try {
+    const url = await G.office.proofUrl(path), pdf = /\.pdf$/i.test(path);
+    w.querySelector(".sh-body").innerHTML = (pdf ? `<p>Es un archivo PDF.</p>` : `<img class="proofimg" src="${esc(url)}" alt="Captura del comprobante de pago">`) + `<a class="btn primary" href="${esc(url)}" target="_blank" rel="noopener">${pdf ? "Abrir PDF" : "Abrir en tamaño completo"}</a>`;
+  } catch (e) { w.querySelector(".sh-body").innerHTML = `<div class="alert bad">No se pudo abrir: ${esc(e.message)}</div>`; }
+}
+
+// ── Record a payment ──
+function paySheet(pre) {
+  pre = pre || {};
+  const list = students(); if (!list.length) return G.toast("Todavía no hay alumnos");
+  const sid = pre.sid || list[0].p.id, m = pre.m || monthKey(new Date());
+  const w = sheet("Registrar pago", "Con la captura de la transferencia, si la tienes", `
+    <div class="field"><label for="pyS">Alumno</label><select id="pyS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
+    <div class="grid2"><div class="field"><label for="pyM">Mes que paga</label>${monthSel("pyM", m, 8)}</div><div class="field"><label for="pyA">Monto</label><input id="pyA" type="number" min="0" step="10" inputmode="decimal"></div></div>
+    <p class="hint" id="pyHint"></p>
+    <div class="grid2"><div class="field"><label for="pyD">Fecha de pago</label><input id="pyD" type="date" value="${day(new Date())}"></div>
+      <div class="field"><label for="pyW">Forma de pago</label><select id="pyW">${Object.entries(METHOD).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div></div>
+    <div class="field"><label for="pyR">Referencia o clave de rastreo <span class="muted" style="font-weight:500">(opcional)</span></label><input id="pyR" maxlength="80" autocomplete="off"></div>
+    <label class="drop" id="pyDrop"><input id="pyF" type="file" accept="image/*,application/pdf">${I('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>').replace("<svg", '<svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"')}<span id="pyFL">Subir captura del comprobante</span><small class="hint">Foto o captura de pantalla (o PDF)</small></label>
+    <div class="field"><label for="pyN">Nota <span class="muted" style="font-weight:500">(opcional)</span></label><input id="pyN" maxlength="300"></div>
+    <div id="pyMsg" hidden></div>
+    <button class="btn primary" id="pySave">Guardar pago</button>`);
+  const fill = () => { const id = $("pyS").value, mm = $("pyM").value, b = billOf(id, mm), sg = suggested(id, mm); $("pyA").value = pre.amount != null && id === sid && mm === m ? pre.amount : sg.amount || ""; $("pyHint").textContent = b.a.billing === "free" ? "Este alumno no paga." : `${sg.how} · Pagado en ${monthShort(mm).toLowerCase()}: ${MONEY(b.paid, b.a.currency)}`; };
+  $("pyS").onchange = fill; $("pyM").onchange = fill; fill();
+  $("pyF").onchange = () => {
+    const f = $("pyF").files[0]; if (!f) return;
+    $("pyFL").textContent = f.name;
+    const old = $("pyDrop").querySelector("img"); if (old) old.remove();
+    if (/^image\//.test(f.type)) { const im = document.createElement("img"); im.alt = "Vista previa"; im.src = URL.createObjectURL(f); $("pyDrop").prepend(im); }
+  };
+  $("pySave").onclick = async () => {
+    const amount = Number(String($("pyA").value).replace(/[^0-9.]/g, "")), msg = $("pyMsg");
+    if (!(amount > 0)) { msg.className = "alert bad"; msg.textContent = "Escribe el monto."; msg.hidden = false; return; }
+    const btn = $("pySave"); btn.disabled = true; btn.textContent = "Guardando…";
+    try {
+      const f = $("pyF").files[0], id = $("pyS").value;
+      const proof = f ? await G.office.uploadProof(f, id) : null;
+      const row = { student_id: id, month: $("pyM").value, amount, paid_on: $("pyD").value || day(new Date()), method: $("pyW").value, reference: $("pyR").value.trim() || null, note: $("pyN").value.trim() || null, proof_path: proof };
+      const saved = await G.office.insert("payments", [row]);
+      await load();
+      const p = (saved && saved[0]) || (DATA.payments || []).find(x => x.student_id === id && x.amount == amount);
+      const ph = phoneOf(id);
+      w.querySelector(".sh-body").innerHTML = `<div class="okbox"><span class="ic">${I('<path d="M5 12.5l4.5 4.5L19 7.5"/>')}</span><b>Pago registrado</b><span class="hint">${esc(byId(id).p.display_name)} · ${MONEY(amount, adminOf(id).currency)} · ${monthShort(row.month)}</span>
+        <div class="okacts"><a class="btn" id="okR" href="${p ? esc(receiptLink(p)) : "#"}" target="_blank" rel="noopener">Ver recibo</a>${p ? `<a class="btn primary" href="${esc(waLink(ph, receiptText(p)))}" target="_blank" rel="noopener">Enviar por WhatsApp</a>` : ""}</div>
+        ${ph ? "" : `<small class="hint">Sin teléfono guardado: WhatsApp te dejará escoger el contacto.</small>`}</div>`;
+    } catch (e) { btn.disabled = false; btn.textContent = "Guardar pago"; msg.className = "alert bad"; msg.textContent = "No se pudo guardar: " + (e.message || e); msg.hidden = false; }
+  };
+}
+function addProof(p) {
+  const inp = document.createElement("input"); inp.type = "file"; inp.accept = "image/*,application/pdf";
+  inp.onchange = async () => {
+    const f = inp.files[0]; if (!f) return;
+    G.toast("Subiendo comprobante…");
+    try { const path = await G.office.uploadProof(f, p.student_id); await G.office.update("payments", p.id, { proof_path: path }); if (p.proof_path) G.office.removeProof(p.proof_path); G.toast("<b>Comprobante guardado</b>"); await load(); }
+    catch (e) { G.toast("No se pudo subir: " + esc(e.message)); }
+  };
+  inp.click();
+}
+const payRow = (p, showName) => { const s = byId(p.student_id), a = adminOf(p.student_id); return `<div class="li">${showName && s ? ini(s) : ""}<div class="m"><b>${showName && s ? esc(s.p.display_name) : MONEY(p.amount, a.currency) + " · " + monthShort(p.month)}</b><small>${showName ? MONEY(p.amount, a.currency) + " · " + monthShort(p.month) + " · " : ""}Pagó el ${dShort(p.paid_on)}${p.method ? " · " + METHOD[p.method] : ""}${p.reference ? " · Ref. " + esc(p.reference) : ""}${p.note ? " · " + esc(p.note) : ""}</small></div>
+  <span class="acts">${p.proof_path ? `<button class="btn sm" data-pf="${esc(p.proof_path)}">${I('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>').replace("<svg", '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:4px"')}Comprobante</button>` : `<button class="btn sm ghost" data-pfadd="${p.id}">+ Comprobante</button>`}<a class="btn sm" href="${esc(receiptLink(p))}" target="_blank" rel="noopener">Recibo</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(p.student_id), receiptText(p)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-pdel="${p.id}" aria-label="Borrar pago">Borrar</button></span></div>`; };
+function wirePays() {
+  app.querySelectorAll("[data-pf]").forEach(b => b.onclick = () => showProof(b.dataset.pf));
+  app.querySelectorAll("[data-pfadd]").forEach(b => b.onclick = () => addProof((DATA.payments || []).find(p => p.id === b.dataset.pfadd)));
+  app.querySelectorAll("[data-pdel]").forEach(b => b.onclick = async () => {
+    const p = (DATA.payments || []).find(x => x.id === b.dataset.pdel); if (!p) return;
+    if (!confirm(`¿Borrar el pago de ${MONEY(p.amount)} de ${(byId(p.student_id) || { p: {} }).p.display_name || ""}?`)) return;
+    try { await G.office.remove("payments", p.id); if (p.proof_path) G.office.removeProof(p.proof_path); G.toast("Pago borrado"); await load(); } catch (e) { G.toast("No se pudo borrar: " + esc(e.message)); }
+  });
+  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => paySheet({ sid: b.dataset.pay, m: b.dataset.m, amount: b.dataset.amt != null ? Number(b.dataset.amt) : null }));
+}
+
+// ── Views ──
+function inicio(m) {
+  m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
+  const list = students(), rows = list.map(s => ({ s, b: billOf(s.p.id, m) })), cur = "MXN";
+  const tot = rows.reduce((t, r) => ({ cls: t.cls + r.b.attended, due: t.due + r.b.due, paid: t.paid + r.b.paid, bal: t.bal + r.b.bal }), { cls: 0, due: 0, paid: 0, bal: 0 });
+  const owe = rows.filter(r => r.b.bal > 0).sort((a, b) => b.b.bal - a.b.bal);
+  const now = Date.now(), wk = now + 7 * 864e5;
+  const next = (DATA.classes || []).filter(c => c.status === "scheduled" && new Date(c.starts_at) >= now - 3600e3 && new Date(c.starts_at) <= wk && byId(c.student_id)).sort((a, b) => a.starts_at.localeCompare(b.starts_at)).slice(0, 8);
+  const um = unmarked().sort((a, b) => b.starts_at.localeCompare(a.starts_at));
+  const recent = (DATA.payments || []).filter(p => byId(p.student_id)).slice(0, 5);
+  const me = (G.profile && G.profile.display_name || "").split(" ")[0];
+  app.innerHTML = topBar(`Hola${me ? ", " + esc(me) : ""}`, `Resumen de ${monthName(m).toLowerCase()}`, monthSel("iM", m) + `<button class="btn primary sm" id="iPay">Registrar pago</button>`) + `
+    ${DATA.payments === null ? setupNote() : ""}
+    <div class="stats">
+      <div class="stat"><span>Clases tomadas</span><b>${tot.cls}</b></div>
+      <div class="stat"><span>Por cobrar</span><b>${MONEY(tot.due, cur)}</b></div>
+      <div class="stat"><span>Cobrado</span><b>${MONEY(tot.paid, cur)}</b></div>
+      <div class="stat ${tot.bal ? "hl" : ""}"><span>Pendiente</span><b>${MONEY(tot.bal, cur)}</b></div>
+    </div>
+    <div class="dgrid">
+      <div class="card"><div class="card-head"><h2>Pendientes de pago</h2><a class="btn sm ghost" href="#alumnos/${m}">Ver alumnos</a></div>
+        ${owe.length ? owe.map(({ s, b }) => `<div class="li">${ini(s)}<div class="m"><b>${esc(s.p.display_name)}</b><small>${PLAN[b.a.billing]} · ${b.attended} clase${b.attended === 1 ? "" : "s"} tomada${b.attended === 1 ? "" : "s"}</small></div><span class="v"><b>${MONEY(b.bal, b.a.currency)}</b>${tag(b.status)}</span>
+          <span class="acts"><a class="btn sm" href="#fichas/nueva/${s.p.id}/${m}">Ficha</a><button class="btn sm primary" data-pay="${s.p.id}" data-m="${m}" data-amt="${b.bal}">Registrar pago</button></span></div>`).join("") : `<p class="allgood">${I('<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>')}Todo pagado en ${monthShort(m).toLowerCase()}</p>`}</div>
+      <div class="card"><div class="card-head"><h2>Próximas clases</h2><a class="btn sm ghost" href="#agenda">Agenda</a></div>
+        ${um.length ? `<div class="alert info" style="font-size:.9em">Hay ${um.length} clase${um.length === 1 ? "" : "s"} pasada${um.length === 1 ? "" : "s"} sin marcar. <a href="#agenda">Márcalas en la agenda</a> para que cuenten en los cobros.</div>` : ""}
+        ${next.length ? next.map(c => clsRow(c, true)).join("") : `<p class="empty">No hay clases en los próximos 7 días.</p>`}</div>
+      <div class="card"><div class="card-head"><h2>Últimos pagos</h2><a class="btn sm ghost" href="#pagos">Todos</a></div>
+        ${recent.length ? recent.map(p => payRow(p, true)).join("") : `<p class="empty">Aún no hay pagos registrados.</p>`}</div>
+    </div>`;
+  $("iM").onchange = e => location.hash = "#inicio/" + e.target.value;
+  $("iPay").onclick = () => paySheet({ m });
+  wirePays(); wireClassActs();
+}
+
+function alumnos(m) {
+  m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
+  const list = students();
+  app.innerHTML = topBar("Alumnos", "Clases tomadas y pagos de cada alumno.", monthSel("aM", m)) + `
+    <div class="card">${list.length ? list.map(s => { const b = billOf(s.p.id, m); return `<a class="li" href="#a/${s.p.id}/${m}">${ini(s)}<div class="m"><b>${esc(s.p.display_name)}</b><small>${b.a.billing === "free" ? "Sin costo" : Number(b.a.rate) ? PLAN[b.a.billing] + " · " + MONEY(b.a.rate, b.a.currency) : "Sin plan"} · ${b.attended} tomada${b.attended === 1 ? "" : "s"}${b.missed ? ` · ${b.missed} falta${b.missed === 1 ? "" : "s"}` : ""}${b.scheduled ? ` · ${b.scheduled} por tomar` : ""}</small></div>
+      <span class="v"><b>${MONEY(b.paid, b.a.currency)} <small class="muted" style="font-weight:600">de ${MONEY(b.due, b.a.currency)}</small></b>${tag(b.status)}</span></a>`; }).join("") : `<p class="empty">Todavía no hay alumnos.</p>`}</div>`;
+  $("aM").onchange = e => location.hash = "#alumnos/" + e.target.value;
+}
+
+function alumno(id, m) {
+  const s = byId(id); if (!s) { location.hash = "#alumnos"; return; }
+  m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
+  const a = adminOf(id), b = billOf(id, m), cls = clsOf(id, m).sort((x, y) => x.starts_at.localeCompare(y.starts_at));
+  const pays = (DATA.payments || []).filter(p => p.student_id === id), slips = (DATA.charges || []).filter(c => c.student_id === id).slice(0, 6);
+  const rules = (DATA.rules || []).filter(r => r.student_id === id && r.active).sort((x, y) => x.weekday - y.weekday || x.time.localeCompare(y.time));
+  app.innerHTML = `<a class="back" href="#alumnos/${m}">← Todos los alumnos</a>` + topBar(esc(s.p.display_name), rules.length ? "Horario: " + rules.map(r => DAYS[r.weekday].toLowerCase() + " " + hhmm("2000-01-01T" + r.time)).join(", ") : "Sin horario fijo", monthSel("sM", m) + `<a class="btn sm" href="#fichas/nueva/${id}/${m}">Nueva ficha</a><button class="btn primary sm" data-pay="${id}" data-m="${m}" data-amt="${b.bal}">Registrar pago</button>`) + `
+    <div class="stats">
+      <div class="stat"><span>Tomadas</span><b>${b.attended}</b><small class="muted">${b.scheduled ? b.scheduled + " por tomar" : "en " + monthShort(m).toLowerCase()}</small></div>
+      <div class="stat"><span>Faltas</span><b>${b.missed}</b><small class="muted">${b.cancelled ? b.cancelled + " cancelada" + (b.cancelled === 1 ? "" : "s") : "&nbsp;"}</small></div>
+      <div class="stat"><span>Por cobrar</span><b>${MONEY(b.due, a.currency)}</b></div>
+      <div class="stat ${b.bal ? "hl" : ""}"><span>Pagado</span><b>${MONEY(b.paid, a.currency)}</b>${tag(b.status)}</div>
+    </div>
+    <div class="cols">
+      <div style="display:grid;gap:18px;min-width:0">
+        <div class="card"><div class="card-head"><h2>Clases de ${monthShort(m).toLowerCase()}</h2></div>${cls.length ? cls.map(c => clsRow(c, false)).join("") : `<p class="empty">No hay clases este mes.</p>`}</div>
+        <div class="card"><div class="card-head"><h2>Pagos</h2></div>${pays.length ? pays.map(p => payRow(p, false)).join("") : `<p class="empty">Aún no hay pagos.</p>`}</div>
+        <div class="card"><div class="card-head"><h2>Últimos meses</h2></div>${months(6).map(k => { const x = billOf(id, k); return `<div class="li"><div class="m"><b>${monthName(k)}</b><small>${x.attended} tomada${x.attended === 1 ? "" : "s"} · ${x.missed} falta${x.missed === 1 ? "" : "s"} · ${x.cancelled} cancelada${x.cancelled === 1 ? "" : "s"}</small></div><span class="v"><b>${MONEY(x.paid, a.currency)} <small class="muted" style="font-weight:600">de ${MONEY(x.due, a.currency)}</small></b>${tag(x.status)}</span></div>`; }).join("")}</div>
+      </div>
+      <div style="display:grid;gap:18px;min-width:0">
+        <div class="card"><h2>Plan y contacto</h2>
+          <div class="grid2"><div class="field"><label for="plB">Cómo paga</label><select id="plB">${Object.entries(PLAN).map(([k, v]) => `<option value="${k}" ${a.billing === k ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+            <div class="field"><label for="plR">Monto</label><input id="plR" type="number" min="0" step="10" inputmode="decimal" value="${Number(a.rate) || ""}"></div></div>
+          <div class="grid2"><div class="field"><label for="plP">WhatsApp del alumno</label><input id="plP" type="tel" inputmode="tel" value="${esc(a.phone || "")}" placeholder="81 1234 5678"></div>
+            <div class="field"><label for="plPP">WhatsApp de papá o mamá</label><input id="plPP" type="tel" inputmode="tel" value="${esc(a.parent_phone || "")}" placeholder="81 1234 5678"></div></div>
+          <p class="hint">Las fichas y recibos se mandan al WhatsApp de papá o mamá (o al del alumno si no hay).</p>
+          <div class="actions"><button class="btn primary sm" id="plSave">Guardar</button></div></div>
+        <div class="card"><div class="card-head"><h2>Fichas</h2><a class="btn sm" href="#fichas/nueva/${id}/${m}">Nueva</a></div>${slips.length ? slips.map(slipRow).join("") : `<p class="empty">Aún no hay fichas.</p>`}</div>
+      </div>
+    </div>`;
+  $("sM").onchange = e => location.hash = `#a/${id}/` + e.target.value;
+  $("plSave").onclick = async () => {
+    try { await G.office.upsert("student_admin", { ...a, student_id: id, billing: $("plB").value, rate: Number($("plR").value) || 0, currency: a.currency || "MXN", phone: $("plP").value.trim() || null, parent_phone: $("plPP").value.trim() || null, updated_at: new Date().toISOString() }); G.toast("<b>Guardado</b>"); await load(); }
+    catch (e) { G.toast("No se pudo guardar: " + esc(e.message)); }
+  };
+  wirePays(); wireClassActs(); wireSlips();
+}
+
+function agenda(off) {
+  off = Number(off) || 0;
+  const mon = new Date(); mon.setHours(0, 0, 0, 0); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7) + off * 7);
+  const end = new Date(mon); end.setDate(mon.getDate() + 7);
+  const list = students(), cls = (DATA.classes || []).filter(c => byId(c.student_id) && new Date(c.starts_at) >= mon && new Date(c.starts_at) < end).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+  const um = unmarked().sort((a, b) => a.starts_at.localeCompare(b.starts_at)), today = day(new Date());
+  const rules = (DATA.rules || []).filter(r => r.active && byId(r.student_id)).sort((a, b) => a.weekday - b.weekday || a.time.localeCompare(b.time));
+  const days = Array.from({ length: 7 }, (_, k) => { const d = new Date(mon); d.setDate(mon.getDate() + k); return d; });
+  const label = `${mon.toLocaleDateString("es-MX", { day: "numeric", month: "short" })} – ${new Date(end - 864e5).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}`;
+  app.innerHTML = topBar("Agenda", "Agenda, cancela o marca las clases.", `<button class="btn primary sm" id="agNew">Agendar clase</button>`) + `
+    ${DATA.classes === null ? setupNote() : ""}
+    ${um.length ? `<div class="card"><div class="card-head"><h2>Clases sin marcar</h2><span class="hint">Ya pasaron: ¿se tomaron?</span></div>${um.map(c => clsRow(c, true)).join("")}</div>` : ""}
+    <div class="card"><div class="card-head"><div class="wk"><a class="btn sm ghost" href="#agenda/${off - 1}" aria-label="Semana anterior">←</a><b>${label}</b><a class="btn sm ghost" href="#agenda/${off + 1}" aria-label="Semana siguiente">→</a>${off ? `<a class="btn sm ghost" href="#agenda/0">Esta semana</a>` : ""}</div><span class="hint">${cls.length} clase${cls.length === 1 ? "" : "s"}</span></div>
+      ${days.map(d => { const cs = cls.filter(c => day(c.starts_at) === day(d)); return `<div class="day-h ${day(d) === today ? "today" : ""}">${cap(d.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "short" }))}${day(d) === today ? " · hoy" : ""}</div>${cs.length ? cs.map(c => `<div class="li">${ini(byId(c.student_id))}<div class="m"><b>${esc(byId(c.student_id).p.display_name)}</b><small>${hhmm(c.starts_at)}${c.rule_id ? " · horario fijo" : ""}</small></div>${tag(STATUS[c.status])}${clsActs(c)}</div>`).join("") : `<p class="hint" style="padding:4px 2px 8px">Sin clases</p>`}`; }).join("")}</div>
+    <div class="card"><div class="card-head"><h2>Horario fijo semanal</h2><span class="hint">Las clases se agregan solas a la agenda</span></div>
+      ${DATA.rules === null ? setupNote() : rules.length ? rules.map(r => `<div class="li">${ini(byId(r.student_id))}<div class="m"><b>${esc(byId(r.student_id).p.display_name)}</b><small>Cada ${DAYS[r.weekday].toLowerCase()} · ${hhmm("2000-01-01T" + r.time)} · ${r.minutes} min</small></div><span class="acts"><button class="btn sm ghost" data-rdel="${r.id}">Quitar</button></span></div>`).join("") : `<p class="empty">No hay horarios fijos.</p>`}
+      ${list.length && DATA.rules !== null ? `<form class="ruleform" id="rForm" novalidate>
+        <div class="field"><label for="rS">Alumno</label><select id="rS">${list.map(s => `<option value="${s.p.id}">${esc(s.p.display_name)}</option>`).join("")}</select></div>
+        <div class="field"><label for="rD">Día</label><select id="rD">${[1, 2, 3, 4, 5, 6, 0].map(k => `<option value="${k}">${DAYS[k]}</option>`).join("")}</select></div>
+        <div class="field"><label for="rT">Hora</label><input id="rT" type="time" value="17:00"></div>
+        <div class="field"><label for="rM">Duración</label><select id="rM">${[30, 45, 60, 90, 120].map(k => `<option value="${k}" ${k === 60 ? "selected" : ""}>${k} min</option>`).join("")}</select></div>
+        <button class="btn sm" type="submit">Agregar horario</button></form>` : ""}</div>`;
+  $("agNew").onclick = () => {
+    if (!list.length) return G.toast("Todavía no hay alumnos");
+    const w = sheet("Agendar clase", "Una clase suelta (para clases de cada semana usa el horario fijo)", `
+      <div class="field"><label for="nS">Alumno</label><select id="nS">${list.map(s => `<option value="${s.p.id}">${esc(s.p.display_name)}</option>`).join("")}</select></div>
+      <div class="grid2"><div class="field"><label for="nD">Fecha</label><input id="nD" type="date" value="${day(new Date())}"></div><div class="field"><label for="nT">Hora</label><input id="nT" type="time" value="17:00"></div></div>
+      <button class="btn primary" id="nSave">Agendar</button>`);
+    w.querySelector("#nSave").onclick = async () => {
+      const d = $("nD").value, t = $("nT").value; if (!d || !t) return G.toast("Escoge fecha y hora");
+      try { await G.office.insert("classes", [{ student_id: $("nS").value, starts_at: new Date(d + "T" + t).toISOString() }]); closeSheet(); G.toast("<b>Clase agendada</b>"); await load(); } catch (e) { G.toast("No se pudo guardar: " + esc(e.message)); }
+    };
+  };
+  const rf = $("rForm");
+  if (rf) rf.onsubmit = async e => {
+    e.preventDefault();
+    try { await G.office.insert("class_rules", [{ student_id: $("rS").value, weekday: +$("rD").value, time: $("rT").value || "17:00", minutes: +$("rM").value }]); G.toast("<b>Horario agregado</b><span>Las próximas dos semanas ya están en la agenda.</span>"); await load(); }
+    catch (err) { G.toast("No se pudo guardar: " + esc(err.message)); }
+  };
+  app.querySelectorAll("[data-rdel]").forEach(b => b.onclick = async () => {
+    if (!confirm("¿Quitar este horario fijo? Las clases futuras que no se han tomado también se quitan.")) return;
+    try {
+      await G.office.update("class_rules", b.dataset.rdel, { active: false });
+      const fut = (DATA.classes || []).filter(c => c.rule_id === b.dataset.rdel && c.status === "scheduled" && new Date(c.starts_at) > Date.now());
+      for (const c of fut) await G.office.remove("classes", c.id);
+      G.toast("Horario quitado"); await load();
+    } catch (err) { G.toast("No se pudo quitar: " + esc(err.message)); }
+  });
+  wireClassActs();
+}
+
+function pagos(m, sid) {
+  const list = students(), all = m === "todos";
+  m = all ? "todos" : /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
+  const pays = (DATA.payments || []).filter(p => byId(p.student_id) && (all || p.month === m) && (!sid || p.student_id === sid));
+  const total = pays.reduce((t, p) => t + Number(p.amount), 0), withProof = pays.filter(p => p.proof_path).length;
+  app.innerHTML = topBar("Pagos", "Pagos recibidos, recibos y capturas de transferencias.", `<button class="btn primary sm" id="pNew">Registrar pago</button>`) + `
+    ${DATA.payments === null ? setupNote() : ""}
+    <div class="card"><div class="card-head"><div class="filters"><select id="pM" aria-label="Mes que pagan"><option value="todos" ${all ? "selected" : ""}>Todos los meses</option>${months(12, 1).map(k => `<option value="${k}" ${k === m ? "selected" : ""}>${monthName(k)}</option>`).join("")}</select>
+      <select id="pS" aria-label="Alumno"><option value="">Todos los alumnos</option>${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
+      <span class="hint">${pays.length} pago${pays.length === 1 ? "" : "s"} · <b style="color:var(--ink)">${MONEY(total)}</b>${pays.length ? ` · ${withProof} con comprobante` : ""}</span></div>
+      ${pays.length ? pays.map(p => payRow(p, true)).join("") : `<p class="empty">No hay pagos ${all ? "registrados" : "de " + monthName(m).toLowerCase()}.</p>`}</div>`;
+  const go = () => location.hash = "#pagos/" + $("pM").value + ($("pS").value ? "/" + $("pS").value : "");
+  $("pM").onchange = go; $("pS").onchange = go;
+  $("pNew").onclick = () => paySheet({ sid, m: all ? null : m });
+  wirePays();
+}
+
+function slipState(ch) {
+  const b = billOf(ch.student_id, ch.month), paid = b.paid;
+  if (paid >= Number(ch.amount) && Number(ch.amount) > 0) return ["Pagada", "good"];
+  if (ch.due && ch.due < day(new Date())) return ["Vencida", "bad"];
+  return paid > 0 ? ["Pago parcial", "warn"] : ["Pendiente", ""];
+}
+const slipRow = ch => { const s = byId(ch.student_id), a = adminOf(ch.student_id); return `<div class="li"><div class="m"><b>${esc(ch.folio)} · ${s ? esc(s.p.display_name) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}${ch.due ? " · vence " + dShort(ch.due) : ""}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b>${tag(slipState(ch))}</span>
+  <span class="acts"><a class="btn sm" href="${esc(slipLink(ch))}" target="_blank" rel="noopener">Abrir</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(ch.student_id), slipText(ch)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-copy="${ch.id}">Copiar enlace</button><button class="btn sm ghost" data-chdel="${ch.id}">Borrar</button></span></div>`; };
+function wireSlips() {
+  app.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => { const ch = DATA.charges.find(x => x.id === b.dataset.copy), u = slipLink(ch); navigator.clipboard.writeText(u).then(() => G.toast("<b>Enlace copiado</b>"), () => window.prompt("Copia este enlace:", u)); });
+  app.querySelectorAll("[data-chdel]").forEach(b => b.onclick = async () => { if (!confirm("¿Borrar esta ficha?")) return; try { await G.office.remove("charges", b.dataset.chdel); G.toast("Ficha borrada"); await load(); } catch (e) { G.toast("No se pudo borrar: " + esc(e.message)); } });
+}
+function fichas(mode, sid, m) {
+  const list = students(), bk = DATA.bank || {}, noBank = !bk.clabe && !bk.account && !bk.card;
+  sid = byId(sid) ? sid : (list[0] && list[0].p.id); m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
+  const ch = (DATA.charges || []).filter(c => byId(c.student_id));
+  const dueDef = () => { const [y, mo] = $("fM").value.split("-").map(Number), d5 = new Date(y, mo - 1, 5); return day(d5 > new Date() ? d5 : new Date(Date.now() + 3 * 864e5)); };
+  app.innerHTML = topBar("Fichas de pago", "Fichas con los datos bancarios para que las familias paguen.") + `
+    ${DATA.charges === null ? setupNote() : ""}
+    ${noBank ? `<div class="alert info">Antes de mandar fichas, captura los <a href="#banco">datos bancarios</a> (banco, titular y CLABE).</div>` : ""}
+    <div class="cols">
+      <div class="card" id="newSlip"><h2>Nueva ficha</h2>
+        ${list.length ? `<div class="grid2"><div class="field"><label for="fS">Alumno</label><select id="fS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
+          <div class="field"><label for="fM">Mes</label>${monthSel("fM", m, 8)}</div></div>
+        <div class="field"><label for="fC">Concepto</label><input id="fC" maxlength="140"></div>
+        <div class="grid2"><div class="field"><label for="fA">Monto a pagar</label><input id="fA" type="number" min="0" step="10" inputmode="decimal"></div><div class="field"><label for="fD">Fecha límite</label><input id="fD" type="date"></div></div>
+        <p class="hint" id="fHint"></p>
+        <div class="field"><label for="fN">Nota <span class="muted" style="font-weight:500">(opcional)</span></label><input id="fN" maxlength="300" placeholder="Ej. Incluye la clase de reposición del día 12"></div>
+        <div id="fMsg" hidden></div>
+        <div class="actions"><button class="btn primary" id="fSave">Crear ficha</button></div>` : `<p class="empty">Todavía no hay alumnos.</p>`}</div>
+      <div class="card"><div class="card-head"><h2>Fichas emitidas</h2></div>${ch.length ? ch.map(slipRow).join("") : `<p class="empty">Aún no hay fichas.</p>`}</div>
+    </div>`;
+  wireSlips();
+  if (!list.length) return;
+  const fill = () => { const id = $("fS").value, mm = $("fM").value, sg = suggested(id, mm); $("fC").value = "Clases de inglés · " + monthName(mm).toLowerCase(); $("fA").value = sg.amount || ""; $("fD").value = dueDef(); $("fHint").textContent = sg.how + "."; };
+  $("fS").onchange = fill; $("fM").onchange = fill; fill();
+  $("fSave").onclick = async () => {
+    const id = $("fS").value, mm = $("fM").value, amount = Number($("fA").value), msg = $("fMsg");
+    if (!(amount > 0)) { msg.className = "alert bad"; msg.textContent = "Escribe el monto a pagar."; msg.hidden = false; return; }
+    const s = byId(id), n = (s.p.display_name || "X").trim().split(/\s+/), initials = ((n[0][0] || "X") + (n[1] ? n[1][0] : n[0][1] || "")).toUpperCase().normalize("NFD").replace(/[^A-Z]/g, "");
+    const seq = (DATA.charges || []).filter(c => c.month === mm).length + 1;
+    const row = { student_id: id, month: mm, folio: `F-${mm.replace("-", "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $("fC").value.trim() || null, amount, due: $("fD").value || null, note: $("fN").value.trim() || null };
+    const btn = $("fSave"); btn.disabled = true;
+    try {
+      const saved = await G.office.insert("charges", [row]); await load();
+      const c = (saved && saved[0]) || { ...row, created_at: new Date().toISOString() };
+      sheet("Ficha creada", esc(c.folio), `<div class="okbox"><span class="ic">${I('<path d="M5 12.5l4.5 4.5L19 7.5"/>')}</span><b>${esc(s.p.display_name)} · ${MONEY(amount, adminOf(id).currency)}</b><span class="hint">${c.due ? "Fecha límite: " + dLong(c.due) : ""}</span>
+        <div class="okacts"><a class="btn" href="${esc(slipLink(c))}" target="_blank" rel="noopener">Ver ficha</a><a class="btn primary" href="${esc(waLink(phoneOf(id), slipText(c)))}" target="_blank" rel="noopener">Enviar por WhatsApp</a></div></div>`);
+    } catch (e) { btn.disabled = false; msg.className = "alert bad"; msg.textContent = "No se pudo crear: " + (e.message || e); msg.hidden = false; }
+  };
+}
+
+function banco() {
+  const bk = DATA.bank || {};
+  app.innerHTML = topBar("Datos bancarios", "Salen en cada ficha de pago para que las familias transfieran.") + `
+    ${DATA.bank === null ? setupNote() : ""}
+    <div class="cols">
+      <div class="card"><form id="bkForm" style="display:grid;gap:12px" novalidate>
+        <div class="grid2"><div class="field"><label for="bkB">Banco</label><input id="bkB" maxlength="60" value="${esc(bk.bank || "")}" placeholder="Ej. BBVA"></div>
+          <div class="field"><label for="bkH">Titular de la cuenta</label><input id="bkH" maxlength="120" value="${esc(bk.holder || "")}" autocomplete="off"></div></div>
+        <div class="field"><label for="bkC">CLABE interbancaria (18 dígitos)</label><input id="bkC" inputmode="numeric" maxlength="22" value="${esc(bk.clabe || "")}" autocomplete="off"></div>
+        <div class="grid2"><div class="field"><label for="bkA">Número de cuenta <span class="muted" style="font-weight:500">(opcional)</span></label><input id="bkA" inputmode="numeric" maxlength="20" value="${esc(bk.account || "")}" autocomplete="off"></div>
+          <div class="field"><label for="bkK">Tarjeta para depósito <span class="muted" style="font-weight:500">(opcional)</span></label><input id="bkK" inputmode="numeric" maxlength="19" value="${esc(bk.card || "")}" autocomplete="off"></div></div>
+        <div class="field"><label for="bkT">Enviar comprobante a</label><input id="bkT" maxlength="120" value="${esc(bk.send_to || "")}" placeholder="Ej. WhatsApp 81 1234 5678"></div>
+        <div class="field"><label for="bkI">Instrucciones <span class="muted" style="font-weight:500">(opcional)</span></label><textarea id="bkI" maxlength="600">${esc(bk.instructions || "Escribe el folio de la ficha en el concepto de la transferencia.")}</textarea></div>
+        <div id="bkMsg" hidden></div>
+        <div class="actions"><button class="btn primary" type="submit">Guardar datos</button>${bk.updated_at ? `<span class="hint">Guardado el ${dShort(bk.updated_at)}</span>` : ""}</div></form></div>
+      <div class="card"><h2>Así se ve en la ficha</h2><div class="bankprev" id="bkPrev"></div><p class="hint">Solo tú, Alejandro y quien reciba una ficha ven estos datos.</p></div>
+    </div>`;
+  const digits = v => v.replace(/\D/g, ""), group = (v, n) => v.replace(new RegExp(`(.{${n}})`, "g"), "$1 ").trim();
+  const prev = () => {
+    const r = [["Banco", $("bkB").value.trim()], ["Titular", $("bkH").value.trim()], ["CLABE", group(digits($("bkC").value), 4)], ["Cuenta", digits($("bkA").value)], ["Tarjeta", group(digits($("bkK").value), 4)], ["Comprobante a", $("bkT").value.trim()]].filter(x => x[1]);
+    $("bkPrev").innerHTML = r.length ? r.map(x => `<div><span>${x[0]}</span><b>${esc(x[1])}</b></div>`).join("") : `<span>Todavía sin datos.</span>`;
+  };
+  $("bkForm").querySelectorAll("input,textarea").forEach(x => x.addEventListener("input", prev)); prev();
+  $("bkForm").onsubmit = async e => {
+    e.preventDefault();
+    const msg = $("bkMsg"), bad = t => { msg.className = "alert bad"; msg.textContent = t; msg.hidden = false; };
+    const clabe = digits($("bkC").value), card = digits($("bkK").value), acct = digits($("bkA").value);
+    if (clabe && clabe.length !== 18) return bad(`La CLABE debe tener 18 dígitos (tiene ${clabe.length}).`);
+    if (card && !(card.length === 16 || card.length === 15)) return bad("La tarjeta debe tener 16 dígitos.");
+    if (!clabe && !acct && !card) return bad("Escribe al menos la CLABE, la cuenta o la tarjeta.");
+    try { await G.office.upsert("billing_info", { id: 1, bank: $("bkB").value.trim() || null, holder: $("bkH").value.trim() || null, clabe: clabe || null, account: acct || null, card: card || null, send_to: $("bkT").value.trim() || null, instructions: $("bkI").value.trim() || null, updated_at: new Date().toISOString() }); G.toast("<b>Datos bancarios guardados</b>"); await load(); }
+    catch (err) { bad("No se pudo guardar: " + (err.message || err)); }
+  };
+}
+
+// ── Router ──
+const TITLES = { inicio: "Inicio", alumnos: "Alumnos", a: "Alumno", agenda: "Agenda", pagos: "Pagos", fichas: "Fichas de pago", banco: "Datos bancarios" };
+function render() {
+  const h = (location.hash || "#inicio").slice(1).split("/"), v = TITLES[h[0]] ? h[0] : "inicio";
+  const nav = v === "a" ? "alumnos" : v;
+  document.querySelectorAll("#admNav [data-v]").forEach(a => a.classList.toggle("on", a.dataset.v === nav));
+  $("mtitle").textContent = TITLES[v];
+  const me = G.profile || {}; $("me").innerHTML = `<b>${esc(me.display_name || "")}</b><small>${G.isTeacher ? "Maestro" : "Administración"}</small>`;
+  const um = unmarked().length, c = $("cntAg"); c.hidden = !um; c.textContent = um;
+  if (v === "alumnos") return alumnos(h[1]);
+  if (v === "a") return alumno(h[1], h[2]);
+  if (v === "agenda") return agenda(h[1]);
+  if (v === "pagos") return pagos(h[1], h[2]);
+  if (v === "fichas") return fichas(h[1], h[2], h[3]);
+  if (v === "banco") return banco();
+  return inicio(h[1]);
+}
+window.addEventListener("hashchange", () => { if (DATA) { render(); window.scrollTo(0, 0); } });
+
+// Ghost of the page while it loads
+(function () {
+  const b = (w, h, x) => `<i class="sk ${x || ""}" style="width:${w};height:${h}px"></i>`;
+  const row = i => `<div class="sk-row">${b("38px", 38, "sk-c")}<div class="grow">${b(["46%", "58%", "38%", "52%"][i % 4], 12)}${b(["70%", "62%", "80%", "66%"][i % 4], 10)}</div>${b("80px", 30)}</div>`;
+  app.innerHTML = `<div class="skl" aria-busy="true" aria-label="Cargando"><div class="adm-top"><div style="display:grid;gap:10px">${b("190px", 26)}${b("240px", 12)}</div>${b("130px", 32)}</div>
+    <div class="kpis">${[0, 1, 2, 3].map(() => `<div class="card">${b("55%", 11)}${b("45%", 28)}</div>`).join("")}</div>
+    <div class="dgrid"><div class="card">${b("40%", 16)}${row(0)}${row(1)}${row(2)}</div><div class="card">${b("36%", 16)}${row(3)}${row(1)}</div></div></div>`;
+})();
+
+G.ready.then(() => {
+  if (!G.cloudEnabled) { app.innerHTML = `<div class="card"><h2>Administración</h2><p class="muted">Este panel necesita las cuentas en línea (Supabase).</p></div>`; return; }
+  if (!G.isAdmin && !G.isTeacher) { app.innerHTML = `<div class="card"><h2>Esta sección es solo para administración</h2><p class="muted">Tu cuenta no tiene acceso. <a href="index.html">Ir a Lingua</a></p></div>`; return; }
+  if (G.isTeacher) { $("tLink").hidden = false; $("tSep").hidden = false; }
+  load();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clases de Inglés · Ficha de pago</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<style>
+  :root { --ink: #111; --mute: #6b6b6b; --line: #e3e3e3; --blue: #2233e6; --black: #0d0d0d; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #e9e9ec; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .bar { max-width: 816px; margin: 18px auto 0; display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px; }
+  .bar button { font: inherit; font-size: 14px; font-weight: 700; padding: 9px 16px; border-radius: 8px; border: 1px solid #c9c9cf; background: #fff; cursor: pointer; min-height: 44px; }
+  .bar button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .doc { width: 816px; margin: 12px auto 40px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.12); }
+  @media (max-width: 840px) { .doc { width: 100%; margin: 10px 0 30px; } }
+  header { background: var(--black); color: #fff; padding: 46px 60px 42px; display: flex; justify-content: space-between; gap: 24px; }
+  header h1 { font-size: 30px; font-weight: 800; letter-spacing: .5px; }
+  .kick { font-size: 10.5px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #8f9bff; margin-top: 12px; }
+  header .r { text-align: right; display: grid; gap: 8px; align-content: start; }
+  header .no { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  header .lbl { font-size: 9.5px; letter-spacing: 2.5px; text-transform: uppercase; color: #9a9a9a; }
+  main { padding: 34px 60px 26px; display: grid; gap: 26px; }
+  .who { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .lab { font-size: 9.5px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--mute); }
+  .who b { display: block; font-size: 17px; margin-top: 6px; }
+  .sh { display: flex; align-items: center; gap: 10px; font-size: 11.5px; font-weight: 800; letter-spacing: 3.5px; text-transform: uppercase; }
+  .sh::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .line { display: grid; grid-template-columns: 1fr auto; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; color: #444; }
+  .line span:last-child { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1.5px solid var(--ink); padding-top: 14px; }
+  .total .lab { color: var(--ink); }
+  .total b { font-size: 34px; font-weight: 800; letter-spacing: -.5px; color: var(--blue); font-variant-numeric: tabular-nums; }
+  .paid { display: inline-flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #12754a; border: 1.5px solid #12754a; border-radius: 6px; padding: 6px 10px; justify-self: start; }
+  .paid.part { color: #a35f00; border-color: #a35f00; }
+  .note { font-size: 12px; color: #444; line-height: 1.6; white-space: pre-wrap; }
+  .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding: 30px 60px 50px; align-items: end; }
+  .sign .s { border-top: 1px solid var(--ink); padding-top: 8px; font-size: 11.5px; }
+  .sign .s b { display: block; font-size: 13px; }
+  .sign small { font-size: 10px; color: var(--mute); line-height: 1.5; }
+  @media (max-width: 640px) { header { padding: 32px 24px; flex-direction: column; } header .r { text-align: left; } main { padding: 26px 24px 20px; } .sign { padding: 24px 24px 34px; grid-template-columns: 1fr; gap: 20px; } .who { grid-template-columns: 1fr; } }
+  .missing { padding: 60px; font-size: 15px; }
+  @media print { html, body { background: #fff; } .bar { display: none; } .doc { width: auto; margin: 0; box-shadow: none; } @page { size: letter; margin: 0; } }
+  .bank { border: 1.5px solid var(--ink); border-radius: 10px; overflow: hidden; }
+  .bank .row { display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: 12px; padding: 12px 18px; border-top: 1px solid var(--line); font-size: 13px; }
+  .bank .row:first-child { border-top: 0; }
+  .bank .row span { font-size: 9.5px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--mute); }
+  .bank .row b { font-size: 15px; font-variant-numeric: tabular-nums; letter-spacing: .3px; overflow-wrap: anywhere; }
+  .bank .row.big b { font-size: 19px; letter-spacing: 1px; }
+  .bank .ref { background: #f3f4ff; }
+  .cp { font: inherit; font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid #c9c9cf; background: #fff; cursor: pointer; min-height: 32px; }
+  .due { display: inline-flex; gap: 8px; align-items: center; font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #b42318; border: 1.5px solid #b42318; border-radius: 6px; padding: 6px 10px; justify-self: start; }
+  @media (max-width: 640px) { .bank .row { grid-template-columns: 1fr auto; } .bank .row span { grid-column: 1 / -1; } }
+  @media print { .cp { display: none; } }
+</style>
+</head>
+<body>
+<div class="bar"><button type="button" id="cpBar" hidden>Copiar CLABE</button><button type="button" class="primary" onclick="window.print()">Guardar como PDF</button></div>
+<div class="doc" id="doc"></div>
+<script>
+(function () {
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  let D = null;
+  try { const q = new URLSearchParams(location.search).get("d"); const b = atob(q.replace(/-/g, "+").replace(/_/g, "/")); D = JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) {}
+  const doc = document.getElementById("doc");
+  if (!D) { doc.innerHTML = `<p class="missing">Este enlace de ficha no es válido.</p>`; return; }
+  const cur = D.cur || "MXN", money = n => "$" + Number(n || 0).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " " + cur;
+  const date = d => new Date(d + "T12:00").toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" });
+  const group = (v, n) => String(v || "").replace(new RegExp(`(.{${n}})`, "g"), "$1 ").trim();
+  const B = D.b || {}, lines = [];
+  if (D.pl === "per_class" && D.k && D.r) lines.push([`${D.k} clase${D.k === 1 ? "" : "s"} × ${money(D.r)}`, money(D.k * D.r)]);
+  if (D.pl === "monthly" && D.r) lines.push(["Mensualidad", money(D.r)]);
+  const base = D.pl === "per_class" ? (D.k || 0) * (D.r || 0) : D.pl === "monthly" ? (D.r || 0) : 0;
+  if (lines.length && base > D.a + .005) lines.push(["Pagado antes o descuento", "−" + money(base - D.a)]);
+  else if (lines.length && base + .005 < D.a) lines.length = 0;
+  const rows = [["Banco", B.bank], ["Titular", B.holder], ["CLABE", group(B.clabe, 4), "clabe", B.clabe], ["Número de cuenta", B.account, "", B.account], ["Tarjeta (depósito)", group(B.card, 4), "", B.card]].filter(r => r[1]);
+  document.title = `Ficha ${D.f} · ${D.n}`;
+  doc.innerHTML = `
+    <header><div><h1>FICHA DE PAGO</h1><div class="kick">Clases de inglés</div></div>
+      <div class="r"><span class="lbl">Folio</span><span class="no">${esc(D.f)}</span>${D.du ? `<span class="lbl">Pagar antes del</span><span class="no">${esc(date(D.du))}</span>` : `<span class="lbl">Emitida</span><span class="no">${esc(date(D.e))}</span>`}</div></header>
+    <main>
+      <div class="who"><div><span class="lab">Alumno</span><b>${esc(D.n)}</b></div><div><span class="lab">Concepto</span><b>${esc(D.c || "Clases de inglés · " + D.m)}</b></div></div>
+      <div style="display:grid;gap:2px"><div class="sh">Detalle</div>
+        ${lines.map(l => `<div class="line"><span>${esc(l[0])}</span><span>${esc(l[1])}</span></div>`).join("")}
+        <div class="line"><span>Emitida el ${esc(date(D.e))}</span><span></span></div></div>
+      <div class="total"><span class="lab">Total a pagar</span><b>${esc(money(D.a))}</b></div>
+      ${D.du ? `<span class="due">Fecha límite · ${esc(date(D.du))}</span>` : ""}
+      ${rows.length ? `<div style="display:grid;gap:12px"><div class="sh">Datos para transferencia</div>
+        <div class="bank">${rows.map(r => `<div class="row ${r[2] === "clabe" ? "big" : ""}"><span>${r[0]}</span><b>${esc(r[1])}</b>${r[3] ? `<button type="button" class="cp" data-cp="${esc(r[3])}">Copiar</button>` : "<i></i>"}</div>`).join("")}
+          <div class="row ref"><span>Concepto / referencia</span><b>${esc(D.f)}</b><button type="button" class="cp" data-cp="${esc(D.f)}">Copiar</button></div></div></div>` : ""}
+      ${B.ins || B.to ? `<p class="note">${B.ins ? esc(B.ins) : ""}${B.ins && B.to ? "\n" : ""}${B.to ? "Envía tu comprobante a: <b>" + esc(B.to) + "</b>" : ""}</p>` : ""}
+      ${D.nt ? `<p class="note">${esc(D.nt)}</p>` : ""}
+    </main>
+    <div class="sign"><div class="s"><b>${esc(D.ow || "")}</b>Clases de inglés</div><small>Al recibir tu pago te mandamos el recibo. ¡Gracias por tu confianza!</small></div>`;
+  const copy = (v, btn) => navigator.clipboard.writeText(v).then(() => { const t = btn.textContent; btn.textContent = "¡Copiado!"; setTimeout(() => btn.textContent = t, 1400); }, () => window.prompt("Copia:", v));
+  doc.querySelectorAll("[data-cp]").forEach(b => b.onclick = () => copy(b.dataset.cp, b));
+  const cb = document.getElementById("cpBar"); if (B.clabe) { cb.hidden = false; cb.onclick = () => copy(B.clabe, cb); }
+})();
+</script>
+</body>
+</html>

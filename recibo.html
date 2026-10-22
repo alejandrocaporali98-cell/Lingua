@@ -68,7 +68,9 @@
       <div class="who"><div><span class="lab">Recibido de</span><b>${esc(D.n)}</b></div><div><span class="lab">Concepto</span><b>Clases de inglés · ${esc(D.m)}</b></div></div>
       <div style="display:grid;gap:2px"><div class="sh">Detalle</div>
         ${lines.map(l => `<div class="line"><span>${esc(l[0])}</span><span>${esc(l[1])}</span></div>`).join("")}
-        <div class="line"><span>Pago recibido</span><span>${esc(money(D.a))}</span></div></div>
+        <div class="line"><span>Pago recibido</span><span>${esc(money(D.a))}</span></div>
+        ${D.mt ? `<div class="line"><span>Forma de pago</span><span>${esc(({ transfer: "Transferencia", cash: "Efectivo", deposit: "Depósito", card: "Tarjeta", other: "Otro" })[D.mt] || D.mt)}</span></div>` : ""}
+        ${D.rf ? `<div class="line"><span>Referencia</span><span>${esc(D.rf)}</span></div>` : ""}</div>
       <div class="total"><span class="lab">Total pagado</span><b>${esc(money(D.a))}</b></div>
       ${D.du > 0 && D.pt < D.du ? `<div style="display:grid;gap:8px"><div class="line" style="border-top:1px solid var(--line)"><span>Pagado en ${esc(D.m)}</span><span>${esc(money(D.pt))} de ${esc(money(D.du))}</span></div><div class="line"><span><b>Saldo pendiente</b></span><span><b>${esc(money(D.du - D.pt))}</b></span></div></div><span class="paid part">Pago parcial</span>` : `<span class="paid">Pagado</span>`}
       ${D.nt ? `<p class="note">${esc(D.nt)}</p>` : ""}
