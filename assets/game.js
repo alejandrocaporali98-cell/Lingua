@@ -497,6 +497,8 @@
       <div class="lsheet-acts">
         <a class="btn primary" href="${links.webcal}">iPhone, iPad or Mac</a>
         <a class="btn" href="${links.google}" target="_blank" rel="noopener">Google Calendar</a>
+        <a class="btn" href="https://outlook.office.com/calendar/0/addfromweb?url=${encodeURIComponent(links.https)}&name=${encodeURIComponent("Lingua classes")}" target="_blank" rel="noopener">Outlook (work or school)</a>
+        <a class="btn" href="https://outlook.live.com/calendar/0/addfromweb?url=${encodeURIComponent(links.https)}&name=${encodeURIComponent("Lingua classes")}" target="_blank" rel="noopener">Outlook.com</a>
         <button type="button" class="btn ghost" id="calCopy">Copy link</button>
       </div><p class="muted" id="calMsg" style="font-size:.85em"></p>`, { label: "Calendar" });
     body.querySelector("#calCopy").onclick = () => navigator.clipboard.writeText(links.https).then(() => L.toast("Link copied"), () => window.prompt("Copy this link:", links.https));
