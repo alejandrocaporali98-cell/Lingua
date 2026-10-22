@@ -27,6 +27,7 @@
       <div class="tools">
         <button class="btn ghost sm hide-in-class" id="szDown" aria-label="Smaller text">A−</button>
         <button class="btn ghost sm hide-in-class" id="szUp" aria-label="Larger text">A+</button>
+        <a class="btn sm" id="gamesBtn" aria-label="Games" href="../juegos.html?l=${encodeURIComponent(C.id)}" title="Class games built from this lesson"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3M16 11.5h.01M18 13.5h.01"/></svg><span class="gl">Games</span></a>
         <button class="toggle" id="classBtn" aria-pressed="false"><span class="sw"></span>Class mode <span class="kbd">C</span></button>
         <button class="btn sm hide-sm" id="presentBtn" title="Full screen for sharing your screen">Present <span class="kbd">P</span></button>
         <a class="avatar hide-in-class hide-sm" data-avatar href="../perfil.html" aria-label="Your profile" style="width:32px;height:32px"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="6.5" r="3.2"/><path d="M2.8 16c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" stroke-linecap="round"/></svg></a>

@@ -4,6 +4,11 @@
 .pbar .ltitle { font-weight: 700; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pbar .tools { display: flex; align-items: center; gap: 6px; }
 .ring { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: .88em; color: var(--ink-2); }
+.pbar #gamesBtn { white-space: nowrap; flex: none; }
+@media (min-width: 561px) { .pbar .ring, .pbar .tools .toggle { white-space: nowrap; flex: none; } }
+#gamesBtn svg { margin-right: 2px; }
+@media (max-width: 1180px) { .pbar .ring { display: none; } }
+@media (max-width: 560px) { #gamesBtn .gl { display: none; } #gamesBtn svg { margin: 0; } }
 @media (max-width: 760px) { .pbar .hide-sm { display: none; } }
 @media (max-width: 560px) { .pbar { gap: 10px; } .pbar #szDown, .pbar #szUp, .pbar .toggle .kbd { display: none; } }
 
