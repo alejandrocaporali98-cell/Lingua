@@ -168,15 +168,27 @@
   .spk { flex: none; max-width: 45%; height: auto; }
   .ksub { font-size: .78em; font-weight: 700; color: var(--mute); } .ksub.up { color: var(--ok); } .ksub.down { color: var(--dev); } .ksub a { color: var(--brand); }
   .segs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; margin-top: 4px; } .segs i { height: 8px; border-radius: 2px; background: var(--line); } .segs i.on { background: var(--ok); } .segs i.part { background: #d39a00; }
-  @media (max-width: 560px) { .kpi { padding: 12px; } .kval b { font-size: 1.45em; } .spk { width: 64px; } }
+  @media (max-width: 560px) {
+    .kpis { gap: 10px; }
+    .kpi { padding: 12px 12px 10px; gap: 4px; align-content: start; }
+    .klbl { font-size: .64em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .kval { display: grid; gap: 6px; min-height: 0; } .kval b { font-size: 1.5em; }
+    .spk { width: 100%; max-width: none; height: 22px; }
+    .ksub { font-size: .72em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dgrid { gap: 12px; } .dgrid > .card { padding: 14px 14px; gap: 10px; }
+    .wbars { height: 100px; gap: 6px; }
+    .qb { grid-template-columns: 72px minmax(0, 1fr) 40px; gap: 8px; }
+  }
   .dgrid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 18px; align-items: start; }
   @media (max-width: 1000px) { .dgrid { grid-template-columns: 1fr; } }
   .tcs { display: grid; }
   .tc { display: grid; grid-template-columns: 70px 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); }
-  .tc:first-child { border-top: 0; } .tc .tt { font-variant-numeric: tabular-nums; white-space: nowrap; font-size: .92em; }
+  .tc:first-child { border-top: 0; }
+  .tc .tt { display: grid; line-height: 1.2; font-variant-numeric: tabular-nums; white-space: nowrap; } .tc .tt b { font-size: .92em; } .tc .tt small { font-size: .72em; font-weight: 700; color: var(--mute); text-transform: uppercase; letter-spacing: .03em; }
+  .tc > div { min-width: 0; } .tc > div b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tc .av { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; }
   .tc a { color: inherit; text-decoration: none; } .tc small { display: block; color: var(--mute); font-size: .8em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  @media (max-width: 520px) { .tc { grid-template-columns: 62px minmax(0, 1fr) auto; } .tc .av { display: none; } }
+  @media (max-width: 520px) { .tc { grid-template-columns: 64px minmax(0, 1fr) auto; gap: 10px; padding: 12px 0; } .tc .av { display: none; } }
   .wbars { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; align-items: end; height: 120px; }
   .wb { display: grid; justify-items: center; align-content: end; gap: 4px; height: 100%; }
   .wb i { width: 68%; max-width: 34px; border-radius: 4px 4px 0 0; background: var(--line); } .wb i.done { background: var(--ok); } .wb i.today { background: var(--fill-brand); } .wb i.sched { background: var(--line-2); } .wb i.missed { background: var(--bad); } .wb i.none { background: var(--line); border-radius: 2px; }
@@ -494,7 +506,7 @@ function todayView() {
     const lo = Math.min(...v.map(p => p[1])), hi = Math.max(...v.map(p => p[1])), rng = hi - lo || 1;
     const pts = v.map(([i, x]) => [(i / (vals.length - 1)) * 92 + 2, 28 - ((x - lo) / rng) * 22]);
     const last = pts[pts.length - 1];
-    return `<svg class="spk" width="96" height="32" viewBox="0 0 96 32" role="img" aria-label="${esc(label)}"><polyline points="${pts.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline><circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="${color}"></circle></svg>`;
+    return `<svg class="spk" width="96" height="32" viewBox="0 0 96 32" preserveAspectRatio="none" role="img" aria-label="${esc(label)}"><polyline points="${pts.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline><path d="M${last[0].toFixed(1)} ${last[1].toFixed(1)}h0" stroke="${color}" stroke-width="6" stroke-linecap="round" vector-effect="non-scaling-stroke"></path></svg>`;
   };
 
   // KPI 1: classes this month vs last month
@@ -516,7 +528,7 @@ function todayView() {
 
   const kpi = (label, val, unit, sub, subCls, chart) => `<div class="kpi"><span class="klbl">${label}</span><div class="kval"><b>${val}${unit ? `<small>${unit}</small>` : ""}</b>${chart || ""}</div><small class="ksub ${subCls || ""}">${sub}</small></div>`;
   const kpis = [
-    kpi("Classes this month", cM, "", cP ? `${cM - cP >= 0 ? "+" : ""}${cM - cP} vs ${new Date(pm + "-15").toLocaleDateString("en-US", { month: "long" })}` : "Attended and scheduled", cM - cP > 0 ? "up" : "", spark(cSpark, "var(--brand)", "Classes per week, last 8 weeks")),
+    kpi("Classes this month", cM, "", cP ? `${cM - cP >= 0 ? "+" : ""}${cM - cP} vs ${new Date(pm + "-15").toLocaleDateString("en-US", { month: "long" })}` : "Attended and scheduled", cP && cM - cP > 0 ? "up" : "", spark(cSpark, "var(--brand)", "Classes per week, last 8 weeks")),
     kpi("Average quiz", qAvg == null ? "—" : qAvg, qAvg == null ? "" : "%", "Pass mark 80%", "", spark(qSpark, "var(--brand)", "Average quiz score per week")),
     kpi("Homework on time", hPct == null ? "—" : hPct, hPct == null ? "" : "%", hPct == null ? "No homework with a due date yet" : hTrend === "down" ? "Down 2 weeks in a row" : `${hwAll.filter(onTime).length} of ${hwAll.length} on time`, hTrend === "down" ? "down" : "", spark(hSpark, hTrend === "down" ? "var(--dev)" : "var(--brand)", "Homework on time per week")),
     billable === null ? kpi(`${new Date().toLocaleDateString("en-US", { month: "long" })} payments`, "—", "", `<a href="#billing">Set up billing</a>`) :
@@ -526,7 +538,7 @@ function todayView() {
   // classes list: today, or the next ones when there's nothing today
   const showList = today.length ? today : upcoming.slice(0, 3);
   const classRows = showList.map(c => { const s = byId[c.student_id], l = c.lesson_id ? lessons.find(x => x.id === c.lesson_id) : s.mine[s.nextIdx], d = new Date(c.starts_at);
-    return `<div class="tc"><b class="tt">${today.length ? "" : esc(d.toLocaleDateString("en-US", { weekday: "short" })) + " "}${hhmm(c.starts_at)}</b>
+    return `<div class="tc"><span class="tt">${today.length ? "" : `<small>${esc(d.toLocaleDateString("en-US", { weekday: "short" }) + " " + d.getDate())}</small>`}<b>${hhmm(c.starts_at)}</b></span>
       <span class="av">${avatarOf(s, 36)}</span>
       <div style="min-width:0"><a href="#s/${s.p.id}"><b>${esc(s.p.display_name || "")}</b></a><small>${l ? esc("Lesson " + l.id + " · " + l.titulo) : "Next lesson"}</small></div>
       ${c.status === "scheduled" ? `<button class="btn sm ${Math.abs(d - now) < 3 * 3600e3 ? "primary" : ""}" data-sc="${c.id}">Start</button>` : `<span class="tag ${(ST[c.status] || ["", ""])[1]}">${(ST[c.status] || [c.status])[0]}</span>`}</div>`; }).join("");
