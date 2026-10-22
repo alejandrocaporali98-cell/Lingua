@@ -158,6 +158,22 @@
   .fu .dot.bad { background: var(--bad); } .fu .dot.warn { background: #d39a00; }
   .fu .what { color: var(--ink-2); min-width: 0; }
   @media (max-width: 520px) { .fu { grid-template-columns: 8px minmax(0, 1fr); row-gap: 2px; } .fu .what { grid-column: 2; } }
+  /* Reports overview */
+  .insl { display: grid; }
+  .ins { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 0; border-top: 1px solid var(--line); font-size: .92em; line-height: 1.45; color: var(--ink-2); }
+  .ins:first-child { border-top: 0; } .ins b { color: var(--ink); }
+  .ins i { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; }
+  .ins i svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .ins i.bad { background: var(--bad-soft); color: var(--bad); } .ins i.warn { background: var(--dev-soft); color: var(--dev); } .ins i.good { background: var(--ok-soft); color: var(--ok); } .ins i.info { background: var(--brand-soft); color: var(--brand); }
+  .seg { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--bg); border-radius: 10px; padding: 3px; }
+  .seg button { font: inherit; font-size: .86em; font-weight: 700; height: 36px; border: 0; border-radius: 8px; background: transparent; color: var(--mute); cursor: pointer; }
+  .seg button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .qt i.br { background: var(--fill-brand); } .qbs.nopass .qt::after { display: none; }
+  .badt { color: var(--bad); }
+  .rmain { grid-template-columns: 40px minmax(0, 1fr); } .rmain .av { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; }
+  .rnm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini { display: flex; gap: 10px; flex-wrap: wrap; font-size: .8em; color: var(--mute); margin-top: 3px; } .mini b { color: var(--ink); }
+  a.ib { text-decoration: none; }
   /* Today: dashboard with charts */
   .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
   @media (max-width: 1000px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -782,29 +798,93 @@ function scheduleView() {
 
 // ── Reports: analytics per student, comparison across students, export ──
 const RP_CTX = () => ({ classes: DATA.classes || [], homework: DATA.homework || [], analyzePlacement: LinguaReport.analyzePlacement });
-const RP_LABEL = { "30": "Last 30 days", "90": "Last 3 months", month: "This month", prev: "Last month", all: "All time" };
-let RPC = "", RPL = "es";
+const RP_LABEL = { "7": "Last 7 days", "30": "Last 30 days", "90": "Last 3 months", month: "This month", prev: "Last month", all: "All time" };
+let RPC = "", RPL = "es", RPCMP = "days";
 function reportsView(id, period) {
   const list = students(); period = LinguaReport.periods.includes(period) ? period : "30";
   const s = id && id !== "all" ? list.find(x => x.p.id === id) : null;
   const ctl = `<select id="rpS" aria-label="Student"><option value="all">All students</option>${list.map(x => `<option value="${x.p.id}" ${s && x.p.id === s.p.id ? "selected" : ""}>${esc(x.p.display_name || "")}</option>`).join("")}</select>
     <select id="rpP" aria-label="Period">${LinguaReport.periods.map(p => `<option value="${p}" ${p === period ? "selected" : ""}>${RP_LABEL[p]}</option>`).join("")}</select>`;
   if (!s) {
-    const rows = list.map(x => ({ x, D: LinguaReport.compute(x, period, RP_CTX()) }));
-    app.innerHTML = topBar("Reports", "Compare your students, then open one to see topics, strengths, areas of opportunity and trends.", ctl) + `
-      <div class="card"><div class="card-head"><h2>${RP_LABEL[period]}</h2><button class="btn sm" id="rpCsv">Download CSV</button></div>
-      <div class="tbl"><table class="crm" style="min-width:900px"><thead><tr><th>Student</th><th class="r">Classes</th><th class="r">Practice days</th><th class="r">Lessons passed</th><th class="r">Avg. quiz</th><th>Trend</th><th class="r">Points</th><th class="r">To review</th><th class="r"></th></tr></thead>
+    const ctx = RP_CTX(), rows = list.map(x => ({ x, D: LinguaReport.compute(x, period, ctx) }));
+    const prevNow = period === "all" ? null : new Date(LinguaReport.range(period).from.getTime() - 1);
+    const prev = prevNow ? list.map(x => LinguaReport.compute(x, period, { ...ctx, now: prevNow })) : null;
+    const sum = (arr, f) => arr.reduce((t, D) => t + f(D), 0), Ds = rows.map(r => r.D);
+    const withQ = Ds.filter(D => D.k.avg != null), qAvg = withQ.length ? Math.round(sum(withQ, D => D.k.avg) / withQ.length) : null;
+    const pWithQ = prev ? prev.filter(D => D.k.avg != null) : [], pAvg = pWithQ.length ? Math.round(sum(pWithQ, D => D.k.avg) / pWithQ.length) : null;
+    const n = Math.max(1, list.length), round1 = v => Math.round(v * 10) / 10;
+    const K = { cls: sum(Ds, D => D.k.cls[0]), days: round1(sum(Ds, D => D.k.days) / n), passed: sum(Ds, D => D.k.passed) };
+    const P = prev ? { cls: sum(prev, D => D.k.cls[0]), days: round1(sum(prev, D => D.k.days) / n), passed: sum(prev, D => D.k.passed) } : null;
+    const delta = (a, b, unit) => { if (b == null || a == null) return ""; const d = round1(a - b); return d === 0 ? `<small class="ksub">Same as previous</small>` : `<small class="ksub ${d > 0 ? "up" : "down"}">${d > 0 ? "+" : "−"}${Math.abs(d)}${unit || ""} vs previous</small>`; };
+    const first = x => esc((x.p.display_name || "").split(" ")[0]), names = xs => xs.length === 1 ? xs[0] : xs.slice(0, -1).join(", ") + " and " + xs[xs.length - 1];
+    // what stands out: short sentences built from the numbers, most urgent first
+    const INS = [];
+    const idle = rows.filter(r => r.D.k.days === 0 && r.x.mine.length);
+    if (idle.length) INS.push(["bad", `<b>${names(idle.map(r => first(r.x)))}</b> ${idle.length === 1 ? "hasn’t" : "haven’t"} practiced in this period.`]);
+    rows.filter(r => r.D.k.cls[1] >= 2).forEach(r => INS.push(["bad", `<b>${first(r.x)}</b> missed ${r.D.k.cls[1]} classes.`]));
+    const down = rows.filter(r => r.D.tr != null && r.D.tr < -3).sort((a, b) => a.D.tr - b.D.tr)[0];
+    if (down) INS.push(["warn", `<b>${first(down.x)}</b>’s quiz scores dropped ${-down.D.tr} points.`]);
+    const up = rows.filter(r => r.D.tr != null && r.D.tr > 3).sort((a, b) => b.D.tr - a.D.tr)[0];
+    if (up) INS.push(["good", `<b>${first(up.x)}</b>’s quiz scores went up ${up.D.tr} points.`]);
+    const top = rows.slice().sort((a, b) => b.D.k.days - a.D.k.days)[0];
+    if (top && top.D.k.days >= 2) INS.push(["good", `<b>${first(top.x)}</b> practiced the most: ${top.D.k.days} days.`]);
+    const noPl = list.filter(x => !x.placement && x.mine.length);
+    if (noPl.length) INS.push(["info", `${noPl.length === 1 ? `<b>${first(noPl[0])}</b> hasn’t` : `${noPl.length} students haven’t`} taken the placement test.`]);
+    const II = { bad: '<path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/>', warn: '<path d="M4 8l6 6 4-4 6 7"/>', good: '<path d="M4 16l6-6 4 4 6-7"/>', info: '<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/>' };
+    const kpi = (label, val, unit, sub) => `<div class="kpi"><span class="klbl">${label}</span><div class="kval"><b>${val}${unit ? `<small>${unit}</small>` : ""}</b></div>${sub || ""}</div>`;
+    const send = x => `<button type="button" class="ib gh" data-send="${x.p.id}" aria-label="Send ${first(x)}’s report to the family"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></svg></button>`;
+    const trend = D => D.tr == null ? "" : D.tr > 3 ? ` <span class="okt">▲</span>` : D.tr < -3 ? ` <span class="badt">▼</span>` : "";
+    app.innerHTML = topBar("Reports", "Compare your students, then open one to see topics, strengths, areas of opportunity and trends.", `<button class="btn sm" id="rpCsv">CSV</button>`) + `
+      <div class="chips" role="group" aria-label="Period">${LinguaReport.periods.map(p => `<button type="button" class="fchip ${p === period ? "on" : ""}" data-p="${p}" aria-pressed="${p === period}">${RP_LABEL[p]}</button>`).join("")}</div>
+      <div class="kpis">
+        ${kpi("Classes given", K.cls, "", P ? delta(K.cls, P.cls) : "")}
+        ${kpi("Practice days", K.days, " / student", P ? delta(K.days, P.days) : "")}
+        ${kpi("Average quiz", qAvg == null ? "—" : qAvg, qAvg == null ? "" : "%", pAvg != null && qAvg != null ? delta(qAvg, pAvg, " pts") : `<small class="ksub">${withQ.length} student${withQ.length === 1 ? "" : "s"} with quizzes</small>`)}
+        ${kpi("Lessons passed", K.passed, "", P ? delta(K.passed, P.passed) : "")}
+      </div>
+      <div class="dgrid">
+        <div class="card"><h2>What stands out</h2>
+          ${INS.length ? `<div class="insl">${INS.slice(0, 4).map(i => `<div class="ins"><i class="${i[0]}"><svg viewBox="0 0 24 24" aria-hidden="true">${II[i[0]]}</svg></i><span>${i[1]}</span></div>`).join("")}</div>` : `<p class="allgood"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>Nothing unusual in this period</p>`}</div>
+        <div class="card"><div class="card-head"><h2>Compare</h2><span class="muted" style="font-size:.82em" id="cmpLbl"></span></div>
+          <div class="seg" role="group" aria-label="Compare by"><button type="button" data-c="days">Practice</button><button type="button" data-c="avg">Quizzes</button><button type="button" data-c="passed">Lessons</button></div>
+          <div class="qbs" id="cmp"></div></div>
+      </div>
+      <div class="card"><div class="card-head"><h2>Student reports</h2><span class="muted" style="font-size:.85em">${RP_LABEL[period]}</span></div>
+      <div class="tbl only-wide"><table class="crm" style="min-width:900px"><thead><tr><th>Student</th><th class="r">Classes</th><th class="r">Practice days</th><th class="r">Lessons passed</th><th class="r">Avg. quiz</th><th>Trend</th><th class="r">Points</th><th class="r">To review</th><th class="r"></th></tr></thead>
       <tbody>${rows.map(({ x, D }) => `<tr data-row="${x.p.id}" tabindex="0"><td><div class="who"><span class="av">${avatarOf(x, 30)}</span><b>${esc(x.p.display_name || "")}</b></div></td>
         <td class="r num">${D.k.cls[0]}${D.k.cls[1] ? `<small class="muted"> · ${D.k.cls[1]} missed</small>` : ""}</td><td class="r num">${D.k.days}</td><td class="r num">${D.k.passed}<small class="muted"> · ${D.k.done}/${D.k.lessons}</small></td>
         <td class="r num">${D.k.avg == null ? "—" : D.k.avg + "%"}</td><td>${D.tr == null ? `<span class="muted">—</span>` : D.tr > 3 ? `<span class="tag good">▲ ${D.tr}</span>` : D.tr < -3 ? `<span class="tag bad">▼ ${-D.tr}</span>` : `<span class="tag">● steady</span>`}</td>
-        <td class="r num">${D.k.xp}</td><td class="r num">${D.k.rv}</td><td class="r"><a class="btn sm" href="#reports/${x.p.id}/${period}">Open</a></td></tr>`).join("")}</tbody></table></div></div>`;
-    wireTop(); wireRp(period);
+        <td class="r num">${D.k.xp}</td><td class="r num">${D.k.rv}</td><td class="r"><div class="rowact">${send(x)}<a class="btn sm" href="#reports/${x.p.id}/${period}">Open</a></div></td></tr>`).join("")}</tbody></table></div>
+      <div class="mlist only-narrow">${rows.map(({ x, D }) => `<div class="mrow">
+        <a class="mmain rmain" href="#reports/${x.p.id}/${period}"><span class="av">${avatarOf(x, 40)}</span>
+          <span class="mtxt"><b class="rnm">${esc(x.p.display_name || "")}</b><span class="mini"><span><b>${D.k.cls[0]}</b> class${D.k.cls[0] === 1 ? "" : "es"}</span><span><b>${D.k.days}</b> day${D.k.days === 1 ? "" : "s"}</span><span>Quiz <b>${D.k.avg == null ? "—" : D.k.avg + "%"}</b>${trend(D)}</span></span></span></a>
+        <div class="acts">${send(x)}<a class="ib" href="#reports/${x.p.id}/${period}" aria-label="Open ${first(x)}’s report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></div></div>`).join("")}</div></div>`;
+    wireTop();
+    app.querySelectorAll("[data-p]").forEach(b => b.onclick = () => location.hash = "#reports/all/" + b.dataset.p);
+    const CMP = { days: ["practice days", D => D.k.days, v => v], avg: ["average quiz", D => D.k.avg, v => v == null ? "—" : v + "%"], passed: ["lessons passed", D => D.k.passed, v => v] };
+    const drawCmp = k => {
+      RPCMP = k; const [lbl, f, fmt] = CMP[k], vals = rows.map(r => ({ x: r.x, v: f(r.D) })).sort((a, b) => (b.v ?? -1) - (a.v ?? -1));
+      const max = k === "avg" ? 100 : Math.max(1, ...vals.map(o => o.v || 0));
+      document.getElementById("cmpLbl").textContent = lbl;
+      document.getElementById("cmp").classList.toggle("nopass", k !== "avg");
+      document.getElementById("cmp").innerHTML = vals.map(o => `<a class="qb" href="#reports/${o.x.p.id}/${period}"><b>${first(o.x)}</b><span class="qt">${o.v ? `<i class="${k === "avg" ? (o.v >= 80 ? "ok" : o.v >= 60 ? "mid" : "low") : "br"}" style="width:${Math.round(o.v / max * 100)}%"></i>` : ""}</span><span class="qv">${fmt(o.v)}</span></a>`).join("");
+      app.querySelectorAll("[data-c]").forEach(b => { b.classList.toggle("on", b.dataset.c === k); b.setAttribute("aria-pressed", b.dataset.c === k); });
+    };
+    app.querySelectorAll("[data-c]").forEach(b => b.onclick = () => drawCmp(b.dataset.c));
+    drawCmp(RPCMP);
     app.querySelectorAll("tr[data-row]").forEach(tr => tr.onclick = e => { if (!e.target.closest("a, button")) location.hash = "#reports/" + tr.dataset.row + "/" + period; });
+    app.querySelectorAll("[data-send]").forEach(b => b.onclick = () => {
+      const r = rows.find(o => o.x.p.id === b.dataset.send);
+      const url = location.origin + location.pathname.replace(/teacher\.html$/, "") + "informe.html?d=" + b64({ ...r.D, te: G.maestroNombre || G.maestro }) + "&lang=es";
+      const text = "Reporte de avance de inglés de " + (r.x.p.display_name || "") + ": " + url;
+      if (navigator.share) navigator.share({ title: "Reporte de avance", text: "Reporte de avance de inglés de " + (r.x.p.display_name || ""), url }).catch(() => {});
+      else window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
+    });
     document.getElementById("rpCsv").onclick = () => {
       const head = ["Student", "Period", "From", "To", "Classes attended", "Classes missed", "Practice days", "Lessons passed", "Lessons passed (total)", "Lessons assigned", "Average quiz %", "Trend (pts)", "Points", "Homework done", "Homework assigned", "Questions to review"];
       const lines = rows.map(({ x, D }) => [x.p.display_name || "", RP_LABEL[period], D.f, D.t, D.k.cls[0], D.k.cls[1], D.k.days, D.k.passed, D.k.done, D.k.lessons, D.k.avg ?? "", D.tr ?? "", D.k.xp, D.k.hw[0], D.k.hw[1], D.k.rv]);
       const csv = [head, ...lines].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
-      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv" })); a.download = `lingua-students-${day(new Date())}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv" })); a.download = `lingua-students-${day(new Date())}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
     };
     return;
   }

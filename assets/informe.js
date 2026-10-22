@@ -9,7 +9,7 @@
   const pct = a => Math.round(a.ok / a.n * 100);
 
   // ── Period ──
-  R.periods = ["30", "90", "month", "prev", "all"];
+  R.periods = ["7", "30", "90", "month", "prev", "all"];
   R.range = function (p, now) {
     now = now || new Date(); const to = new Date(now); to.setHours(23, 59, 59, 999);
     let from;
@@ -22,7 +22,7 @@
 
   // ── Compute (teacher side). s = student from the panel; ctx = { classes, homework, areas, analyzePlacement } ──
   R.compute = function (s, period, ctx) {
-    const { from, to } = R.range(period), inP = d => { if (!d) return false; const t = new Date(d); return t >= from && t <= to; };
+    const { from, to } = R.range(period, ctx && ctx.now), inP = d => { if (!d) return false; const t = new Date(d); return t >= from && t <= to; };
     const span = to - from, prevFrom = new Date(from - span), prevIn = d => { const t = new Date(d); return t >= prevFrom && t < from; };
     const get = s.get, g = get("game", null) || { days: {} }, days = g.days || {};
     const attempts = s.rows.flatMap(r => (get("attempts." + r.l.id, []) || []).filter(a => a && a.at).map(a => ({ ...a, l: r.l })));
@@ -107,7 +107,7 @@
 
   // ── Strings ──
   const T = {
-    en: { title: "Progress report", period: { "30": "Last 30 days", "90": "Last 3 months", month: "This month", prev: "Last month", all: "All time" },
+    en: { title: "Progress report", period: { "7": "Last 7 days", "30": "Last 30 days", "90": "Last 3 months", month: "This month", prev: "Last month", all: "All time" },
       teacher: "Instructor", level: "Level", gen: "Generated on", summary: "Summary", classes: "Classes attended", missed: "Missed", practice: "Practice days", lessons: "Lessons passed", avg: "Average quiz score",
       xp: "Points earned", hw: "Homework done", trendUp: "Quiz scores are going up", trendDown: "Quiz scores went down", trendFlat: "Quiz scores are steady", vsPrev: "vs previous period",
       scores: "Quiz scores over time", scoresNote: "Each dot is a final quiz. The dashed line is the pass mark (80%).", weekly: "Weekly practice (points)", attendance: "Attendance by month", attended: "Attended",
@@ -118,7 +118,7 @@
       o_lesson: (t, p) => `<b>${t}</b>: last quiz ${p}%, needs another try`, o_review: (t, n, ex) => `<b>${t}</b>: ${n} question${n === 1 ? "" : "s"} to review${ex ? ` · e.g. “${ex}”` : ""}`,
       o_area: (a, p) => `<b>${a}</b> (${p}% in the placement test)`, o_habit: (d, w) => `Practice more often: ${d} days in ${w} week${w === 1 ? "" : "s"} (goal: 2 or more a week)`, o_hw: n => `${n} homework task${n === 1 ? "" : "s"} overdue`,
       comment: "Teacher’s comment", print: "Print or save as PDF", months: "en-US", missedN: n => n + " missed" },
-    es: { title: "Reporte de avance", period: { "30": "Últimos 30 días", "90": "Últimos 3 meses", month: "Este mes", prev: "Mes pasado", all: "Desde el inicio" },
+    es: { title: "Reporte de avance", period: { "7": "Últimos 7 días", "30": "Últimos 30 días", "90": "Últimos 3 meses", month: "Este mes", prev: "Mes pasado", all: "Desde el inicio" },
       teacher: "Instructor", level: "Nivel", gen: "Generado el", summary: "Resumen", classes: "Clases tomadas", missed: "Faltó", practice: "Días de práctica", lessons: "Lecciones aprobadas", avg: "Promedio en quizzes",
       xp: "Puntos ganados", hw: "Tareas entregadas", trendUp: "Sus calificaciones van subiendo", trendDown: "Sus calificaciones bajaron", trendFlat: "Sus calificaciones se mantienen", vsPrev: "vs periodo anterior",
       scores: "Calificaciones en el tiempo", scoresNote: "Cada punto es un quiz final. La línea punteada es la calificación aprobatoria (80%).", weekly: "Práctica por semana (puntos)", attendance: "Asistencia por mes", attended: "Asistió",
