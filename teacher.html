@@ -294,13 +294,52 @@
   .only-narrow { display: none; }
   @media (max-width: 760px) { .only-wide { display: none; } .only-narrow { display: grid; } }
   .mlist { display: grid; margin: 0 -4px; }
-  .mrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 4px; border-top: 1px solid var(--line); }
+  .mrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 12px 4px; border-top: 1px solid var(--line); }
   .mrow:first-child { border-top: 0; }
-  .mmain { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center; color: inherit; text-decoration: none; min-width: 0; }
-  .mmain .av { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; }
-  .mtxt { min-width: 0; display: grid; } .mname { font-weight: 700; display: flex; align-items: center; gap: 6px; }
-  .mtxt small { color: var(--mute); font-size: .82em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .mdot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; } .mdot.bad { background: var(--bad); } .mdot.warn { background: #d39a00; }
+  .mmain { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 12px; align-items: center; color: inherit; text-decoration: none; min-width: 0; }
+  .ring { position: relative; display: inline-block; flex: none; }
+  .ring svg { position: absolute; inset: 0; }
+  .ring > .av { position: absolute; inset: 5px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; }
+  .who .ring > .av { width: auto; height: auto; }
+  .mtxt { min-width: 0; display: grid; } .mname { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .mname b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1em; }
+  .lv { flex: none; font-size: .68em; font-weight: 800; padding: 2px 6px; border-radius: 5px; background: var(--brand-soft); color: var(--brand-dark); }
+  .thi { width: 14px; height: 14px; fill: none; stroke: var(--mute); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .sty .thi { width: 16px; height: 16px; stroke: var(--ink-2); }
+  .l2 { font-size: .86em; font-weight: 600; color: var(--ink-2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .l2.warn, .warnt { color: var(--dev); } .okt { color: var(--ok); font-weight: 700; }
+  .l3 { display: flex; align-items: center; gap: 6px; color: var(--mute); font-size: .78em; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gdot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex: none; }
+  .mdot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; } .mdot.bad { background: var(--bad); } .mdot.warn { background: #d39a00; }
+  .acts { display: flex; gap: 2px; }
+  .ib { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); display: grid; place-items: center; cursor: pointer; flex: none; }
+  .ib svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .ib:hover { border-color: var(--brand); color: var(--brand); }
+  .ib.pri { background: var(--fill-brand); border-color: var(--fill-brand); color: var(--on-fill); } .ib.pri:hover { background: var(--fill-brand-hover); color: var(--on-fill); }
+  .ib.gh { border-color: transparent; color: var(--mute); } .ib.gh:hover { background: var(--bg); color: var(--ink); }
+  .srch { position: relative; display: block; } .srch svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: none; stroke: var(--mute); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+  .card-head .srch input[type=search] { width: 100%; max-width: 420px; padding-left: 38px; height: 44px; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -2px; padding: 2px; } .chips::-webkit-scrollbar { display: none; }
+  .fchip { flex: none; font: inherit; font-size: .86em; font-weight: 700; height: 36px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .fchip i { font-style: normal; font-size: .82em; padding: 1px 6px; border-radius: 99px; background: var(--bg); color: var(--ink-2); }
+  .fchip.on { background: var(--inverse); border-color: var(--inverse); color: var(--on-inverse); } .fchip.on i { background: rgba(255,255,255,.18); color: inherit; }
+  #sheet { position: fixed; inset: 0; z-index: 80; }
+  .sh-scrim { position: absolute; inset: 0; background: rgba(8,10,16,.5); opacity: 0; transition: opacity .2s; }
+  .asheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 90vh; overflow-y: auto; background: var(--surface); border-radius: 20px 20px 0 0; padding: 10px 0 max(12px, env(safe-area-inset-bottom, 0px)); transform: translateY(100%); transition: transform .25s cubic-bezier(.2,.8,.3,1); box-shadow: 0 -10px 40px rgba(0,0,0,.25); }
+  #sheet.in .sh-scrim { opacity: 1; } #sheet.in .asheet { transform: none; }
+  @media (min-width: 761px) { .asheet { left: 50%; right: auto; bottom: auto; top: 50%; width: 420px; border-radius: 16px; transform: translate(-50%, -46%); opacity: 0; transition: transform .2s, opacity .2s; } #sheet.in .asheet { transform: translate(-50%, -50%); opacity: 1; } .sh-grab { display: none !important; } }
+  @media (prefers-reduced-motion: reduce) { .asheet, .sh-scrim { transition: none; } }
+  .sh-grab { display: block; margin: 0 auto 12px; width: 40px; height: 4px; border-radius: 99px; background: var(--line-2); }
+  .sh-head { display: flex; align-items: center; gap: 12px; padding: 4px 16px 14px; }
+  .sh-head .av { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; flex: none; }
+  .sh-head b { display: block; font-size: 1.1em; } .sh-head small { color: var(--mute); font-size: .85em; }
+  .sh-x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--bg); color: var(--ink-2); display: grid; place-items: center; cursor: pointer; flex: none; }
+  .sh-x svg, .sh-main svg, .sh-act svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .sh-main { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 16px 14px; } .sh-main .btn { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .sh-act { display: flex; align-items: center; gap: 14px; min-height: 54px; padding: 0 16px; border-top: 1px solid var(--line); color: var(--ink); text-decoration: none; font-weight: 600; }
+  .sh-act svg { width: 20px; height: 20px; color: var(--brand); } .sh-act span { flex: 1; white-space: nowrap; } .sh-act small { font-size: .8em; color: var(--mute); font-weight: 600; text-align: right; max-width: 52%; }
+  .sh-act:hover { background: var(--bg); }
+  body.sheet-open { overflow: hidden; }
+  @media (min-width: 761px) { .only-narrow { display: none !important; } }
 </style>
 </head>
 <body>
@@ -576,38 +615,111 @@ function todayView() {
   app.querySelectorAll("[data-sc]").forEach(b => b.onclick = () => { const c = cls.find(x => x.id === b.dataset.sc); b.disabled = true; startClass(byId[c.student_id], c); });
 }
 
+// theme icons (stroke) for the student list
+const THEME_ICON = {
+  racing: '<path d="M4 15a8 8 0 0 1 16 0v3H4z"/><path d="M12 11h8"/>',
+  music: '<circle cx="9" cy="15" r="5"/><path d="M12.5 11.5L20 4M18 3l3 3"/>',
+  cinema: '<rect x="3" y="9" width="18" height="12" rx="1"/><path d="M3 9l1.5-5h15L21 9M9 4L7.5 9M15 4l-1.5 5"/>',
+  riding: '<path d="M7 20v-8a5 5 0 0 1 10 0v8"/><path d="M5 20h4M15 20h4"/>',
+  career: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 13h18"/>'
+};
+const themeIco = s => `<svg class="thi" viewBox="0 0 24 24" role="img" aria-label="${esc(G.themeOf(s.theme).label.split(" (")[0])}">${THEME_ICON[s.theme] || THEME_ICON.racing}</svg>`;
+let FILT = "all";
+function studentFacts(s) {
+  const n = nextClass(s.p.id), al = alertsOf(s).filter(a => a[0] !== "info");
+  const b = DATA.admin === null ? null : billOf(s, monthKey(new Date()));
+  const unpaid = !!(b && b.a.billing !== "free" && b.due > 0 && b.paid < b.due);
+  const today = s.updated && day(s.updated) === day(new Date());
+  const week = n && new Date(n.starts_at) - Date.now() < 7 * 864e5;
+  return { n, al, b, unpaid, today, week, pct: s.rows.length ? Math.round(s.passed / s.rows.length * 100) : 0 };
+}
 function listView() {
-  const list = students();
-  const rows = list.filter(s => !Q || (s.p.display_name || "").toLowerCase().includes(Q.toLowerCase()));
-  const nc = s => nextClass(s.p.id), pct = s => s.rows.length ? Math.round(s.passed / s.rows.length * 100) : 0;
-  app.innerHTML = topBar("Students", `${list.length} student${list.length === 1 ? "" : "s"}`) + `
+  const list = students(), F = Object.fromEntries(list.map(s => [s.p.id, studentFacts(s)]));
+  const FILTERS = [["all", "All", () => true], ["week", "Class this week", s => F[s.p.id].week], ["follow", "Follow up", s => F[s.p.id].al.length], ["noclass", "No class", s => !F[s.p.id].n]]
+    .concat(DATA.admin === null ? [] : [["unpaid", "Unpaid", s => F[s.p.id].unpaid]]);
+  if (!FILTERS.some(f => f[0] === FILT)) FILT = "all";
+  const fn = FILTERS.find(f => f[0] === FILT)[2];
+  const rows = list.filter(s => fn(s) && (!Q || (s.p.display_name || "").toLowerCase().includes(Q.toLowerCase())));
+  const soon = list.map(s => F[s.p.id].n).filter(Boolean).sort((a, b) => a.starts_at.localeCompare(b.starts_at))[0];
+  const nTxt = n => new Date(n.starts_at).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit" });
+  const active = s => { const a = ago(s.updated); return a === "never" ? "Never signed in" : F[s.p.id].today ? "Practiced today" : "Active " + a; };
+  const ring = (s, size) => { const r = size / 2 - 2, c = 2 * Math.PI * r, p = F[s.p.id].pct;
+    return `<span class="ring" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="3"/>${p ? `<circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="var(--ok)" stroke-width="3" stroke-linecap="round" stroke-dasharray="${(c * p / 100).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 ${size / 2} ${size / 2})"/>` : ""}</svg><span class="av">${avatarOf(s, size - 10)}</span></span>`; };
+  const dots = s => { const al = F[s.p.id].al; return al.length ? `<i class="mdot ${al.some(a => a[0] === "bad") ? "bad" : "warn"}" title="${esc(al.map(a => a[1]).join(" · "))}"></i>` : ""; };
+  const more = s => `<button type="button" class="ib gh" data-more="${s.p.id}" aria-label="More for ${esc((s.p.display_name || "").split(" ")[0])}" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></button>`;
+  const play = s => `<button type="button" class="ib ${soon && F[s.p.id].n === soon ? "pri" : ""}" data-start="${s.p.id}" aria-label="Start class with ${esc((s.p.display_name || "").split(" ")[0])}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>`;
+  const practiced = list.filter(s => F[s.p.id].today).length;
+  app.innerHTML = topBar("Students", `${list.length} student${list.length === 1 ? "" : "s"}${practiced ? ` · ${practiced} practiced today` : ""}`, `<a class="btn primary sm" href="#accounts">+ Add</a>`) + `
     <div class="card">
-      <div class="card-head"><input type="search" id="q" placeholder="Search students" value="${esc(Q)}" aria-label="Search students"></div>
-      ${list.length ? `<div class="tbl only-wide"><table class="crm">
-        <thead><tr><th>Student</th><th>Style</th><th>Level</th><th>Progress</th><th>XP</th><th>Next class</th><th>Alerts</th><th>Last active</th><th class="r"></th></tr></thead>
-        <tbody>${rows.map(s => { const n = nc(s), al = alertsOf(s).filter(a => a[0] !== "info"); return `<tr data-row="${s.p.id}" tabindex="0">
-          <td><div class="who"><span class="av">${avatarOf(s, 34)}</span><span><b>${esc(s.p.display_name || "New student")}</b><small>${s.p.age ? s.p.age + " y/o" : ""}</small></span></div></td>
-          <td><span class="sty">${STYLE_ICON(s.theme)}${esc(G.themeOf(s.theme).label.split(" (")[0])}</span></td>
-          <td>${s.placement ? `<span class="tag">${esc(s.placement.nivel)}</span>` : `<span class="muted">—</span>`}</td>
-          <td><div class="prog"><span class="bar"><i style="width:${pct(s)}%"></i></span><small>${s.passed}/${s.rows.length}</small></div></td>
+      <div class="card-head" style="display:grid;gap:12px;justify-content:stretch">
+        <label class="srch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="q" placeholder="Search students" value="${esc(Q)}" aria-label="Search students"></label>
+        <div class="chips" role="group" aria-label="Filter students">${FILTERS.map(f => `<button type="button" class="fchip ${f[0] === FILT ? "on" : ""}" data-f="${f[0]}" aria-pressed="${f[0] === FILT}">${f[1]} <i>${list.filter(f[2]).length}</i></button>`).join("")}</div>
+      </div>
+      ${!list.length ? `<p class="empty">No students yet. <a href="#accounts">Create one in Accounts.</a></p>` : !rows.length ? `<p class="empty">No students match this filter.</p>` : `
+      <div class="tbl only-wide"><table class="crm">
+        <thead><tr><th>Student</th><th>Style</th><th>Level</th><th>Progress</th><th>XP</th><th>Next class</th><th>Last active</th><th class="r"></th></tr></thead>
+        <tbody>${rows.map(s => { const f = F[s.p.id]; return `<tr data-row="${s.p.id}" tabindex="0">
+          <td><div class="who">${ring(s, 40)}<span><b>${esc(s.p.display_name || "New student")} ${dots(s)}</b><small>${s.p.age ? s.p.age + " y/o" : ""}</small></span></div></td>
+          <td><span class="sty">${themeIco(s)}${esc(G.themeOf(s.theme).label.split(" (")[0])}</span></td>
+          <td>${s.placement ? `<span class="lv">${esc(s.placement.nivel)}</span>` : `<span class="muted">—</span>`}</td>
+          <td><div class="prog"><span class="bar"><i style="width:${f.pct}%"></i></span><small>${s.passed}/${s.rows.length}</small></div></td>
           <td class="num">${s.game.xp}<small class="muted"> · Lv ${s.game.level}</small></td>
-          <td>${n ? `<span class="nowrap">${when(n)}</span>` : `<span class="muted">—</span>`}</td>
-          <td>${al.length ? `<span class="tag ${al.some(a => a[0] === "bad") ? "bad" : "warn"}">${al.length}</span>` : `<span class="muted">—</span>`}</td>
-          <td class="muted nowrap">${ago(s.updated)}</td>
-          <td class="r"><div class="rowact"><button class="btn primary sm" data-start="${s.p.id}">Start class</button><a class="btn sm" href="#s/${s.p.id}">Open</a></div></td>
+          <td>${f.n ? `<span class="nowrap">${when(f.n)}</span>` : `<span class="warnt">No class scheduled</span>`}</td>
+          <td class="nowrap ${f.today ? "okt" : "muted"}">${f.today ? "Today" : ago(s.updated)}</td>
+          <td class="r"><div class="rowact">${play(s)}${more(s)}</div></td>
         </tr>`; }).join("")}</tbody></table></div>
-      <div class="mlist only-narrow">${rows.map(s => { const n = nc(s), al = alertsOf(s).filter(a => a[0] !== "info"), bad = al.some(a => a[0] === "bad"); return `<div class="mrow">
-        <a class="mmain" href="#s/${s.p.id}"><span class="av">${avatarOf(s, 40)}</span>
-          <span class="mtxt"><span class="mname">${esc(s.p.display_name || "New student")}${al.length ? `<i class="mdot ${bad ? "bad" : "warn"}" title="${al.length} to follow up"></i>` : ""}</span>
-          <small>${s.passed}/${s.rows.length} passed · ${n ? "Next " + new Date(n.starts_at).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit" }) : "No class scheduled"}</small></span></a>
-        <button class="btn sm" data-start="${s.p.id}">Start</button></div>`; }).join("")}</div>`
-      : `<p class="empty">No students yet. Create one in Accounts.</p>`}
+      <div class="mlist only-narrow">${rows.map(s => { const f = F[s.p.id]; return `<div class="mrow">
+        <a class="mmain" href="#s/${s.p.id}">${ring(s, 48)}
+          <span class="mtxt"><span class="mname"><b>${esc(s.p.display_name || "New student")}</b>${s.placement ? `<span class="lv">${esc(s.placement.nivel)}</span>` : ""}${themeIco(s)}${dots(s)}</span>
+            <span class="l2 ${f.n ? "" : "warn"}">${f.n ? "Next · " + nTxt(f.n) : "No class scheduled"}</span>
+            <small class="l3">${f.today ? `<i class="gdot"></i>` : ""}${s.passed}/${s.rows.length} lessons · ${active(s)}</small></span></a>
+        <div class="acts">${play(s)}${more(s)}</div></div>`; }).join("")}</div>`}
     </div>`;
   wireTop();
   const q = document.getElementById("q"); if (q) q.oninput = () => { Q = q.value; const pos = q.selectionStart; listView(); const n = document.getElementById("q"); n.focus(); n.setSelectionRange(pos, pos); };
+  app.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { FILT = b.dataset.f; listView(); const n = app.querySelector(`[data-f="${FILT}"]`); n && n.focus(); });
   app.querySelectorAll("tr[data-row]").forEach(tr => { const go = () => location.hash = "#s/" + tr.dataset.row; tr.onclick = e => { if (!e.target.closest("button, a")) go(); }; tr.onkeydown = e => { if (e.key === "Enter" && e.target === tr) go(); }; });
   app.querySelectorAll("[data-start]").forEach(b => b.onclick = () => { b.disabled = true; startClass(list.find(x => x.p.id === b.dataset.start)); });
+  app.querySelectorAll("[data-more]").forEach(b => b.onclick = () => actionSheet(list.find(x => x.p.id === b.dataset.more), F[b.dataset.more], b));
 }
+
+// "⋯" menu: a sheet from the bottom on phones, a small dialog on wide screens
+function actionSheet(s, f, opener) {
+  closeSheet();
+  const rules = (DATA.rules || []).filter(r => r.student_id === s.p.id && r.active);
+  const ruleTxt = rules.length ? rules.map(r => "Every " + DAYS[r.weekday].slice(0, 3) + " " + hhmm("2000-01-01T" + r.time)).join(", ") : f.n ? "" : "Nothing scheduled";
+  const bill = !f.b ? "" : f.b.a.billing === "free" ? "Free" : f.b.due === 0 && f.b.paid === 0 ? "Set a plan" : f.b.paid >= f.b.due ? `<span class="okt">${new Date().toLocaleDateString("en-US", { month: "long" })} paid</span>` : `<span class="warnt">${new Date().toLocaleDateString("en-US", { month: "long" })} ${f.b.paid > 0 ? "partly paid" : "unpaid"}</span>`;
+  const I = d => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+  const wrap = document.createElement("div");
+  wrap.id = "sheet"; wrap.innerHTML = `<div class="sh-scrim" data-x></div>
+    <div class="asheet" role="dialog" aria-modal="true" aria-labelledby="shName">
+      <i class="sh-grab" aria-hidden="true"></i>
+      <div class="sh-head"><span class="av">${avatarOf(s, 44)}</span><div style="flex:1;min-width:0"><b id="shName">${esc(s.p.display_name || "")}</b><small>${esc(G.themeOf(s.theme).label.split(" (")[0])} · ${f.n ? "Next " + new Date(f.n.starts_at).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit" }) : "No class scheduled"}</small></div>
+        <button type="button" class="sh-x" data-x aria-label="Close">${I('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div>
+      <div class="sh-main"><button type="button" class="btn primary" id="shStart">${I('<path d="M8 5v14l11-7z"/>')}Start class</button><button type="button" class="btn" id="shPres">${I('<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>')}Present</button></div>
+      <a class="sh-act" href="#s/${s.p.id}/homework">${I('<path d="M9 4h6a2 2 0 0 1 2 2h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1a2 2 0 0 1 2-2z"/><path d="M8.5 13l2.5 2.5 4.5-5"/>')}<span>Assign homework</span><small>${s.pending ? `<span class="warnt">${s.pending} pending</span>` : "None pending"}</small></a>
+      <a class="sh-act" href="#s/${s.p.id}/classes">${I('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>')}<span>Schedule a class</span><small>${esc(ruleTxt)}</small></a>
+      <a class="sh-act" href="#reports/${s.p.id}/30">${I('<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>')}<span>Progress report</span></a>
+      ${f.b ? `<a class="sh-act" href="#s/${s.p.id}/billing">${I('<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>')}<span>Billing and plan</span><small>${bill}</small></a>` : ""}
+      <a class="sh-act" href="#s/${s.p.id}">${I('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>')}<span>Open student file</span></a>
+    </div>`;
+  document.body.appendChild(wrap); document.body.classList.add("sheet-open");
+  requestAnimationFrame(() => wrap.classList.add("in"));
+  const close = () => { closeSheet(); opener && opener.isConnected && opener.focus(); };
+  wrap.querySelectorAll("[data-x]").forEach(x => x.onclick = close);
+  wrap.querySelectorAll(".sh-act").forEach(a => a.addEventListener("click", () => closeSheet()));
+  wrap.querySelector("#shStart").onclick = e => { e.currentTarget.disabled = true; startClass(s); };
+  wrap.querySelector("#shPres").onclick = e => { e.currentTarget.disabled = true; startClass(s, null, { present: true }); };
+  wrap.onkeydown = e => {
+    if (e.key === "Escape") { e.preventDefault(); close(); return; }
+    if (e.key !== "Tab") return;
+    const fs = [...wrap.querySelectorAll(".asheet button, .asheet a")]; const a = fs[0], z = fs[fs.length - 1];
+    if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+  };
+  wrap.querySelector("#shStart").focus();
+}
+function closeSheet() { const w = document.getElementById("sheet"); if (w) w.remove(); document.body.classList.remove("sheet-open"); }
+window.addEventListener("hashchange", closeSheet);
 
 function rulesBox(onlyId) {
   if (DATA.rules === null) return setupNote("recurring classes");
