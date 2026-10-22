@@ -16,6 +16,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
 <script src="assets/config.js"></script>
+<script src="assets/billing.js"></script>
 <script src="assets/game.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
@@ -72,7 +73,6 @@ const hhmm = d => new Date(d).toLocaleTimeString("es-MX", { hour: "numeric", min
 const DAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 const METHOD = { transfer: "Transferencia", cash: "Efectivo", deposit: "Depósito", card: "Tarjeta", other: "Otro" };
 const STATUS = { scheduled: ["Programada", ""], attended: ["Tomada", "good"], missed: ["Faltó", "bad"], cancelled: ["Cancelada", "warn"] };
-const PLAN = { per_class: "Por clase", monthly: "Mensualidad", free: "Sin costo" };
 const b64 = obj => { const bytes = new TextEncoder().encode(JSON.stringify(obj)); let bin = ""; bytes.forEach(c => bin += String.fromCharCode(c)); return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
 const site = () => location.origin + location.pathname.replace(/admin\.html$/, "");
 const waLink = (phone, text) => { let d = String(phone || "").replace(/\D/g, ""); if (d.length === 10) d = "52" + d; return "https://wa.me/" + d + "?text=" + encodeURIComponent(text); };
@@ -88,23 +88,41 @@ const students = () => {
   return DATA.profiles.filter(p => p.id !== me && !staff.has(p.id) && !tch.has(p.id)).map(p => ({ p })).sort((a, b) => (a.p.display_name || "").localeCompare(b.p.display_name || ""));
 };
 const byId = id => students().find(s => s.p.id === id);
-const adminOf = id => (DATA.admin || []).find(a => a.student_id === id) || { student_id: id, billing: "per_class", rate: 0, currency: "MXN", phone: null, parent_phone: null };
+const PLAN = { per_class: "Por clase", weekly: "Por semana", monthly: "Mensualidad", free: "Sin costo" };
+const ST = { free: ["Sin costo", ""], none: ["—", ""], paid: ["Pagado", "good"], partial: ["Parcial", "warn"], pending: ["Pendiente", "bad"] };
+const adminOf = id => G.billing.plan(DATA, id);
 const clsOf = (id, m) => (DATA.classes || []).filter(c => c.student_id === id && (!m || monthKey(c.starts_at) === m));
-function billOf(id, m) {
-  const a = adminOf(id), cls = clsOf(id, m);
-  const attended = cls.filter(c => c.status === "attended").length, missed = cls.filter(c => c.status === "missed").length, cancelled = cls.filter(c => c.status === "cancelled").length, scheduled = cls.filter(c => c.status === "scheduled").length;
-  const due = a.billing === "free" ? 0 : a.billing === "monthly" ? Number(a.rate) : attended * Number(a.rate);
-  const paid = (DATA.payments || []).filter(p => p.student_id === id && p.month === m).reduce((t, p) => t + Number(p.amount), 0);
-  const status = a.billing === "free" ? ["Sin costo", ""] : due === 0 && paid === 0 ? ["—", ""] : paid >= due ? ["Pagado", "good"] : paid > 0 ? ["Parcial", "warn"] : ["Pendiente", "bad"];
-  return { a, attended, missed, cancelled, scheduled, due, paid, bal: Math.max(0, due - paid), status };
+// Families (siblings who pay together): one plan, one payment, one receipt
+const famIds = id => { const ids = G.billing.members(DATA, id).filter(i => byId(i)); return ids.length ? ids : [id]; };
+const nameOf = id => { const s = byId(id); return s ? s.p.display_name || "" : ""; };
+const famName = id => G.billing.names(famIds(id).map(nameOf));
+const famFirst = id => G.billing.names(famIds(id).map(i => nameOf(i).split(" ")[0]));
+const withWho = id => { const o = famIds(id).filter(i => i !== id).map(i => nameOf(i).split(" ")[0]); return o.length ? "con " + G.billing.names(o) : ""; };
+const units = () => G.billing.units(DATA, students());
+function billOf(id, m) { const b = G.billing.bill(DATA, id, m); b.status = ST[b.code]; return b; }
+const own = (id, m) => { const c = clsOf(id, m), n = st => c.filter(x => x.status === st).length; return { attended: n("attended"), scheduled: n("scheduled"), missed: n("missed"), cancelled: n("cancelled") }; };
+const planText = a => a.billing === "free" ? "Sin costo" : !Number(a.rate) ? "Sin plan" : MONEY(a.rate, a.currency) + (a.billing === "weekly" ? " por semana" : a.billing === "monthly" ? " al mes" : " por clase");
+// Weeks (weekly plans): named by their pay day
+const wkRange = (id, key) => G.billing.weekRange(key, adminOf(id).pay_day);
+function wkLabel(id, key, year) {
+  const [a, b] = wkRange(id, key).map(x => new Date(x + "T12:00")), mo = d => d.toLocaleDateString("es-MX", { month: "long" });
+  return (a.getMonth() === b.getMonth() ? `${a.getDate()} al ${b.getDate()} de ${mo(b)}` : `${a.getDate()} de ${mo(a)} al ${b.getDate()} de ${mo(b)}`) + (year ? " de " + b.getFullYear() : "");
 }
-// What to charge on a slip: monthly fee, or every class of the month (taken + still scheduled) for per-class plans
+const byLine = (id, w) => famIds(id).map(i => `${nameOf(i).split(" ")[0]} ${w.by[i] || 0} clase${(w.by[i] || 0) === 1 ? "" : "s"}`).join(" · ");
+const wkTag = w => tag(ST[w.code === "none" ? "none" : w.code]);
+const weekOpts = (id, sel) => { const pd = adminOf(id).pay_day, keys = G.billing.weekKeys(pd, 8, 2); if (sel && !keys.includes(sel)) keys.push(sel); return keys.map(k => `<option value="${k}" ${k === sel ? "selected" : ""}>${cap(dShort(k).replace(".", ""))} · ${wkLabel(id, k)}</option>`).join(""); };
+const nextUnpaidWeek = (id, m) => { const b = billOf(id, m); const w = (b.weeks || []).find(x => x.due > 0 && x.paid < x.due); return w ? w.key : G.billing.weekKey(new Date(), adminOf(id).pay_day); };
+// What to charge: weekly → one week; monthly fee; or every class of the month (taken + still scheduled)
+function suggestedWeek(id, key) { const w = G.billing.week(DATA, id, key), a = adminOf(id); return { amount: w.bal, k: w.k, w, how: `${byLine(id, w)} · ${MONEY(a.rate, a.currency)} por semana` + (w.paid ? " − pagado " + MONEY(w.paid, a.currency) : "") }; }
 function suggested(id, m) {
   const b = billOf(id, m), a = b.a;
   if (a.billing === "free") return { amount: 0, k: 0, how: "Sin costo" };
+  if (a.billing === "weekly") { const n = (b.weeks || []).filter(w => w.due > 0).length; return { amount: b.bal, k: b.attended + b.scheduled, how: `${n} semana${n === 1 ? "" : "s"} × ${MONEY(a.rate, a.currency)}` + (b.paid ? " − pagado " + MONEY(b.paid, a.currency) : "") }; }
   if (a.billing === "monthly") return { amount: Math.max(0, Number(a.rate) - b.paid), k: b.attended + b.scheduled, how: "Mensualidad " + MONEY(a.rate, a.currency) + (b.paid ? " − pagado " + MONEY(b.paid, a.currency) : "") };
   const k = b.attended + b.scheduled; return { amount: Math.max(0, k * Number(a.rate) - b.paid), k, how: `${k} clase${k === 1 ? "" : "s"} × ${MONEY(a.rate, a.currency)}` + (b.paid ? " − pagado " + MONEY(b.paid, a.currency) : "") };
 }
+const periodOf = x => x.week ? "Semana del " + wkLabel(x.student_id, x.week) : monthShort(x.month);
+const unitOptions = sel => { return units().map(u => `<option value="${u[0].p.id}" ${u.some(s => s.p.id === sel) ? "selected" : ""}>${esc(G.billing.names(u.map(s => s.p.display_name)))}</option>`).join(""); };
 const unmarked = () => (DATA.classes || []).filter(c => c.status === "scheduled" && new Date(c.starts_at) < Date.now() - 3600e3 && byId(c.student_id));
 
 async function fillFromRules() {
@@ -175,22 +193,25 @@ function moveSheet(c) {
 
 // ── Receipts, slips and proofs ──
 function receiptLink(p) {
-  const s = byId(p.student_id), a = adminOf(p.student_id), b = billOf(p.student_id, p.month);
-  const D = { no: "R-" + p.month.replace("-", "") + "-" + String(p.id).replace(/-/g, "").slice(0, 4).toUpperCase(), n: s ? s.p.display_name : "", m: new Date(p.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
-    d: p.paid_on, a: Number(p.amount), cur: a.currency || "MXN", pl: a.billing, k: b.attended, r: Number(a.rate) || 0, nt: p.note || "", ow: G.maestroNombre || G.maestro, du: b.due, pt: b.paid, mt: p.method || "", rf: p.reference || "" };
+  const a = adminOf(p.student_id), wk = p.week ? G.billing.week(DATA, p.student_id, p.week) : null, b = wk ? null : billOf(p.student_id, p.month);
+  const D = { no: "R-" + (p.week || p.month).replace(/-/g, "") + "-" + String(p.id).replace(/-/g, "").slice(0, 4).toUpperCase(), n: famName(p.student_id),
+    m: wk ? "semana del " + wkLabel(p.student_id, p.week, true) : new Date(p.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
+    d: p.paid_on, a: Number(p.amount), cur: a.currency || "MXN", pl: wk ? "weekly" : a.billing, k: wk ? wk.attended || wk.k : b.attended, r: Number(a.rate) || 0, by: wk && famIds(p.student_id).length > 1 ? byLine(p.student_id, wk) : "",
+    nt: p.note || "", ow: G.maestroNombre || G.maestro, du: wk ? wk.rate : b.due, pt: wk ? wk.paid : b.paid, mt: p.method || "", rf: p.reference || "" };
   return site() + "recibo.html?d=" + b64(D);
 }
 function slipLink(ch) {
-  const s = byId(ch.student_id), a = adminOf(ch.student_id), bk = DATA.bank || {}, sg = suggested(ch.student_id, ch.month);
-  const D = { f: ch.folio, n: s ? s.p.display_name : "", c: ch.concept || "", m: new Date(ch.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }), a: Number(ch.amount), cur: a.currency || "MXN",
-    du: ch.due || "", e: day(ch.created_at || new Date()), pl: a.billing, r: Number(a.rate) || 0, k: sg.k, nt: ch.note || "", ow: G.maestroNombre || G.maestro,
+  const a = adminOf(ch.student_id), bk = DATA.bank || {}, wk = ch.week ? G.billing.week(DATA, ch.student_id, ch.week) : null, sg = wk ? null : suggested(ch.student_id, ch.month);
+  const D = { f: ch.folio, n: famName(ch.student_id), c: ch.concept || "", m: wk ? "semana del " + wkLabel(ch.student_id, ch.week, true) : new Date(ch.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }), a: Number(ch.amount), cur: a.currency || "MXN",
+    du: "", e: day(ch.created_at || new Date()), pl: wk ? "weekly" : a.billing, r: Number(a.rate) || 0, k: wk ? wk.k : sg.k, by: wk && famIds(ch.student_id).length > 1 ? byLine(ch.student_id, wk) : "", nt: ch.note || "", ow: G.maestroNombre || G.maestro,
     b: { bank: bk.bank || "", holder: bk.holder || "", clabe: bk.clabe || "", account: bk.account || "", card: bk.card || "", to: bk.send_to || "", ins: bk.instructions || "" } };
   return site() + "ficha.html?d=" + b64(D);
 }
 const firstName = s => (s && s.p.display_name || "").split(" ")[0];
-function slipText(ch) { const s = byId(ch.student_id), a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${firstName(s)} (${monthShort(ch.month).toLowerCase()}): ${MONEY(ch.amount, a.currency)}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; }
-function receiptText(p) { const s = byId(p.student_id), a = adminOf(p.student_id); return `Hola, recibimos su pago de ${MONEY(p.amount, a.currency)} por las clases de inglés de ${firstName(s)} (${monthShort(p.month).toLowerCase()}). ¡Gracias! Aquí está su recibo: ${receiptLink(p)}`; }
-const phoneOf = id => { const a = adminOf(id); return a.parent_phone || a.phone || ""; };
+const periodText = x => x.week ? "semana del " + wkLabel(x.student_id, x.week) : monthShort(x.month).toLowerCase();
+function slipText(ch) { const a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${famFirst(ch.student_id)} (${periodText(ch)}): ${MONEY(ch.amount, a.currency)}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; }
+function receiptText(p) { const a = adminOf(p.student_id); return `Hola, recibimos su pago de ${MONEY(p.amount, a.currency)} por las clases de inglés de ${famFirst(p.student_id)} (${periodText(p)}). ¡Gracias! Aquí está su recibo: ${receiptLink(p)}`; }
+const phoneOf = id => { const ph = famIds(id).map(i => adminOf(i)).find(a => a.parent_phone || a.phone); return ph ? ph.parent_phone || ph.phone : ""; };
 async function showProof(path) {
   const w = sheet("Comprobante", "", `<p class="hint">Cargando…</p>`);
   try {
@@ -199,14 +220,15 @@ async function showProof(path) {
   } catch (e) { w.querySelector(".sh-body").innerHTML = `<div class="alert bad">No se pudo abrir: ${esc(e.message)}</div>`; }
 }
 
-// ── Record a payment ──
+// ── Record a payment (a month, or a week for weekly plans) ──
 function paySheet(pre) {
   pre = pre || {};
   const list = students(); if (!list.length) return G.toast("Todavía no hay alumnos");
   const sid = pre.sid || list[0].p.id, m = pre.m || monthKey(new Date());
   const w = sheet("Registrar pago", "Con la captura de la transferencia, si la tienes", `
-    <div class="field"><label for="pyS">Alumno</label><select id="pyS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
-    <div class="grid2"><div class="field"><label for="pyM">Mes que paga</label>${monthSel("pyM", m, 8)}</div><div class="field"><label for="pyA">Monto</label><input id="pyA" type="number" min="0" step="10" inputmode="decimal"></div></div>
+    <div class="field"><label for="pyS">Alumno</label><select id="pyS">${unitOptions(sid)}</select></div>
+    <div class="grid2"><div class="field" id="pyMBox"><label for="pyM">Mes que paga</label>${monthSel("pyM", m, 8)}</div><div class="field" id="pyWBox" hidden><label for="pyWk">Semana que paga</label><select id="pyWk"></select></div>
+      <div class="field"><label for="pyA">Monto</label><input id="pyA" type="number" min="0" step="10" inputmode="decimal"></div></div>
     <p class="hint" id="pyHint"></p>
     <div class="grid2"><div class="field"><label for="pyD">Fecha de pago</label><input id="pyD" type="date" value="${day(new Date())}"></div>
       <div class="field"><label for="pyW">Forma de pago</label><select id="pyW">${Object.entries(METHOD).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div></div>
@@ -215,8 +237,18 @@ function paySheet(pre) {
     <div class="field"><label for="pyN">Nota <span class="muted" style="font-weight:500">(opcional)</span></label><input id="pyN" maxlength="300"></div>
     <div id="pyMsg" hidden></div>
     <button class="btn primary" id="pySave">Guardar pago</button>`);
-  const fill = () => { const id = $("pyS").value, mm = $("pyM").value, b = billOf(id, mm), sg = suggested(id, mm); $("pyA").value = pre.amount != null && id === sid && mm === m ? pre.amount : sg.amount || ""; $("pyHint").textContent = b.a.billing === "free" ? "Este alumno no paga." : `${sg.how} · Pagado en ${monthShort(mm).toLowerCase()}: ${MONEY(b.paid, b.a.currency)}`; };
-  $("pyS").onchange = fill; $("pyM").onchange = fill; fill();
+  let lastId = null;
+  const weekly = () => adminOf($("pyS").value).billing === "weekly";
+  const fill = (keepAmount) => {
+    const id = $("pyS").value, a = adminOf(id), isW = a.billing === "weekly", first = lastId === null;
+    $("pyMBox").hidden = isW; $("pyWBox").hidden = !isW;
+    if (isW && id !== lastId) $("pyWk").innerHTML = weekOpts(id, famIds(id).includes(sid) && pre.week ? pre.week : nextUnpaidWeek(id, monthKey(new Date())));
+    lastId = id;
+    const usePre = first && pre.amount != null;
+    if (isW) { const sg = suggestedWeek(id, $("pyWk").value); $("pyA").value = usePre ? pre.amount : sg.amount || ""; $("pyHint").textContent = `Semana del ${wkLabel(id, $("pyWk").value)} · ${sg.how}`; }
+    else { const mm = $("pyM").value, b = billOf(id, mm), sg = suggested(id, mm); $("pyA").value = usePre ? pre.amount : sg.amount || ""; $("pyHint").textContent = a.billing === "free" ? "Este alumno no paga." : `${sg.how} · Pagado en ${monthShort(mm).toLowerCase()}: ${MONEY(b.paid, a.currency)}`; }
+  };
+  $("pyS").onchange = () => fill(); $("pyM").onchange = () => fill(); $("pyWk").onchange = () => fill(); fill();
   $("pyF").onchange = () => {
     const f = $("pyF").files[0]; if (!f) return;
     $("pyFL").textContent = f.name;
@@ -228,17 +260,18 @@ function paySheet(pre) {
     if (!(amount > 0)) { msg.className = "alert bad"; msg.textContent = "Escribe el monto."; msg.hidden = false; return; }
     const btn = $("pySave"); btn.disabled = true; btn.textContent = "Guardando…";
     try {
-      const f = $("pyF").files[0], id = $("pyS").value;
+      const f = $("pyF").files[0], id = $("pyS").value, wk = weekly() ? $("pyWk").value : null;
       const proof = f ? await G.office.uploadProof(f, id) : null;
-      const row = { student_id: id, month: $("pyM").value, amount, paid_on: $("pyD").value || day(new Date()), method: $("pyW").value, reference: $("pyR").value.trim() || null, note: $("pyN").value.trim() || null, proof_path: proof };
+      const row = { student_id: id, month: wk ? wk.slice(0, 7) : $("pyM").value, amount, paid_on: $("pyD").value || day(new Date()), method: $("pyW").value, reference: $("pyR").value.trim() || null, note: $("pyN").value.trim() || null, proof_path: proof };
+      if (wk) row.week = wk;
       const saved = await G.office.insert("payments", [row]);
       await load();
-      const p = (saved && saved[0]) || (DATA.payments || []).find(x => x.student_id === id && x.amount == amount);
+      const p = (saved && saved[0]) || (DATA.payments || []).find(x => x.student_id === id && Number(x.amount) === amount && x.month === row.month);
       const ph = phoneOf(id);
-      w.querySelector(".sh-body").innerHTML = `<div class="okbox"><span class="ic">${I('<path d="M5 12.5l4.5 4.5L19 7.5"/>')}</span><b>Pago registrado</b><span class="hint">${esc(byId(id).p.display_name)} · ${MONEY(amount, adminOf(id).currency)} · ${monthShort(row.month)}</span>
+      w.querySelector(".sh-body").innerHTML = `<div class="okbox"><span class="ic">${I('<path d="M5 12.5l4.5 4.5L19 7.5"/>')}</span><b>Pago registrado</b><span class="hint">${esc(famName(id))} · ${MONEY(amount, adminOf(id).currency)} · ${esc(periodOf(row))}</span>
         <div class="okacts"><a class="btn" id="okR" href="${p ? esc(receiptLink(p)) : "#"}" target="_blank" rel="noopener">Ver recibo</a>${p ? `<a class="btn primary" href="${esc(waLink(ph, receiptText(p)))}" target="_blank" rel="noopener">Enviar por WhatsApp</a>` : ""}</div>
         ${ph ? "" : `<small class="hint">Sin teléfono guardado: WhatsApp te dejará escoger el contacto.</small>`}</div>`;
-    } catch (e) { btn.disabled = false; btn.textContent = "Guardar pago"; msg.className = "alert bad"; msg.textContent = "No se pudo guardar: " + (e.message || e); msg.hidden = false; }
+    } catch (e) { btn.disabled = false; btn.textContent = "Guardar pago"; msg.className = "alert bad"; msg.textContent = "No se pudo guardar: " + (e.message || e) + (/week|column/i.test(e.message || "") ? " (falta correr supabase/v5.sql)" : ""); msg.hidden = false; }
   };
 }
 function addProof(p) {
@@ -251,23 +284,23 @@ function addProof(p) {
   };
   inp.click();
 }
-const payRow = (p, showName) => { const s = byId(p.student_id), a = adminOf(p.student_id); return `<div class="li">${showName && s ? ini(s) : ""}<div class="m"><b>${showName && s ? esc(s.p.display_name) : MONEY(p.amount, a.currency) + " · " + monthShort(p.month)}</b><small>${showName ? MONEY(p.amount, a.currency) + " · " + monthShort(p.month) + " · " : ""}Pagó el ${dShort(p.paid_on)}${p.method ? " · " + METHOD[p.method] : ""}${p.reference ? " · Ref. " + esc(p.reference) : ""}${p.note ? " · " + esc(p.note) : ""}</small></div>
+const payRow = (p, showName) => { const s = byId(p.student_id), a = adminOf(p.student_id); return `<div class="li">${showName && s ? ini(s) : ""}<div class="m"><b>${showName && s ? esc(famName(p.student_id)) : MONEY(p.amount, a.currency) + " · " + esc(periodOf(p))}</b><small>${showName ? MONEY(p.amount, a.currency) + " · " + esc(periodOf(p)) + " · " : ""}Pagó el ${dShort(p.paid_on)}${p.method ? " · " + METHOD[p.method] : ""}${p.reference ? " · Ref. " + esc(p.reference) : ""}${p.note ? " · " + esc(p.note) : ""}</small></div>
   <span class="acts">${p.proof_path ? `<button class="btn sm" data-pf="${esc(p.proof_path)}">${I('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>').replace("<svg", '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:4px"')}Comprobante</button>` : `<button class="btn sm ghost" data-pfadd="${p.id}">+ Comprobante</button>`}<a class="btn sm" href="${esc(receiptLink(p))}" target="_blank" rel="noopener">Recibo</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(p.student_id), receiptText(p)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-pdel="${p.id}" aria-label="Borrar pago">Borrar</button></span></div>`; };
 function wirePays() {
   app.querySelectorAll("[data-pf]").forEach(b => b.onclick = () => showProof(b.dataset.pf));
   app.querySelectorAll("[data-pfadd]").forEach(b => b.onclick = () => addProof((DATA.payments || []).find(p => p.id === b.dataset.pfadd)));
   app.querySelectorAll("[data-pdel]").forEach(b => b.onclick = async () => {
     const p = (DATA.payments || []).find(x => x.id === b.dataset.pdel); if (!p) return;
-    if (!confirm(`¿Borrar el pago de ${MONEY(p.amount)} de ${(byId(p.student_id) || { p: {} }).p.display_name || ""}?`)) return;
+    if (!confirm(`¿Borrar el pago de ${MONEY(p.amount)} de ${famName(p.student_id)}?`)) return;
     try { await G.office.remove("payments", p.id); if (p.proof_path) G.office.removeProof(p.proof_path); G.toast("Pago borrado"); await load(); } catch (e) { G.toast("No se pudo borrar: " + esc(e.message)); }
   });
-  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => paySheet({ sid: b.dataset.pay, m: b.dataset.m, amount: b.dataset.amt != null ? Number(b.dataset.amt) : null }));
+  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => paySheet({ sid: b.dataset.pay, m: b.dataset.m, week: b.dataset.wk || null, amount: b.dataset.amt != null ? Number(b.dataset.amt) : null }));
 }
 
 // ── Views ──
 function inicio(m) {
   m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
-  const list = students(), rows = list.map(s => ({ s, b: billOf(s.p.id, m) })), cur = "MXN";
+  const rows = units().map(u => ({ u, s: u[0], b: billOf(u[0].p.id, m) })), cur = "MXN";
   const tot = rows.reduce((t, r) => ({ cls: t.cls + r.b.attended, due: t.due + r.b.due, paid: t.paid + r.b.paid, bal: t.bal + r.b.bal }), { cls: 0, due: 0, paid: 0, bal: 0 });
   const owe = rows.filter(r => r.b.bal > 0).sort((a, b) => b.b.bal - a.b.bal);
   const now = Date.now(), wk = now + 7 * 864e5;
@@ -275,6 +308,9 @@ function inicio(m) {
   const um = unmarked().sort((a, b) => b.starts_at.localeCompare(a.starts_at));
   const recent = (DATA.payments || []).filter(p => byId(p.student_id)).slice(0, 5);
   const me = (G.profile && G.profile.display_name || "").split(" ")[0];
+  const oweRow = ({ s, b }) => { const id = s.p.id, isW = b.a.billing === "weekly", wkK = isW ? nextUnpaidWeek(id, m) : "", nW = isW ? (b.weeks || []).filter(w => w.due > 0 && w.paid < w.due).length : 0;
+    return `<div class="li">${ini(s)}<div class="m"><b>${esc(famName(id))}</b><small>${PLAN[b.a.billing]} · ${isW ? `${nW} semana${nW === 1 ? "" : "s"} sin pagar` : `${b.attended} clase${b.attended === 1 ? "" : "s"} tomada${b.attended === 1 ? "" : "s"}`}</small></div><span class="v"><b>${MONEY(b.bal, b.a.currency)}</b>${tag(b.status)}</span>
+    <span class="acts"><a class="btn sm" href="#fichas/nueva/${id}/${m}${isW ? "/" + wkK : ""}">Ficha</a><button class="btn sm primary" data-pay="${id}" data-m="${m}" ${isW ? `data-wk="${wkK}"` : `data-amt="${b.bal}"`}>Registrar pago</button></span></div>`; };
   app.innerHTML = topBar(`Hola${me ? ", " + esc(me) : ""}`, `Resumen de ${monthName(m).toLowerCase()}`, monthSel("iM", m) + `<button class="btn primary sm" id="iPay">Registrar pago</button>`) + `
     ${DATA.payments === null ? setupNote() : ""}
     <div class="stats">
@@ -285,8 +321,7 @@ function inicio(m) {
     </div>
     <div class="dgrid">
       <div class="card"><div class="card-head"><h2>Pendientes de pago</h2><a class="btn sm ghost" href="#alumnos/${m}">Ver alumnos</a></div>
-        ${owe.length ? owe.map(({ s, b }) => `<div class="li">${ini(s)}<div class="m"><b>${esc(s.p.display_name)}</b><small>${PLAN[b.a.billing]} · ${b.attended} clase${b.attended === 1 ? "" : "s"} tomada${b.attended === 1 ? "" : "s"}</small></div><span class="v"><b>${MONEY(b.bal, b.a.currency)}</b>${tag(b.status)}</span>
-          <span class="acts"><a class="btn sm" href="#fichas/nueva/${s.p.id}/${m}">Ficha</a><button class="btn sm primary" data-pay="${s.p.id}" data-m="${m}" data-amt="${b.bal}">Registrar pago</button></span></div>`).join("") : `<p class="allgood">${I('<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>')}Todo pagado en ${monthShort(m).toLowerCase()}</p>`}</div>
+        ${owe.length ? owe.map(oweRow).join("") : `<p class="allgood">${I('<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>')}Todo pagado en ${monthShort(m).toLowerCase()}</p>`}</div>
       <div class="card"><div class="card-head"><h2>Próximas clases</h2><a class="btn sm ghost" href="#agenda">Agenda</a></div>
         ${um.length ? `<div class="alert info" style="font-size:.9em">Hay ${um.length} clase${um.length === 1 ? "" : "s"} pasada${um.length === 1 ? "" : "s"} sin marcar. <a href="#agenda">Márcalas en la agenda</a> para que cuenten en los cobros.</div>` : ""}
         ${next.length ? next.map(c => clsRow(c, true)).join("") : `<p class="empty">No hay clases en los próximos 7 días.</p>`}</div>
@@ -302,7 +337,7 @@ function alumnos(m) {
   m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
   const list = students();
   app.innerHTML = topBar("Alumnos", "Clases tomadas y pagos de cada alumno.", monthSel("aM", m)) + `
-    <div class="card">${list.length ? list.map(s => { const b = billOf(s.p.id, m); return `<a class="li" href="#a/${s.p.id}/${m}">${ini(s)}<div class="m"><b>${esc(s.p.display_name)}</b><small>${b.a.billing === "free" ? "Sin costo" : Number(b.a.rate) ? PLAN[b.a.billing] + " · " + MONEY(b.a.rate, b.a.currency) : "Sin plan"} · ${b.attended} tomada${b.attended === 1 ? "" : "s"}${b.missed ? ` · ${b.missed} falta${b.missed === 1 ? "" : "s"}` : ""}${b.scheduled ? ` · ${b.scheduled} por tomar` : ""}</small></div>
+    <div class="card">${list.length ? list.map(s => { const id = s.p.id, b = billOf(id, m), o = own(id, m), w = withWho(id); return `<a class="li" href="#a/${id}/${m}">${ini(s)}<div class="m"><b>${esc(s.p.display_name)}</b><small>${planText(b.a)}${w ? " · " + esc(w) : ""} · ${o.attended} tomada${o.attended === 1 ? "" : "s"}${o.missed ? ` · ${o.missed} falta${o.missed === 1 ? "" : "s"}` : ""}${o.scheduled ? ` · ${o.scheduled} por tomar` : ""}</small></div>
       <span class="v"><b>${MONEY(b.paid, b.a.currency)} <small class="muted" style="font-weight:600">de ${MONEY(b.due, b.a.currency)}</small></b>${tag(b.status)}</span></a>`; }).join("") : `<p class="empty">Todavía no hay alumnos.</p>`}</div>`;
   $("aM").onchange = e => location.hash = "#alumnos/" + e.target.value;
 }
@@ -310,37 +345,58 @@ function alumnos(m) {
 function alumno(id, m) {
   const s = byId(id); if (!s) { location.hash = "#alumnos"; return; }
   m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
-  const a = adminOf(id), b = billOf(id, m), cls = clsOf(id, m).sort((x, y) => x.starts_at.localeCompare(y.starts_at));
-  const pays = (DATA.payments || []).filter(p => p.student_id === id), slips = (DATA.charges || []).filter(c => c.student_id === id).slice(0, 6);
+  const a = adminOf(id), b = billOf(id, m), o = own(id, m), cls = clsOf(id, m).sort((x, y) => x.starts_at.localeCompare(y.starts_at)), fam = famIds(id), isW = a.billing === "weekly";
+  const pays = (DATA.payments || []).filter(p => fam.includes(p.student_id)), slips = (DATA.charges || []).filter(c => fam.includes(c.student_id)).slice(0, 6);
   const rules = (DATA.rules || []).filter(r => r.student_id === id && r.active).sort((x, y) => x.weekday - y.weekday || x.time.localeCompare(y.time));
-  app.innerHTML = `<a class="back" href="#alumnos/${m}">← Todos los alumnos</a>` + topBar(esc(s.p.display_name), rules.length ? "Horario: " + rules.map(r => DAYS[r.weekday].toLowerCase() + " " + hhmm("2000-01-01T" + r.time)).join(", ") : "Sin horario fijo", monthSel("sM", m) + `<a class="btn sm" href="#fichas/nueva/${id}/${m}">Nueva ficha</a><button class="btn primary sm" data-pay="${id}" data-m="${m}" data-amt="${b.bal}">Registrar pago</button>`) + `
+  const others = students().filter(x => x.p.id !== id), wk0 = isW ? nextUnpaidWeek(id, m) : "";
+  app.innerHTML = `<a class="back" href="#alumnos/${m}">← Todos los alumnos</a>` + topBar(esc(s.p.display_name), (rules.length ? "Horario: " + rules.map(r => DAYS[r.weekday].toLowerCase() + " " + hhmm("2000-01-01T" + r.time)).join(", ") : "Sin horario fijo") + (fam.length > 1 ? ` · Paga junto ${esc(withWho(id))}` : ""), monthSel("sM", m) + `<a class="btn sm" href="#fichas/nueva/${id}/${m}${isW ? "/" + wk0 : ""}">Nueva ficha</a><button class="btn primary sm" data-pay="${id}" data-m="${m}" ${isW ? `data-wk="${wk0}"` : `data-amt="${b.bal}"`}>Registrar pago</button>`) + `
     <div class="stats">
-      <div class="stat"><span>Tomadas</span><b>${b.attended}</b><small class="muted">${b.scheduled ? b.scheduled + " por tomar" : "en " + monthShort(m).toLowerCase()}</small></div>
-      <div class="stat"><span>Faltas</span><b>${b.missed}</b><small class="muted">${b.cancelled ? b.cancelled + " cancelada" + (b.cancelled === 1 ? "" : "s") : "&nbsp;"}</small></div>
-      <div class="stat"><span>Por cobrar</span><b>${MONEY(b.due, a.currency)}</b></div>
-      <div class="stat ${b.bal ? "hl" : ""}"><span>Pagado</span><b>${MONEY(b.paid, a.currency)}</b>${tag(b.status)}</div>
+      <div class="stat"><span>Tomadas</span><b>${o.attended}</b><small class="muted">${o.scheduled ? o.scheduled + " por tomar" : "en " + monthShort(m).toLowerCase()}</small></div>
+      <div class="stat"><span>Faltas</span><b>${o.missed}</b><small class="muted">${o.cancelled ? o.cancelled + " cancelada" + (o.cancelled === 1 ? "" : "s") : "&nbsp;"}</small></div>
+      <div class="stat"><span>Por cobrar${fam.length > 1 ? " (familia)" : ""}</span><b>${MONEY(b.due, a.currency)}</b></div>
+      <div class="stat ${b.bal ? "hl" : ""}"><span>Pagado${fam.length > 1 ? " (familia)" : ""}</span><b>${MONEY(b.paid, a.currency)}</b>${tag(b.status)}</div>
     </div>
     <div class="cols">
       <div style="display:grid;gap:18px;min-width:0">
+        ${isW ? `<div class="card"><div class="card-head"><h2>Semanas de ${monthShort(m).toLowerCase()}</h2><span class="hint">${MONEY(a.rate, a.currency)} por semana${fam.length > 1 ? " · " + esc(famFirst(id)) : ""}</span></div>
+          ${(b.weeks || []).length ? b.weeks.map(w => `<div class="li"><div class="m"><b>Semana del ${wkLabel(id, w.key)}</b><small>${byLine(id, w)}${w.missed ? ` · ${w.missed} falta${w.missed === 1 ? "" : "s"}` : ""}</small></div><span class="v"><b>${MONEY(w.paid, a.currency)} <small class="muted" style="font-weight:600">de ${MONEY(w.due || (w.k ? w.rate : 0), a.currency)}</small></b>${wkTag(w)}</span>
+            ${w.paid < w.rate && (w.attended || w.scheduled) ? `<span class="acts"><a class="btn sm ghost" href="#fichas/nueva/${id}/${m}/${w.key}">Ficha</a><button class="btn sm" data-pay="${id}" data-m="${m}" data-wk="${w.key}">Registrar pago</button></span>` : ""}</div>`).join("") : `<p class="empty">No hay clases este mes.</p>`}</div>` : ""}
         <div class="card"><div class="card-head"><h2>Clases de ${monthShort(m).toLowerCase()}</h2></div>${cls.length ? cls.map(c => clsRow(c, false)).join("") : `<p class="empty">No hay clases este mes.</p>`}</div>
-        <div class="card"><div class="card-head"><h2>Pagos</h2></div>${pays.length ? pays.map(p => payRow(p, false)).join("") : `<p class="empty">Aún no hay pagos.</p>`}</div>
-        <div class="card"><div class="card-head"><h2>Últimos meses</h2></div>${months(6).map(k => { const x = billOf(id, k); return `<div class="li"><div class="m"><b>${monthName(k)}</b><small>${x.attended} tomada${x.attended === 1 ? "" : "s"} · ${x.missed} falta${x.missed === 1 ? "" : "s"} · ${x.cancelled} cancelada${x.cancelled === 1 ? "" : "s"}</small></div><span class="v"><b>${MONEY(x.paid, a.currency)} <small class="muted" style="font-weight:600">de ${MONEY(x.due, a.currency)}</small></b>${tag(x.status)}</span></div>`; }).join("")}</div>
+        <div class="card"><div class="card-head"><h2>Pagos${fam.length > 1 ? " de la familia" : ""}</h2></div>${pays.length ? pays.map(p => payRow(p, false)).join("") : `<p class="empty">Aún no hay pagos.</p>`}</div>
+        <div class="card"><div class="card-head"><h2>Últimos meses</h2></div>${months(6).map(k => { const x = billOf(id, k), y = own(id, k); return `<div class="li"><div class="m"><b>${monthName(k)}</b><small>${y.attended} tomada${y.attended === 1 ? "" : "s"} · ${y.missed} falta${y.missed === 1 ? "" : "s"} · ${y.cancelled} cancelada${y.cancelled === 1 ? "" : "s"}</small></div><span class="v"><b>${MONEY(x.paid, a.currency)} <small class="muted" style="font-weight:600">de ${MONEY(x.due, a.currency)}</small></b>${tag(x.status)}</span></div>`; }).join("")}</div>
       </div>
       <div style="display:grid;gap:18px;min-width:0">
         <div class="card"><h2>Plan y contacto</h2>
           <div class="grid2"><div class="field"><label for="plB">Cómo paga</label><select id="plB">${Object.entries(PLAN).map(([k, v]) => `<option value="${k}" ${a.billing === k ? "selected" : ""}>${v}</option>`).join("")}</select></div>
-            <div class="field"><label for="plR">Monto</label><input id="plR" type="number" min="0" step="10" inputmode="decimal" value="${Number(a.rate) || ""}"></div></div>
+            <div class="field"><label for="plR" id="plRL">Monto</label><input id="plR" type="number" min="0" step="10" inputmode="decimal" value="${Number(a.rate) || ""}"></div></div>
+          <div class="field" id="plDBox"><label for="plD">Día de pago</label><select id="plD">${DAYS.map((d, i) => `<option value="${i}" ${Number(a.pay_day ?? 6) === i ? "selected" : ""}>${d}</option>`).join("")}</select></div>
+          ${others.length ? `<div class="field"><span style="font-weight:700;font-size:.9em">Paga junto con <span class="muted" style="font-weight:500">(hermanos: un solo pago y un solo recibo)</span></span>
+            <div class="seg">${others.map(x => `<label><input type="checkbox" name="plFam" value="${x.p.id}" ${fam.includes(x.p.id) ? "checked" : ""}>${esc(x.p.display_name)}</label>`).join("")}</div></div>` : ""}
+          <p class="hint" id="plHint"></p>
           <div class="grid2"><div class="field"><label for="plP">WhatsApp del alumno</label><input id="plP" type="tel" inputmode="tel" value="${esc(a.phone || "")}" placeholder="81 1234 5678"></div>
             <div class="field"><label for="plPP">WhatsApp de papá o mamá</label><input id="plPP" type="tel" inputmode="tel" value="${esc(a.parent_phone || "")}" placeholder="81 1234 5678"></div></div>
           <p class="hint">Las fichas y recibos se mandan al WhatsApp de papá o mamá (o al del alumno si no hay).</p>
           <div class="actions"><button class="btn primary sm" id="plSave">Guardar</button></div></div>
-        <div class="card"><div class="card-head"><h2>Fichas</h2><a class="btn sm" href="#fichas/nueva/${id}/${m}">Nueva</a></div>${slips.length ? slips.map(slipRow).join("") : `<p class="empty">Aún no hay fichas.</p>`}</div>
+        <div class="card"><div class="card-head"><h2>Fichas</h2><a class="btn sm" href="#fichas/nueva/${id}/${m}${isW ? "/" + wk0 : ""}">Nueva</a></div>${slips.length ? slips.map(slipRow).join("") : `<p class="empty">Aún no hay fichas.</p>`}</div>
       </div>
     </div>`;
   $("sM").onchange = e => location.hash = `#a/${id}/` + e.target.value;
+  const planUi = () => { const v = $("plB").value, fs = [...document.querySelectorAll('[name="plFam"]:checked')].map(x => nameOf(x.value).split(" ")[0]);
+    $("plDBox").hidden = v !== "weekly"; $("plRL").textContent = v === "weekly" ? "Monto por semana" : v === "monthly" ? "Monto al mes" : v === "per_class" ? "Monto por clase" : "Monto";
+    $("plHint").textContent = fs.length ? `El plan se guarda igual para ${G.billing.names([s.p.display_name.split(" ")[0]].concat(fs))}: el monto es por todos juntos.` : ""; };
+  $("plB").onchange = planUi; document.querySelectorAll('[name="plFam"]').forEach(x => x.onchange = planUi); planUi();
   $("plSave").onclick = async () => {
-    try { await G.office.upsert("student_admin", { ...a, student_id: id, billing: $("plB").value, rate: Number($("plR").value) || 0, currency: a.currency || "MXN", phone: $("plP").value.trim() || null, parent_phone: $("plPP").value.trim() || null, updated_at: new Date().toISOString() }); G.toast("<b>Guardado</b>"); await load(); }
-    catch (e) { G.toast("No se pudo guardar: " + esc(e.message)); }
+    const pick = [...document.querySelectorAll('[name="plFam"]:checked')].map(x => x.value), now = new Date().toISOString();
+    const plan = { billing: $("plB").value, rate: Number($("plR").value) || 0, currency: a.currency || "MXN" };
+    if (plan.billing === "weekly" || pick.length || a.family) plan.pay_day = Number($("plD").value);
+    const famKey = pick.length ? (a.family || pick.map(i => adminOf(i).family).find(Boolean) || "fam-" + id.slice(0, 8)) : null;
+    try {
+      await G.office.upsert("student_admin", { ...a, student_id: id, ...plan, ...(famKey || a.family ? { family: famKey } : {}), phone: $("plP").value.trim() || null, parent_phone: $("plPP").value.trim() || null, updated_at: now });
+      for (const x of pick) await G.office.upsert("student_admin", { ...adminOf(x), student_id: x, ...plan, family: famKey, updated_at: now });
+      // whoever was in the family and got unticked leaves it
+      for (const x of fam.filter(i => i !== id && !pick.includes(i))) await G.office.upsert("student_admin", { ...adminOf(x), student_id: x, family: null, updated_at: now });
+      G.toast("<b>Guardado</b>"); await load();
+    } catch (e) { G.toast("No se pudo guardar: " + esc(e.message) + (/pay_day|family|check/i.test(e.message || "") ? " (falta correr supabase/v5.sql)" : "")); }
   };
   wirePays(); wireClassActs(); wireSlips();
 }
@@ -397,16 +453,17 @@ function agenda(off) {
 }
 
 function pagos(m, sid) {
-  const list = students(), all = m === "todos";
+  const list = students(), all = m === "todos", fam = sid ? famIds(sid) : null;
   m = all ? "todos" : /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
-  const pays = (DATA.payments || []).filter(p => byId(p.student_id) && (all || p.month === m) && (!sid || p.student_id === sid));
+  const pays = (DATA.payments || []).filter(p => byId(p.student_id) && (all || p.month === m) && (!fam || fam.includes(p.student_id)));
   const total = pays.reduce((t, p) => t + Number(p.amount), 0), withProof = pays.filter(p => p.proof_path).length;
   app.innerHTML = topBar("Pagos", "Pagos recibidos, recibos y capturas de transferencias.", `<button class="btn primary sm" id="pNew">Registrar pago</button>`) + `
     ${DATA.payments === null ? setupNote() : ""}
     <div class="card"><div class="card-head"><div class="filters"><select id="pM" aria-label="Mes que pagan"><option value="todos" ${all ? "selected" : ""}>Todos los meses</option>${months(12, 1).map(k => `<option value="${k}" ${k === m ? "selected" : ""}>${monthName(k)}</option>`).join("")}</select>
-      <select id="pS" aria-label="Alumno"><option value="">Todos los alumnos</option>${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
+      <select id="pS" aria-label="Alumno"><option value="">Todos los alumnos</option>${unitOptions(sid)}</select></div>
       <span class="hint">${pays.length} pago${pays.length === 1 ? "" : "s"} · <b style="color:var(--ink)">${MONEY(total)}</b>${pays.length ? ` · ${withProof} con comprobante` : ""}</span></div>
       ${pays.length ? pays.map(p => payRow(p, true)).join("") : `<p class="empty">No hay pagos ${all ? "registrados" : "de " + monthName(m).toLowerCase()}.</p>`}</div>`;
+  if (!sid) $("pS").value = "";
   const go = () => location.hash = "#pagos/" + $("pM").value + ($("pS").value ? "/" + $("pS").value : "");
   $("pM").onchange = go; $("pS").onchange = go;
   $("pNew").onclick = () => paySheet({ sid, m: all ? null : m });
@@ -414,17 +471,17 @@ function pagos(m, sid) {
 }
 
 function slipState(ch) {
-  const b = billOf(ch.student_id, ch.month), paid = b.paid;
+  const paid = ch.week ? G.billing.week(DATA, ch.student_id, ch.week).paid : billOf(ch.student_id, ch.month).paid;
   if (paid >= Number(ch.amount) && Number(ch.amount) > 0) return ["Pagada", "good"];
   return paid > 0 ? ["Pago parcial", "warn"] : ["Pendiente", ""];
 }
-const slipRow = ch => { const s = byId(ch.student_id), a = adminOf(ch.student_id); return `<div class="li"><div class="m"><b>${esc(ch.folio)} · ${s ? esc(s.p.display_name) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b>${tag(slipState(ch))}</span>
+const slipRow = ch => { const s = byId(ch.student_id), a = adminOf(ch.student_id); return `<div class="li"><div class="m"><b>${esc(ch.folio)} · ${s ? esc(famName(ch.student_id)) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b>${tag(slipState(ch))}</span>
   <span class="acts"><a class="btn sm" href="${esc(slipLink(ch))}" target="_blank" rel="noopener">Abrir</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(ch.student_id), slipText(ch)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-copy="${ch.id}">Copiar enlace</button><button class="btn sm ghost" data-chdel="${ch.id}">Borrar</button></span></div>`; };
 function wireSlips() {
   app.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => { const ch = DATA.charges.find(x => x.id === b.dataset.copy), u = slipLink(ch); navigator.clipboard.writeText(u).then(() => G.toast("<b>Enlace copiado</b>"), () => window.prompt("Copia este enlace:", u)); });
   app.querySelectorAll("[data-chdel]").forEach(b => b.onclick = async () => { if (!confirm("¿Borrar esta ficha?")) return; try { await G.office.remove("charges", b.dataset.chdel); G.toast("Ficha borrada"); await load(); } catch (e) { G.toast("No se pudo borrar: " + esc(e.message)); } });
 }
-function fichas(mode, sid, m) {
+function fichas(mode, sid, m, wkPre) {
   const list = students(), bk = DATA.bank || {}, noBank = !bk.clabe && !bk.account && !bk.card;
   sid = byId(sid) ? sid : (list[0] && list[0].p.id); m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
   const ch = (DATA.charges || []).filter(c => byId(c.student_id));
@@ -433,8 +490,8 @@ function fichas(mode, sid, m) {
     ${noBank ? `<div class="alert info">Antes de mandar fichas, captura los <a href="#banco">datos bancarios</a> (banco, titular y CLABE).</div>` : ""}
     <div class="cols">
       <div class="card" id="newSlip"><h2>Nueva ficha</h2>
-        ${list.length ? `<div class="grid2"><div class="field"><label for="fS">Alumno</label><select id="fS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
-          <div class="field"><label for="fM">Mes</label>${monthSel("fM", m, 8)}</div></div>
+        ${list.length ? `<div class="grid2"><div class="field"><label for="fS">Alumno</label><select id="fS">${unitOptions(sid)}</select></div>
+          <div class="field" id="fMBox"><label for="fM">Mes</label>${monthSel("fM", m, 8)}</div><div class="field" id="fWBox" hidden><label for="fW">Semana</label><select id="fW"></select></div></div>
         <div class="field"><label for="fC">Concepto</label><input id="fC" maxlength="140"></div>
         <div class="field"><label for="fA">Monto a pagar</label><input id="fA" type="number" min="0" step="10" inputmode="decimal"></div>
         <p class="hint" id="fHint"></p>
@@ -445,21 +502,32 @@ function fichas(mode, sid, m) {
     </div>`;
   wireSlips();
   if (!list.length) return;
-  const fill = () => { const id = $("fS").value, mm = $("fM").value, sg = suggested(id, mm); $("fC").value = "Clases de inglés · " + monthName(mm).toLowerCase(); $("fA").value = sg.amount || ""; $("fHint").textContent = sg.how + "."; };
-  $("fS").onchange = fill; $("fM").onchange = fill; fill();
+  let lastId = null;
+  const isW = () => adminOf($("fS").value).billing === "weekly";
+  const fill = () => {
+    const id = $("fS").value, w = isW();
+    $("fMBox").hidden = w; $("fWBox").hidden = !w;
+    if (w && id !== lastId) $("fW").innerHTML = weekOpts(id, famIds(id).includes(sid) && wkPre ? wkPre : nextUnpaidWeek(id, m));
+    lastId = id;
+    if (w) { const k = $("fW").value, sg = suggestedWeek(id, k); $("fC").value = "Clases de inglés · semana del " + wkLabel(id, k); $("fA").value = sg.amount || ""; $("fHint").textContent = sg.how + "."; }
+    else { const mm = $("fM").value, sg = suggested(id, mm); $("fC").value = "Clases de inglés · " + monthName(mm).toLowerCase(); $("fA").value = sg.amount || ""; $("fHint").textContent = sg.how + "."; }
+  };
+  $("fS").onchange = fill; $("fM").onchange = fill; $("fW").onchange = fill; fill();
   $("fSave").onclick = async () => {
-    const id = $("fS").value, mm = $("fM").value, amount = Number($("fA").value), msg = $("fMsg");
+    const id = $("fS").value, wk = isW() ? $("fW").value : null, mm = wk ? wk.slice(0, 7) : $("fM").value, amount = Number($("fA").value), msg = $("fMsg");
     if (!(amount > 0)) { msg.className = "alert bad"; msg.textContent = "Escribe el monto a pagar."; msg.hidden = false; return; }
-    const s = byId(id), n = (s.p.display_name || "X").trim().split(/\s+/), initials = ((n[0][0] || "X") + (n[1] ? n[1][0] : n[0][1] || "")).toUpperCase().normalize("NFD").replace(/[^A-Z]/g, "");
-    const seq = (DATA.charges || []).filter(c => c.month === mm).length + 1;
-    const row = { student_id: id, month: mm, folio: `F-${mm.replace("-", "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $("fC").value.trim() || null, amount, due: null, note: $("fN").value.trim() || null };
+    const ns = famIds(id).map(nameOf), parts = ns.map(n => n.trim().split(/\s+/));
+    const initials = (ns.length > 1 ? parts.map(p => p[0][0]).join("") + (parts[0][1] ? parts[0][parts[0].length - 1][0] : "") : (parts[0][0][0] || "X") + (parts[0][1] ? parts[0][1][0] : parts[0][0][1] || "")).toUpperCase().normalize("NFD").replace(/[^A-Z]/g, "");
+    const seq = (DATA.charges || []).filter(c => (wk ? c.week === wk : c.month === mm && !c.week)).length + 1;
+    const row = { student_id: id, month: mm, folio: `F-${(wk || mm).replace(/-/g, "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $("fC").value.trim() || null, amount, due: null, note: $("fN").value.trim() || null };
+    if (wk) row.week = wk;
     const btn = $("fSave"); btn.disabled = true;
     try {
       const saved = await G.office.insert("charges", [row]); await load();
       const c = (saved && saved[0]) || { ...row, created_at: new Date().toISOString() };
-      sheet("Ficha creada", esc(c.folio), `<div class="okbox"><span class="ic">${I('<path d="M5 12.5l4.5 4.5L19 7.5"/>')}</span><b>${esc(s.p.display_name)} · ${MONEY(amount, adminOf(id).currency)}</b><span class="hint">${c.due ? "Fecha límite: " + dLong(c.due) : ""}</span>
+      sheet("Ficha creada", esc(c.folio), `<div class="okbox"><span class="ic">${I('<path d="M5 12.5l4.5 4.5L19 7.5"/>')}</span><b>${esc(famName(id))} · ${MONEY(amount, adminOf(id).currency)}</b><span class="hint">${esc(periodOf(c))}</span>
         <div class="okacts"><a class="btn" href="${esc(slipLink(c))}" target="_blank" rel="noopener">Ver ficha</a><a class="btn primary" href="${esc(waLink(phoneOf(id), slipText(c)))}" target="_blank" rel="noopener">Enviar por WhatsApp</a></div></div>`);
-    } catch (e) { btn.disabled = false; msg.className = "alert bad"; msg.textContent = "No se pudo crear: " + (e.message || e); msg.hidden = false; }
+    } catch (e) { btn.disabled = false; msg.className = "alert bad"; msg.textContent = "No se pudo crear: " + (e.message || e) + (/week|column/i.test(e.message || "") ? " (falta correr supabase/v5.sql)" : ""); msg.hidden = false; }
   };
 }
 
@@ -511,7 +579,7 @@ function render() {
   if (v === "a") return alumno(h[1], h[2]);
   if (v === "agenda") return agenda(h[1]);
   if (v === "pagos") return pagos(h[1], h[2]);
-  if (v === "fichas") return fichas(h[1], h[2], h[3]);
+  if (v === "fichas") return fichas(h[1], h[2], h[3], h[4]);
   if (v === "banco") return banco();
   return inicio(h[1]);
 }

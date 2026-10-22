@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="assets/lingua.css">
 <link rel="stylesheet" href="assets/informe.css">
 <script src="assets/config.js"></script>
+<script src="assets/billing.js"></script>
 <script src="assets/game.js"></script>
 <script src="assets/avatar.js"></script>
 <script src="assets/vendor/supabase.js"></script>
@@ -145,7 +146,7 @@ function nextClass(id) {
 }
 const when = c => new Date(c.starts_at).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 const hhmm = d => new Date(d).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-const adminOf = id => (DATA.admin || []).find(a => a.student_id === id) || { student_id: id, notes: "", billing: "per_class", rate: 0, currency: "MXN", phone: null, parent_phone: null };
+const adminOf = id => ({ notes: "", ...G.billing.plan(DATA, id) });
 let Q = "";
 
 // Start a class: mark the scheduled class as attended (if there is one) and open the student's lesson
@@ -207,7 +208,7 @@ function render() {
   if (h[0] === "s" && h[1]) { const s = students().find(x => x.p.id === h[1]); if (s) { SEL = s.p.id; return studentView(s, h[2] || "overview"); } }
   if (v === "students") return listView();
   if (v === "schedule") return scheduleView();
-  if (v === "billing") return billingView(h[1], h[2], h[3]);
+  if (v === "billing") return billingView(h[1], h[2], h[3], h[4]);
   if (v === "reports") return reportsView(h[1], h[2]);
   if (v === "accounts") return accountsView();
   return todayView();
@@ -281,7 +282,7 @@ function todayView() {
   const hSpark = weeks.map(w => { const hs = hwAll.filter(h => inW(h.due + "T12:00:00", w)); return hs.length ? hs.filter(onTime).length / hs.length * 100 : null; });
   const hTrend = (() => { const v = hSpark.filter(x => x != null); return v.length >= 3 && v[v.length - 1] < v[v.length - 2] && v[v.length - 2] < v[v.length - 3] ? "down" : v.length >= 2 && v[v.length - 1] > v[v.length - 2] ? "up" : ""; })();
   // KPI 4: payments this month for students on a paid plan
-  const billable = DATA.admin === null ? null : list.map(s => billOf(s, m0)).filter(b => b.a.billing !== "free" && b.due > 0);
+  const billable = DATA.admin === null ? null : G.billing.units(DATA, list).map(u => billOf(u[0], m0)).filter(b => b.a.billing !== "free" && b.due > 0);
   const paidN = billable ? billable.filter(b => b.paid >= b.due).length : 0;
 
   const kpi = (label, val, unit, sub, subCls, chart) => `<div class="kpi"><span class="klbl">${label}</span><div class="kval"><b>${val}${unit ? `<small>${unit}</small>` : ""}</b>${chart || ""}</div><small class="ksub ${subCls || ""}">${sub}</small></div>`;
@@ -636,20 +637,36 @@ function wireRp(period) {
 }
 
 // ── Billing ──
-function billOf(s, m) {
-  const a = adminOf(s.p.id), cls = (DATA.classes || []).filter(c => c.student_id === s.p.id && monthKey(c.starts_at) === m);
-  const attended = cls.filter(c => c.status === "attended").length, scheduled = cls.filter(c => c.status === "scheduled").length;
-  const due = a.billing === "free" ? 0 : a.billing === "monthly" ? Number(a.rate) : attended * Number(a.rate);
-  const paid = (DATA.payments || []).filter(p => p.student_id === s.p.id && p.month === m).reduce((t, p) => t + Number(p.amount), 0);
-  const status = a.billing === "free" ? ["Free", ""] : due === 0 && paid === 0 ? ["—", ""] : paid >= due ? ["Paid", "good"] : paid > 0 ? ["Partial", "warn"] : ["Pending", "bad"];
-  return { a, attended, scheduled, due, paid, status };
-}
+const TST = { free: ["Free", ""], none: ["—", ""], paid: ["Paid", "good"], partial: ["Partial", "warn"], pending: ["Pending", "bad"] };
+function billOf(s, m) { const b = G.billing.bill(DATA, s.p.id, m); b.status = TST[b.code]; return b; }
 // ── Billing: overview, payments with transfer screenshots, payment slips, bank details ──
 // (the same things the office panel does; documents for families stay in Spanish)
 const METHOD = { transfer: "Transfer", cash: "Cash", deposit: "Deposit", card: "Card", other: "Other" };
+const PLAN_EN = { per_class: "Per class", weekly: "Weekly", monthly: "Monthly fee", free: "Free" };
+const DAY_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const SITE = () => location.origin + location.pathname.replace(/teacher\.html$/, "");
 const sById = id => students().find(s => s.p.id === id);
-const phoneOf = id => { const a = adminOf(id); return a.parent_phone || a.phone || ""; };
+// Families (siblings who pay together): one plan, one payment, one receipt
+const famIds = id => { const ids = G.billing.members(DATA, id).filter(i => sById(i)); return ids.length ? ids : [id]; };
+const nameOf = id => { const s = sById(id); return s ? s.p.display_name || "" : ""; };
+const famName = (id, es) => G.billing.names(famIds(id).map(nameOf), es ? "y" : "&");
+const famFirst = (id, es) => G.billing.names(famIds(id).map(i => nameOf(i).split(" ")[0]), es ? "y" : "&");
+const withWho = id => { const o = famIds(id).filter(i => i !== id).map(i => nameOf(i).split(" ")[0]); return o.length ? "with " + G.billing.names(o, "&") : ""; };
+const bUnits = () => G.billing.units(DATA, students());
+const phoneOf = id => { const ph = famIds(id).map(i => adminOf(i)).find(a => a.parent_phone || a.phone); return ph ? ph.parent_phone || ph.phone : ""; };
+const planText = a => a.billing === "free" ? "Free" : !Number(a.rate) ? "No plan yet" : MONEY(a.rate, a.currency) + (a.billing === "weekly" ? " / week" : a.billing === "monthly" ? " / month" : " / class");
+// Weeks of weekly plans are named by their pay day (Saturday by default)
+const wkRange = (id, key) => G.billing.weekRange(key, adminOf(id).pay_day).map(x => new Date(x + "T12:00"));
+const wkEn = (id, key) => { const [a, b] = wkRange(id, key), mo = d => d.toLocaleDateString("en-US", { month: "short" }); return a.getMonth() === b.getMonth() ? `${mo(a)} ${a.getDate()}–${b.getDate()}` : `${mo(a)} ${a.getDate()} – ${mo(b)} ${b.getDate()}`; };
+const wkEs = (id, key, year) => { const [a, b] = wkRange(id, key), mo = d => d.toLocaleDateString("es-MX", { month: "long" }); return (a.getMonth() === b.getMonth() ? `${a.getDate()} al ${b.getDate()} de ${mo(b)}` : `${a.getDate()} de ${mo(a)} al ${b.getDate()} de ${mo(b)}`) + (year ? " de " + b.getFullYear() : ""); };
+const byLine = (id, w, es) => famIds(id).map(i => `${nameOf(i).split(" ")[0]} ${w.by[i] || 0} ${es ? "clase" + ((w.by[i] || 0) === 1 ? "" : "s") : "class" + ((w.by[i] || 0) === 1 ? "" : "es")}`).join(" · ");
+const weekOpts = (id, sel) => { const keys = G.billing.weekKeys(adminOf(id).pay_day, 8, 2); if (sel && !keys.includes(sel)) keys.push(sel); return keys.map(k => `<option value="${k}" ${k === sel ? "selected" : ""}>Week of ${wkEn(id, k)}</option>`).join(""); };
+const nextUnpaidWeek = (id, m) => { const b = billOf(sById(id), m); const w = (b.weeks || []).find(x => x.due > 0 && x.paid < x.due); return w ? w.key : G.billing.weekKey(new Date(), adminOf(id).pay_day); };
+const periodEn = x => x.week ? "Week of " + wkEn(x.student_id, x.week) : monthName(x.month);
+const periodEs = x => x.week ? "semana del " + wkEs(x.student_id, x.week) : esMonth(x.month, { month: "long" });
+const unitOptions = sel => bUnits().map(u => `<option value="${u[0].p.id}" ${u.some(s => s.p.id === sel) ? "selected" : ""}>${esc(G.billing.names(u.map(s => s.p.display_name), "&"))}</option>`).join("");
+const wkStatus = w => w.code === "paid" ? ["Paid", "good"] : w.code === "partial" ? ["Partial", "warn"] : w.code === "pending" ? ["Pending", "bad"] : ["—", ""];
+function suggestedWeek(id, key) { const w = G.billing.week(DATA, id, key), a = adminOf(id); return { amount: w.bal, k: w.k, w, how: `${byLine(id, w)} · ${MONEY(a.rate, a.currency)} a week` + (w.paid ? " − paid " + MONEY(w.paid, a.currency) : "") }; }
 const esMonth = (m, o) => new Date(m + "-15T12:00").toLocaleDateString("es-MX", o || { month: "long", year: "numeric" });
 const esMoney = (n, cur) => "$" + Number(n || 0).toLocaleString("es-MX", { maximumFractionDigits: 2 }) + ((cur || "MXN") === "MXN" ? "" : " " + cur);
 const esDate = d => new Date(String(d).length === 10 ? d + "T12:00" : d).toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" });
@@ -664,19 +681,20 @@ const $b = id => document.getElementById(id);
 function suggestedPay(s, m) {
   const b = billOf(s, m), a = b.a;
   if (a.billing === "free") return { amount: 0, k: 0, how: "Free plan" };
+  if (a.billing === "weekly") { const n = (b.weeks || []).filter(w => w.due > 0).length; return { amount: b.bal, k: b.attended + b.scheduled, how: `${n} week${n === 1 ? "" : "s"} × ${MONEY(a.rate, a.currency)}` + (b.paid ? " − paid " + MONEY(b.paid, a.currency) : "") }; }
   if (a.billing === "monthly") return { amount: Math.max(0, Number(a.rate) - b.paid), k: b.attended + b.scheduled, how: "Monthly fee " + MONEY(a.rate, a.currency) + (b.paid ? " − paid " + MONEY(b.paid, a.currency) : "") };
   const k = b.attended + b.scheduled; return { amount: Math.max(0, k * Number(a.rate) - b.paid), k, how: `${k} class${k === 1 ? "" : "es"} × ${MONEY(a.rate, a.currency)}` + (b.paid ? " − paid " + MONEY(b.paid, a.currency) : "") };
 }
 function slipLink(ch) {
-  const s = sById(ch.student_id), a = adminOf(ch.student_id), bk = DATA.bank || {}, sg = s ? suggestedPay(s, ch.month) : { k: 0 };
-  const D = { f: ch.folio, n: s ? s.p.display_name : "", c: ch.concept || "", m: esMonth(ch.month), a: Number(ch.amount), cur: a.currency || "MXN",
-    du: ch.due || "", e: day(ch.created_at || new Date()), pl: a.billing, r: Number(a.rate) || 0, k: sg.k, nt: ch.note || "", ow: G.maestroNombre || G.maestro,
+  const s = sById(ch.student_id), a = adminOf(ch.student_id), bk = DATA.bank || {}, wk = ch.week ? G.billing.week(DATA, ch.student_id, ch.week) : null, sg = wk || !s ? { k: wk ? wk.k : 0 } : suggestedPay(s, ch.month);
+  const D = { f: ch.folio, n: famName(ch.student_id, true), c: ch.concept || "", m: wk ? "semana del " + wkEs(ch.student_id, ch.week, true) : esMonth(ch.month), a: Number(ch.amount), cur: a.currency || "MXN",
+    du: "", e: day(ch.created_at || new Date()), pl: wk ? "weekly" : a.billing, r: Number(a.rate) || 0, k: sg.k, by: wk && famIds(ch.student_id).length > 1 ? byLine(ch.student_id, wk, true) : "", nt: ch.note || "", ow: G.maestroNombre || G.maestro,
     b: { bank: bk.bank || "", holder: bk.holder || "", clabe: bk.clabe || "", account: bk.account || "", card: bk.card || "", to: bk.send_to || "", ins: bk.instructions || "" } };
   return SITE() + "ficha.html?d=" + b64(D);
 }
 const firstOf = s => (s && s.p.display_name || "").split(" ")[0];
-const slipText = ch => { const s = sById(ch.student_id), a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${firstOf(s)} (${esMonth(ch.month, { month: "long" })}): ${esMoney(ch.amount, a.currency)}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; };
-const receiptText = p => { const s = sById(p.student_id), a = adminOf(p.student_id); return `Hola, recibimos su pago de ${esMoney(p.amount, a.currency)} por las clases de inglés de ${firstOf(s)} (${esMonth(p.month, { month: "long" })}). ¡Gracias! Aquí está su recibo: ${receiptLink(s, p)}`; };
+const slipText = ch => { const a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${famFirst(ch.student_id, true)} (${periodEs(ch)}): ${esMoney(ch.amount, a.currency)}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; };
+const receiptText = p => { const s = sById(p.student_id), a = adminOf(p.student_id); return `Hola, recibimos su pago de ${esMoney(p.amount, a.currency)} por las clases de inglés de ${famFirst(p.student_id, true)} (${periodEs(p)}). ¡Gracias! Aquí está su recibo: ${receiptLink(s, p)}`; };
 
 // A pop-up sheet (bottom sheet on phones, centered on computers)
 function sheet(title, sub, body) {
@@ -706,8 +724,9 @@ function paySheet(pre) {
   const list = students(); if (!list.length) return G.toast("No students yet");
   const sid = pre.sid || list[0].p.id, m = pre.m || monthKey(new Date());
   const w = sheet("Record payment", "Add the transfer screenshot if you have it", `
-    <div class="field"><label for="pyS">Student</label><select id="pyS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
-    <div class="grid2"><div class="field"><label for="pyM">Month it pays</label><select id="pyM">${monthOpts(m)}</select></div><div class="field"><label for="pyA">Amount</label><input id="pyA" type="number" min="0" step="10" inputmode="decimal"></div></div>
+    <div class="field"><label for="pyS">Student</label><select id="pyS">${unitOptions(sid)}</select></div>
+    <div class="grid2"><div class="field" id="pyMBox"><label for="pyM">Month it pays</label><select id="pyM">${monthOpts(m)}</select></div><div class="field" id="pyWBox" hidden><label for="pyWk">Week it pays</label><select id="pyWk"></select></div>
+      <div class="field"><label for="pyA">Amount</label><input id="pyA" type="number" min="0" step="10" inputmode="decimal"></div></div>
     <p class="hint" id="pyHint"></p>
     <div class="grid2"><div class="field"><label for="pyD">Paid on</label><input id="pyD" type="date" value="${day(new Date())}"></div>
       <div class="field"><label for="pyW">Method</label><select id="pyW">${Object.entries(METHOD).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div></div>
@@ -716,8 +735,17 @@ function paySheet(pre) {
     <div class="field"><label for="pyN">Note <span class="muted" style="font-weight:500">(optional)</span></label><input id="pyN" maxlength="300"></div>
     <div id="pyMsg" hidden></div>
     <button class="btn primary" id="pySave">Save payment</button>`);
-  const fill = () => { const s = sById($b("pyS").value), mm = $b("pyM").value, b = billOf(s, mm), sg = suggestedPay(s, mm); $b("pyA").value = pre.amount != null && s.p.id === sid && mm === m ? pre.amount : sg.amount || ""; $b("pyHint").textContent = b.a.billing === "free" ? "This student doesn’t pay." : `${sg.how} · Paid for ${monthName(mm)}: ${MONEY(b.paid, b.a.currency)}`; };
-  $b("pyS").onchange = fill; $b("pyM").onchange = fill; fill();
+  let lastId = null;
+  const weekly = () => adminOf($b("pyS").value).billing === "weekly";
+  const fill = () => {
+    const id = $b("pyS").value, s = sById(id), a = adminOf(id), isW = a.billing === "weekly", usePre = lastId === null && pre.amount != null;
+    $b("pyMBox").hidden = isW; $b("pyWBox").hidden = !isW;
+    if (isW && id !== lastId) $b("pyWk").innerHTML = weekOpts(id, famIds(id).includes(sid) && pre.week ? pre.week : nextUnpaidWeek(id, monthKey(new Date())));
+    lastId = id;
+    if (isW) { const sg = suggestedWeek(id, $b("pyWk").value); $b("pyA").value = usePre ? pre.amount : sg.amount || ""; $b("pyHint").textContent = `Week of ${wkEn(id, $b("pyWk").value)} · ${sg.how}`; }
+    else { const mm = $b("pyM").value, b = billOf(s, mm), sg = suggestedPay(s, mm); $b("pyA").value = usePre ? pre.amount : sg.amount || ""; $b("pyHint").textContent = a.billing === "free" ? "This student doesn’t pay." : `${sg.how} · Paid for ${monthName(mm)}: ${MONEY(b.paid, a.currency)}`; }
+  };
+  $b("pyS").onchange = fill; $b("pyM").onchange = fill; $b("pyWk").onchange = fill; fill();
   $b("pyF").onchange = () => {
     const f = $b("pyF").files[0]; if (!f) return;
     $b("pyFL").textContent = f.name;
@@ -729,16 +757,17 @@ function paySheet(pre) {
     if (!(amount > 0)) return bMsg(msg, "Write the amount.");
     const btn = $b("pySave"); btn.disabled = true; btn.textContent = "Saving…";
     try {
-      const f = $b("pyF").files[0], id = $b("pyS").value;
+      const f = $b("pyF").files[0], id = $b("pyS").value, wk = weekly() ? $b("pyWk").value : null;
       const proof = f ? await G.office.uploadProof(f, id) : null;
-      const row = { student_id: id, month: $b("pyM").value, amount, paid_on: $b("pyD").value || day(new Date()), method: $b("pyW").value, reference: $b("pyR").value.trim() || null, note: $b("pyN").value.trim() || null, proof_path: proof };
+      const row = { student_id: id, month: wk ? wk.slice(0, 7) : $b("pyM").value, amount, paid_on: $b("pyD").value || day(new Date()), method: $b("pyW").value, reference: $b("pyR").value.trim() || null, note: $b("pyN").value.trim() || null, proof_path: proof };
+      if (wk) row.week = wk;
       const saved = await G.teacher.insert("payments", [row]);
       await load();
       const p = (saved && saved[0]) || (DATA.payments || []).find(x => x.student_id === id && Number(x.amount) === amount && x.month === row.month), s = sById(id), ph = phoneOf(id);
-      w.querySelector(".sh-body").innerHTML = `<div class="okbox"><span class="ic">${ICO('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 28)}</span><b>Payment recorded</b><span class="hint">${esc(s.p.display_name)} · ${MONEY(amount, adminOf(id).currency)} · ${monthName(row.month)}</span>
+      w.querySelector(".sh-body").innerHTML = `<div class="okbox"><span class="ic">${ICO('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 28)}</span><b>Payment recorded</b><span class="hint">${esc(famName(id))} · ${MONEY(amount, adminOf(id).currency)} · ${esc(periodEn(row))}</span>
         <div class="okacts"><a class="btn" id="okR" href="${p ? esc(receiptLink(s, p)) : "#"}" target="_blank" rel="noopener">Open receipt</a>${p ? `<a class="btn primary" href="${esc(waLink(ph, receiptText(p)))}" target="_blank" rel="noopener">Send by WhatsApp</a>` : ""}</div>
         ${ph ? "" : `<small class="hint">No phone saved: WhatsApp will let you pick the contact.</small>`}</div>`;
-    } catch (e) { btn.disabled = false; btn.textContent = "Save payment"; bMsg(msg, "Couldn’t save: " + (e.message || e)); }
+    } catch (e) { btn.disabled = false; btn.textContent = "Save payment"; bMsg(msg, "Couldn’t save: " + (e.message || e) + (/week|column/i.test(e.message || "") ? " (run supabase/v5.sql first)" : "")); }
   };
 }
 function addProof(p) {
@@ -753,7 +782,7 @@ function addProof(p) {
 }
 function payRow(p, showName) {
   const s = sById(p.student_id), a = adminOf(p.student_id); if (!s) return "";
-  return `<div class="li">${showName ? `<span class="av">${avatarOf(s, 38)}</span>` : ""}<div class="m"><b>${showName ? esc(s.p.display_name) : MONEY(p.amount, a.currency) + " · " + monthName(p.month)}</b><small>${showName ? MONEY(p.amount, a.currency) + " · " + monthName(p.month) + " · " : ""}Paid ${fmt(p.paid_on + "T12:00")}${p.method ? " · " + METHOD[p.method] : ""}${p.reference ? " · Ref. " + esc(p.reference) : ""}${p.note ? " · " + esc(p.note) : ""}</small></div>
+  return `<div class="li">${showName ? `<span class="av">${avatarOf(s, 38)}</span>` : ""}<div class="m"><b>${showName ? esc(famName(p.student_id)) : MONEY(p.amount, a.currency) + " · " + esc(periodEn(p))}</b><small>${showName ? MONEY(p.amount, a.currency) + " · " + esc(periodEn(p)) + " · " : ""}Paid ${fmt(p.paid_on + "T12:00")}${p.method ? " · " + METHOD[p.method] : ""}${p.reference ? " · Ref. " + esc(p.reference) : ""}${p.note ? " · " + esc(p.note) : ""}</small></div>
     <span class="acts">${p.proof_path ? `<button class="btn sm" data-pf="${esc(p.proof_path)}">${ICO('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>')} Screenshot</button>` : `<button class="btn sm ghost" data-pfadd="${p.id}">+ Screenshot</button>`}<a class="btn sm" href="${esc(receiptLink(s, p))}" target="_blank" rel="noopener">Receipt</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(p.student_id), receiptText(p)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-pdel="${p.id}">Delete</button></span></div>`;
 }
 function wirePays() {
@@ -764,16 +793,16 @@ function wirePays() {
     const p = (DATA.payments || []).find(x => x.id === b.dataset.pdel); if (!p) return;
     try { await G.teacher.remove("payments", p.id); if (p.proof_path) G.office.removeProof(p.proof_path); G.toast("Payment deleted"); await load(); } catch (e) { G.toast("Couldn’t delete: " + esc(e.message)); }
   });
-  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => paySheet({ sid: b.dataset.pay, m: b.dataset.m, amount: b.dataset.amt != null ? Number(b.dataset.amt) : null }));
+  app.querySelectorAll("[data-pay]").forEach(b => b.onclick = () => paySheet({ sid: b.dataset.pay, m: b.dataset.m, week: b.dataset.wk || null, amount: b.dataset.amt != null ? Number(b.dataset.amt) : null }));
 }
 function slipState(ch) {
-  const s = sById(ch.student_id), paid = s ? billOf(s, ch.month).paid : 0;
+  const s = sById(ch.student_id), paid = !s ? 0 : ch.week ? G.billing.week(DATA, ch.student_id, ch.week).paid : billOf(s, ch.month).paid;
   if (paid >= Number(ch.amount) && Number(ch.amount) > 0) return ["Paid", "good"];
   return paid > 0 ? ["Partly paid", "warn"] : ["Pending", ""];
 }
 function slipRow(ch, showName) {
   const s = sById(ch.student_id), a = adminOf(ch.student_id), st = slipState(ch); if (!s) return "";
-  return `<div class="li"><div class="m"><b>${esc(ch.folio)}${showName ? " · " + esc(s.p.display_name) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b><span class="tag ${st[1]}">${st[0]}</span></span>
+  return `<div class="li"><div class="m"><b>${esc(ch.folio)}${showName ? " · " + esc(famName(ch.student_id)) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b><span class="tag ${st[1]}">${st[0]}</span></span>
     <span class="acts"><a class="btn sm" href="${esc(slipLink(ch))}" target="_blank" rel="noopener">Open</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(ch.student_id), slipText(ch)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-copy="${ch.id}">Copy link</button><button class="btn sm ghost" data-chdel="${ch.id}">Delete</button></span></div>`;
 }
 function wireSlips() {
@@ -786,18 +815,22 @@ function wireSlips() {
 
 const BTABS = [["", "Overview"], ["payments", "Payments"], ["slips", "Slips"], ["bank", "Bank details"]];
 const billingNav = cur => `<nav class="subtabs" aria-label="Billing">${BTABS.map(([k, t]) => `<a href="#billing${k ? "/" + k : ""}" class="${k === cur ? "on" : ""}" ${k === cur ? 'aria-current="page"' : ""}>${t}</a>`).join("")}</nav>`;
-function billingView(a1, a2, a3) {
+function billingView(a1, a2, a3, a4) {
   if (a1 === "payments") return billingPayments(a2, a3);
-  if (a1 === "slips") return billingSlips(a2, a3);
+  if (a1 === "slips") return billingSlips(a2, a3, a4);
   if (a1 === "bank") return billingBank();
   return billingOverview(a1);
 }
 function billingOverview(m) {
   if (DATA.admin === null || DATA.payments === null) { app.innerHTML = topBar("Billing", "") + setupNote("billing"); wireTop(); return; }
   m = m && /^\d{4}-\d{2}$/.test(m) ? m : monthKey(new Date());
-  const list = students(), months = [0, 1, 2, 3, 4, 5].map(k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return monthKey(d); });
-  const rows = list.map(s => ({ s, b: billOf(s, m) })), cur = (rows.find(r => r.b.a.currency) || { b: { a: { currency: "MXN" } } }).b.a.currency;
+  const months = [0, 1, 2, 3, 4, 5].map(k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return monthKey(d); });
+  // families show up once (siblings who pay together)
+  const rows = bUnits().map(u => ({ s: u[0], u, b: billOf(u[0], m) })), cur = (rows.find(r => r.b.a.currency) || { b: { a: { currency: "MXN" } } }).b.a.currency;
   const tot = rows.reduce((t, r) => ({ due: t.due + r.b.due, paid: t.paid + r.b.paid, cls: t.cls + r.b.attended }), { due: 0, paid: 0, cls: 0 });
+  const who = r => r.u.length > 1 ? esc(G.billing.names(r.u.map(x => x.p.display_name), "&")) : esc(r.s.p.display_name || "");
+  const payBtn = ({ s, b }) => { const isW = b.a.billing === "weekly", wk = isW ? nextUnpaidWeek(s.p.id, m) : ""; return `${DATA.charges !== null ? `<a class="btn sm ghost" href="#billing/slips/${s.p.id}/${m}${isW ? "/" + wk : ""}">Slip</a> ` : ""}<button class="btn sm" data-pay="${s.p.id}" data-m="${m}" ${isW ? `data-wk="${wk}"` : `data-amt="${Math.max(0, b.due - b.paid)}"`}>Record payment</button>`; };
+  const cls = b => b.a.billing === "weekly" ? `${(b.weeks || []).filter(w => w.due > 0).length} wk · ${b.attended}` : `${b.attended}`;
   app.innerHTML = topBar("Billing", "Classes given, payments, slips and bank details.", `<select id="bm" aria-label="Month">${months.map(k => `<option value="${k}" ${k === m ? "selected" : ""}>${monthName(k)}</option>`).join("")}</select><button class="btn primary sm" id="bPayNew">Record payment</button>`) + billingNav("") + `
     <div class="stats">
       <div class="stat"><span>Classes given</span><b>${tot.cls}</b></div>
@@ -805,41 +838,42 @@ function billingOverview(m) {
       <div class="stat"><span>Received</span><b>${MONEY(tot.paid, cur)}</b></div>
       <div class="stat"><span>Outstanding</span><b>${MONEY(Math.max(0, tot.due - tot.paid), cur)}</b></div>
     </div>
-    <div class="card only-narrow">${rows.map(({ s, b }) => `<div class="li"><span class="av">${avatarOf(s, 38)}</span><div class="m"><a href="#s/${s.p.id}/billing" style="color:inherit;text-decoration:none"><b>${esc(s.p.display_name || "")}</b></a><small>${b.a.billing === "free" ? "Free" : !Number(b.a.rate) ? "No plan yet" : b.a.billing === "monthly" ? MONEY(b.a.rate, b.a.currency) + " / month" : MONEY(b.a.rate, b.a.currency) + " / class"} · ${b.attended} class${b.attended === 1 ? "" : "es"}${b.scheduled ? ` +${b.scheduled}` : ""}</small></div>
+    <div class="card only-narrow">${rows.map(r => { const { s, b } = r; return `<div class="li"><span class="av">${avatarOf(s, 38)}</span><div class="m"><a href="#s/${s.p.id}/billing" style="color:inherit;text-decoration:none"><b>${who(r)}</b></a><small>${planText(b.a)} · ${b.attended} class${b.attended === 1 ? "" : "es"}${b.scheduled ? ` +${b.scheduled}` : ""}</small></div>
         <span class="v"><b>${MONEY(b.paid, b.a.currency)} <small class="muted">of ${MONEY(b.due, b.a.currency)}</small></b><span class="tag ${b.status[1]}">${b.status[0]}</span></span>
-        ${b.a.billing === "free" ? "" : !Number(b.a.rate) ? `<span class="acts"><a class="btn sm" href="#s/${s.p.id}/billing">Set plan</a></span>` : `<span class="acts">${DATA.charges !== null ? `<a class="btn sm ghost" href="#billing/slips/${s.p.id}/${m}">Slip</a>` : ""}<button class="btn sm" data-pay="${s.p.id}" data-m="${m}" data-amt="${Math.max(0, b.due - b.paid)}">Record payment</button></span>`}</div>`).join("") || `<p class="empty">No students yet.</p>`}</div>
+        ${b.a.billing === "free" ? "" : !Number(b.a.rate) ? `<span class="acts"><a class="btn sm" href="#s/${s.p.id}/billing">Set plan</a></span>` : `<span class="acts">${payBtn(r)}</span>`}</div>`; }).join("") || `<p class="empty">No students yet.</p>`}</div>
     <div class="card only-wide"><div class="tbl"><table class="crm" style="min-width:880px">
       <thead><tr><th>Student</th><th>Plan</th><th class="r">Classes</th><th class="r">Expected</th><th class="r">Paid</th><th>Status</th><th class="r"></th></tr></thead>
-      <tbody>${rows.map(({ s, b }) => `<tr>
-        <td><a class="who" href="#s/${s.p.id}/billing" style="text-decoration:none;color:inherit"><span class="av">${avatarOf(s, 30)}</span><b>${esc(s.p.display_name || "")}</b></a></td>
-        <td class="muted">${b.a.billing === "free" ? "Free" : !Number(b.a.rate) ? `<a href="#s/${s.p.id}/billing">Set plan</a>` : b.a.billing === "monthly" ? MONEY(b.a.rate, b.a.currency) + " / month" : MONEY(b.a.rate, b.a.currency) + " / class"}</td>
-        <td class="r num">${b.attended}${b.scheduled ? `<small class="muted"> +${b.scheduled}</small>` : ""}</td>
+      <tbody>${rows.map(r => { const { s, b } = r; return `<tr>
+        <td><a class="who" href="#s/${s.p.id}/billing" style="text-decoration:none;color:inherit"><span class="av">${avatarOf(s, 30)}</span><b>${who(r)}</b></a></td>
+        <td class="muted">${!Number(b.a.rate) && b.a.billing !== "free" ? `<a href="#s/${s.p.id}/billing">Set plan</a>` : planText(b.a)}</td>
+        <td class="r num">${cls(b)}${b.scheduled ? `<small class="muted"> +${b.scheduled}</small>` : ""}</td>
         <td class="r num">${MONEY(b.due, b.a.currency)}</td><td class="r num">${MONEY(b.paid, b.a.currency)}</td>
         <td><span class="tag ${b.status[1] === "bad" ? "bad" : b.status[1]}">${b.status[0]}</span></td>
-        <td class="r" style="white-space:nowrap">${b.a.billing === "free" ? "" : `${DATA.charges !== null ? `<a class="btn sm ghost" href="#billing/slips/${s.p.id}/${m}">Slip</a> ` : ""}<button class="btn sm" data-pay="${s.p.id}" data-m="${m}" data-amt="${Math.max(0, b.due - b.paid)}">Record payment</button>`}</td></tr>`).join("")}</tbody></table></div>
-      <p class="muted" style="font-size:.84em">Classes counts attended classes (+ still scheduled this month). Set each student’s plan in their file → Billing.</p></div>`;
+        <td class="r" style="white-space:nowrap">${b.a.billing === "free" ? "" : payBtn(r)}</td></tr>`; }).join("")}</tbody></table></div>
+      <p class="muted" style="font-size:.84em">Classes counts attended classes (+ still scheduled this month). Weekly plans charge each week with classes taken. Set plans and siblings in each student’s file → Billing.</p></div>`;
   wireTop(); wirePays();
   $b("bm").onchange = e => location.hash = "#billing/" + e.target.value;
   $b("bPayNew").onclick = () => paySheet({ m });
 }
 function billingPayments(m, sid) {
-  const list = students(), all = m === "all";
+  const all = m === "all", fam = sid ? famIds(sid) : null;
   m = all ? "all" : /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
-  const pays = (DATA.payments || []).filter(p => sById(p.student_id) && (all || p.month === m) && (!sid || p.student_id === sid));
+  const pays = (DATA.payments || []).filter(p => sById(p.student_id) && (all || p.month === m) && (!fam || fam.includes(p.student_id)));
   const total = pays.reduce((t, p) => t + Number(p.amount), 0), withProof = pays.filter(p => p.proof_path).length;
   app.innerHTML = topBar("Billing", "Payments received, receipts and transfer screenshots.", `<button class="btn primary sm" id="pNew">Record payment</button>`) + billingNav("payments") + `
     ${DATA.payments === null ? setupNote("billing") : DATA.charges === null ? v4Note() : ""}
     <div class="card"><div class="card-head"><div class="filters"><select id="pM" aria-label="Month paid"><option value="all" ${all ? "selected" : ""}>All months</option>${monthOpts(m, 12)}</select>
-      <select id="pS" aria-label="Student"><option value="">All students</option>${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
+      <select id="pS" aria-label="Student"><option value="">All students</option>${unitOptions(sid)}</select></div>
       <span class="hint">${pays.length} payment${pays.length === 1 ? "" : "s"} · <b style="color:var(--ink)">${MONEY(total)}</b>${pays.length ? ` · ${withProof} with screenshot` : ""}</span></div>
       ${pays.length ? pays.map(p => payRow(p, true)).join("") : `<p class="empty">No payments ${all ? "recorded" : "for " + monthName(m)}.</p>`}</div>`;
+  if (!sid) $b("pS").value = "";
   wireTop();
   const go = () => location.hash = "#billing/payments/" + $b("pM").value + ($b("pS").value ? "/" + $b("pS").value : "");
   $b("pM").onchange = go; $b("pS").onchange = go;
   $b("pNew").onclick = () => paySheet({ sid, m: all ? null : m });
   wirePays();
 }
-function billingSlips(sid, m) {
+function billingSlips(sid, m, wkPre) {
   const list = students(), bk = DATA.bank || {}, noBank = !bk.clabe && !bk.account && !bk.card;
   sid = sById(sid) ? sid : (list[0] && list[0].p.id); m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
   const ch = (DATA.charges || []).filter(c => sById(c.student_id));
@@ -847,8 +881,8 @@ function billingSlips(sid, m) {
     ${DATA.charges === null ? v4Note() : noBank ? `<div class="alert info">Before sending slips, add your <a href="#billing/bank">bank details</a> (bank, account holder and CLABE).</div>` : ""}
     <div class="cols">
       <div class="card" id="newSlip"><h2>New payment slip</h2>
-        ${list.length ? `<div class="grid2"><div class="field"><label for="fS">Student</label><select id="fS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
-          <div class="field"><label for="fM">Month</label><select id="fM">${monthOpts(m)}</select></div></div>
+        ${list.length ? `<div class="grid2"><div class="field"><label for="fS">Student</label><select id="fS">${unitOptions(sid)}</select></div>
+          <div class="field" id="fMBox"><label for="fM">Month</label><select id="fM">${monthOpts(m)}</select></div><div class="field" id="fWBox" hidden><label for="fW">Week</label><select id="fW"></select></div></div>
         <div class="field"><label for="fC">Concept <span class="muted" style="font-weight:500">(prints on the slip, in Spanish)</span></label><input id="fC" maxlength="140"></div>
         <div class="field"><label for="fA">Amount to pay</label><input id="fA" type="number" min="0" step="10" inputmode="decimal"></div>
         <p class="hint" id="fHint"></p>
@@ -859,21 +893,32 @@ function billingSlips(sid, m) {
     </div>`;
   wireTop(); wireSlips();
   if (!list.length) return;
-  const fill = () => { const s = sById($b("fS").value), mm = $b("fM").value, sg = suggestedPay(s, mm); $b("fC").value = "Clases de inglés · " + esMonth(mm); $b("fA").value = sg.amount || ""; $b("fHint").textContent = sg.how + "."; };
-  $b("fS").onchange = fill; $b("fM").onchange = fill; fill();
+  let lastId = null;
+  const isW = () => adminOf($b("fS").value).billing === "weekly";
+  const fill = () => {
+    const id = $b("fS").value, w = isW();
+    $b("fMBox").hidden = w; $b("fWBox").hidden = !w;
+    if (w && id !== lastId) $b("fW").innerHTML = weekOpts(id, famIds(id).includes(sid) && wkPre ? wkPre : nextUnpaidWeek(id, m));
+    lastId = id;
+    if (w) { const k = $b("fW").value, sg = suggestedWeek(id, k); $b("fC").value = "Clases de inglés · semana del " + wkEs(id, k); $b("fA").value = sg.amount || ""; $b("fHint").textContent = sg.how + "."; }
+    else { const mm = $b("fM").value, sg = suggestedPay(sById(id), mm); $b("fC").value = "Clases de inglés · " + esMonth(mm); $b("fA").value = sg.amount || ""; $b("fHint").textContent = sg.how + "."; }
+  };
+  $b("fS").onchange = fill; $b("fM").onchange = fill; $b("fW").onchange = fill; fill();
   $b("fSave").onclick = async () => {
-    const id = $b("fS").value, mm = $b("fM").value, amount = Number($b("fA").value), msg = $b("fMsg");
+    const id = $b("fS").value, wk = isW() ? $b("fW").value : null, mm = wk ? wk.slice(0, 7) : $b("fM").value, amount = Number($b("fA").value), msg = $b("fMsg");
     if (!(amount > 0)) return bMsg(msg, "Write the amount to pay.");
-    const s = sById(id), n = (s.p.display_name || "X").trim().split(/\s+/), initials = ((n[0][0] || "X") + (n[1] ? n[1][0] : n[0][1] || "")).toUpperCase().normalize("NFD").replace(/[^A-Z]/g, "");
-    const seq = (DATA.charges || []).filter(c => c.month === mm).length + 1;
-    const row = { student_id: id, month: mm, folio: `F-${mm.replace("-", "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $b("fC").value.trim() || null, amount, due: null, note: $b("fN").value.trim() || null };
+    const parts = famIds(id).map(i => (nameOf(i) || "X").trim().split(/\s+/));
+    const initials = (parts.length > 1 ? parts.map(p => p[0][0]).join("") + (parts[0][1] ? parts[0][parts[0].length - 1][0] : "") : (parts[0][0][0] || "X") + (parts[0][1] ? parts[0][1][0] : parts[0][0][1] || "")).toUpperCase().normalize("NFD").replace(/[^A-Z]/g, "");
+    const seq = (DATA.charges || []).filter(c => (wk ? c.week === wk : c.month === mm && !c.week)).length + 1;
+    const row = { student_id: id, month: mm, folio: `F-${(wk || mm).replace(/-/g, "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $b("fC").value.trim() || null, amount, due: null, note: $b("fN").value.trim() || null };
+    if (wk) row.week = wk;
     const btn = $b("fSave"); btn.disabled = true;
     try {
       const saved = await G.teacher.insert("charges", [row]); await load();
       const c = (saved && saved[0]) || { ...row, created_at: new Date().toISOString() };
-      sheet("Slip created", esc(c.folio), `<div class="okbox"><span class="ic">${ICO('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 28)}</span><b>${esc(s.p.display_name)} · ${MONEY(amount, adminOf(id).currency)}</b><span class="hint">${c.due ? "Pay by " + fmt(c.due + "T12:00") : ""}</span>
+      sheet("Slip created", esc(c.folio), `<div class="okbox"><span class="ic">${ICO('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 28)}</span><b>${esc(famName(id))} · ${MONEY(amount, adminOf(id).currency)}</b><span class="hint">${esc(periodEn(c))}</span>
         <div class="okacts"><a class="btn" href="${esc(slipLink(c))}" target="_blank" rel="noopener">Open slip</a><a class="btn primary" href="${esc(waLink(phoneOf(id), slipText(c)))}" target="_blank" rel="noopener">Send by WhatsApp</a></div></div>`);
-    } catch (e) { btn.disabled = false; bMsg(msg, "Couldn’t create it: " + (e.message || e)); }
+    } catch (e) { btn.disabled = false; bMsg(msg, "Couldn’t create it: " + (e.message || e) + (/week|column/i.test(e.message || "") ? " (run supabase/v5.sql first)" : "")); }
   };
 }
 function billingBank() {
@@ -962,33 +1007,55 @@ function wireProposal(s) {
 }
 function billingTab(s) {
   if (DATA.admin === null || DATA.payments === null) return setupNote("billing") + proposalCard(s);
-  const a = adminOf(s.p.id), pays = (DATA.payments || []).filter(p => p.student_id === s.p.id);
+  const id = s.p.id, a = adminOf(id), fam = famIds(id), isW = a.billing === "weekly", pays = (DATA.payments || []).filter(p => fam.includes(p.student_id));
   const months = [0, 1, 2, 3, 4, 5].map(k => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - k); return monthKey(d); });
+  const m0 = monthKey(new Date()), b0 = billOf(s, m0), others = students().filter(x => x.p.id !== id), wk0 = isW ? nextUnpaidWeek(id, m0) : "";
   return `<div class="card"><h2>Plan</h2>
     <div class="grid2" style="grid-template-columns:repeat(3,minmax(0,1fr));align-items:end">
-      <div class="field"><label for="bP">How they pay</label><select id="bP"><option value="per_class" ${a.billing === "per_class" ? "selected" : ""}>Per class</option><option value="monthly" ${a.billing === "monthly" ? "selected" : ""}>Monthly fee</option><option value="free" ${a.billing === "free" ? "selected" : ""}>Free</option></select></div>
-      <div class="field"><label for="bR">Amount</label><input id="bR" type="number" min="0" step="10" value="${Number(a.rate) || ""}" inputmode="decimal"></div>
+      <div class="field"><label for="bP">How they pay</label><select id="bP">${Object.entries(PLAN_EN).map(([k, v]) => `<option value="${k}" ${a.billing === k ? "selected" : ""}>${v}</option>`).join("")}</select></div>
+      <div class="field"><label for="bR" id="bRL">Amount</label><input id="bR" type="number" min="0" step="10" value="${Number(a.rate) || ""}" inputmode="decimal"></div>
       <div class="field"><label for="bC">Currency</label><select id="bC">${["MXN", "USD"].map(c => `<option ${a.currency === c ? "selected" : ""}>${c}</option>`).join("")}</select></div>
     </div>
+    <div class="field" id="bDBox"><label for="bD">Pay day</label><select id="bD">${DAY_EN.map((d, i) => `<option value="${i}" ${Number(a.pay_day ?? 6) === i ? "selected" : ""}>${d}</option>`).join("")}</select></div>
+    ${others.length ? `<div class="field"><span style="font-weight:700;font-size:.9em">Pays together with <span class="muted" style="font-weight:500">(siblings: one payment and one receipt)</span></span>
+      <div class="chks">${others.map(x => `<label><input type="checkbox" name="bFam" value="${x.p.id}" ${fam.includes(x.p.id) ? "checked" : ""}>${esc(x.p.display_name)}</label>`).join("")}</div></div>` : ""}
+    <p class="hint" id="bHint"></p>
     <div class="actions"><button class="btn primary sm" id="bSave">Save plan</button></div></div>
-    <div class="card"><h2>By month</h2><div class="tbl"><table style="min-width:520px"><thead><tr><th>Month</th><th class="r">Classes</th><th class="r">Expected</th><th class="r">Paid</th><th>Status</th></tr></thead>
+    ${isW ? `<div class="card"><div class="card-head"><h2>Weeks of ${monthName(m0)}</h2><span class="hint">${MONEY(a.rate, a.currency)} a week${fam.length > 1 ? " · " + esc(famFirst(id)) : ""}</span></div>
+      ${(b0.weeks || []).length ? b0.weeks.map(w => { const st = wkStatus(w); return `<div class="li"><div class="m"><b>Week of ${wkEn(id, w.key)}</b><small>${byLine(id, w)}${w.missed ? ` · ${w.missed} missed` : ""}</small></div><span class="v"><b>${MONEY(w.paid, a.currency)} <small class="muted">of ${MONEY(w.due || (w.k ? w.rate : 0), a.currency)}</small></b><span class="tag ${st[1]}">${st[0]}</span></span>
+        ${w.paid < w.rate && (w.attended || w.scheduled) ? `<span class="acts">${DATA.charges !== null ? `<a class="btn sm ghost" href="#billing/slips/${id}/${m0}/${w.key}">Slip</a>` : ""}<button class="btn sm" data-pay="${id}" data-m="${m0}" data-wk="${w.key}">Record payment</button></span>` : ""}</div>`; }).join("") : `<p class="empty">No classes this month.</p>`}</div>` : ""}
+    <div class="card"><h2>By month${fam.length > 1 ? " (family)" : ""}</h2><div class="tbl"><table style="min-width:520px"><thead><tr><th>Month</th><th class="r">Classes</th><th class="r">Expected</th><th class="r">Paid</th><th>Status</th></tr></thead>
       <tbody>${months.map(m => { const b = billOf(s, m); return `<tr><td>${monthName(m)}</td><td class="r">${b.attended}</td><td class="r">${MONEY(b.due, a.currency)}</td><td class="r">${MONEY(b.paid, a.currency)}</td><td><span class="tag ${b.status[1]}">${b.status[0]}</span></td></tr>`; }).join("")}</tbody></table></div></div>
-    <div class="card"><div class="card-head"><h2>Payments</h2><div class="actions"><button class="btn primary sm" data-pay="${s.p.id}" data-m="${monthKey(new Date())}">Record payment</button>${DATA.charges !== null ? `<a class="btn sm" href="#billing/slips/${s.p.id}">New payment slip</a>` : ""}</div></div>
+    <div class="card"><div class="card-head"><h2>Payments${fam.length > 1 ? " (family)" : ""}</h2><div class="actions"><button class="btn primary sm" data-pay="${id}" data-m="${m0}" ${isW ? `data-wk="${wk0}"` : ""}>Record payment</button>${DATA.charges !== null ? `<a class="btn sm" href="#billing/slips/${id}/${m0}${isW ? "/" + wk0 : ""}">New payment slip</a>` : ""}</div></div>
       ${pays.length ? pays.map(p => payRow(p, false)).join("") : `<p class="empty">No payments recorded.</p>`}</div>
-    ${DATA.charges !== null ? `<div class="card"><div class="card-head"><h2>Payment slips</h2></div>${(() => { const cs = DATA.charges.filter(c => c.student_id === s.p.id); return cs.length ? cs.map(c => slipRow(c, false)).join("") : `<p class="empty">No slips yet. <a href="#billing/slips/${s.p.id}">Create one</a></p>`; })()}</div>` : ""}` + proposalCard(s);
+    ${DATA.charges !== null ? `<div class="card"><div class="card-head"><h2>Payment slips</h2></div>${(() => { const cs = DATA.charges.filter(c => fam.includes(c.student_id)); return cs.length ? cs.map(c => slipRow(c, false)).join("") : `<p class="empty">No slips yet. <a href="#billing/slips/${id}">Create one</a></p>`; })()}</div>` : ""}` + proposalCard(s);
 }
 function receiptLink(s, p) {
-  const a = adminOf(s.p.id), b = billOf(s, p.month);
-  const D = { no: "R-" + p.month.replace("-", "") + "-" + String(p.id).replace(/-/g, "").slice(0, 4).toUpperCase(), n: s.p.display_name || "", m: new Date(p.month + "-15").toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
-    d: p.paid_on, a: Number(p.amount), cur: a.currency || "MXN", pl: a.billing, k: b.attended, r: Number(a.rate) || 0, nt: p.note || "", ow: G.maestroNombre || G.maestro, du: b.due, pt: b.paid, mt: p.method || "", rf: p.reference || "" };
+  const sid = p.student_id, a = adminOf(sid), wk = p.week ? G.billing.week(DATA, sid, p.week) : null, b = wk ? null : billOf(sById(sid) || s, p.month);
+  const D = { no: "R-" + (p.week || p.month).replace(/-/g, "") + "-" + String(p.id).replace(/-/g, "").slice(0, 4).toUpperCase(), n: famName(sid, true) || (s && s.p.display_name) || "",
+    m: wk ? "semana del " + wkEs(sid, p.week, true) : new Date(p.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
+    d: p.paid_on, a: Number(p.amount), cur: a.currency || "MXN", pl: wk ? "weekly" : a.billing, k: wk ? wk.attended || wk.k : b.attended, r: Number(a.rate) || 0, by: wk && famIds(sid).length > 1 ? byLine(sid, wk, true) : "",
+    nt: p.note || "", ow: G.maestroNombre || G.maestro, du: wk ? wk.rate : b.due, pt: wk ? wk.paid : b.paid, mt: p.method || "", rf: p.reference || "" };
   return location.origin + location.pathname.replace(/teacher\.html$/, "") + "recibo.html?d=" + b64(D);
 }
 function wireBilling(s) {
   wirePays(); wireSlips();
-  const bs = document.getElementById("bSave");
-  if (bs) bs.onclick = async () => {
-    try { await G.teacher.upsert("student_admin", { ...adminOf(s.p.id), student_id: s.p.id, billing: document.getElementById("bP").value, rate: Number(document.getElementById("bR").value) || 0, currency: document.getElementById("bC").value, updated_at: new Date().toISOString() }); G.toast("Plan saved"); await load(); }
-    catch (err) { G.toast("Couldn’t save: " + esc(err.message)); }
+  const id = s.p.id, a = adminOf(id), fam = famIds(id), bP = document.getElementById("bP"); if (!bP) return;
+  const planUi = () => { const v = bP.value, fs = [...document.querySelectorAll('[name="bFam"]:checked')].map(x => nameOf(x.value).split(" ")[0]);
+    document.getElementById("bDBox").hidden = v !== "weekly"; document.getElementById("bRL").textContent = v === "weekly" ? "Amount per week" : v === "monthly" ? "Amount per month" : v === "per_class" ? "Amount per class" : "Amount";
+    document.getElementById("bHint").textContent = fs.length ? `The same plan is saved for ${G.billing.names([s.p.display_name.split(" ")[0]].concat(fs), "&")}: the amount covers all of them together.` : ""; };
+  bP.onchange = planUi; document.querySelectorAll('[name="bFam"]').forEach(x => x.onchange = planUi); planUi();
+  document.getElementById("bSave").onclick = async () => {
+    const pick = [...document.querySelectorAll('[name="bFam"]:checked')].map(x => x.value), now = new Date().toISOString();
+    const plan = { billing: bP.value, rate: Number(document.getElementById("bR").value) || 0, currency: document.getElementById("bC").value };
+    if (plan.billing === "weekly" || pick.length || a.family) plan.pay_day = Number(document.getElementById("bD").value);
+    const famKey = pick.length ? (a.family || pick.map(i => adminOf(i).family).find(Boolean) || "fam-" + id.slice(0, 8)) : null;
+    try {
+      await G.teacher.upsert("student_admin", { ...a, student_id: id, ...plan, ...(famKey || a.family ? { family: famKey } : {}), updated_at: now });
+      for (const x of pick) await G.teacher.upsert("student_admin", { ...adminOf(x), student_id: x, ...plan, family: famKey, updated_at: now });
+      for (const x of fam.filter(i => i !== id && !pick.includes(i))) await G.teacher.upsert("student_admin", { ...adminOf(x), student_id: x, family: null, updated_at: now });
+      G.toast("Plan saved"); await load();
+    } catch (err) { G.toast("Couldn’t save: " + esc(err.message) + (/pay_day|family|check/i.test(err.message || "") ? " (run supabase/v5.sql first)" : "")); }
   };
 }
 

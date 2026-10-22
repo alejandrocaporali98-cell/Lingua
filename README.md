@@ -138,3 +138,7 @@ Neither function needs any key pasted in: Supabase gives them their own.
 1. **SQL:** run `supabase/v4.sql` once in Supabase → SQL Editor. It adds the `staff` table (office role), what the office may see and change (names, classes, weekly schedule, plans, payments — no lessons, quizzes or homework), payment method/reference/screenshot, the bank details row (`billing_info`), payment slips (`charges`) and the private `comprobantes` storage for transfer screenshots.
 2. **Account:** Teacher panel → Accounts → create the account with **Role: Office · payments & schedule**. That person signs in and lands on `admin.html` (in Spanish): Inicio, Alumnos, Agenda, Pagos, Fichas de pago, Datos bancarios.
 3. Bank details are typed in the office panel → Datos bancarios (or by the teacher there too). They print on each payment slip (`ficha.html`), which opens without signing in so it can be sent by WhatsApp.
+
+## v5 setup (weekly plans and siblings)
+
+Run `supabase/v5.sql` once in Supabase → SQL Editor. It adds the **Weekly** plan (with a pay day, Saturday by default), **families** (siblings who pay together: one plan, one payment, one receipt) and the week on payments and slips. Set it in a student's file → Billing (or in the office panel → Alumnos → the student): choose *Weekly*, the amount per week, and tick the siblings under *Pays together with*. Weeks with no class taken aren't charged.

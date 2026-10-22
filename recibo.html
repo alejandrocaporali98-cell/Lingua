@@ -60,6 +60,8 @@
   const lines = [];
   if (D.pl === "per_class" && D.k) lines.push([`${D.k} clase${D.k === 1 ? "" : "s"} × ${money(D.r)}`, money(D.k * D.r)]);
   if (D.pl === "monthly") lines.push(["Mensualidad", money(D.r)]);
+  if (D.pl === "weekly") lines.push([`Pago semanal${D.k ? " · " + D.k + " clase" + (D.k === 1 ? "" : "s") : ""}`, money(D.r)]);
+  if (D.by) lines.push([D.by, ""]);
   document.title = `Recibo ${D.no} · ${D.n}`;
   doc.innerHTML = `
     <header><div><h1>RECIBO DE PAGO</h1><div class="kick">Clases de inglés</div></div>

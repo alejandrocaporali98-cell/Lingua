@@ -74,9 +74,11 @@
   const B = D.b || {}, lines = [];
   if (D.pl === "per_class" && D.k && D.r) lines.push([`${D.k} clase${D.k === 1 ? "" : "s"} × ${money(D.r)}`, money(D.k * D.r)]);
   if (D.pl === "monthly" && D.r) lines.push(["Mensualidad", money(D.r)]);
-  const base = D.pl === "per_class" ? (D.k || 0) * (D.r || 0) : D.pl === "monthly" ? (D.r || 0) : 0;
+  if (D.pl === "weekly" && D.r) lines.push([`Pago semanal${D.k ? " · " + D.k + " clase" + (D.k === 1 ? "" : "s") : ""}`, money(D.r)]);
+  const base = D.pl === "per_class" ? (D.k || 0) * (D.r || 0) : D.pl === "monthly" || D.pl === "weekly" ? (D.r || 0) : 0;
   if (lines.length && base > D.a + .005) lines.push(["Pagado antes o descuento", "−" + money(base - D.a)]);
   else if (lines.length && base + .005 < D.a) lines.length = 0;
+  if (D.by) lines.splice(1, 0, [D.by, ""]);
   const rows = [["Banco", B.bank], ["Titular", B.holder], ["CLABE", group(B.clabe, 4), "clabe", B.clabe], ["Número de cuenta", B.account, "", B.account], ["Tarjeta (depósito)", group(B.card, 4), "", B.card]].filter(r => r[1]);
   document.title = `Ficha ${D.f} · ${D.n}`;
   doc.innerHTML = `
