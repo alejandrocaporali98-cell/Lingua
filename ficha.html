@@ -40,6 +40,8 @@
   .sign .s { border-top: 1px solid var(--ink); padding-top: 8px; font-size: 11.5px; }
   .sign .s b { display: block; font-size: 13px; }
   .sign small { font-size: 10px; color: var(--mute); line-height: 1.5; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); }
+  .brand svg { flex: none; }
   @media (max-width: 640px) { header { padding: 32px 24px; flex-direction: column; } header .r { text-align: left; } main { padding: 26px 24px 20px; } .sign { padding: 24px 24px 34px; grid-template-columns: 1fr; gap: 20px; } .who { grid-template-columns: 1fr; } }
   .missing { padding: 60px; font-size: 15px; }
   @media print { html, body { background: #fff; } .bar { display: none; } .doc { width: auto; margin: 0; box-shadow: none; } @page { size: letter; margin: 0; } }
@@ -92,7 +94,7 @@
       ${B.ins || B.to ? `<p class="note">${B.ins ? esc(B.ins) : ""}${B.ins && B.to ? "\n" : ""}${B.to ? "Envía tu comprobante a: <b>" + esc(B.to) + "</b>" : ""}</p>` : ""}
       ${D.nt ? `<p class="note">${esc(D.nt)}</p>` : ""}
     </main>
-    <div class="sign"><div class="s"><b>${esc(D.ow || "")}</b>Clases de inglés</div><small>Al recibir tu pago te mandamos el recibo. ¡Gracias por tu confianza!</small></div>`;
+    <div class="sign"><div class="brand"><svg width="38" height="38" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2346d0"/><path d="M8.5 9h15a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5H16l-4.5 4v-4h-3A2.5 2.5 0 0 1 6 19v-7.5A2.5 2.5 0 0 1 8.5 9z" fill="#fff"/><circle cx="20.5" cy="15.25" r="2.4" fill="#f5c518"/></svg>Lingua</div><small>Al recibir tu pago te mandamos el recibo. ¡Gracias por tu confianza!</small></div>`;
   const copy = (v, btn) => navigator.clipboard.writeText(v).then(() => { const t = btn.textContent; btn.textContent = "¡Copiado!"; setTimeout(() => btn.textContent = t, 1400); }, () => window.prompt("Copia:", v));
   doc.querySelectorAll("[data-cp]").forEach(b => b.onclick = () => copy(b.dataset.cp, b));
   const cb = document.getElementById("cpBar"); if (B.clabe) { cb.hidden = false; cb.onclick = () => copy(B.clabe, cb); }
