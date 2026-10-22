@@ -311,7 +311,7 @@
     const st = STYLE(), names = st.badges || {};
     const EMO = { music: { first: "🎸", level5: "🎤", mechanic: "🎛️" }, cinema: { first: "🎬", level5: "🎞️", mechanic: "✂️" }, riding: { first: "🐴", level5: "🏇", mechanic: "🪮" }, career: { first: "💼", level5: "📈", mechanic: "🧩" } };
     const key = Object.keys(L.THEMES || {}).find(k => L.THEMES[k] === st), emo = EMO[key] || {};
-    BADGES.forEach(b => { if (names[b.id]) b.t = names[b.id]; if (emo[b.id]) b.e = emo[b.id]; });
+    BADGES.forEach(b => { b.t0 = b.t; if (names[b.id]) b.t = names[b.id]; if (emo[b.id]) b.e = emo[b.id]; });
   })();
   function context(get) {
     const ready = lessonsReady(), g = stats(get), once = (get("game", null) || {}).once || {};
@@ -326,7 +326,9 @@
   }
   L.badges = {
     list: BADGES,
-    earned: get => { get = get || ((k, d) => S.get(k, d)); const c = context(get), have = get("badges", {}) || {}; return BADGES.map(b => ({ ...b, at: have[b.id] || null, now: b.ok(c) })); },
+    // theme: name the badges for another student's style (the teacher panel passes each student's theme)
+    earned: (get, theme) => { get = get || ((k, d) => S.get(k, d)); const c = context(get), have = get("badges", {}) || {}, nm = theme && L.themeOf ? (L.themeOf(theme).badges || {}) : null;
+      return BADGES.map(b => ({ ...b, t: nm ? (nm[b.id] || b.t0 || b.t) : b.t, at: have[b.id] || null, now: b.ok(c) })); },
     check() {
       if (L.badges._busy) return; L.badges._busy = true;
       try {

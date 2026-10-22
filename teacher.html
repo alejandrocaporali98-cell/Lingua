@@ -433,7 +433,7 @@ function activityOf(s) {
   s.rows.forEach(r => (get("attempts." + r.l.id, []) || []).forEach(a => a.at && ev.push([a.at, `${a.ok / a.n >= .8 ? "passed" : "took"} the final quiz of <b>${esc(r.l.titulo)}</b> · ${Math.round(a.ok / a.n * 100)}%`, a.ok / a.n >= .8 ? "good" : ""])));
   s.hw.filter(h => h.done_at).forEach(h => ev.push([h.done_at, `finished homework <b>${esc(h.title)}</b>`, "good"]));
   const pl = s.placement; if (pl && pl.fecha) ev.push([pl.fecha + "T12:00:00", `took the placement test · ${esc(pl.nivel)}`, ""]);
-  (G.badges ? G.badges.earned(get) : []).filter(b => b.at).forEach(b => ev.push([b.at, `earned the badge <b>${esc(b.t)}</b>`, ""]));
+  (G.badges ? G.badges.earned(get, s.theme) : []).filter(b => b.at).forEach(b => ev.push([b.at, `earned the badge <b>${esc(b.t)}</b>`, ""]));
   (DATA.classes || []).filter(c => c.student_id === s.p.id && c.status === "attended").forEach(c => ev.push([c.starts_at, `had a class with you`, ""]));
   return ev.map(e => ({ at: e[0], html: `<b>${esc(name)}</b> ${e[1]}`, cls: e[2], s }));
 }
