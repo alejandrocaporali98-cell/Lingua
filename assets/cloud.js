@@ -120,7 +120,10 @@
   }
   L.saveProfile = async (fields) => {
     const row = { ...fields, id: tid, updated_at: new Date().toISOString() };
-    const { data, error } = await sb.from("profiles").upsert(row).select().maybeSingle();
+    // Update first: a teacher in class mode may edit a student's profile but not create one,
+    // and an upsert counts as a create for the security rules. Only create it if it isn't there yet.
+    let { data, error } = await sb.from("profiles").update(row).eq("id", tid).select().maybeSingle();
+    if (!error && !data) ({ data, error } = await sb.from("profiles").upsert(row).select().maybeSingle());
     if (error) throw error;
     L.profile = data || row; lsSet("__profile", L.profile); decorate();
     return L.profile;
