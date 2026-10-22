@@ -79,12 +79,12 @@
   document.title = `Ficha ${D.f} · ${D.n}`;
   doc.innerHTML = `
     <header><div><h1>FICHA DE PAGO</h1><div class="kick">Clases de inglés</div></div>
-      <div class="r"><span class="lbl">Folio</span><span class="no">${esc(D.f)}</span>${D.du ? `<span class="lbl">Pagar antes del</span><span class="no">${esc(date(D.du))}</span>` : `<span class="lbl">Emitida</span><span class="no">${esc(date(D.e))}</span>`}</div></header>
+      <div class="r"><span class="lbl">Folio</span><span class="no">${esc(D.f)}</span><span class="lbl">Emitida</span><span class="no">${esc(date(D.e))}</span></div></header>
     <main>
       <div class="who"><div><span class="lab">Alumno</span><b>${esc(D.n)}</b></div><div><span class="lab">Concepto</span><b>${esc(D.c || "Clases de inglés · " + D.m)}</b></div></div>
       <div style="display:grid;gap:2px"><div class="sh">Detalle</div>
         ${lines.map(l => `<div class="line"><span>${esc(l[0])}</span><span>${esc(l[1])}</span></div>`).join("")}
-        <div class="line"><span>Emitida el ${esc(date(D.e))}</span><span></span></div></div>
+</div>
       <div class="total"><span class="lab">Total a pagar</span><b>${esc(money(D.a))}</b></div>
       ${rows.length ? `<div style="display:grid;gap:12px"><div class="sh">Datos para transferencia</div>
         <div class="bank">${rows.map(r => `<div class="row ${r[2] === "clabe" ? "big" : ""}"><span>${r[0]}</span><b>${esc(r[1])}</b>${r[3] ? `<button type="button" class="cp" data-cp="${esc(r[3])}">Copiar</button>` : "<i></i>"}</div>`).join("")}

@@ -675,7 +675,7 @@ function slipLink(ch) {
   return SITE() + "ficha.html?d=" + b64(D);
 }
 const firstOf = s => (s && s.p.display_name || "").split(" ")[0];
-const slipText = ch => { const s = sById(ch.student_id), a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${firstOf(s)} (${esMonth(ch.month, { month: "long" })}): ${esMoney(ch.amount, a.currency)}${ch.due ? ", con fecha límite el " + esDate(ch.due) : ""}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; };
+const slipText = ch => { const s = sById(ch.student_id), a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${firstOf(s)} (${esMonth(ch.month, { month: "long" })}): ${esMoney(ch.amount, a.currency)}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; };
 const receiptText = p => { const s = sById(p.student_id), a = adminOf(p.student_id); return `Hola, recibimos su pago de ${esMoney(p.amount, a.currency)} por las clases de inglés de ${firstOf(s)} (${esMonth(p.month, { month: "long" })}). ¡Gracias! Aquí está su recibo: ${receiptLink(s, p)}`; };
 
 // A pop-up sheet (bottom sheet on phones, centered on computers)
@@ -769,12 +769,11 @@ function wirePays() {
 function slipState(ch) {
   const s = sById(ch.student_id), paid = s ? billOf(s, ch.month).paid : 0;
   if (paid >= Number(ch.amount) && Number(ch.amount) > 0) return ["Paid", "good"];
-  if (ch.due && ch.due < day(new Date())) return ["Overdue", "bad"];
   return paid > 0 ? ["Partly paid", "warn"] : ["Pending", ""];
 }
 function slipRow(ch, showName) {
   const s = sById(ch.student_id), a = adminOf(ch.student_id), st = slipState(ch); if (!s) return "";
-  return `<div class="li"><div class="m"><b>${esc(ch.folio)}${showName ? " · " + esc(s.p.display_name) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}${ch.due ? " · due " + fmt(ch.due + "T12:00") : ""}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b><span class="tag ${st[1]}">${st[0]}</span></span>
+  return `<div class="li"><div class="m"><b>${esc(ch.folio)}${showName ? " · " + esc(s.p.display_name) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b><span class="tag ${st[1]}">${st[0]}</span></span>
     <span class="acts"><a class="btn sm" href="${esc(slipLink(ch))}" target="_blank" rel="noopener">Open</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(ch.student_id), slipText(ch)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-copy="${ch.id}">Copy link</button><button class="btn sm ghost" data-chdel="${ch.id}">Delete</button></span></div>`;
 }
 function wireSlips() {
@@ -851,7 +850,7 @@ function billingSlips(sid, m) {
         ${list.length ? `<div class="grid2"><div class="field"><label for="fS">Student</label><select id="fS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
           <div class="field"><label for="fM">Month</label><select id="fM">${monthOpts(m)}</select></div></div>
         <div class="field"><label for="fC">Concept <span class="muted" style="font-weight:500">(prints on the slip, in Spanish)</span></label><input id="fC" maxlength="140"></div>
-        <div class="grid2"><div class="field"><label for="fA">Amount to pay</label><input id="fA" type="number" min="0" step="10" inputmode="decimal"></div><div class="field"><label for="fD">Pay by</label><input id="fD" type="date"></div></div>
+        <div class="field"><label for="fA">Amount to pay</label><input id="fA" type="number" min="0" step="10" inputmode="decimal"></div>
         <p class="hint" id="fHint"></p>
         <div class="field"><label for="fN">Note <span class="muted" style="font-weight:500">(optional, in Spanish)</span></label><input id="fN" maxlength="300" placeholder="Ej. Incluye la clase de reposición del día 12"></div>
         <div id="fMsg" hidden></div>
@@ -860,15 +859,14 @@ function billingSlips(sid, m) {
     </div>`;
   wireTop(); wireSlips();
   if (!list.length) return;
-  const dueDef = () => { const [y, mo] = $b("fM").value.split("-").map(Number), d5 = new Date(y, mo - 1, 5); return day(d5 > new Date() ? d5 : new Date(Date.now() + 3 * 864e5)); };
-  const fill = () => { const s = sById($b("fS").value), mm = $b("fM").value, sg = suggestedPay(s, mm); $b("fC").value = "Clases de inglés · " + esMonth(mm); $b("fA").value = sg.amount || ""; $b("fD").value = dueDef(); $b("fHint").textContent = sg.how + "."; };
+  const fill = () => { const s = sById($b("fS").value), mm = $b("fM").value, sg = suggestedPay(s, mm); $b("fC").value = "Clases de inglés · " + esMonth(mm); $b("fA").value = sg.amount || ""; $b("fHint").textContent = sg.how + "."; };
   $b("fS").onchange = fill; $b("fM").onchange = fill; fill();
   $b("fSave").onclick = async () => {
     const id = $b("fS").value, mm = $b("fM").value, amount = Number($b("fA").value), msg = $b("fMsg");
     if (!(amount > 0)) return bMsg(msg, "Write the amount to pay.");
     const s = sById(id), n = (s.p.display_name || "X").trim().split(/\s+/), initials = ((n[0][0] || "X") + (n[1] ? n[1][0] : n[0][1] || "")).toUpperCase().normalize("NFD").replace(/[^A-Z]/g, "");
     const seq = (DATA.charges || []).filter(c => c.month === mm).length + 1;
-    const row = { student_id: id, month: mm, folio: `F-${mm.replace("-", "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $b("fC").value.trim() || null, amount, due: $b("fD").value || null, note: $b("fN").value.trim() || null };
+    const row = { student_id: id, month: mm, folio: `F-${mm.replace("-", "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $b("fC").value.trim() || null, amount, due: null, note: $b("fN").value.trim() || null };
     const btn = $b("fSave"); btn.disabled = true;
     try {
       const saved = await G.teacher.insert("charges", [row]); await load();

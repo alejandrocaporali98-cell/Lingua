@@ -188,7 +188,7 @@ function slipLink(ch) {
   return site() + "ficha.html?d=" + b64(D);
 }
 const firstName = s => (s && s.p.display_name || "").split(" ")[0];
-function slipText(ch) { const s = byId(ch.student_id), a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${firstName(s)} (${monthShort(ch.month).toLowerCase()}): ${MONEY(ch.amount, a.currency)}${ch.due ? ", con fecha límite el " + dLong(ch.due) : ""}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; }
+function slipText(ch) { const s = byId(ch.student_id), a = adminOf(ch.student_id); return `Hola, le comparto la ficha de pago de las clases de inglés de ${firstName(s)} (${monthShort(ch.month).toLowerCase()}): ${MONEY(ch.amount, a.currency)}. Ahí vienen los datos para la transferencia: ${slipLink(ch)}`; }
 function receiptText(p) { const s = byId(p.student_id), a = adminOf(p.student_id); return `Hola, recibimos su pago de ${MONEY(p.amount, a.currency)} por las clases de inglés de ${firstName(s)} (${monthShort(p.month).toLowerCase()}). ¡Gracias! Aquí está su recibo: ${receiptLink(p)}`; }
 const phoneOf = id => { const a = adminOf(id); return a.parent_phone || a.phone || ""; };
 async function showProof(path) {
@@ -416,10 +416,9 @@ function pagos(m, sid) {
 function slipState(ch) {
   const b = billOf(ch.student_id, ch.month), paid = b.paid;
   if (paid >= Number(ch.amount) && Number(ch.amount) > 0) return ["Pagada", "good"];
-  if (ch.due && ch.due < day(new Date())) return ["Vencida", "bad"];
   return paid > 0 ? ["Pago parcial", "warn"] : ["Pendiente", ""];
 }
-const slipRow = ch => { const s = byId(ch.student_id), a = adminOf(ch.student_id); return `<div class="li"><div class="m"><b>${esc(ch.folio)} · ${s ? esc(s.p.display_name) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}${ch.due ? " · vence " + dShort(ch.due) : ""}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b>${tag(slipState(ch))}</span>
+const slipRow = ch => { const s = byId(ch.student_id), a = adminOf(ch.student_id); return `<div class="li"><div class="m"><b>${esc(ch.folio)} · ${s ? esc(s.p.display_name) : ""}</b><small>${esc(ch.concept || monthName(ch.month))}</small></div><span class="v"><b>${MONEY(ch.amount, a.currency)}</b>${tag(slipState(ch))}</span>
   <span class="acts"><a class="btn sm" href="${esc(slipLink(ch))}" target="_blank" rel="noopener">Abrir</a><a class="btn sm ghost" href="${esc(waLink(phoneOf(ch.student_id), slipText(ch)))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-copy="${ch.id}">Copiar enlace</button><button class="btn sm ghost" data-chdel="${ch.id}">Borrar</button></span></div>`; };
 function wireSlips() {
   app.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => { const ch = DATA.charges.find(x => x.id === b.dataset.copy), u = slipLink(ch); navigator.clipboard.writeText(u).then(() => G.toast("<b>Enlace copiado</b>"), () => window.prompt("Copia este enlace:", u)); });
@@ -429,7 +428,6 @@ function fichas(mode, sid, m) {
   const list = students(), bk = DATA.bank || {}, noBank = !bk.clabe && !bk.account && !bk.card;
   sid = byId(sid) ? sid : (list[0] && list[0].p.id); m = /^\d{4}-\d{2}$/.test(m || "") ? m : monthKey(new Date());
   const ch = (DATA.charges || []).filter(c => byId(c.student_id));
-  const dueDef = () => { const [y, mo] = $("fM").value.split("-").map(Number), d5 = new Date(y, mo - 1, 5); return day(d5 > new Date() ? d5 : new Date(Date.now() + 3 * 864e5)); };
   app.innerHTML = topBar("Fichas de pago", "Fichas con los datos bancarios para que las familias paguen.") + `
     ${DATA.charges === null ? setupNote() : ""}
     ${noBank ? `<div class="alert info">Antes de mandar fichas, captura los <a href="#banco">datos bancarios</a> (banco, titular y CLABE).</div>` : ""}
@@ -438,7 +436,7 @@ function fichas(mode, sid, m) {
         ${list.length ? `<div class="grid2"><div class="field"><label for="fS">Alumno</label><select id="fS">${list.map(s => `<option value="${s.p.id}" ${s.p.id === sid ? "selected" : ""}>${esc(s.p.display_name)}</option>`).join("")}</select></div>
           <div class="field"><label for="fM">Mes</label>${monthSel("fM", m, 8)}</div></div>
         <div class="field"><label for="fC">Concepto</label><input id="fC" maxlength="140"></div>
-        <div class="grid2"><div class="field"><label for="fA">Monto a pagar</label><input id="fA" type="number" min="0" step="10" inputmode="decimal"></div><div class="field"><label for="fD">Fecha límite</label><input id="fD" type="date"></div></div>
+        <div class="field"><label for="fA">Monto a pagar</label><input id="fA" type="number" min="0" step="10" inputmode="decimal"></div>
         <p class="hint" id="fHint"></p>
         <div class="field"><label for="fN">Nota <span class="muted" style="font-weight:500">(opcional)</span></label><input id="fN" maxlength="300" placeholder="Ej. Incluye la clase de reposición del día 12"></div>
         <div id="fMsg" hidden></div>
@@ -447,14 +445,14 @@ function fichas(mode, sid, m) {
     </div>`;
   wireSlips();
   if (!list.length) return;
-  const fill = () => { const id = $("fS").value, mm = $("fM").value, sg = suggested(id, mm); $("fC").value = "Clases de inglés · " + monthName(mm).toLowerCase(); $("fA").value = sg.amount || ""; $("fD").value = dueDef(); $("fHint").textContent = sg.how + "."; };
+  const fill = () => { const id = $("fS").value, mm = $("fM").value, sg = suggested(id, mm); $("fC").value = "Clases de inglés · " + monthName(mm).toLowerCase(); $("fA").value = sg.amount || ""; $("fHint").textContent = sg.how + "."; };
   $("fS").onchange = fill; $("fM").onchange = fill; fill();
   $("fSave").onclick = async () => {
     const id = $("fS").value, mm = $("fM").value, amount = Number($("fA").value), msg = $("fMsg");
     if (!(amount > 0)) { msg.className = "alert bad"; msg.textContent = "Escribe el monto a pagar."; msg.hidden = false; return; }
     const s = byId(id), n = (s.p.display_name || "X").trim().split(/\s+/), initials = ((n[0][0] || "X") + (n[1] ? n[1][0] : n[0][1] || "")).toUpperCase().normalize("NFD").replace(/[^A-Z]/g, "");
     const seq = (DATA.charges || []).filter(c => c.month === mm).length + 1;
-    const row = { student_id: id, month: mm, folio: `F-${mm.replace("-", "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $("fC").value.trim() || null, amount, due: $("fD").value || null, note: $("fN").value.trim() || null };
+    const row = { student_id: id, month: mm, folio: `F-${mm.replace("-", "")}-${initials}${String(seq).padStart(2, "0")}`, concept: $("fC").value.trim() || null, amount, due: null, note: $("fN").value.trim() || null };
     const btn = $("fSave"); btn.disabled = true;
     try {
       const saved = await G.office.insert("charges", [row]); await load();
