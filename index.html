@@ -33,10 +33,10 @@
 <script src="assets/cloud.js"></script>
 <script src="assets/menu.js"></script>
 <style>
-  .hero { position: relative; background: var(--surface); border-bottom: 1px solid var(--line); padding-block: 36px 40px; overflow: hidden; }
+  .hero { position: relative; background: var(--surface); border-bottom: 1px solid var(--line); padding-block: 30px 32px; overflow: hidden; }
   .hero::after { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 46%; pointer-events: none; background-image: radial-gradient(color-mix(in srgb, var(--brand) 18%, transparent) 1.2px, transparent 1.5px); background-size: 16px 16px; -webkit-mask-image: linear-gradient(to left, #000 10%, transparent 90%); mask-image: linear-gradient(to left, #000 10%, transparent 90%); }
   .hero .container { position: relative; z-index: 1; }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 28px; align-items: stretch; }
+  .hero-grid { display: block; }
   @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
   .hero h1 { font-size: 2.1em; font-weight: 800; }
   .hero-av { width: 56px; height: 56px; flex: 0 0 auto; font-size: 1.4em; }
@@ -81,6 +81,22 @@
   .strip .v { font-size: 2em; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
   .strip .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .strip .lvl-badge { width: 46px; height: 46px; border-radius: 12px; background: var(--fill-brand); color: var(--on-fill); display: grid; place-items: center; font-weight: 800; font-size: 1.25em; flex: 0 0 auto; }
+  .bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-areas: "res res lvl lvl" "res res stk xp" "wk wk rev rev"; gap: 16px; }
+  @media (max-width: 900px) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: "res res" "stk xp" "lvl lvl" "wk wk" "rev rev"; } }
+  .bento > .card { padding: 18px 20px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .b-resume { grid-area: res; } .b-level { grid-area: lvl; } .b-streak { grid-area: stk; } .b-xp { grid-area: xp; } .b-week { grid-area: wk; } .b-review { grid-area: rev; }
+  .b-resume { gap: 16px !important; align-content: stretch !important; }
+  .b-resume .rthumb { border-radius: 12px; overflow: hidden; }
+  .b-resume h3 { font-size: 1.35em; font-weight: 800; letter-spacing: -.02em; line-height: 1.2; }
+  .b-resume .rrow { display: flex; align-items: center; gap: 16px; margin-top: auto; flex-wrap: wrap; }
+  .pring { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+  .pring > span { width: 50px; height: 50px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-weight: 800; font-size: .92em; font-variant-numeric: tabular-nums; }
+  .b-resume .btn { flex: 1; min-height: 48px; font-size: 1em; }
+  .bento .v { font-size: 2.2em; font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .b-streak .v { display: flex; align-items: center; gap: 8px; } .b-streak .v svg { width: 30px; height: 30px; flex: none; }
+  .bento .sub { color: var(--mute); font-size: .84em; }
+  .b-xp .lvl-badge { width: 40px; height: 40px; border-radius: 10px; background: var(--fill-brand); color: var(--on-fill); display: grid; place-items: center; font-weight: 800; font-size: 1.1em; flex: none; }
+  .ihead { display: flex; align-items: center; gap: 8px; } .ihead svg { width: 18px; height: 18px; fill: none; stroke: var(--brand); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
   .todo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   @media (max-width: 800px) { .todo { grid-template-columns: 1fr; } }
   .todo > :only-child { grid-column: 1 / -1; }
@@ -123,15 +139,20 @@
       <div style="display:flex;align-items:center;gap:14px;margin-top:8px"><a class="avatar hero-av" data-avatar="56" href="perfil.html" aria-label="Your profile" hidden></a><h1 data-greet>Welcome back</h1></div>
       <p class="lead">Pick up where you left off. Every lesson we do in class stays here so you can review it.</p>
       <div class="instructor" style="margin-top:14px"><span class="in" id="inIni"></span><span style="font-size:.9em"><span class="muted">Instructor</span><br><b id="inName"></b></span></div>
-      <div class="card resume" id="resume"></div>
     </div>
-    <aside class="card level" id="level" aria-label="Your level"></aside>
   </div>
 </section>
 
 <main class="gutter">
   <div class="container" style="display:grid;gap:16px">
-    <div class="strip" id="strip" aria-label="Your progress"></div>
+    <div class="bento" aria-label="Your progress">
+      <div class="card b-resume" id="resume"></div>
+      <aside class="card b-level level" id="level" aria-label="Your level"></aside>
+      <div class="card b-streak" id="bStreak"></div>
+      <div class="card b-xp" id="bXp"></div>
+      <div class="card b-week" id="bWeek"></div>
+      <div class="card b-review" id="bReview"></div>
+    </div>
     <div class="todo" id="todo"></div>
     <div class="card season" id="season" aria-label="Your course progress"></div>
   </div>
@@ -173,18 +194,17 @@
 
   // Continue card
   const cur = ready.find(l => pct(l) < 100) || ready[ready.length - 1];
-  document.getElementById("resume").innerHTML = cur ? `
-    ${C.thumb(cur, "LESSON")}
-    <div>
+  const rEl = document.getElementById("resume");
+  if (cur) {
+    rEl.innerHTML = `
       <span class="eyebrow">Continue where you left off</span>
-      <h3 style="margin-top:4px">Lesson ${cur.id} · ${cur.titulo}</h3>
-      <div class="meta"><span class="chip">${cur.nivel}</span><span class="muted" style="font-size:.9em">${cur.min} min · ${cur.secs || 5} sections</span></div>
-      <div class="bar" style="margin-bottom:6px"><i style="width:${pct(cur)}%"></i></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px">
-        <span class="muted num" style="font-size:.88em">${pct(cur)}% complete</span>
-        <a class="btn primary" href="${cur.archivo}">${pct(cur) ? "Continue lesson" : "Start lesson"}</a>
-      </div>
-    </div>` : "";
+      <a class="rthumb" href="${cur.archivo}" aria-label="Lesson ${cur.id} · ${C.esc(cur.titulo)}">${C.thumb(cur, "LESSON")}</a>
+      <div class="meta" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="chip">${cur.nivel}</span><span class="muted" style="font-size:.9em">${cur.min} min · ${cur.secs || 5} sections</span></div>
+      <div class="rrow"><div class="pring" data-pr role="img" aria-label="${pct(cur)}% complete"><span data-pt>0%</span></div>
+        <a class="btn primary shimmer" href="${cur.archivo}"><span>${pct(cur) ? "Continue lesson" : "Start lesson"}</span></a></div>`;
+    C.fx.ring(rEl.querySelector("[data-pr]"), pct(cur), "var(--fill-brand)");
+    C.fx.ticker(rEl.querySelector("[data-pt]"), pct(cur), { fmt: n => Math.round(n) + "%" });
+  } else rEl.hidden = true;
 
   // Level card
   const L = ["A1", "A2", "B1", "B2", "C1", "C2"], names = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", "B2+": "Upper intermediate +" };
@@ -211,25 +231,30 @@
       return soon ? `<div class="lesson soon">${inner}</div>` : `<a class="lesson" href="${l.archivo}">${inner}</a>`;
     }).join("")}</div></section>`).join("");
 
-  // Streak, level and weekly goal
+  // Streak, XP and weekly goal (numbers count up the first time, then from the last value)
+  const FLAME = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22c4.4 0 7-2.9 7-6.6 0-3.3-2-5.6-3.6-7.3-.4 1.6-1.3 2.7-2.4 3.1.3-3.2-1.2-6.4-4-8.2.2 2.8-1.2 4.9-2.8 6.7C4.8 11.3 5 12.8 5 15.4 5 19.1 7.6 22 12 22z" fill="#f59e0b"/><path d="M12 22c-2 0-3.4-1.4-3.4-3.3 0-1.7 1.2-2.8 2.1-3.9.3 1 .9 1.6 1.6 1.8 0-1.4.5-2.6 1.5-3.4.4 1.6 1.6 2.7 1.6 4.8 0 2.4-1.4 4-3.4 4z" fill="#fde047"/></svg>`;
+  let prevG = null;
   function strip() {
-    const g = C.game.mine();
-    document.getElementById("strip").innerHTML = `
-      <div class="card"><span class="eyebrow">Day streak</span>
-        <div class="row"><span class="v">🔥 ${g.streak}</span><span class="muted" style="font-size:.85em;text-align:right">${g.todayXp ? "You practiced today" : g.streak ? "Practice today to keep it" : "Practice today to start one"}<br>Best: ${g.best} day${g.best === 1 ? "" : "s"}</span></div></div>
-      <div class="card"><span class="eyebrow">Your level</span>
-        <div class="row" style="justify-content:flex-start"><span class="lvl-badge">${g.level}</span><div style="display:grid;gap:2px;flex:1;min-width:0"><b>${g.title}</b><span class="muted num" style="font-size:.85em">${g.xp} XP${g.ceil ? " · " + (g.ceil - g.xp) + " XP to Level " + (g.level + 1) : " · Max level"}</span></div></div>
-        <div class="xpbar"><i style="width:${g.pct}%"></i></div>
-        <span class="muted" style="font-size:.82em">New levels unlock ${C.style.part} designs in your <a href="perfil.html">profile</a>.</span></div>
-      <div class="card wk"><div class="row"><span class="eyebrow">This week</span><span class="chip ${g.weekDays >= g.goal ? "ok" : ""}">${g.weekDays >= g.goal ? "Goal done ✓" : g.weekDays + " of " + g.goal + " days"}</span></div>
-        <div class="week">${g.week.map(d => `<span class="${d.xp ? "on" : ""} ${d.today ? "today" : ""}"><i></i>${d.label}</span>`).join("")}</div>
-        <span class="muted" style="font-size:.82em">Weekly goal: practice ${g.goal} days. Bonus +50 XP.</span></div>`;
+    const g = C.game.mine(), p0 = prevG || { streak: 0, xp: 0 };
+    document.getElementById("bStreak").innerHTML = `<span class="eyebrow">Day streak</span>
+      <span class="v">${FLAME}<span data-tk-s>0</span></span>
+      <span class="sub">${g.todayXp ? "You practiced today" : g.streak ? "Practice today to keep it" : "Practice today to start one"} · Best ${g.best}</span>`;
+    document.getElementById("bXp").innerHTML = `<span class="eyebrow">Your XP</span>
+      <div style="display:flex;align-items:center;gap:10px"><span class="lvl-badge" title="Level ${g.level}">${g.level}</span><span class="v" data-tk-x>0</span></div>
+      <div class="xpbar"><i style="width:${g.pct}%"></i></div>
+      <span class="sub">${g.title}${g.ceil ? " · " + (g.ceil - g.xp) + " XP to Level " + (g.level + 1) : " · Max level"}</span>`;
+    document.getElementById("bWeek").innerHTML = `<div class="row" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="eyebrow">This week</span><span class="chip ${g.weekDays >= g.goal ? "ok" : ""}">${g.weekDays >= g.goal ? "Goal done" : g.weekDays + " of " + g.goal + " days"}</span></div>
+      <div class="week">${g.week.map((d, i) => `<span class="${d.xp ? "on" : ""} ${d.today ? "today" : ""} fx-in" style="--i:${i}"><i></i>${d.label}</span>`).join("")}</div>
+      <span class="sub">Practice ${g.goal} days for a +50 XP bonus. New levels unlock ${C.style.part} designs in your <a href="perfil.html">profile</a>.</span>`;
+    C.fx.ticker(document.querySelector("[data-tk-s]"), g.streak, { from: p0.streak, dur: 700 });
+    C.fx.ticker(document.querySelector("[data-tk-x]"), g.xp, { from: p0.xp, dur: 1100 });
+    prevG = g;
   }
   // Homework and review
   function todo() {
     const n = C.review.count(), hw = C.homework ? C.homework.cached() : [], pend = hw.filter(h => !h.done_at);
     const due = h => { if (!h.due) return ""; const d = new Date(h.due + "T23:59"), late = !h.done_at && d < new Date(); return `<small class="${late ? "late" : ""}">${late ? "Late · " : "Due "}${d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</small>`; };
-    const hwCard = C.cloudEnabled ? `<div class="card"><h3>📝 Homework ${pend.length ? `<span class="chip new">${pend.length} to do</span>` : ""}</h3>
+    const hwCard = C.cloudEnabled ? `<div class="card"><h3 class="ihead"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6M9 4a2 2 0 0 0-2 2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-1a2 2 0 0 0-2-2M9 4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M8.5 13l2.5 2.5 4.5-5"/></svg>Homework ${pend.length ? `<span class="chip new">${pend.length} to do</span>` : ""}</h3>
       ${hw.length ? hw.slice(0, 6).map(h => `<label class="hw-row ${h.done_at ? "done" : ""}"><input type="checkbox" data-hw="${h.id}" ${h.done_at ? "checked" : ""}>
         <span style="min-width:0"><b>${C.esc(h.title)}</b>${h.details ? `<p>${C.esc(h.details)}</p>` : ""}${due(h)}</span></label>`).join("")
         : `<p class="muted" style="font-size:.92em">No homework right now. Your teacher adds it here after class.</p>`}</div>` : "";
@@ -237,16 +262,19 @@
     const upcoming = cls.filter(k => k.status === "scheduled" && new Date(k.starts_at).getTime() > now - 3600e3).sort((a, b) => a.starts_at.localeCompare(b.starts_at))[0];
     const lastNote = cls.filter(k => k.status === "attended" && (k.notes || k.words)).sort((a, b) => b.starts_at.localeCompare(a.starts_at))[0];
     const dt = d => new Date(d), when = d => { const days = Math.round((new Date(dt(d).toDateString()) - new Date(new Date().toDateString())) / 864e5); return days === 0 ? "Today" : days === 1 ? "Tomorrow" : days > 1 && days < 7 ? "In " + days + " days" : ""; };
-    const classCard = C.cloudEnabled ? `<div class="card"><h3>📅 Next class</h3>
+    const classCard = C.cloudEnabled ? `<div class="card"><h3 class="ihead"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Next class</h3>
       ${upcoming ? `<div class="next-class"><span class="cal"><span>${dt(upcoming.starts_at).toLocaleDateString("en-US", { month: "short" }).toUpperCase()}</span><b>${dt(upcoming.starts_at).getDate()}</b></span>
         <span style="min-width:0"><b>${dt(upcoming.starts_at).toLocaleDateString("en-US", { weekday: "long" })} · ${dt(upcoming.starts_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</b>${when(upcoming.starts_at) ? ` <span class="chip new">${when(upcoming.starts_at)}</span>` : ""}
         <br><span class="muted" style="font-size:.9em">${upcoming.lesson_id ? "Lesson " + C.esc(upcoming.lesson_id) + " · " : ""}${C.esc(upcoming.title || "Class with " + C.maestro)}</span></span></div>`
         : `<p class="muted" style="font-size:.92em">Your teacher hasn’t scheduled the next class yet.</p>`}
       ${lastNote ? `<div style="border-top:1px solid var(--line);padding-top:10px;display:grid;gap:4px"><span class="eyebrow">From your last class · ${dt(lastNote.starts_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
         <p style="font-size:.92em;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${C.esc(lastNote.notes || lastNote.words)}</p><a href="notes.html" style="font-size:.88em;font-weight:700">All class notes →</a></div>` : ""}</div>` : "";
-    document.getElementById("todo").innerHTML = classCard + hwCard + `<div class="card"><h3>🔁 Review</h3>
-      <p class="muted" style="font-size:.92em">${n ? `You have <b style="color:var(--ink)">${n} question${n === 1 ? "" : "s"}</b> to review from your quizzes.` : "No mistakes to review. Great job!"}</p>
-      <div class="actions">${n ? `<a class="btn primary" href="review.html">Practice now</a>` : ""}<a class="btn ${n ? "ghost" : ""}" href="practice.html">Practice games</a></div></div>`;
+    document.getElementById("todo").innerHTML = classCard + hwCard;
+    document.getElementById("todo").hidden = !(classCard + hwCard);
+    document.getElementById("bReview").innerHTML = `<span class="eyebrow ihead"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>Review</span>
+      <div style="display:flex;align-items:baseline;gap:10px"><span class="v" data-tk-r>${n}</span><span class="sub">${n ? `question${n === 1 ? "" : "s"} to review from your quizzes` : "No mistakes to review. Great job!"}</span></div>
+      <div class="actions">${n ? `<a class="btn primary" href="review.html">Practice now</a>` : ""}<a class="btn ${n ? "ghost" : ""}" href="practice.html">Practice games</a></div>`;
+    if (!todo.once) { todo.once = 1; C.fx.ticker(document.querySelector("[data-tk-r]"), n, { dur: 700 }); }
     document.querySelectorAll("[data-hw]").forEach(x => x.onchange = async () => {
       x.disabled = true;
       try { await C.homework.setDone(x.dataset.hw, x.checked); if (x.checked) { C.sfx("win"); C.confetti(70); if (C.game.award(15, { once: "hw." + x.dataset.hw, label: "Homework done" })) C.count("homework"); } }

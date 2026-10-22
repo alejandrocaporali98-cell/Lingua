@@ -183,6 +183,10 @@
   .lplan { padding: 14px 20px; border-top: 1px solid var(--line); display: flex; gap: 8px 12px; flex-wrap: wrap; align-items: center; font-size: .9em; }
   .lplan .lbl { font-weight: 700; color: var(--mute); } .lplan .ltema { color: var(--ink-2); flex: 1 1 260px; } .lplan .chips { display: flex; gap: 6px; flex-wrap: wrap; }
   .hero-empty { padding: 28px 24px; display: grid; gap: 10px; justify-items: start; }
+  .avs { display: flex; align-items: center; padding-left: 10px; }
+  .avs .av { width: 40px; height: 40px; margin-left: -10px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; border: 2px solid var(--surface); background: var(--bg); text-decoration: none; transition: transform .15s; }
+  .avs a.av:hover { transform: translateY(-3px); z-index: 1; }
+  .avs .av.more { background: var(--bg); color: var(--ink-2); font-size: .8em; border-color: var(--surface); }
   .later { display: grid; gap: 12px; }
   .lt { display: flex; align-items: center; gap: 12px; } .lt a { color: inherit; text-decoration: none; } .lt a:hover b { text-decoration: underline; }
   .lt .av { width: 40px; height: 40px; border-radius: 10px; overflow: hidden; display: grid; place-items: center; color: #fff; font-weight: 800; flex: none; }
@@ -444,6 +448,7 @@ function todayView() {
   const hero = upcoming[0] || null;
   const alerts = list.flatMap(s => alertsOf(s).map(a => ({ s, a })));
   const acts = list.flatMap(activityOf).filter(e => e.at).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 6);
+  const practiced = list.filter(s => s.updated && day(s.updated) === day(new Date()));
   const ST = { scheduled: ["Scheduled", ""], attended: ["Done", "good"], missed: ["Missed", "warn"] };
   // follow-up: one card per student, worst issue first; "placement not taken" goes to a single summary line
   const sev = { bad: 0, warn: 1, info: 2 }, byStu = {}, noPlacement = [];
@@ -532,10 +537,13 @@ function todayView() {
       </section>
       </div>
       <div class="tdside">
+        <div class="card"><div class="card-head"><h2>Practiced today</h2><span class="muted" style="font-size:.85em">${practiced.length} of ${list.length}</span></div>
+          ${practiced.length ? `<div class="avs">${practiced.slice(0, 6).map((s, i) => `<a class="av fx-in" style="--i:${i}" href="#s/${s.p.id}" title="${esc(s.p.display_name || "")}" aria-label="${esc(s.p.display_name || "")}">${avatarOf(s, 40)}</a>`).join("")}${practiced.length > 6 ? `<span class="av more">+${practiced.length - 6}</span>` : ""}</div>
+          <p class="muted" style="font-size:.88em">${practiced.map(s => esc((s.p.display_name || "").split(" ")[0])).join(", ")}</p>` : `<p class="muted" style="font-size:.9em">No one has practiced yet today.</p>`}</div>
         <div class="card"><h2>${laterTitle}</h2><div class="later">${laterHtml}</div></div>
         <div class="card"><div class="card-head"><h2>${first.toLocaleDateString("en-US", { month: "long" })}</h2><a class="btn sm" href="#schedule">Schedule</a></div>${cal}</div>
         <div class="card"><h2>Recent activity</h2>
-          ${acts.length ? `<div class="feed">${acts.map(e => `<div class="fe ${e.cls}"><span class="av">${avatarOf(e.s, 28)}</span><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}
+          ${acts.length ? `<div class="feed">${acts.map((e, i) => `<div class="fe ${e.cls} fx-in" style="--i:${i}"><span class="av">${avatarOf(e.s, 28)}</span><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}
         </div>
       </div>
     </div>`;

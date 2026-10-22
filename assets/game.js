@@ -355,6 +355,80 @@
     })));
   };
 
+  // ── Effects: number ticker, progress ring, scratch to reveal, morphing text ──
+  L.fx = {
+    // count a number up (or down) inside an element
+    ticker(el, to, opt) {
+      opt = opt || {}; if (!el) return;
+      const from = opt.from != null ? opt.from : 0, fmt = opt.fmt || (n => Math.round(n).toLocaleString("en-US")), dur = opt.dur || 900;
+      if (reduced() || from === to) { el.textContent = fmt(to); return; }
+      const t0 = performance.now(), ease = t => 1 - Math.pow(1 - t, 3);
+      el.textContent = fmt(from);
+      (function step(t) { const k = Math.min(1, (t - t0) / dur); el.textContent = fmt(from + (to - from) * ease(k)); if (k < 1) requestAnimationFrame(step); })(t0);
+    },
+    // fill a conic-gradient ring from 0 to pct
+    ring(el, pct, color, opt) {
+      opt = opt || {}; if (!el) return;
+      const paint = p => { el.style.background = `conic-gradient(${color} ${p}%, var(--line) 0)`; };
+      if (reduced()) { paint(pct); return; }
+      const t0 = performance.now(), dur = opt.dur || 1000, ease = t => 1 - Math.pow(1 - t, 3);
+      paint(0);
+      (function step(t) { const k = Math.min(1, (t - t0) / dur); paint(pct * ease(k)); if (k < 1) requestAnimationFrame(step); })(t0);
+    },
+    // cover a box with a layer the student scratches off; Enter/Space or the reveal link uncovers it at once
+    scratch(zone, opt) {
+      opt = opt || {}; if (!zone || zone.dataset.scr) return; zone.dataset.scr = "1";
+      zone.classList.add("scr-zone");
+      const cover = document.createElement("button");
+      cover.type = "button"; cover.className = "scr-cover"; cover.setAttribute("aria-label", opt.label || "Reveal the answer");
+      const cv = document.createElement("canvas"), hint = document.createElement("span");
+      hint.className = "scr-hint"; hint.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20c3-1 4-4 7-5s5 1 9-3M6 12c2-1 3-3 6-4s4 0 7-2"/></svg>${opt.hint || "Scratch to reveal"}`;
+      cover.appendChild(cv); cover.appendChild(hint); zone.appendChild(cover);
+      const x = cv.getContext("2d"); let w = 0, h = 0, dpr = 1, done = false, moves = 0, last = null, drawn = false;
+      function paint() {
+        const r = zone.getBoundingClientRect(); if (!r.width || !r.height) return;
+        w = r.width; h = r.height; dpr = Math.min(2, window.devicePixelRatio || 1);
+        cv.width = w * dpr; cv.height = h * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const cs = getComputedStyle(document.documentElement), c1 = cs.getPropertyValue("--fill-brand").trim() || "#2346d0", c2 = cs.getPropertyValue("--brand-dark").trim() || "#1a36a6";
+        x.globalCompositeOperation = "source-over"; x.fillStyle = c1; x.fillRect(0, 0, w, h);
+        x.fillStyle = c2; for (let i = -h; i < w; i += 14) { x.beginPath(); x.moveTo(i, h); x.lineTo(i + h, 0); x.lineTo(i + h + 5, 0); x.lineTo(i + 5, h); x.fill(); }
+        drawn = true;
+      }
+      const ro = window.ResizeObserver ? new ResizeObserver(() => { if (!done && !drawn) paint(); }) : null; ro ? ro.observe(zone) : setTimeout(paint, 60);
+      function reveal() {
+        if (done) return; done = true; ro && ro.disconnect();
+        cover.classList.add("gone"); setTimeout(() => cover.remove(), reduced() ? 0 : 350);
+        zone.classList.add("scr-done"); opt.onReveal && opt.onReveal();
+      }
+      function cleared() {
+        try { const d = x.getImageData(0, 0, cv.width, cv.height).data; let n = 0, t = 0; for (let i = 3; i < d.length; i += 4 * 24) { t++; if (d[i] < 40) n++; } return n / t; } catch (e) { return 1; }
+      }
+      function rub(e) {
+        if (done) return; if (!drawn) paint();
+        const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+        x.globalCompositeOperation = "destination-out"; x.lineCap = "round"; x.lineJoin = "round"; x.lineWidth = 34;
+        x.beginPath(); if (last) { x.moveTo(last[0], last[1]); x.lineTo(px, py); x.stroke(); } else { x.arc(px, py, 17, 0, 7); x.fill(); }
+        last = [px, py]; hint.style.opacity = "0";
+        if (++moves % 8 === 0 && cleared() > .5) reveal();
+      }
+      cv.addEventListener("pointerdown", e => { e.preventDefault(); last = null; cv.setPointerCapture && cv.setPointerCapture(e.pointerId); rub(e); cv.onpointermove = rub; });
+      const up = () => { cv.onpointermove = null; last = null; if (!done && moves > 3 && cleared() > .38) reveal(); };
+      cv.addEventListener("pointerup", up); cv.addEventListener("pointercancel", up);
+      cover.addEventListener("click", e => { if (e.detail === 0 || e.detail >= 2) reveal(); });
+      return { reveal };
+    },
+    // cycle the words inside an element with a soft blur crossfade
+    morph(el, words, ms) {
+      if (!el || !words || words.length < 2 || reduced()) return;
+      let i = 0; el.classList.add("morph");
+      setInterval(() => {
+        if (document.hidden) return;
+        el.classList.add("out");
+        setTimeout(() => { i = (i + 1) % words.length; el.textContent = words[i]; el.classList.remove("out"); }, 380);
+      }, ms || 2800);
+    }
+  };
+
   // ── Install as an app (PWA) ──
   L.install = { prompt: null, ios: /iphone|ipad|ipod/i.test(navigator.userAgent), standalone: (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true };
   window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); L.install.prompt = e; document.dispatchEvent(new CustomEvent("lingua:installable")); });

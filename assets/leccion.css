@@ -39,11 +39,6 @@
 
 /* Flashcards */
 .flash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-.flash { perspective: 900px; height: 150px; border: 0; padding: 0; background: none; text-align: left; }
-.flash .in { position: relative; width: 100%; height: 100%; transition: transform .4s; transform-style: preserve-3d; }
-.flash.flip .in { transform: rotateY(180deg); }
-.flash .face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--r-m); border: 1px solid var(--line-2); background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
-.flash .back { transform: rotateY(180deg); background: var(--brand-soft); border-color: var(--brand); }
 .flash .word { font-size: 1.3em; font-weight: 800; letter-spacing: -.02em; }
 .flash .es { font-weight: 700; color: var(--brand-dark); }
 .flash .ex { color: var(--ink-2); font-size: .88em; }
@@ -96,15 +91,12 @@ body.clase .player { grid-template-columns: 1fr; }
 .badge-earned { display: flex; align-items: center; gap: 12px; margin-top: 6px; padding: 10px 14px; border-radius: var(--r-m); background: var(--badge-soft); border: 1px solid var(--badge-line); font-size: .9em; }
 .pbar .ltitle a:hover { color: var(--ink); }
 
-/* Illustrated flashcards with audio */
-.flash { cursor: pointer; height: 178px; }
-.flash:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: var(--r-m); }
+/* Vocabulary cards: word on top, meaning under a scratch layer */
+.flash { display: flex; flex-direction: column; gap: 8px; border-radius: var(--r-m); border: 1px solid var(--line-2); background: var(--surface); padding: 14px 14px 14px 16px; text-align: left; }
 .flash .ftop, .flash .fbot { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .flash .fbot { justify-content: flex-end; margin-top: auto; }
 .flash .fimg { font-size: 2.1em; line-height: 1; }
-.flash .face { justify-content: flex-start; }
-.flash .face .word { margin-top: auto; }
-.flash .back .es { margin-top: 2px; }
+.flash .fback { display: flex; flex-direction: column; gap: 4px; min-height: 92px; margin-top: auto; padding: 10px 12px; border-radius: 10px; background: var(--brand-soft); }
 .q-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .q-title .gap.filled { border-bottom-color: var(--ok); color: var(--ok-ink); padding: 0 .2em; min-width: 0; }
 .feedback { justify-content: space-between; }
@@ -125,7 +117,7 @@ body.clase .player { grid-template-columns: 1fr; }
 .err .fixed { background: var(--ok-soft); border-radius: 10px; padding: 10px 12px; }
 .err .fixed p, .tr .model p { margin-top: 4px; font-size: .9em; }
 .tr .src { font-size: 1.05em; font-weight: 700; }
-.tr .model { background: var(--brand-soft); border-radius: 10px; padding: 10px 12px; }
+.tr .model { background: var(--brand-soft); border-radius: 10px; padding: 10px 12px; min-height: 48px; }
 .talkq { display: grid; gap: 12px; padding-left: 22px; font-size: 1.05em; }
 .tnotes { background: var(--badge-soft); border-color: var(--badge-line); }
 .tnotes ul { display: grid; gap: 6px; padding-left: 18px; font-size: .92em; }

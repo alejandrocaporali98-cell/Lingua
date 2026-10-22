@@ -106,16 +106,16 @@
 
   // ── 1 Vocabulario ──
   function drawFlash() {
-    stage.innerHTML = head("Lesson vocabulary", "Read each word out loud and say what you think it means. Click a card to see the answer.") +
+    stage.innerHTML = head("Lesson vocabulary", "Read each word out loud and say what you think it means. Then scratch the card to check.") +
       `<div class="flash-grid">${C.flash.map((f, i) => `
-        <div class="flash" role="button" tabindex="0" aria-label="${G.esc(f.en)}. Flip card" data-i="${i}"><div class="in">
-          <div class="face"><div class="ftop"><span class="chip">${f.tag}</span>${G.sayBtn(f.en, "Listen: " + f.en)}</div>${f.img ? `<span class="fimg" aria-hidden="true">${f.img}</span>` : ""}<span class="word">${f.en}</span><span class="tap">Tap to flip</span></div>
-          <div class="face back"><span class="es">${f.def}</span><span class="ex">${f.ex}</span><div class="fbot">${G.sayBtn(f.ex, "Listen to the example")}</div></div>
-        </div></div>`).join("")}</div>` + pager();
+        <div class="flash" data-i="${i}">
+          <div class="ftop"><span class="chip">${f.tag}</span>${G.sayBtn(f.en, "Listen: " + f.en)}</div>
+          ${f.img ? `<span class="fimg" aria-hidden="true">${f.img}</span>` : ""}
+          <span class="word">${f.en}</span>
+          <div class="fback"><span class="es">${f.def}</span><span class="ex">${f.ex}</span><div class="fbot">${G.sayBtn(f.ex, "Listen to the example")}</div></div>
+        </div>`).join("")}</div>` + pager();
     stage.querySelectorAll(".flash").forEach(b => {
-      const flip = () => { b.classList.toggle("flip"); G.game && G.game.award(2, { once: "flip." + C.id + "." + b.dataset.i, silent: true }); };
-      b.onclick = e => { if (!e.target.closest("[data-say]")) flip(); };
-      b.onkeydown = e => { if ((e.key === "Enter" || e.key === " ") && !e.target.closest("[data-say]")) { e.preventDefault(); flip(); } };
+      G.fx.scratch(b.querySelector(".fback"), { label: "Reveal the meaning of " + b.querySelector(".word").textContent, onReveal: () => G.game && G.game.award(2, { once: "flip." + C.id + "." + b.dataset.i, silent: true }) });
     });
   }
 
@@ -166,17 +166,20 @@
     function summary() {
       const ok = res.filter(Boolean).length, wrong = qs.filter((_, k) => !res[k]), p = Math.round(ok / qs.length * 100);
       wrong.forEach(q => G.review.add(q, C.id, "mistake"));
-      if (o.onDone) o.onDone(ok, qs.length);
+      const fresh = o.onDone ? o.onDone(ok, qs.length) : false;
       if (G.game && ok) G.game.award(ok * (o.badge ? 3 : 2), { label: o.label + " · " + ok + " right" });
       const msg = p >= 80 ? "Excellent! You’re ready for the next lesson." : p >= 50 ? "Good job! Review your mistakes and try again." : "Let’s review this together in the next class.";
       el.innerHTML = `<div class="panel" style="display:grid;gap:20px">
         <div class="result">
-          <div class="score-ring" style="background:conic-gradient(${p >= 80 ? "var(--ok)" : "var(--brand)"} ${p}%, var(--line) 0)"><div><span><b class="num">${ok}/${qs.length}</b><br><span class="muted" style="font-size:.8em">${p}%</span></span></div></div>
+          <div class="score-ring" data-ring><div><span><b class="num"><span data-tk>0</span>/${qs.length}</b><br><span class="muted" style="font-size:.8em"><span data-tp>0</span>%</span></span></div></div>
           <div style="display:grid;gap:6px"><span class="eyebrow">${o.label}</span><h3 style="font-size:1.35em;font-weight:800">${msg}</h3>
             ${o.badge && p >= 80 ? `<div class="badge-earned"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="17" r="13" fill="#f5c518"/><circle cx="20" cy="17" r="9" fill="none" stroke="#3a2c00" stroke-width="1.6" stroke-dasharray="2 2.2"/><path d="M14.5 17.5l3.6 3.4 7.4-7.4" fill="none" stroke="#3a2c00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 27l-3 9 5-2 3 4 2-8M27 27l3 9-5-2-3 4-2-8" fill="#2346d0"/></svg><span><b>Diploma unlocked</b><br><span class="muted">Lesson ${C.id} · ${C.titulo} · <a href="../diplomas.html#d${C.id}">View your diploma</a></span></span></div>` : ""}</div>
         </div>
         ${wrong.length ? `<div style="display:grid;gap:8px"><span class="eyebrow">Correct answers to review</span>${wrong.map(q => `<div class="feedback bad" style="padding:10px 14px"><div>${q.p.replace("___", "<b style='display:inline'>" + q.a + "</b>")}</div>${G.sayBtn(/___/.test(q.p) ? q.p.replace("___", q.a) : q.a)}</div>`).join("")}<p class="muted" style="font-size:.88em">We added ${wrong.length === 1 ? "this question" : "these " + wrong.length + " questions"} to your <a href="../review.html">Review</a> list.</p></div>` : ""}
         <div class="actions"><button class="btn" data-a="again">Try again</button>${wrong.length ? `<a class="btn ghost" href="../review.html">Practice my mistakes</a>` : ""}</div></div>`;
+      G.fx.ring(el.querySelector("[data-ring]"), p, p >= 80 ? "var(--ok)" : "var(--brand)");
+      G.fx.ticker(el.querySelector("[data-tk]"), ok); G.fx.ticker(el.querySelector("[data-tp]"), p);
+      if (p >= 80 && !(o.badge && fresh)) setTimeout(() => { G.confetti(o.badge ? 90 : 50); G.sfx("win"); }, 650);
       el.querySelector('[data-a="again"]').onclick = () => { res.fill(null); i = 0; sel = null; shown = false; fin = false; paint(); };
     }
     paint(); return api;
@@ -255,15 +258,11 @@
   // ── Optional: say it in English ──
   function drawTranslate() {
     const T = C.translate;
-    stage.innerHTML = head(T.title || "Say it in English", T.text || "Say each sentence in English out loud, then show the model.") + `<div class="panel trs">${T.items.map((t, i) => `
+    stage.innerHTML = head(T.title || "Say it in English", T.text || "Say each sentence in English out loud, then scratch to see the model.") + `<div class="panel trs">${T.items.map((t, i) => `
       <div class="tr" data-i="${i}"><span class="n num">${i + 1}.</span><div style="display:grid;gap:8px;min-width:0">
         <p class="src" lang="es">${G.esc(t.es)}</p>
-        <div class="model" hidden><b>${G.esc(t.en)}</b> ${G.sayBtn(t.en, "Listen")} ${G.micBtn(t.en, "Say it")}${t.note ? `<p class="muted">${G.esc(t.note)}</p>` : ""}</div>
-        <button type="button" class="btn ghost sm" data-show style="justify-self:start;padding-left:0">Show the English</button></div></div>`).join("")}</div>` + pager();
-    stage.querySelectorAll(".tr").forEach(r => r.querySelector("[data-show]").onclick = (ev) => {
-      const m = r.querySelector(".model"); m.hidden = !m.hidden; ev.target.textContent = m.hidden ? "Show the English" : "Hide";
-      if (!m.hidden) G.game && G.game.award(1, { once: "tr." + C.id + "." + r.dataset.i, silent: true });
-    });
+        <div class="model"><b>${G.esc(t.en)}</b> ${G.sayBtn(t.en, "Listen")} ${G.micBtn(t.en, "Say it")}${t.note ? `<p class="muted">${G.esc(t.note)}</p>` : ""}</div></div></div>`).join("")}</div>` + pager();
+    stage.querySelectorAll(".tr").forEach(r => G.fx.scratch(r.querySelector(".model"), { label: "Show the English for sentence " + (+r.dataset.i + 1), hint: "Scratch to see the English", onReveal: () => G.game && G.game.award(1, { once: "tr." + C.id + "." + r.dataset.i, silent: true }) }));
   }
   // ── Optional: open conversation ──
   function drawTalk() {
@@ -286,8 +285,9 @@
         const tries = G.store.get("attempts." + C.id, []); tries.push({ ok, n, at }); G.store.set("attempts." + C.id, tries.slice(-50));
         const d = G.store.get("diploma." + C.id, null);
         if (ok / n >= .8) G.game && G.game.award(50, { once: "pass." + C.id, silent: true });
-        if (ok / n >= .8 && !d) { G.store.set("diploma." + C.id, { ok, n, at }); setTimeout(() => { G.confetti(); G.sfx("win"); }, 250); }
+        if (ok / n >= .8 && !d) { G.store.set("diploma." + C.id, { ok, n, at }); setTimeout(() => { G.confetti(); G.sfx("win"); }, 650); return true; }
         else if (d && ok > d.ok) G.store.set("diploma." + C.id, { ...d, ok, n });
+        return false;
       }
     });
   }
