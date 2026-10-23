@@ -522,5 +522,119 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "“Killing your darlings”",
+  "kicker": "Filmmaking · Opinion",
+  "title": "The best scene in my film is the one you’ll never see",
+  "before": "Editors talk about “killing your darlings.” What do you think it means? Guess before you read.",
+  "text": [
+   "Every editor has a folder called “the darlings.” It’s where the scenes the director loved — and the film didn’t need — go to rest. On my last short, the opening was a gorgeous [[tracking shot]] through a night market. Everyone on set was proud of it. In the first cut, it lasted ninety seconds.",
+   "The problem wasn’t the shot. It was the [[pacing]]. By the time our lead appeared, the audience had already started checking their phones. The test screening told us the truth in one word: it [[drags]].",
+   "We cut it to twelve seconds. The market is still there, but now it’s a feeling, not a tour. The joke in scene two finally [[lands]], because people are still awake when it arrives. And a line I thought was clever turned out to be [[on the nose]], so it went into the folder too.",
+   "Cutting your favourite scene doesn’t mean it was bad. It means the film is bigger than any one shot. The darlings folder isn’t a graveyard. It’s proof you were brave enough to choose."
+  ],
+  "questions": [
+   {
+    "q": "Why did the opening have to change?",
+    "a": "It slowed the story down too much.",
+    "w": [
+     "The shot looked bad.",
+     "The market was closed during filming."
+    ],
+    "ev": "The problem wasn’t the shot. It was the"
+   },
+   {
+    "q": "How did the test audience react to the long opening?",
+    "a": "They got bored and looked at their phones.",
+    "w": [
+     "They asked for a longer version.",
+     "They laughed at the market scene."
+    ],
+    "ev": "By the time our lead appeared, the audience had already started checking their phones."
+   },
+   {
+    "q": "“The joke finally lands” means…",
+    "a": "people laugh at it, as planned",
+    "w": [
+     "the joke is in the last scene",
+     "the joke was cut"
+    ],
+    "ev": "The joke in scene two finally"
+   },
+   {
+    "q": "True or false: the writer thinks the long shot was bad filmmaking.",
+    "a": "False",
+    "w": [
+     "True"
+    ],
+    "ev": "Cutting your favourite scene doesn’t mean it was bad."
+   },
+   {
+    "q": "What is the “darlings folder”, according to the writer?",
+    "a": "Proof that you were brave enough to choose",
+    "w": [
+     "A place for scenes that were badly shot",
+     "A list of the director’s favourite actors"
+    ],
+    "ev": "It’s proof you were brave enough to choose."
+   }
+  ],
+  "after": "Have you ever cut something you were proud of — a scene, a paragraph, a song? Tell your teacher why, using <b>the pacing</b>, <b>it drags</b> or <b>it didn’t land</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "softening a note",
+  "intro": "Directors hear “it’s boring” and get defensive. These patterns say the same thing in a way people actually listen to.",
+  "pattern": [
+   "It might be worth",
+   "+verb-ing",
+   "=the thing to change"
+  ],
+  "note": "Use it to suggest a change without sounding like an order. Same idea: <b>I wonder if…</b>, <b>Could we try…?</b>, <b>What if we…?</b>",
+  "examples": [
+   "It **might be worth** trimming the opening.",
+   "**I wonder if** the joke would land better earlier.",
+   "**Could we** try it without the music?",
+   "**What if we** start on the close-up?"
+  ],
+  "wrong": "It might be worth ~~to trim~~ the opening.",
+  "right": "It might be worth **trimming** the opening.",
+  "task": "Your turn · make each note softer",
+  "drill": [
+   {
+    "p": "Too direct: “Cut the second song.”",
+    "a": "It might be worth cutting the second song.",
+    "w": [
+     "It might be worth to cut the second song.",
+     "Might be worth cut the second song."
+    ]
+   },
+   {
+    "p": "Too direct: “The ending is too long.”",
+    "a": "I wonder if the ending could be a bit shorter.",
+    "w": [
+     "I wonder the ending is too long?",
+     "I wonder if is the ending too long."
+    ]
+   },
+   {
+    "p": "Too direct: “Use the wide shot.”",
+    "a": "Could we try the wide shot here?",
+    "w": [
+     "Could we to try the wide shot?",
+     "We could trying the wide shot?"
+    ]
+   },
+   {
+    "p": "Too direct: “Start with the argument.”",
+    "a": "What if we started with the argument?",
+    "w": [
+     "What if we start to the argument?",
+     "What about we started with the argument?"
+    ]
+   }
+  ],
+  "say": "Now give your teacher a soft note about a film you’ve seen recently."
+ }
 };

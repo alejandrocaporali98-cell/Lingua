@@ -1,10 +1,12 @@
 // Lingua lesson player (all UI in English). Each lesson defines window.CLASE and loads this file.
 (function () {
   const C = window.CLASE, G = window.LINGUA, AB = "ABCD";
-  // Five core sections, plus optional ones a lesson can bring (spot the error, say it in English, talk about it)
+  // Five core sections, plus optional ones a lesson can bring (reading, grammar, spot the error, say it in English, talk about it)
   const SECS = [
     { id: "flash", t: "Vocabulary", min: 10 },
+    ...(C.read && C.read.text && C.read.text.length ? [{ id: "read", t: "Read", min: 12 }] : []),
     { id: "frases", t: "Sound natural", min: 10 },
+    ...(C.grammar && (C.grammar.drill || C.grammar.sort) ? [{ id: "grammar", t: "Grammar", min: 12 }] : []),
     { id: "gaps", t: "Fill in the gaps", min: 10 },
     ...(C.errors && C.errors.items && C.errors.items.length ? [{ id: "errors", t: "Spot the error", min: 10 }] : []),
     ...(C.translate && C.translate.items && C.translate.items.length ? [{ id: "translate", t: "Say it in English", min: 10 }] : []),
@@ -13,6 +15,16 @@
     { id: "final", t: "Final quiz", min: 15 }
   ];
   const st = { sec: G.store.get("sec." + C.id, 0), done: new Set(G.store.get("done." + C.id, [])) };
+  // Progress is saved by section number: when a lesson gains sections, move what was done to the new numbers
+  (function relayout() {
+    const now = SECS.map(s => s.id), key = "secl." + C.id;
+    const before = G.store.get(key, null) || now.filter(id => id !== "read" && id !== "grammar");
+    if (before.join() === now.join()) { if (!G.store.get(key, null)) G.store.set(key, now); return; }
+    const map = i => now.indexOf(before[i]);
+    st.done = new Set([...st.done].map(map).filter(i => i >= 0));
+    st.sec = Math.max(0, map(st.sec));
+    G.store.set("done." + C.id, [...st.done]); G.store.set("sec." + C.id, st.sec); G.store.set(key, now);
+  })();
   const repKey = "repaso." + C.id;
   let quiz = null;
 
@@ -101,7 +113,7 @@
   }
   function draw() {
     quiz = null;
-    ({ flash: drawFlash, frases: drawFrases, gaps: drawGaps, errors: drawErrors, translate: drawTranslate, rp: drawRP, talk: drawTalk, final: drawFinal })[SECS[st.sec].id]();
+    ({ flash: drawFlash, read: drawRead, grammar: drawGrammar, frases: drawFrases, gaps: drawGaps, errors: drawErrors, translate: drawTranslate, rp: drawRP, talk: drawTalk, final: drawFinal })[SECS[st.sec].id]();
     wirePager();
   }
 
@@ -184,6 +196,97 @@
       el.querySelector('[data-a="again"]').onclick = () => { res.fill(null); i = 0; sel = null; shown = false; fin = false; paint(); };
     }
     paint(); return api;
+  }
+
+  // ── Read: an article with questions; each answer lights up its sentence in the text ──
+  function drawRead() {
+    const R = C.read, qs = R.questions || [], ans = qs.map(() => null);
+    const strip = w => w.toLowerCase().replace(/[.…!?,;:"“”]/g, "").replace(/^(to|a|an|the)\s+/, "").trim();
+    const glossOf = w => { const g = R.gloss && (R.gloss[w] || R.gloss[w.toLowerCase()]); if (g) return { d: g }; const f = (C.flash || []).find(f => strip(f.en) === strip(w) || strip(w).startsWith(strip(f.en)) || strip(f.en).startsWith(strip(w))); return f ? { d: f.def, card: C.flash.indexOf(f) + 1 } : null; };
+    const para = t => t.replace(/\[\[([^\]]+)\]\]/g, (m, w) => `<button type="button" class="gl" data-w="${G.esc(w)}">${w}</button>`);
+    const plain = R.text.map(t => t.replace(/\[\[([^\]]+)\]\]/g, "$1")).join(" ");
+    stage.innerHTML = head("Read: " + (R.short || R.title), R.intro || "Read the text out loud, one paragraph each. Tap a dotted word to see what it means here. Then answer the questions.") + `
+      ${R.before ? `<div class="panel rd-step"><span class="eyebrow">Before you read</span><p>${R.before}</p></div>` : ""}
+      <div class="rd">
+        <article class="panel rd-art">
+          ${R.kicker ? `<div class="rd-kick"><span>${R.kicker}</span><span class="muted">· ${Math.max(1, Math.round(plain.split(/\s+/).length / 180))} min read · ${plain.split(/\s+/).length} words</span></div>` : ""}
+          <h3 class="rd-title">${R.title}</h3>
+          <div class="rd-listen">${G.sayBtn(plain, "Listen to the text")}<span class="muted">Listen while you read</span></div>
+          <div class="rd-body">${R.text.map((t, i) => `<p data-p="${i}">${para(t)}</p>`).join("")}</div>
+          <div class="rd-gloss" id="rdGloss" hidden></div>
+        </article>
+        <aside class="panel rd-qs">
+          <div class="rd-qhead"><b>Check your understanding</b><span class="num muted" id="rdN">0 / ${qs.length}</span></div>
+          ${qs.map((q, i) => { const o = [...(q.w || [])]; const p = q.pos != null ? q.pos : (i * 2 + 1) % (o.length + 1); o.splice(p, 0, q.a); return `<div class="rd-q" data-i="${i}" data-c="${p}"><b>${i + 1}. ${q.q}</b>${o.map((t, k) => `<button type="button" class="opt rd-opt" data-k="${k}"><span class="letter">${AB[k]}</span><span>${t}</span></button>`).join("")}<p class="rd-why" hidden></p></div>`; }).join("")}
+        </aside>
+      </div>
+      ${R.after ? `<div class="panel rd-step"><span class="eyebrow">Talk about it</span><p>${R.after} ${G.sayBtn(R.after.replace(/<[^>]+>/g, ""), "Listen")}</p></div>` : ""}` + pager();
+    stage.querySelectorAll(".gl").forEach(b => b.onclick = () => {
+      const w = b.dataset.w, g = glossOf(w), box = document.getElementById("rdGloss");
+      stage.querySelectorAll(".gl.on").forEach(x => x.classList.remove("on")); b.classList.add("on");
+      box.hidden = false; box.innerHTML = `<span class="eyebrow">Tapped</span><span><b>${G.esc(w)}</b> — ${g ? g.d : "ask your teacher what it means here."}${g && g.card ? ` <span class="muted">· vocabulary card ${g.card}</span>` : ""}</span>`;
+    });
+    const mark = q => {
+      stage.querySelectorAll(".rd-body mark").forEach(m => m.replaceWith(...m.childNodes));
+      stage.querySelectorAll(".rd-body p").forEach(p => p.normalize());
+      if (!q.ev) return;
+      for (const p of stage.querySelectorAll(".rd-body p")) {
+        const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT); let n;
+        while ((n = walker.nextNode())) { const k = n.nodeValue.indexOf(q.ev); if (k >= 0) { const r = document.createRange(); r.setStart(n, k); r.setEnd(n, k + q.ev.length); const m = document.createElement("mark"); r.surroundContents(m); m.scrollIntoView({ block: "nearest", behavior: "smooth" }); return; } }
+      }
+      // the sentence crosses a tappable word: light up its whole paragraph instead
+      const p = [...stage.querySelectorAll(".rd-body p")].find(p => p.textContent.includes(q.ev));
+      if (p) { const m = document.createElement("mark"); while (p.firstChild) m.appendChild(p.firstChild); p.appendChild(m); m.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+    };
+    stage.querySelectorAll(".rd-q").forEach(box => box.querySelectorAll(".rd-opt").forEach(b => b.onclick = () => {
+      const i = +box.dataset.i, q = qs[i], ok = +b.dataset.k === +box.dataset.c;
+      if (ans[i] === true) return;
+      b.classList.add(ok ? "ok" : "bad"); G.sfx(ok ? "ok" : "bad");
+      if (!ok) { ans[i] = ans[i] === null ? false : ans[i]; setTimeout(() => b.classList.remove("bad"), 700); return; }
+      ans[i] = true; box.classList.add("done"); box.querySelectorAll(".rd-opt").forEach(x => x.disabled = true);
+      const why = box.querySelector(".rd-why"); if (q.why || q.ev) { why.hidden = false; why.innerHTML = q.why || "It’s highlighted in the text."; }
+      mark(q);
+      const n = ans.filter(x => x === true).length; document.getElementById("rdN").textContent = n + " / " + qs.length;
+      G.game && G.game.award(2, { once: "rd." + C.id + "." + i, silent: true });
+      if (n === qs.length) { G.confetti(50); markDone(st.sec); }
+    }));
+  }
+
+  // ── Grammar: a pattern card (or two forms side by side) and quick practice ──
+  function drawGrammar() {
+    const M = C.grammar, hi = t => String(t).replace(/\*\*([^*]+)\*\*/g, "<b class='hl'>$1</b>").replace(/~~([^~]+)~~/g, "<s>$1</s>");
+    const clean = t => String(t).replace(/\*\*|~~/g, "");
+    const tl = kind => kind === "span"
+      ? `<svg class="tl" viewBox="0 0 320 64" role="img" aria-label="From the past until now"><line x1="10" y1="32" x2="300" y2="32" class="tl-l"/><rect x="60" y="26" width="240" height="12" rx="6" class="tl-span"/><line x1="300" y1="20" x2="300" y2="44" class="tl-now"/><text x="300" y="60" text-anchor="end">now</text></svg>`
+      : kind === "point" ? `<svg class="tl" viewBox="0 0 320 64" role="img" aria-label="A finished moment in the past"><line x1="10" y1="32" x2="300" y2="32" class="tl-l"/><circle cx="120" cy="32" r="9" class="tl-pt"/><line x1="300" y1="20" x2="300" y2="44" class="tl-now"/><text x="300" y="60" text-anchor="end">now</text></svg>`
+      : kind === "future" ? `<svg class="tl" viewBox="0 0 320 64" role="img" aria-label="Later, after now"><line x1="10" y1="32" x2="310" y2="32" class="tl-l"/><line x1="150" y1="20" x2="150" y2="44" class="tl-now"/><text x="150" y="60" text-anchor="middle">now</text><circle cx="250" cy="32" r="9" class="tl-pt"/></svg>` : "";
+    let body = "";
+    if (M.kind === "compare") {
+      body = `<div class="gr-cols">${M.forms.map((f, i) => `<div class="panel gr-col c${i}"><b class="gr-name">${f.name}</b><span class="gr-form">${f.form}</span>${tl(f.tl)}<span class="muted">${f.use}</span>${(f.examples || []).map(e => `<div class="gr-ex">${hi(e)} ${G.sayBtn(clean(e), "Listen")}</div>`).join("")}</div>`).join("")}</div>`;
+    } else {
+      body = `<div class="panel gr-rule"><span class="eyebrow">The pattern</span>
+        <div class="gr-chips">${M.pattern.map((p, i) => `${i ? `<span class="plus">+</span>` : ""}<span class="gr-chip ${p[0] === "+" ? "slot" : p[0] === "=" ? "rest" : ""}">${p.replace(/^[+=]/, "")}</span>`).join("")}</div>
+        ${M.note ? `<p class="muted">${M.note}</p>` : ""}
+        <div>${(M.examples || []).map(e => `<div class="gr-ex">${G.sayBtn(clean(e), "Listen")} <span>${hi(e)}</span></div>`).join("")}</div></div>
+        ${M.wrong ? `<div class="gr-pair"><div class="panel gr-bad"><span class="eyebrow">✗ Sounds off</span><span>${hi(M.wrong)}</span></div><div class="panel gr-good"><span class="eyebrow">✓ Natural</span><span>${hi(M.right)} ${G.sayBtn(clean(M.right), "Listen")}</span></div></div>` : ""}`;
+    }
+    const items = M.kind === "compare" ? (M.sort || []) : (M.drill || []);
+    const practice = M.kind === "compare"
+      ? `<div class="panel gr-drill"><div class="rd-qhead"><b>${M.task || "Sort them · which form?"}</b><span class="num muted" id="grN">0 / ${items.length}</span></div>
+          ${items.map((x, i) => `<div class="gr-sort" data-i="${i}"><span class="s">${hi(x.s).replace("___", `<span class="gap">___</span>`)}</span><span class="gr-btns">${M.forms.map((f, k) => `<button type="button" class="opt gr-b" data-k="${k}">${f.name}</button>`).join("")}</span></div>`).join("")}</div>`
+      : `<div class="panel gr-drill"><div class="rd-qhead"><b>${M.task || "Your turn"}</b><span class="num muted" id="grN">0 / ${items.length}</span></div>
+          ${items.map((x, i) => { const o = [...x.w]; const p = (i * 2 + 1) % (o.length + 1); o.splice(p, 0, x.a); return `<div class="gr-item" data-i="${i}" data-c="${p}"><span class="gr-p">${hi(x.p)}</span><span class="gr-btns">${o.map((t, k) => `<button type="button" class="opt gr-b" data-k="${k}">${t}</button>`).join("")}</span></div>`; }).join("")}
+          ${M.say ? `<p class="gr-say">${M.say}</p>` : ""}</div>`;
+    stage.innerHTML = head("Grammar: " + M.title, M.intro || "") + body + practice + pager();
+    let n = 0;
+    const done = (row, i) => { row.classList.add("done"); row.querySelectorAll(".gr-b").forEach(x => x.disabled = true); n++; document.getElementById("grN").textContent = n + " / " + items.length; G.game && G.game.award(2, { once: "gr." + C.id + "." + i, silent: true }); if (n === items.length) { G.confetti(50); G.sfx("win"); markDone(st.sec); } };
+    stage.querySelectorAll(".gr-item, .gr-sort").forEach(row => row.querySelectorAll(".gr-b").forEach(b => b.onclick = () => {
+      const i = +row.dataset.i, x = items[i], ok = M.kind === "compare" ? +b.dataset.k === x.f : +b.dataset.k === +row.dataset.c;
+      b.classList.add(ok ? "ok" : "bad"); G.sfx(ok ? "ok" : "bad");
+      if (!ok) { setTimeout(() => b.classList.remove("bad"), 700); return; }
+      if (M.kind === "compare" && x.answer) { const g = row.querySelector(".gap"); if (g) { g.textContent = x.answer; g.classList.add("filled"); } row.querySelector(".s").insertAdjacentHTML("beforeend", " " + G.sayBtn(clean(x.s).replace("___", x.answer), "Listen")); }
+      done(row, i);
+    }));
   }
 
   // ── 2 Suena natural ──
