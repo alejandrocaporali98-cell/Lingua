@@ -53,7 +53,7 @@
         <div class="side-cover">
           ${G.thumb({ id: C.id, titulo: C.titulo, nivel: C.nivel, color: C.color || "#2346d0", icono: C.icono || "helmet" }, "LESSON")}
           ${C.objetivos ? `<div style="display:grid;gap:8px"><span class="eyebrow">What you’ll learn</span><ul class="obj">${C.objetivos.map(o => `<li>${o}</li>`).join("")}</ul></div>` : ""}
-          <div class="instructor"><span class="in">${G.maestro[0]}</span><span style="font-size:.88em"><span class="muted">Instructor</span><br><b>${G.maestro}</b></span></div>
+          <div class="instructor"><span class="in">${G.maestro[0]}</span><span style="font-size:.88em"><span class="muted">Instructor</span><br><b>${G.maestroNombre || G.maestro}</b></span></div>
         </div>
         <h3>Lesson content</h3>
         <ul class="toc" id="toc"></ul>

@@ -189,9 +189,9 @@
 <script>
   const C = window.LINGUA, P = C.store.get("placement", null);
   document.getElementById("logo").innerHTML = C.logo;
-  document.getElementById("teacher").textContent = "Instructor: " + C.maestro;
+  document.getElementById("teacher").textContent = "Instructor: " + (C.maestroNombre || C.maestro);
   document.getElementById("inIni").textContent = C.maestro[0];
-  document.getElementById("inName").textContent = C.maestro;
+  document.getElementById("inName").textContent = C.maestroNombre || C.maestro;
   document.getElementById("flogo").innerHTML = C.mark(22) + "<span>English classes made for you</span>";
   const td = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
   document.getElementById("today").textContent = td;
