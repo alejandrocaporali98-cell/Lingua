@@ -407,5 +407,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A night at a ramen bar",
+  "kicker": "Food · Restaurant review",
+  "title": "Tiny ramen bar, huge flavour",
+  "before": "What food are you always in the mood for? Where do you go to eat it?",
+  "text": [
+   "My cousin and I arrived at Noodle Nook at eight o'clock, and I was [[starving]]. The place is tiny — just twelve seats around a counter — so we waited twenty minutes outside. It was worth it.",
+   "The menu is short: four kinds of ramen and a few side dishes. My cousin asked for the spicy miso. I'm [[not a big fan of]] very spicy food, so I said, \"[[Could I get the]] shoyu ramen, please?\" Then my cousin changed her mind and said, \"Actually, [[I'll have the same]].\"",
+   "When the bowls came, nobody talked for five minutes. The broth was rich and salty, the noodles were perfect, and the egg was soft in the middle. Honestly, [[this is so good]] was the only thing I could say. The gyoza were [[a bit too]] oily for me, but still tasty.",
+   "At the end, we asked, \"[[Could we get the bill]], please?\" Two bowls, gyoza and drinks cost about 450 pesos. It's not cheap, but it's the best ramen I've had outside Japan. Go early, or be ready to wait."
+  ],
+  "gloss": {
+   "starving": "I'm starving = I'm very, very hungry.",
+   "not a big fan of": "A polite way to say you don't like something.",
+   "Could I get the": "The polite, everyday way to order in a restaurant.",
+   "I'll have the same": "I want what the other person ordered.",
+   "this is so good": "The most natural compliment about food.",
+   "a bit too": "Softens a complaint so it doesn't sound rude.",
+   "Could we get the bill": "The set phrase to ask to pay. In the US: the check."
+  },
+  "questions": [
+   {
+    "q": "Why did they wait outside?",
+    "a": "The restaurant is very small.",
+    "w": [
+     "They arrived too early.",
+     "The restaurant was closed."
+    ],
+    "ev": "The place is tiny"
+   },
+   {
+    "q": "Why didn't the writer order the spicy miso?",
+    "a": "They don't really like very spicy food.",
+    "w": [
+     "It wasn't on the menu.",
+     "It was too expensive."
+    ],
+    "ev": "I'm not a big fan of very spicy food"
+   },
+   {
+    "q": "What did the cousin finally order?",
+    "a": "Shoyu ramen, the same as the writer",
+    "w": [
+     "Spicy miso ramen",
+     "Only gyoza"
+    ],
+    "ev": "Actually, I'll have the same."
+   },
+   {
+    "q": "What was the problem with the gyoza?",
+    "a": "They were a little oily.",
+    "w": [
+     "They were cold.",
+     "They were too spicy."
+    ],
+    "ev": "The gyoza were a bit too oily for me"
+   },
+   {
+    "q": "What's the writer's advice?",
+    "a": "Go early or be ready to wait.",
+    "w": [
+     "Order the spicy miso.",
+     "Don't go, it's too expensive."
+    ],
+    "ev": "Go early, or be ready to wait."
+   }
+  ],
+  "after": "Review a restaurant you like. Say what you <b>ordered</b>, what was <b>so good</b>, and one thing that was <b>a bit too</b>…"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "ordering politely: Could I get…?",
+  "intro": "\"I want\" sounds like a child or an order. In a restaurant, English uses a question, even when you know exactly what you want.",
+  "pattern": [
+   "Could I get",
+   "+the + dish",
+   "=, please?"
+  ],
+  "note": "Also natural: <b>Can I have…?</b>, <b>I'll have…</b>, <b>I'd like…</b>. For two people: <b>Could we get…?</b>",
+  "examples": [
+   "**Could I get** the shoyu ramen, please?",
+   "**I'll have** the same.",
+   "**Could we get** the bill, please?",
+   "**Can I have** some water, please?"
+  ],
+  "wrong": "~~I want~~ the shoyu ramen.",
+  "right": "**Could I get** the shoyu ramen, please?",
+  "task": "Your turn · choose the most natural order",
+  "drill": [
+   {
+    "p": "You want a lemonade.",
+    "a": "Could I get a lemonade, please?",
+    "w": [
+     "I want a lemonade.",
+     "Give me a lemonade, please."
+    ]
+   },
+   {
+    "p": "Your friend ordered tacos. You want the same.",
+    "a": "I'll have the same.",
+    "w": [
+     "I'll have the equal.",
+     "Same for me, give."
+    ]
+   },
+   {
+    "p": "You want to pay.",
+    "a": "Could we get the bill, please?",
+    "w": [
+     "Could we get the account, please?",
+     "We want to pay the bill now."
+    ]
+   },
+   {
+    "p": "The food is a little too salty.",
+    "a": "It's a bit too salty for me.",
+    "w": [
+     "It's very much salty for me.",
+     "It's too much salty for me."
+    ]
+   }
+  ],
+  "say": "Now role-play: your teacher is the waiter. Order a drink, a main and the bill."
+ }
 };

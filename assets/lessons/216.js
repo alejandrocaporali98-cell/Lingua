@@ -397,5 +397,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Coffee with an old colleague",
+  "kicker": "Conversation · Transcript",
+  "title": "\"How's work?\" — a real conversation",
+  "before": "When a friend asks \"How's work?\", what do you usually say?",
+  "text": [
+   "Pablo and Sara used to work together. They met for coffee after a year. \"So, how's the new job?\" Sara asked. \"[[To be honest]], it's [[a bit of a nightmare]] right now,\" Pablo said. \"We're moving offices, and nobody knows where anything is.\"",
+   "\"Oh no. Are you still doing the Saturday running club?\" \"No, I stopped. After a week like this, [[I can't be bothered]]. I just want to sleep.\" Sara laughed. \"[[Fair enough]].\"",
+   "\"And I made a mistake last week — I sent a client the wrong invoice.\" \"Was it bad?\" \"It was [[kind of]] embarrassing, but [[it's not the end of the world]]. They noticed, I fixed it, and they were nice about it.\"",
+   "\"[[Long story short]], it's a good job with a messy month,\" Pablo said. \"What about you?\" \"Same old,\" Sara smiled. \"But I've got news.\" She showed him her hand. \"I'm getting married.\""
+  ],
+  "gloss": {
+   "To be honest": "Signals a frank, slightly negative opinion.",
+   "a bit of a nightmare": "Very annoying or difficult.",
+   "I can't be bothered": "I could, but I don't want to make the effort.",
+   "Fair enough": "I accept that. Ends a topic nicely.",
+   "kind of": "A little. Softens what you say.",
+   "it's not the end of the world": "It's not a big problem.",
+   "Long story short": "Jumps to the conclusion."
+  },
+  "questions": [
+   {
+    "q": "Why is Pablo's job difficult right now?",
+    "a": "His company is moving offices.",
+    "w": [
+     "His boss is unfair.",
+     "He works on Saturdays."
+    ],
+    "ev": "We're moving offices"
+   },
+   {
+    "q": "Why did Pablo stop the running club?",
+    "a": "He doesn't have the energy after work.",
+    "w": [
+     "He hurt his leg.",
+     "The club closed."
+    ],
+    "ev": "I can't be bothered"
+   },
+   {
+    "q": "What mistake did Pablo make?",
+    "a": "He sent a client the wrong invoice.",
+    "w": [
+     "He missed a meeting.",
+     "He lost a client."
+    ],
+    "ev": "I sent a client the wrong invoice"
+   },
+   {
+    "q": "How did the client react?",
+    "a": "They were nice about it.",
+    "w": [
+     "They were very angry.",
+     "They didn't notice."
+    ],
+    "ev": "they were nice about it"
+   },
+   {
+    "q": "What was Sara's news?",
+    "a": "She's getting married.",
+    "w": [
+     "She has a new job.",
+     "She's moving abroad."
+    ],
+    "ev": "I'm getting married."
+   }
+  ],
+  "after": "Your teacher asks <b>How's work?</b> Answer honestly with <b>to be honest</b>, <b>a bit of a nightmare</b> or <b>it's not the end of the world</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "a bit of a + noun",
+  "intro": "\"A bit\" goes before adjectives. But with a noun, English needs \"a bit of a\". It softens anything: a problem, a mess, a nightmare.",
+  "pattern": [
+   "It's",
+   "+a bit of a",
+   "=nightmare / problem / mess"
+  ],
+  "note": "<b>a bit + adjective</b>: it's a bit difficult. <b>a bit of a + noun</b>: it's a bit of a problem. Both make you sound calm and natural.",
+  "examples": [
+   "It's **a bit of a nightmare**.",
+   "It's **a bit** difficult.",
+   "We have **a bit of a problem**.",
+   "The office is **a bit of a mess**."
+  ],
+  "wrong": "It's ~~a bit nightmare~~.",
+  "right": "It's **a bit of a nightmare**.",
+  "task": "Your turn · choose the natural sentence",
+  "drill": [
+   {
+    "p": "The traffic was a problem.",
+    "a": "The traffic was a bit of a problem.",
+    "w": [
+     "The traffic was a bit problem.",
+     "The traffic was a bit of problem."
+    ]
+   },
+   {
+    "p": "The report was a little late.",
+    "a": "The report was a bit late.",
+    "w": [
+     "The report was a bit of a late.",
+     "The report was bit late."
+    ]
+   },
+   {
+    "p": "Your desk is messy.",
+    "a": "My desk is a bit of a mess.",
+    "w": [
+     "My desk is a bit mess.",
+     "My desk is a bit of mess."
+    ]
+   },
+   {
+    "p": "Accept what someone said.",
+    "a": "Fair enough.",
+    "w": [
+     "Fair is enough.",
+     "It's fair enough for me."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher about your week using a bit and a bit of a."
+ }
 };

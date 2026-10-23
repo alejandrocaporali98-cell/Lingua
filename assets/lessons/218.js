@@ -397,5 +397,122 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A day in the life",
+  "kicker": "Work · Profile",
+  "title": "A day with a ship inspector",
+  "before": "Do you know anyone with an unusual job? What do they do all day?",
+  "text": [
+   "Elena is [[an engineer]], and her office is the sea. She works as a ship inspector in the port of Veracruz. \"People think it's a romantic job,\" she says. \"It's mostly paperwork and heat.\"",
+   "She has [[breakfast]] at six and goes to work [[by car]]. At seven, she gets on the first ship of the day. [[The ship]] might be from Japan, Brazil or Norway. She checks the engines, the safety equipment and the documents. \"[[The]] captain usually offers me coffee. I always say yes.\"",
+   "Elena loves [[ships]], but she doesn't love [[paperwork]]. Every inspection means a twenty-page report. \"Engineers spend more time writing than fixing,\" she laughs. In the afternoon, she goes back to the office to write the reports.",
+   "She gets home at seven, has dinner with her kids and helps with homework. \"My son wants to be an engineer too,\" she says. \"I told him to learn English first. Ships from everywhere — one language.\""
+  ],
+  "gloss": {
+   "an engineer": "Jobs need a / an in English: I'm an engineer, she's a doctor.",
+   "breakfast": "Meals have no article: have breakfast, have lunch.",
+   "by car": "Transport with by: no article. by car, by bus, by plane.",
+   "The ship": "the = we know which one: the ship she's on.",
+   "The": "the captain = the captain of that ship. We know which one.",
+   "ships": "General plural = no article. Ships in general.",
+   "paperwork": "Uncountable, in general = no article."
+  },
+  "questions": [
+   {
+    "q": "Where does Elena work?",
+    "a": "In the port of Veracruz",
+    "w": [
+     "On a Norwegian ship",
+     "In an office in Mexico City"
+    ],
+    "ev": "in the port of Veracruz"
+   },
+   {
+    "q": "What does she say her job is really like?",
+    "a": "Mostly paperwork and heat",
+    "w": [
+     "Very romantic",
+     "Dangerous and exciting"
+    ],
+    "ev": "It's mostly paperwork and heat."
+   },
+   {
+    "q": "What does she check on the ships?",
+    "a": "Engines, safety equipment and documents",
+    "w": [
+     "Only the cargo",
+     "The crew's passports"
+    ],
+    "ev": "She checks the engines, the safety equipment and the documents."
+   },
+   {
+    "q": "How long is each report?",
+    "a": "Twenty pages",
+    "w": [
+     "Two pages",
+     "Fifty pages"
+    ],
+    "ev": "a twenty-page report"
+   },
+   {
+    "q": "What advice did she give her son?",
+    "a": "Learn English first.",
+    "w": [
+     "Don't be an engineer.",
+     "Work on a ship."
+    ],
+    "ev": "I told him to learn English first."
+   }
+  ],
+  "after": "Describe a normal day at your job. Watch the articles: <b>I'm a…</b>, <b>have breakfast</b>, <b>by car</b>, <b>the office</b>."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "the or nothing?",
+  "intro": "Spanish uses \"el / la / los\" for things in general. English doesn't. The only appears when we mean a specific one.",
+  "forms": [
+   {
+    "name": "Nothing",
+    "form": "ships · coffee · people",
+    "use": "Things in general: all ships, coffee as a drink, people everywhere.",
+    "examples": [
+     "She loves **ships**.",
+     "**Engineers** write a lot of reports."
+    ]
+   },
+   {
+    "name": "the",
+    "form": "the ship · the coffee",
+    "use": "A specific one we both know: this ship, the coffee on the table.",
+    "examples": [
+     "**The** ship is from Norway.",
+     "**The** coffee here is terrible."
+    ]
+   }
+  ],
+  "task": "Sort them · the or nothing? (the gap is the whole noun)",
+  "sort": [
+   {
+    "s": "I don't like ___ in general.",
+    "f": 0,
+    "answer": "meetings"
+   },
+   {
+    "s": "___ this morning was very long.",
+    "f": 1,
+    "answer": "The meeting"
+   },
+   {
+    "s": "___ is short — enjoy it.",
+    "f": 0,
+    "answer": "Life"
+   },
+   {
+    "s": "Can you pass me ___, please?",
+    "f": 1,
+    "answer": "the salt"
+   }
+  ]
+ }
 };

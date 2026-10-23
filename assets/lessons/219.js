@@ -397,5 +397,119 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A word nobody understood",
+  "kicker": "Pronunciation · Story",
+  "title": "The day nobody understood \"comfortable\"",
+  "before": "Have you ever said a word correctly but people didn't understand you? Which word?",
+  "text": [
+   "On my first business trip to Canada, I asked the hotel receptionist if the room was \"com-for-TA-ble\". She looked confused. I repeated it, slower. Still nothing. Finally, she said, \"Oh — [[comfortable]]!\" — three syllables, with the beat at the start: COMF-ta-ble.",
+   "That was when I learned that English pronunciation isn't mostly about sounds. It's about stress. Every English word has one strong syllable, and the others become small and fast. If you put the strong beat in the wrong place, people can't recognise the word.",
+   "Spanish speakers have a special problem with words that look the same in both languages, like \"hotel\", \"chocolate\" or \"photographer\". In English, it's pho-TO-gra-pher, not pho-to-GRA-pher. Words ending in [[-tion]] and [[-ity]] follow simple rules: the stress goes just before the ending — in-for-MA-tion, u-ni-VER-si-ty.",
+   "Some words even change meaning. A [[REcord]] is a noun; to reCORD is a verb. Now, before every presentation, I mark the stress on difficult words with a pen. Nobody has looked confused since."
+  ],
+  "gloss": {
+   "comfortable": "COMF-ta-ble. Three syllables, not four.",
+   "-tion": "The stress falls just before -tion / -sion / -cian: inforMAtion.",
+   "-ity": "Stress one syllable before -ity: uniVERsity, comMUnity.",
+   "REcord": "REcord (noun) · reCORD (verb). Two syllables: noun first, verb second."
+  },
+  "questions": [
+   {
+    "q": "Why didn't the receptionist understand?",
+    "a": "The stress was on the wrong syllable.",
+    "w": [
+     "The writer spoke too fast.",
+     "She didn't speak English."
+    ],
+    "ev": "with the beat at the start"
+   },
+   {
+    "q": "According to the writer, English pronunciation is mostly about…",
+    "a": "stress",
+    "w": [
+     "individual sounds",
+     "speaking slowly"
+    ],
+    "ev": "It's about stress."
+   },
+   {
+    "q": "What happens to the syllables that aren't stressed?",
+    "a": "They become small and fast.",
+    "w": [
+     "They become louder.",
+     "They disappear completely."
+    ],
+    "ev": "the others become small and fast"
+   },
+   {
+    "q": "Where is the stress in \"photographer\"?",
+    "a": "pho-TO-gra-pher",
+    "w": [
+     "pho-to-GRA-pher",
+     "PHO-to-gra-pher"
+    ],
+    "ev": "it's pho-TO-gra-pher"
+   },
+   {
+    "q": "What does the writer do before presentations now?",
+    "a": "Marks the stress on difficult words",
+    "w": [
+     "Avoids long words",
+     "Practises with a receptionist"
+    ],
+    "ev": "I mark the stress on difficult words with a pen"
+   }
+  ],
+  "after": "Read these aloud to your teacher and mark the stress: <b>comfortable</b>, <b>vegetable</b>, <b>information</b>, <b>university</b>, <b>photographer</b>."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "noun or verb? REcord or reCORD",
+  "intro": "Many two-syllable words are both a noun and a verb. The spelling is the same — the stress tells you which one it is.",
+  "forms": [
+   {
+    "name": "Noun · first",
+    "form": "REcord · PREsent · PROgress",
+    "use": "Things: stress the first syllable.",
+    "examples": [
+     "I bought a **RE**cord.",
+     "Thanks for the **PRE**sent."
+    ]
+   },
+   {
+    "name": "Verb · second",
+    "form": "reCORD · preSENT · proGRESS",
+    "use": "Actions: stress the second syllable.",
+    "examples": [
+     "Can we re**CORD** the call?",
+     "I'll pre**SENT** the results."
+    ]
+   }
+  ],
+  "task": "Sort them · noun or verb stress?",
+  "sort": [
+   {
+    "s": "She broke the world ___ in Tokyo.",
+    "f": 0,
+    "answer": "REcord"
+   },
+   {
+    "s": "Please don't ___ this meeting.",
+    "f": 1,
+    "answer": "reCORD"
+   },
+   {
+    "s": "We've made good ___ this month.",
+    "f": 0,
+    "answer": "PROgress"
+   },
+   {
+    "s": "Who's going to ___ the report?",
+    "f": 1,
+    "answer": "preSENT"
+   }
+  ]
+ }
 };

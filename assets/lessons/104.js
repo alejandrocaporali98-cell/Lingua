@@ -397,5 +397,126 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A clear email",
+  "kicker": "Writing · Before and after",
+  "title": "Same message, two emails",
+  "before": "Have you ever written an email to a teacher? How did you start it?",
+  "text": [
+   "Lucía missed a science test because she was sick. Her first email to her teacher said: \"hi i was sick so i didnt do the test can i do it another day also i didnt understand the homework thanks\". Everything is there, but it's hard to read and it sounds rushed.",
+   "Here is her second version. \"[[Dear Ms]] Hart, [[I'm writing to]] ask if I can take the science test on another day. I was ill on Tuesday and I have a note from my doctor.\"",
+   "\"[[In addition]], I have a question about the homework. I understood the first part, [[however]], I'm not sure what exercise 4 means. Could you explain it in class? Thank you for your help. Best wishes, Lucía.\"",
+   "What changed? The second email has a clear purpose in the first line, a polite greeting, one idea per sentence and simple linking words. It isn't longer because of fancy words. It's longer because every sentence has a job."
+  ],
+  "gloss": {
+   "Dear Ms": "Dear Mr / Ms + surname = the correct, respectful way to start an email to a teacher.",
+   "I'm writing to": "Tells the reader why you're writing, in the first line.",
+   "In addition": "Adds another point. More formal than \"also\".",
+   "however": "Shows a contrast: the next idea goes in a different direction."
+  },
+  "questions": [
+   {
+    "q": "Why did Lucía write to her teacher?",
+    "a": "She missed a test because she was ill.",
+    "w": [
+     "She wanted a better grade.",
+     "She lost her homework."
+    ],
+    "ev": "Lucía missed a science test because she was sick."
+   },
+   {
+    "q": "What's the problem with the first email?",
+    "a": "It's hard to read and sounds rushed.",
+    "w": [
+     "It doesn't say she was sick.",
+     "It's too formal."
+    ],
+    "ev": "it's hard to read and it sounds rushed"
+   },
+   {
+    "q": "Where does the second email say its purpose?",
+    "a": "In the first sentence",
+    "w": [
+     "At the end",
+     "It doesn't say it"
+    ],
+    "ev": "a clear purpose in the first line"
+   },
+   {
+    "q": "What doesn't Lucía understand?",
+    "a": "Exercise 4 of the homework",
+    "w": [
+     "The whole homework",
+     "The science test"
+    ],
+    "ev": "I'm not sure what exercise 4 means"
+   },
+   {
+    "q": "Why is the second email longer, according to the writer?",
+    "a": "Because every sentence has a job.",
+    "w": [
+     "Because it uses fancy words.",
+     "Because it repeats the question."
+    ],
+    "ev": "It's longer because every sentence has a job."
+   }
+  ],
+  "after": "Write a three-sentence email to your teacher asking to change the day of your class. Use <b>Dear</b>, <b>I'm writing to</b> and <b>However</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "linking with However and In addition",
+  "intro": "Linkers are the signposts of your writing. They tell the reader if the next idea adds to, or goes against, the last one.",
+  "pattern": [
+   "Sentence one.",
+   "+However, / In addition,",
+   "=sentence two."
+  ],
+  "note": "<b>However</b> = contrast (but). <b>In addition / Furthermore</b> = one more point (and). In writing, they usually start a new sentence and take a <b>comma</b>.",
+  "examples": [
+   "I understood the first part. **However,** exercise 4 is confusing.",
+   "I was ill on Tuesday. **In addition,** I have a question.",
+   "The book is long. **However,** it's easy to read.",
+   "It's cheap. **Furthermore,** it's near my house."
+  ],
+  "wrong": "I like the book ~~however~~ it's long.",
+  "right": "I like the book. **However,** it's long.",
+  "task": "Your turn · choose the right linker",
+  "drill": [
+   {
+    "p": "The test was hard. ___ I passed it.",
+    "a": "The test was hard. However, I passed it.",
+    "w": [
+     "The test was hard. In addition, I passed it.",
+     "The test was hard. Furthermore, I passed it."
+    ]
+   },
+   {
+    "p": "The school is near my house. ___ it has a great library.",
+    "a": "The school is near my house. In addition, it has a great library.",
+    "w": [
+     "The school is near my house. However, it has a great library.",
+     "The school is near my house. On the other hand, it has a great library."
+    ]
+   },
+   {
+    "p": "Start an email to Mr Lee.",
+    "a": "Dear Mr Lee,",
+    "w": [
+     "Hi Mr Lee teacher,",
+     "Dear teacher Lee,"
+    ]
+   },
+   {
+    "p": "Say why you're writing.",
+    "a": "I'm writing to ask about the homework.",
+    "w": [
+     "I write for ask about the homework.",
+     "I'm writing for asking about the homework."
+    ]
+   }
+  ],
+  "say": "Now say two sentences about your school, linked with However."
+ }
 };

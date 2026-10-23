@@ -397,5 +397,125 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A terrible Tuesday",
+  "kicker": "Work · Chat with a friend",
+  "title": "\"What a day.\"",
+  "before": "What's the worst day you've had at work this year? What went wrong?",
+  "text": [
+   "\"What a day,\" Diego [[said]] when he sat down. His friend Elisa ordered two coffees. \"[[Tell]] me everything.\"",
+   "\"So, this morning I [[made a mistake]] in a presentation for the director. I had the wrong numbers on one slide. She didn't [[say]] anything, but I could see her face. Then she asked me to [[do]] the whole analysis again by Friday.\"",
+   "\"That's not that bad,\" Elisa [[said]]. \"Everybody [[makes]] mistakes.\" \"Wait, there's more. At lunch, my colleague asked me to [[do]] him [[a favour]] — to cover his meeting with a client. The client only [[speaks]] French. I don't speak French.\"",
+   "Elisa laughed so hard she almost spilled her coffee. \"What did you [[do]]?\" \"I [[told]] the truth. I [[said]], 'I'm sorry, my French is terrible.' He laughed, switched to English, and we [[made]] a deal in twenty minutes. So the day wasn't a total disaster.\""
+  ],
+  "gloss": {
+   "said": "say + the words. No person after it: He said, \"What a day.\"",
+   "Tell": "tell + a person: Tell me everything. Tell her the truth.",
+   "made a mistake": "Always MAKE a mistake, never \"do\" a mistake.",
+   "say": "say something / say nothing. No person directly after.",
+   "do": "do = tasks and work: do the analysis, do your homework.",
+   "makes": "make a mistake, make a decision, make money.",
+   "a favour": "Favours are DONE: Can you do me a favour?",
+   "speaks": "speak a language. Talk to / with a person.",
+   "told": "tell the truth, tell a lie, tell a story — always tell.",
+   "made": "make = something new is created: make a deal, make a plan."
+  },
+  "questions": [
+   {
+    "q": "What was wrong with Diego's presentation?",
+    "a": "One slide had the wrong numbers.",
+    "w": [
+     "It was too long.",
+     "He forgot to bring it."
+    ],
+    "ev": "I had the wrong numbers on one slide."
+   },
+   {
+    "q": "How did the director react?",
+    "a": "She didn't say anything but asked him to redo it.",
+    "w": [
+     "She shouted at him.",
+     "She cancelled the project."
+    ],
+    "ev": "Then she asked me to do the whole analysis again by Friday."
+   },
+   {
+    "q": "What favour did his colleague ask for?",
+    "a": "To cover his meeting with a client",
+    "w": [
+     "To lend him money",
+     "To translate a document"
+    ],
+    "ev": "to cover his meeting with a client"
+   },
+   {
+    "q": "Why was the meeting a problem?",
+    "a": "The client only speaks French.",
+    "w": [
+     "The client was angry.",
+     "It was very early."
+    ],
+    "ev": "The client only speaks French."
+   },
+   {
+    "q": "How did the meeting end?",
+    "a": "They made a deal in English.",
+    "w": [
+     "The client left.",
+     "Diego cancelled it."
+    ],
+    "ev": "we made a deal in twenty minutes"
+   }
+  ],
+  "after": "Tell your teacher about a bad day. Use <b>make a mistake</b>, <b>do a favour</b>, <b>say</b> and <b>tell</b> correctly."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "say or tell?",
+  "intro": "Both mean \"decir\". The difference is simple: tell needs a person right after it. Say doesn't.",
+  "forms": [
+   {
+    "name": "say",
+    "form": "say + words / say something",
+    "use": "Focus on the words. If there's a person, use say TO someone.",
+    "examples": [
+     "She **said** it was fine.",
+     "He didn't **say** anything."
+    ]
+   },
+   {
+    "name": "tell",
+    "form": "tell + person + …",
+    "use": "A person comes straight after, with no \"to\". Also: tell the truth, tell a story.",
+    "examples": [
+     "**Tell** me everything.",
+     "I **told** him the truth."
+    ]
+   }
+  ],
+  "task": "Sort them · say or tell?",
+  "sort": [
+   {
+    "s": "Can you ___ me what happened?",
+    "f": 1,
+    "answer": "tell"
+   },
+   {
+    "s": "She ___ that the meeting was cancelled.",
+    "f": 0,
+    "answer": "said"
+   },
+   {
+    "s": "Please don't ___ anyone about this.",
+    "f": 1,
+    "answer": "tell"
+   },
+   {
+    "s": "What did he ___ to you?",
+    "f": 0,
+    "answer": "say"
+   }
+  ]
+ }
 };

@@ -407,5 +407,128 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "The game I can't put down",
+  "kicker": "Gaming · Forum post",
+  "title": "Is Stardew Valley still worth it in 2026?",
+  "before": "Which game have you played the most hours of in your life? Why that one?",
+  "text": [
+   "Someone on this forum asked, \"What are you playing lately?\" Honestly? A farming game from 2016. My brother laughed at me, but I've played 140 hours, and I'm completely [[hooked on it]].",
+   "There's no big story and no time pressure. You grow vegetables, go fishing, make friends with the people in town and decorate your house. I'm [[so bad at]] fishing — the fish jump everywhere — but I still try every day.",
+   "The best part is co-op. My cousin lives in Chile, so on Saturday mornings I message her: \"[[Want to hop on]]?\" We run the farm together and talk for hours. Sometimes my [[connection is lagging]] and my character walks into a lake, which is very funny for her.",
+   "We once tried a hard mode with another player and [[got destroyed]] in the mines, but nobody got angry. We just typed \"gg\" and started again. It costs less than a pizza, and [[it's worth it, honestly]]. Not every good game needs explosions."
+  ],
+  "gloss": {
+   "hooked on it": "I'm hooked on it = I can't stop playing it.",
+   "so bad at": "bad at + noun / -ing: \"bad at fishing\", \"bad at aiming\".",
+   "Want to hop on": "A casual invitation to join a game or a call right now.",
+   "connection is lagging": "Lag = the delay between what you do and what happens in the game.",
+   "got destroyed": "We got destroyed = we lost very badly.",
+   "it's worth it, honestly": "The natural way to recommend something that costs money or time."
+  },
+  "questions": [
+   {
+    "q": "How many hours has the writer played?",
+    "a": "140",
+    "w": [
+     "16",
+     "14"
+    ],
+    "ev": "I've played 140 hours"
+   },
+   {
+    "q": "What is the writer bad at in the game?",
+    "a": "Fishing",
+    "w": [
+     "Farming",
+     "Decorating"
+    ],
+    "ev": "I'm so bad at fishing"
+   },
+   {
+    "q": "Why does the writer play co-op with their cousin?",
+    "a": "They live in different countries, so they play and talk together.",
+    "w": [
+     "The cousin is very good at fishing.",
+     "The game is only multiplayer."
+    ],
+    "ev": "My cousin lives in Chile"
+   },
+   {
+    "q": "What happened in hard mode?",
+    "a": "They lost badly in the mines.",
+    "w": [
+     "They won easily.",
+     "They got angry and stopped playing."
+    ],
+    "ev": "got destroyed in the mines, but nobody got angry"
+   },
+   {
+    "q": "What is the writer's final opinion?",
+    "a": "The game is cheap and worth it.",
+    "w": [
+     "The game is too expensive.",
+     "Good games need explosions."
+    ],
+    "ev": "It costs less than a pizza"
+   }
+  ],
+  "after": "Tell your teacher about a game you're <b>hooked on</b>. What are you <b>bad at</b> in it? Is it <b>worth it</b>?"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "good at / bad at + -ing",
+  "intro": "After a preposition like at, about or of, English needs a noun or a verb with -ing. Never the base verb.",
+  "pattern": [
+   "I'm so bad",
+   "+at",
+   "=aiming / fishing / this game"
+  ],
+  "note": "Same rule: <b>good at</b>, <b>tired of</b>, <b>excited about</b>, <b>thinking about</b> + <b>-ing</b>.",
+  "examples": [
+   "I'm so bad **at aiming**.",
+   "She's really good **at building**.",
+   "I'm tired **of losing**.",
+   "I'm thinking **about buying** it."
+  ],
+  "wrong": "I'm bad at ~~aim~~.",
+  "right": "I'm bad at **aiming**.",
+  "task": "Your turn · choose the correct sentence",
+  "drill": [
+   {
+    "p": "You can't drive well in Mario Kart.",
+    "a": "I'm really bad at driving in Mario Kart.",
+    "w": [
+     "I'm really bad at drive in Mario Kart.",
+     "I'm really bad in driving in Mario Kart."
+    ]
+   },
+   {
+    "p": "Your friend builds amazing things in Minecraft.",
+    "a": "She's really good at building.",
+    "w": [
+     "She's really good in build.",
+     "She's really good to build."
+    ]
+   },
+   {
+    "p": "You want to buy the new game, maybe.",
+    "a": "I'm thinking about buying it.",
+    "w": [
+     "I'm thinking about buy it.",
+     "I'm thinking to buying it."
+    ]
+   },
+   {
+    "p": "You lost ten games in a row.",
+    "a": "I'm tired of losing.",
+    "w": [
+     "I'm tired of lose.",
+     "I'm tired to losing."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher two things you're good at and two things you're bad at in games."
+ }
 };

@@ -501,5 +501,130 @@ window.CLASE = {
    "Si suena demasiado directo en inglés, hazle notar que en español ese tono pasa y en inglés no.",
    "Objetivo: que salga usando «would» y «if» sin pensarlo."
   ]
+ },
+ "read": {
+  "short": "A supplier who won't move",
+  "kicker": "Business · Negotiation",
+  "title": "How Laura saved 8% without saying no",
+  "before": "Have you ever negotiated a price — at work, at a market, buying a car? How did it go?",
+  "text": [
+   "Laura buys packaging for a food company. Her main supplier wanted to raise prices by 12% next year. Her budget allowed 4%. In the past, she would have said \"That's impossible,\" and the conversation would have ended. This time she tried a different approach.",
+   "\"[[That's a bit outside our budget]],\" she said calmly. \"[[What kind of flexibility do you have]]?\" The supplier explained that their costs had gone up. \"I understand. [[Would you be able to]] keep the old price for the first six months?\"",
+   "He said that was difficult. So she offered something back: \"[[If we]] sign a two-year contract instead of one, [[would you]] consider 6%?\" He paused. \"[[I'd need to check with]] my director.\" Two days later he called back with 7%.",
+   "\"Can we [[meet in the middle]] at 6.5?\" she asked. \"OK. [[That works for me]].\" Laura didn't get her 4%, but she saved her company almost half a million pesos — and the supplier was happy too. A good negotiation doesn't have a loser."
+  ],
+  "gloss": {
+   "That's a bit outside our budget": "Says no to the number, but not to the deal.",
+   "What kind of flexibility do you have": "Invites them to move first.",
+   "Would you be able to": "Asks for something without demanding it.",
+   "If we": "If we… would you…? Every concession is conditional.",
+   "would you": "If we… would you…? = I give something, you give something.",
+   "I'd need to check with": "Slows things down without refusing.",
+   "meet in the middle": "Split the difference.",
+   "That works for me": "Accepts clearly and warmly."
+  },
+  "questions": [
+   {
+    "q": "How much did the supplier want to raise prices?",
+    "a": "12%",
+    "w": [
+     "4%",
+     "6.5%"
+    ],
+    "ev": "raise prices by 12% next year"
+   },
+   {
+    "q": "How did Laura use to react in negotiations?",
+    "a": "She said \"That's impossible\" and the conversation ended.",
+    "w": [
+     "She always accepted the first price.",
+     "She asked her director."
+    ],
+    "ev": "she would have said \"That's impossible,\""
+   },
+   {
+    "q": "What did Laura offer in exchange?",
+    "a": "A two-year contract",
+    "w": [
+     "Faster payment",
+     "A bigger order"
+    ],
+    "ev": "sign a two-year contract instead of one"
+   },
+   {
+    "q": "What was the final price increase?",
+    "a": "6.5%",
+    "w": [
+     "7%",
+     "4%"
+    ],
+    "ev": "meet in the middle at 6.5"
+   },
+   {
+    "q": "What is the writer's conclusion?",
+    "a": "A good negotiation doesn't have a loser.",
+    "w": [
+     "Never accept more than your budget.",
+     "Always ask for 4%."
+    ],
+    "ev": "A good negotiation doesn't have a loser."
+   }
+  ],
+  "after": "Negotiate with your teacher: they're selling you a laptop for $1,200. Your budget is $900. Use <b>If you… would you…?</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "If we…, would you…?",
+  "intro": "The heart of every negotiation: a conditional offer. You never give something for free — you give it on a condition.",
+  "pattern": [
+   "If we + past / present",
+   "+would you",
+   "=+ verb?"
+  ],
+  "note": "Real offer: <b>If we sign today, will you</b> include delivery? Softer / hypothetical: <b>If we signed today, would you</b>…? Both are common.",
+  "examples": [
+   "**If we sign** a two-year contract, **would you** consider 6%?",
+   "**If you paid** in advance, we **could** offer 5%.",
+   "**Would you be able to** deliver by Friday?",
+   "**If we order** 1,000 units, **will you** include shipping?"
+  ],
+  "wrong": "If we ~~will sign~~ for two years, you give 6%?",
+  "right": "If we **sign** for two years, **would you** consider 6%?",
+  "task": "Your turn · choose the best negotiation line",
+  "drill": [
+   {
+    "p": "Offer: pay in advance. Ask for: 5% discount.",
+    "a": "If we pay in advance, would you give us 5%?",
+    "w": [
+     "If we will pay in advance, you give us 5%?",
+     "If we paid in advance, you will give us 5%?"
+    ]
+   },
+   {
+    "p": "Ask for faster delivery, politely.",
+    "a": "Would you be able to deliver by Friday?",
+    "w": [
+     "Would you be able deliver by Friday?",
+     "You will be able to deliver by Friday?"
+    ]
+   },
+   {
+    "p": "The price is too high.",
+    "a": "That's a bit outside our budget.",
+    "w": [
+     "That's a bit out our budget.",
+     "That's very outside of budget."
+    ]
+   },
+   {
+    "p": "Propose splitting the difference.",
+    "a": "Shall we meet in the middle?",
+    "w": [
+     "Shall we meet in the half?",
+     "Shall we meet on the middle?"
+    ]
+   }
+  ],
+  "say": "Now make your teacher three conditional offers to buy their car."
  }
 };

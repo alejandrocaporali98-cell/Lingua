@@ -407,5 +407,123 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Does it live up to the hype?",
+  "kicker": "Trends · Opinion",
+  "title": "I waited two hours for a viral dessert",
+  "before": "Have you ever tried something only because it was viral? Was it good?",
+  "text": [
+   "This month, [[everyone's talking about]] one thing at my school: a Dubai chocolate bar filled with pistachio cream and crispy noodles. It's [[blowing up]] online — every video shows someone breaking it in slow motion.",
+   "Last Saturday, my sister and I queued for two hours at a new shop. The bar cost 180 pesos. We took a photo, of course, and then we tried it. My sister loved it. She said it really [[lives up to the hype]].",
+   "Honestly? I think it's [[so overhyped]]. It was nice, but very sweet, and after three bites I didn't want more. It's [[not for me, but I get why people like it]] — it looks amazing and it's fun to share.",
+   "My prediction: [[it's just a phase]]. Last year it was a different dessert, and next year it'll be something else. I'm already [[kind of over it]]. My sister disagrees, but [[each to their own]]."
+  ],
+  "gloss": {
+   "everyone's talking about": "Everyone's talking about it = it's a trend right now.",
+   "blowing up": "Getting popular very quickly.",
+   "lives up to the hype": "It's as good as people say.",
+   "so overhyped": "It got more attention than it deserves.",
+   "not for me, but I get why people like it": "Disagree without sounding rude.",
+   "it's just a phase": "A trend that won't last.",
+   "kind of over it": "Be over something = lose interest.",
+   "each to their own": "Everyone can like what they like."
+  },
+  "questions": [
+   {
+    "q": "Where is the dessert popular?",
+    "a": "Online and at the writer's school",
+    "w": [
+     "Only in Dubai",
+     "Only on TV"
+    ],
+    "ev": "It's blowing up online"
+   },
+   {
+    "q": "How long did they wait?",
+    "a": "Two hours",
+    "w": [
+     "Twenty minutes",
+     "A month"
+    ],
+    "ev": "queued for two hours"
+   },
+   {
+    "q": "What did the sister think?",
+    "a": "It was as good as people say.",
+    "w": [
+     "It was overhyped.",
+     "It was too expensive."
+    ],
+    "ev": "She said it really lives up to the hype."
+   },
+   {
+    "q": "What was the writer's problem with it?",
+    "a": "It was too sweet.",
+    "w": [
+     "It was cold.",
+     "It was too small."
+    ],
+    "ev": "very sweet, and after three bites I didn't want more"
+   },
+   {
+    "q": "What does the writer predict?",
+    "a": "The trend won't last.",
+    "w": [
+     "It will be popular forever.",
+     "The price will go down."
+    ],
+    "ev": "My prediction: it's just a phase."
+   }
+  ],
+  "after": "Talk about a trend: does it <b>live up to the hype</b> or is it <b>overhyped</b>? Use <b>it's not for me, but I get why…</b>"
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "present simple or continuous?",
+  "intro": "Trends are happening now — that's why everyone says \"it's blowing up\". But habits and facts use the simple form.",
+  "forms": [
+   {
+    "name": "Continuous",
+    "form": "is / are + -ing",
+    "use": "Now, this period, temporary trends.",
+    "examples": [
+     "Everyone's **talking** about it.",
+     "It's **blowing up** right now."
+    ]
+   },
+   {
+    "name": "Simple",
+    "form": "verb / verb-s",
+    "use": "Habits, facts, opinions and feelings (like, love, think, want).",
+    "examples": [
+     "I **don't like** very sweet things.",
+     "I **think** it's overhyped."
+    ]
+   }
+  ],
+  "task": "Sort them · which form?",
+  "sort": [
+   {
+    "s": "This song ___ on TikTok at the moment.",
+    "f": 0,
+    "answer": "is trending"
+   },
+   {
+    "s": "I ___ it's a bit overhyped.",
+    "f": 1,
+    "answer": "think"
+   },
+   {
+    "s": "My sister ___ sweet things.",
+    "f": 1,
+    "answer": "loves"
+   },
+   {
+    "s": "Everyone ___ those bags this month.",
+    "f": 0,
+    "answer": "is buying"
+   }
+  ]
+ }
 };

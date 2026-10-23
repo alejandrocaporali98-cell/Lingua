@@ -407,5 +407,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Trying out for the team",
+  "kicker": "Sport · Diary",
+  "title": "Volleyball tryouts: a week in my diary",
+  "before": "Have you ever tried out for a team or a competition? How did you prepare?",
+  "text": [
+   "Monday. Tryouts for the school volleyball team are on Friday. The problem: I haven't played since last year, so I'm [[a bit out of practice]]. I'm not even very [[sporty]] — I do yoga and I go swimming, but that's it.",
+   "Wednesday. I practised with my cousin for two hours. I was terrible at first, but by the end my serves were going over the net. I'm [[shattered]] now. I'm also [[trying to keep fit]], so I went running after dinner. Bad idea.",
+   "Thursday. I [[pulled a muscle]] in my leg yesterday while running. It isn't serious, but it hurts. My mum made me rest all day, and I [[got an early night]]. I was so nervous I couldn't sleep until midnight.",
+   "Friday. Tryouts! My leg was OK. We played a short match at the end and [[we won 3-1]]. Two of the points were my serves. The coach said, \"See you at practice on Monday.\" I'm on the team!"
+  ],
+  "gloss": {
+   "a bit out of practice": "You haven't done it for a while, so you're not at your best.",
+   "sporty": "Someone who likes and does a lot of sport.",
+   "shattered": "Very, very tired.",
+   "trying to keep fit": "Keep fit = stay healthy and strong.",
+   "pulled a muscle": "A small sports injury: pull a muscle, twist your ankle.",
+   "got an early night": "Went to bed early.",
+   "we won 3-1": "Say scores as \"three one\"."
+  },
+  "questions": [
+   {
+    "q": "Why is the writer worried on Monday?",
+    "a": "They haven't played volleyball for a long time.",
+    "w": [
+     "They don't know the rules.",
+     "The tryouts are tomorrow."
+    ],
+    "ev": "I haven't played since last year"
+   },
+   {
+    "q": "Which sports does the writer usually do?",
+    "a": "Yoga and swimming",
+    "w": [
+     "Volleyball and football",
+     "Running and tennis"
+    ],
+    "ev": "I do yoga and I go swimming"
+   },
+   {
+    "q": "Why was going running a bad idea?",
+    "a": "They pulled a muscle.",
+    "w": [
+     "It started raining.",
+     "They missed dinner."
+    ],
+    "ev": "I pulled a muscle in my leg yesterday while running."
+   },
+   {
+    "q": "What did the writer do on Thursday?",
+    "a": "Rested and went to bed early",
+    "w": [
+     "Practised for two hours",
+     "Played a match"
+    ],
+    "ev": "My mum made me rest all day"
+   },
+   {
+    "q": "How do we know the writer made the team?",
+    "a": "The coach said \"See you at practice on Monday.\"",
+    "w": [
+     "They won 3-1.",
+     "Their leg was OK."
+    ],
+    "ev": "See you at practice on Monday."
+   }
+  ],
+  "after": "Tell your teacher about your week of sport. What do you <b>play</b>, <b>do</b> or <b>go</b>? Are you <b>sporty</b>?"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "play, do or go?",
+  "intro": "Every sport takes one of three verbs. Using the wrong one is the quickest way to sound like a translation.",
+  "pattern": [
+   "play + ball games",
+   "+do + individual sports",
+   "=go + -ing"
+  ],
+  "note": "<b>play</b> football, tennis, volleyball. <b>do</b> yoga, karate, gymnastics. <b>go</b> swimming, running, skiing.",
+  "examples": [
+   "I **play** volleyball on Fridays.",
+   "She **does** yoga every morning.",
+   "We **go** swimming on weekends.",
+   "He **does** karate."
+  ],
+  "wrong": "I ~~make~~ yoga and I ~~practice~~ swimming.",
+  "right": "I **do** yoga and I **go** swimming.",
+  "task": "Your turn · choose the right verb",
+  "drill": [
+   {
+    "p": "You and tennis, every Tuesday.",
+    "a": "I play tennis every Tuesday.",
+    "w": [
+     "I do tennis every Tuesday.",
+     "I go tennis every Tuesday."
+    ]
+   },
+   {
+    "p": "Your sister and gymnastics.",
+    "a": "She does gymnastics.",
+    "w": [
+     "She plays gymnastics.",
+     "She makes gymnastics."
+    ]
+   },
+   {
+    "p": "Your family, the mountains, skiing.",
+    "a": "We go skiing in winter.",
+    "w": [
+     "We play skiing in winter.",
+     "We do ski in winter."
+    ]
+   },
+   {
+    "p": "Running before school.",
+    "a": "I go running before school.",
+    "w": [
+     "I do run before school.",
+     "I play running before school."
+    ]
+   }
+  ],
+  "say": "Now ask your teacher three questions: Do you play…? Do you do…? Do you go…?"
+ }
 };

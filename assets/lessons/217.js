@@ -398,5 +398,128 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Moving to a new office",
+  "kicker": "Work · Office memo",
+  "title": "Everything you need to know about the move",
+  "before": "Have you ever moved house or office? What was the most stressful part?",
+  "text": [
+   "Dear team, as you know, we're moving to the new office on Monday. Here is some [[information]] to make the week easier. Please read it carefully — there's a lot of it, but it's all useful.",
+   "The [[furniture]] will be moved on Saturday. Please don't leave any personal items in your desk drawers. If you have a lot of [[luggage]] or boxes, use the labels at reception. Each box should have your name and floor number.",
+   "We have some good [[news]]: the new office has a kitchen with free coffee and fruit. The bad news is that the parking isn't ready yet, so on Monday please come by public transport if you can. There's a bus stop in front of the building.",
+   "One last piece of [[advice]]: bring a sweater. The air conditioning is very strong, and nobody has found the controls yet. If you need help with anything, Rosa from HR will be at the entrance all morning. Thanks, and good luck with the [[work]] this week!"
+  ],
+  "gloss": {
+   "information": "Always singular: some information, a piece of information. Never \"informations\".",
+   "furniture": "All the objects together. One item = a piece of furniture.",
+   "luggage": "All your bags together. One bag = a piece of luggage / a suitcase.",
+   "news": "Ends in -s but takes a singular verb: The news is good.",
+   "advice": "Always singular. To count it: a piece of advice.",
+   "work": "Uncountable. The countable version is \"job\"."
+  },
+  "questions": [
+   {
+    "q": "When is the team moving?",
+    "a": "On Monday",
+    "w": [
+     "On Saturday",
+     "Next month"
+    ],
+    "ev": "we're moving to the new office on Monday"
+   },
+   {
+    "q": "When will the furniture be moved?",
+    "a": "On Saturday",
+    "w": [
+     "On Monday",
+     "On Friday"
+    ],
+    "ev": "The furniture will be moved on Saturday."
+   },
+   {
+    "q": "What should you write on each box?",
+    "a": "Your name and floor number",
+    "w": [
+     "The date",
+     "Your manager's name"
+    ],
+    "ev": "Each box should have your name and floor number."
+   },
+   {
+    "q": "What is the bad news?",
+    "a": "The parking isn't ready.",
+    "w": [
+     "There's no coffee.",
+     "The move is cancelled."
+    ],
+    "ev": "the parking isn't ready yet"
+   },
+   {
+    "q": "Why should people bring a sweater?",
+    "a": "The air conditioning is very strong.",
+    "w": [
+     "The heating is broken.",
+     "It's going to rain."
+    ],
+    "ev": "The air conditioning is very strong"
+   }
+  ],
+  "after": "Give your teacher some <b>advice</b> and some <b>information</b> about your own office or home — and some <b>news</b> from your week."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "a piece of advice, some information",
+  "intro": "Some nouns can't be counted in English, even when they can in Spanish. They have no plural and no a / an.",
+  "pattern": [
+   "some / a lot of / a piece of",
+   "+advice / information / news",
+   "=+ singular verb"
+  ],
+  "note": "<b>advice, information, news, furniture, luggage, work, homework</b> — no -s, no <b>a</b>. To count them: <b>a piece of</b>. The news <b>is</b>, not <b>are</b>.",
+  "examples": [
+   "Can I give you **some advice**?",
+   "Here's **a piece of** advice.",
+   "The news **is** good.",
+   "We need **some information**."
+  ],
+  "wrong": "I have ~~an advice~~. The ~~news are~~ good.",
+  "right": "I have **some advice**. The **news is** good.",
+  "task": "Your turn · choose the correct sentence",
+  "drill": [
+   {
+    "p": "Ask for details about the course.",
+    "a": "Could you give me some information?",
+    "w": [
+     "Could you give me an information?",
+     "Could you give me some informations?"
+    ]
+   },
+   {
+    "p": "Your friend helped you decide.",
+    "a": "She gave me some good advice.",
+    "w": [
+     "She gave me a good advice.",
+     "She gave me some good advices."
+    ]
+   },
+   {
+    "p": "The news today.",
+    "a": "The news is really bad today.",
+    "w": [
+     "The news are really bad today.",
+     "The new is really bad today."
+    ]
+   },
+   {
+    "p": "Your new sofa and table.",
+    "a": "We bought some new furniture.",
+    "w": [
+     "We bought some new furnitures.",
+     "We bought a new furniture."
+    ]
+   }
+  ],
+  "say": "Now give your teacher a piece of advice about learning English."
+ }
 };

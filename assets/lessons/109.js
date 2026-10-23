@@ -407,5 +407,130 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A delayed flight",
+  "kicker": "Travel · Diary",
+  "title": "Six hours at Madrid airport",
+  "before": "What's the worst thing that has happened to you at an airport?",
+  "text": [
+   "My first trip alone was to visit my aunt in London, with a stop in Madrid. At the desk in Mexico City I said, \"[[I'd like to check in]], please,\" and the woman asked about my bags. \"[[Just this one, carry-on]],\" I said. Easy.",
+   "In Madrid, I looked at the screen to see [[which gate]] my flight was at. Next to it, in red, it said \"Delayed\". An announcement said: \"[[The flight's been delayed]] because of a storm in London.\" It was six hours late.",
+   "I was nervous, but I didn't panic. I asked a man in uniform, \"[[Excuse me, how do I get to]] a place to charge my phone?\" He spoke very fast, so I said, \"[[Could you say that again]], please?\" He smiled and said, \"It's [[just around the corner]], next to the café.\"",
+   "When I finally arrived in London, the immigration officer asked how long I was staying. \"[[I'm here for a week]],\" I said. He stamped my passport and said, \"Enjoy your trip.\" I was tired, but I felt very grown-up."
+  ],
+  "gloss": {
+   "I'd like to check in": "Check in = register for a flight or a hotel.",
+   "Just this one, carry-on": "Carry-on = the bag you take on the plane with you.",
+   "which gate": "Gate = where you get on the plane.",
+   "The flight's been delayed": "Delayed = late. Cancelled = not happening.",
+   "Excuse me, how do I get to": "The polite way to ask for directions.",
+   "Could you say that again": "The polite rescue phrase when you don't understand.",
+   "just around the corner": "Very close.",
+   "I'm here for a week": "for + a length of time."
+  },
+  "questions": [
+   {
+    "q": "How many bags did the writer have?",
+    "a": "One small carry-on bag",
+    "w": [
+     "Two big suitcases",
+     "No bags"
+    ],
+    "ev": "Just this one, carry-on"
+   },
+   {
+    "q": "Why was the flight delayed?",
+    "a": "Because of a storm in London",
+    "w": [
+     "Because the pilot was late",
+     "Because the gate changed"
+    ],
+    "ev": "because of a storm in London"
+   },
+   {
+    "q": "What did the writer need?",
+    "a": "A place to charge their phone",
+    "w": [
+     "A new ticket",
+     "Something to eat"
+    ],
+    "ev": "a place to charge my phone"
+   },
+   {
+    "q": "What did the writer do when the man spoke too fast?",
+    "a": "Asked him to say it again",
+    "w": [
+     "Panicked",
+     "Pretended to understand"
+    ],
+    "ev": "Could you say that again, please?"
+   },
+   {
+    "q": "How long is the writer staying in London?",
+    "a": "A week",
+    "w": [
+     "Six hours",
+     "A month"
+    ],
+    "ev": "I'm here for a week"
+   }
+  ],
+  "after": "Tell your teacher about a trip. Did anything go wrong? Use <b>delayed</b>, <b>gate</b> and <b>Could you say that again?</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "the passive: it's been delayed",
+  "intro": "At airports, we care about what happened to the flight, not who did it. So English uses the passive.",
+  "pattern": [
+   "The flight",
+   "+has been / was",
+   "=delayed / cancelled"
+  ],
+  "note": "<b>be + past participle</b>. Very common in travel: <b>is delayed, has been cancelled, was moved, is included</b>.",
+  "examples": [
+   "The flight's **been delayed**.",
+   "Our gate **was changed** to B12.",
+   "Breakfast **is included**.",
+   "My bag **was lost**!"
+  ],
+  "wrong": "The flight ~~has delayed~~.",
+  "right": "The flight **has been delayed**.",
+  "task": "Your turn · choose the correct announcement",
+  "drill": [
+   {
+    "p": "Nobody can take the 9:00 flight today.",
+    "a": "The 9:00 flight has been cancelled.",
+    "w": [
+     "The 9:00 flight has cancelled.",
+     "The 9:00 flight is cancel."
+    ]
+   },
+   {
+    "p": "The airport changed your gate.",
+    "a": "Our gate was changed.",
+    "w": [
+     "Our gate was change.",
+     "Our gate changed by them."
+    ]
+   },
+   {
+    "p": "You don't pay extra for breakfast.",
+    "a": "Breakfast is included.",
+    "w": [
+     "Breakfast includes.",
+     "Breakfast is include."
+    ]
+   },
+   {
+    "p": "The airline lost your bag.",
+    "a": "My bag was lost.",
+    "w": [
+     "My bag lost.",
+     "My bag was losed."
+    ]
+   }
+  ],
+  "say": "Now imagine you're the airport announcer. Give two announcements with the passive."
+ }
 };

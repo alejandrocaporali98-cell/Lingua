@@ -203,7 +203,7 @@
     const R = C.read, qs = R.questions || [], ans = qs.map(() => null);
     const strip = w => w.toLowerCase().replace(/[.…!?,;:"“”]/g, "").replace(/^(to|a|an|the)\s+/, "").trim();
     const glossOf = w => { const g = R.gloss && (R.gloss[w] || R.gloss[w.toLowerCase()]); if (g) return { d: g }; const f = (C.flash || []).find(f => strip(f.en) === strip(w) || strip(w).startsWith(strip(f.en)) || strip(f.en).startsWith(strip(w))); return f ? { d: f.def, card: C.flash.indexOf(f) + 1 } : null; };
-    const para = t => t.replace(/\[\[([^\]]+)\]\]/g, (m, w) => `<button type="button" class="gl" data-w="${G.esc(w)}">${w}</button>`);
+    const para = t => t.replace(/\[\[([^\]]+)\]\]/g, (m, w) => `<button type="button" class="rd-gl" data-w="${G.esc(w)}">${w}</button>`);
     const plain = R.text.map(t => t.replace(/\[\[([^\]]+)\]\]/g, "$1")).join(" ");
     stage.innerHTML = head("Read: " + (R.short || R.title), R.intro || "Read the text out loud, one paragraph each. Tap a dotted word to see what it means here. Then answer the questions.") + `
       ${R.before ? `<div class="panel rd-step"><span class="eyebrow">Before you read</span><p>${R.before}</p></div>` : ""}
@@ -221,9 +221,9 @@
         </aside>
       </div>
       ${R.after ? `<div class="panel rd-step"><span class="eyebrow">Talk about it</span><p>${R.after} ${G.sayBtn(R.after.replace(/<[^>]+>/g, ""), "Listen")}</p></div>` : ""}` + pager();
-    stage.querySelectorAll(".gl").forEach(b => b.onclick = () => {
+    stage.querySelectorAll(".rd-gl").forEach(b => b.onclick = () => {
       const w = b.dataset.w, g = glossOf(w), box = document.getElementById("rdGloss");
-      stage.querySelectorAll(".gl.on").forEach(x => x.classList.remove("on")); b.classList.add("on");
+      stage.querySelectorAll(".rd-gl.on").forEach(x => x.classList.remove("on")); b.classList.add("on");
       box.hidden = false; box.innerHTML = `<span class="eyebrow">Tapped</span><span><b>${G.esc(w)}</b> — ${g ? g.d : "ask your teacher what it means here."}${g && g.card ? ` <span class="muted">· vocabulary card ${g.card}</span>` : ""}</span>`;
     });
     const mark = q => {

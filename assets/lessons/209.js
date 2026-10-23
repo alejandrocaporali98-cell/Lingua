@@ -398,5 +398,130 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Should I take the job?",
+  "kicker": "Advice · Message thread",
+  "title": "A job offer in another city",
+  "before": "If you got a great job offer in another city, would you move? What would you need to know first?",
+  "text": [
+   "Marco sent his sister a long message on Sunday night: \"I got the offer from the company in Querétaro. Better salary, but I'd have to move. [[I'm thinking of]] saying yes, but I'm scared. [[What would you do]]?\"",
+   "Lucía called him instead. \"OK. First question: what are you doing this week?\" \"[[I'm meeting]] their HR manager on Wednesday at ten.\" \"Good. Then ask about working from home. If they let you do two days remote, you [[might]] not need to move straight away.\"",
+   "\"And honestly? [[If I were you, I'd]] take it. You've been bored at your job for two years. But [[you'd better]] ask for the offer in writing before you tell your boss anything.\" Marco laughed. \"[[I'm going to]] make a list of questions tonight.\"",
+   "\"Perfect. [[I'll]] help you — send it to me when it's done.\" On Wednesday, the company said yes to two remote days. Marco signed on Friday. Lucía still reminds him whose idea it was."
+  ],
+  "gloss": {
+   "I'm thinking of": "An idea you haven't decided yet. + -ing.",
+   "What would you do": "Asks someone to imagine your situation.",
+   "I'm meeting": "Present continuous = an arrangement with a time and a person.",
+   "might": "Possible, but not certain.",
+   "If I were you, I'd": "The standard way to give advice. \"Were\", not \"was\".",
+   "you'd better": "Stronger than should: if you don't, there could be a problem.",
+   "I'm going to": "A decision you've already made.",
+   "I'll": "An offer or decision made as you speak."
+  },
+  "questions": [
+   {
+    "q": "Why is Marco scared?",
+    "a": "He'd have to move to another city.",
+    "w": [
+     "The salary is lower.",
+     "He didn't get the job."
+    ],
+    "ev": "Better salary, but I'd have to move."
+   },
+   {
+    "q": "When is Marco meeting HR?",
+    "a": "Wednesday at ten",
+    "w": [
+     "Sunday night",
+     "Friday morning"
+    ],
+    "ev": "on Wednesday at ten"
+   },
+   {
+    "q": "Why does Lucía think he should take it?",
+    "a": "He's been bored at his job for two years.",
+    "w": [
+     "She lives in Querétaro.",
+     "His boss is angry."
+    ],
+    "ev": "You've been bored at your job for two years."
+   },
+   {
+    "q": "What does Lucía warn him to do first?",
+    "a": "Get the offer in writing",
+    "w": [
+     "Tell his boss",
+     "Find an apartment"
+    ],
+    "ev": "ask for the offer in writing before you tell your boss anything"
+   },
+   {
+    "q": "What did the company agree to?",
+    "a": "Two remote days",
+    "w": [
+     "A higher salary",
+     "A later start date"
+    ],
+    "ev": "the company said yes to two remote days"
+   }
+  ],
+  "after": "Your teacher will describe a problem. Give advice with <b>If I were you, I'd…</b> and <b>You'd better…</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "If I were you, I'd…",
+  "intro": "The most common way to give advice is to imagine being the other person. That needs the second conditional.",
+  "pattern": [
+   "If I were you,",
+   "+I'd + verb",
+   "=…"
+  ],
+  "note": "<b>If + past</b>, <b>would + verb</b>. With I / he / she, careful English uses <b>were</b>: If I <b>were</b> you. Never <b>If I would be</b>.",
+  "examples": [
+   "**If I were you, I'd** take the job.",
+   "**If I were you, I'd** ask for it in writing.",
+   "**What would you do** if you were me?",
+   "**If** I **had** more time, I**'d** learn Italian."
+  ],
+  "wrong": "If I ~~would be~~ you, I ~~will~~ take it.",
+  "right": "If I **were** you, I**'d** take it.",
+  "task": "Your turn · choose the correct advice",
+  "drill": [
+   {
+    "p": "Your friend is always tired.",
+    "a": "If I were you, I'd go to bed earlier.",
+    "w": [
+     "If I would be you, I'd go to bed earlier.",
+     "If I were you, I will go to bed earlier."
+    ]
+   },
+   {
+    "p": "Ask for advice.",
+    "a": "What would you do?",
+    "w": [
+     "What will you do if you are me?",
+     "What you would do?"
+    ]
+   },
+   {
+    "p": "Imagine: more money → buy a house.",
+    "a": "If I had more money, I'd buy a house.",
+    "w": [
+     "If I would have more money, I'd buy a house.",
+     "If I have more money, I'd buy a house."
+    ]
+   },
+   {
+    "p": "Strong warning: leave now or miss the flight.",
+    "a": "You'd better leave now.",
+    "w": [
+     "You'd better to leave now.",
+     "You better leaving now."
+    ]
+   }
+  ],
+  "say": "Now ask your teacher \"What would you do?\" about a real decision in your life."
+ }
 };

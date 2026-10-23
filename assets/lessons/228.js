@@ -501,5 +501,127 @@ window.CLASE = {
    "Si se disculpa demasiado (muy común), hazle ver que en inglés el exceso suena inseguro.",
    "Ojo con «sorry for» vs «sorry about»: ambos valen; «sorry of» no."
   ]
+ },
+ "read": {
+  "short": "A mistake with consequences",
+  "kicker": "Work · Case study",
+  "title": "The email that went to the wrong client",
+  "before": "What's the best apology you've ever received? What made it good?",
+  "text": [
+   "Sofía, an account manager, sent a price proposal to a client on Monday morning. By lunchtime, she realised her mistake: she'd sent it to the wrong client — a competitor of the first one. Both companies could now see each other's prices.",
+   "Her first instinct was to write a long email explaining the new software, the busy morning and the similar names. Her manager stopped her. \"Nobody cares why. Say what happened, own it, and say what you're doing to fix it.\"",
+   "So she called both clients. \"[[I'm really sorry]]. This morning I sent your proposal to the wrong address. [[That was my mistake]]. I've asked them to delete it, and they've confirmed in writing. [[It won't happen again]] — from now on, every proposal is checked by a second person.\"",
+   "One client was annoyed but accepted it. The other actually thanked her for being honest. Later, a colleague knocked over her coffee. \"Oh, [[my bad]]!\" he said. She smiled. \"[[Sorry about that]] is enough for coffee,\" she thought. \"Today I needed the big one.\""
+  ],
+  "gloss": {
+   "I'm really sorry": "For something that really affected the other person.",
+   "That was my mistake": "Short and direct. Stronger than explaining what went wrong.",
+   "It won't happen again": "An apology needs a fix. Say what will change.",
+   "my bad": "Casual, for tiny mistakes.",
+   "Sorry about that": "A small inconvenience. Warm and complete."
+  },
+  "questions": [
+   {
+    "q": "What was Sofía's mistake?",
+    "a": "She sent a proposal to the wrong client.",
+    "w": [
+     "She gave the wrong prices.",
+     "She forgot a meeting."
+    ],
+    "ev": "she'd sent it to the wrong client"
+   },
+   {
+    "q": "Why was it serious?",
+    "a": "The two clients were competitors.",
+    "w": [
+     "The proposal had errors.",
+     "The email was very long."
+    ],
+    "ev": "a competitor of the first one"
+   },
+   {
+    "q": "What was the manager's advice?",
+    "a": "Don't explain why — own it and say how you'll fix it.",
+    "w": [
+     "Write a long explanation.",
+     "Don't tell the clients."
+    ],
+    "ev": "Nobody cares why."
+   },
+   {
+    "q": "What will change from now on?",
+    "a": "A second person checks every proposal.",
+    "w": [
+     "Sofía will stop sending proposals.",
+     "They'll use new software."
+    ],
+    "ev": "every proposal is checked by a second person"
+   },
+   {
+    "q": "How did one of the clients react?",
+    "a": "They thanked her for being honest.",
+    "w": [
+     "They cancelled the contract.",
+     "They didn't reply."
+    ],
+    "ev": "thanked her for being honest"
+   }
+  ],
+  "after": "Apologise to your teacher for three things: something tiny, something small, and something serious. Choose the right phrase for each."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "the three-part apology",
+  "intro": "A strong apology in English is short: say sorry, own it, fix it. Long explanations sound like excuses.",
+  "pattern": [
+   "I'm really sorry",
+   "+That was my mistake",
+   "=It won't happen again because…"
+  ],
+  "note": "<b>Sorry / my bad</b> for tiny things · <b>Sorry about that</b> for small ones · <b>I'm really sorry</b> or <b>I apologise for</b> + noun / -ing for real problems.",
+  "examples": [
+   "**I'm really sorry.** **That was my mistake.**",
+   "**I apologise for** the delay.",
+   "**I apologise for sending** the wrong file.",
+   "**It won't happen again** — I've set a reminder."
+  ],
+  "wrong": "I apologise for ~~send~~ the wrong file.",
+  "right": "I apologise for **sending** the wrong file.",
+  "task": "Your turn · choose the best apology",
+  "drill": [
+   {
+    "p": "You bumped into someone's chair.",
+    "a": "Oh, sorry!",
+    "w": [
+     "I take full responsibility.",
+     "I apologise for the inconvenience caused."
+    ]
+   },
+   {
+    "p": "Formal email: you sent the invoice late.",
+    "a": "I apologise for the late invoice.",
+    "w": [
+     "I apologise for send the invoice late.",
+     "I'm apologise for the late invoice."
+    ]
+   },
+   {
+    "p": "Your mistake cost a client a day of work.",
+    "a": "I'm really sorry. That was my mistake.",
+    "w": [
+     "My bad.",
+     "Sorry, but the system was slow."
+    ]
+   },
+   {
+    "p": "Promise a fix.",
+    "a": "It won't happen again.",
+    "w": [
+     "It won't happen more.",
+     "It doesn't happen again."
+    ]
+   }
+  ],
+  "say": "Now apologise to your teacher for being late, in three parts."
  }
 };

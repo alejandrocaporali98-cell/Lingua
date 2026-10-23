@@ -397,5 +397,130 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A week of phrasal verbs",
+  "kicker": "Work · Email chain",
+  "title": "The project that almost fell apart",
+  "before": "When a project at work has a problem, what do you usually do first?",
+  "text": [
+   "Monday. Jen to the team: \"Bad news. The supplier has [[run out of]] the material we need. They can't send anything until next month. We need to [[come up with]] a plan B by Wednesday.\"",
+   "Tuesday. Raúl: \"I suggest we [[put off]] the launch by two weeks. I've spoken to the client — they're not happy, but they understand. Meanwhile, I'll try another supplier in Monterrey. I [[get on with]] their sales manager really well.\"",
+   "Wednesday. Jen: \"Good news! Raúl's contact can deliver on Friday. The price is a bit higher, but we [[worked out]] the numbers, and we'll still make a profit. Now we just need to [[sort out]] the shipping.\"",
+   "Friday. Raúl: \"The delivery [[turned up]] at 8 a.m. Everything is here. I'm [[looking forward to]] a quiet weekend. Thanks, everyone — that could have gone very badly.\""
+  ],
+  "gloss": {
+   "run out of": "Have no more of something.",
+   "come up with": "Produce an idea or a solution.",
+   "put off": "Move something to a later date. Postpone.",
+   "get on with": "Have a good relationship with someone.",
+   "worked out": "Here: calculated. It can also mean train, or end well.",
+   "sort out": "Solve or organise a problem.",
+   "turned up": "Arrived.",
+   "looking forward to": "Excited about something coming. + noun / -ing."
+  },
+  "questions": [
+   {
+    "q": "What was the problem on Monday?",
+    "a": "The supplier had no more material.",
+    "w": [
+     "The client cancelled.",
+     "The shipping was late."
+    ],
+    "ev": "The supplier has run out of the material we need."
+   },
+   {
+    "q": "What did Raúl suggest?",
+    "a": "Moving the launch two weeks later",
+    "w": [
+     "Cancelling the project",
+     "Lowering the price"
+    ],
+    "ev": "put off the launch by two weeks"
+   },
+   {
+    "q": "Why did Raúl contact the Monterrey supplier?",
+    "a": "He has a good relationship with their sales manager.",
+    "w": [
+     "They're the cheapest.",
+     "The client asked him to."
+    ],
+    "ev": "I get on with their sales manager really well."
+   },
+   {
+    "q": "What was the downside of the new supplier?",
+    "a": "A slightly higher price",
+    "w": [
+     "A late delivery",
+     "Bad quality"
+    ],
+    "ev": "The price is a bit higher"
+   },
+   {
+    "q": "When did the delivery arrive?",
+    "a": "Friday at 8 a.m.",
+    "w": [
+     "Wednesday",
+     "Next month"
+    ],
+    "ev": "The delivery turned up at 8 a.m."
+   }
+  ],
+  "after": "Tell your teacher about a problem you <b>sorted out</b> at work. Did you have to <b>put something off</b> or <b>come up with</b> a new idea?"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "where the object goes: put it off",
+  "intro": "With many two-word phrasal verbs, the object can go after or in the middle. But if it's a pronoun (it, them), it must go in the middle.",
+  "pattern": [
+   "put",
+   "+it / the meeting",
+   "=off"
+  ],
+  "note": "✓ put off <b>the meeting</b> ✓ put <b>the meeting</b> off ✓ put <b>it</b> off ✗ put off <b>it</b>. Three-word verbs (run out of, come up with) never split.",
+  "examples": [
+   "Let's **put** the meeting **off**.",
+   "Let's **put it off** until Friday.",
+   "Can you **sort it out**?",
+   "We've **run out of** coffee."
+  ],
+  "wrong": "Let's put off ~~it~~.",
+  "right": "Let's **put it off**.",
+  "task": "Your turn · choose the correct sentence",
+  "drill": [
+   {
+    "p": "The meeting → later. Use \"it\".",
+    "a": "Let's put it off.",
+    "w": [
+     "Let's put off it.",
+     "Let's off put it."
+    ]
+   },
+   {
+    "p": "The problem → solve it.",
+    "a": "I'll sort it out.",
+    "w": [
+     "I'll sort out it.",
+     "I'll out sort it."
+    ]
+   },
+   {
+    "p": "No more paper in the printer.",
+    "a": "We've run out of paper.",
+    "w": [
+     "We've run paper out of.",
+     "We've run out paper."
+    ]
+   },
+   {
+    "p": "The offer → refuse it.",
+    "a": "She turned it down.",
+    "w": [
+     "She turned down it.",
+     "She down turned it."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher about your week using four phrasal verbs from the lesson."
+ }
 };

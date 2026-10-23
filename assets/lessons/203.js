@@ -397,5 +397,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Disagreeing at dinner",
+  "kicker": "Conversation · Case study",
+  "title": "How to disagree and still get invited back",
+  "before": "When you disagree with a friend, do you say it directly or do you stay quiet?",
+  "text": [
+   "At a dinner last week, my friend Lucas said that working from home was \"obviously\" better for everyone. Half the table nodded. I didn't agree at all, but I also didn't want to start a fight over dessert.",
+   "So I started with \"[[That's a good point]] — you don't waste two hours in traffic.\" That bought me a couple of seconds, and it showed I was listening. Then: \"[[I see what you mean, but]] I'm [[not sure I agree with that]] for everyone. When I worked from home, I felt [[kind of]] lonely.\"",
+   "Lucas pushed back, so I slowed down. \"[[Well, it's complicated]]. [[The way I see it]], it depends on the job and the person. Some people need the office. [[How do I put this]]... I need people around me to think.\"",
+   "Nobody changed their mind, but the conversation stayed friendly. Later Lucas said, \"[[To be honest]], I hadn't thought about the lonely part.\" That's the goal of a good disagreement: not to win, but to leave the other person with something to think about."
+  ],
+  "gloss": {
+   "That's a good point": "Agrees with part of it and gives you time to think.",
+   "I see what you mean, but": "Shows you understand before you disagree.",
+   "not sure I agree with that": "Disagrees clearly but gently.",
+   "kind of": "A little. Makes your words less strong.",
+   "Well, it's complicated": "A natural start when you need to organise your thoughts.",
+   "The way I see it": "Presents your view as a perspective, not a fact.",
+   "How do I put this": "Shows you're looking for the right words.",
+   "To be honest": "Your real opinion is coming."
+  },
+  "questions": [
+   {
+    "q": "What did Lucas say?",
+    "a": "Working from home is better for everyone.",
+    "w": [
+     "Offices are better for everyone.",
+     "Traffic is getting worse."
+    ],
+    "ev": "working from home was \"obviously\" better for everyone"
+   },
+   {
+    "q": "Why did the writer start with \"That's a good point\"?",
+    "a": "To get time to think and show they were listening",
+    "w": [
+     "Because they completely agreed",
+     "To end the conversation"
+    ],
+    "ev": "That bought me a couple of seconds"
+   },
+   {
+    "q": "What was the writer's problem with working from home?",
+    "a": "They felt lonely.",
+    "w": [
+     "The internet was slow.",
+     "They worked too much."
+    ],
+    "ev": "I felt kind of lonely"
+   },
+   {
+    "q": "True or false: Lucas changed his mind.",
+    "a": "False",
+    "w": [
+     "True"
+    ],
+    "ev": "Nobody changed their mind"
+   },
+   {
+    "q": "What is the goal of a good disagreement, according to the writer?",
+    "a": "To give the other person something to think about",
+    "w": [
+     "To win the argument",
+     "To avoid the topic"
+    ],
+    "ev": "not to win, but to leave the other person with something to think about"
+   }
+  ],
+  "after": "Your teacher will give an opinion. Disagree politely using <b>I see what you mean, but…</b> and <b>The way I see it…</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "softening a disagreement",
+  "intro": "\"You're wrong\" and \"I don't agree\" are correct but heavy. English speakers wrap disagreement in a few extra words.",
+  "pattern": [
+   "I'm not sure",
+   "+I agree / that's true",
+   "=for everyone"
+  ],
+  "note": "Softeners: <b>I'm not sure…</b>, <b>I see what you mean, but…</b>, <b>kind of</b>, <b>a bit</b>, <b>it depends</b>. They make the same point — without the fight.",
+  "examples": [
+   "**I'm not sure** I agree with that.",
+   "**I see what you mean, but** it's not that simple.",
+   "It's **a bit** more complicated than that.",
+   "**It depends** on the person."
+  ],
+  "wrong": "~~You're wrong.~~ Working from home is bad.",
+  "right": "**I'm not sure I agree.** Working from home isn't for everyone.",
+  "task": "Your turn · choose the softer version",
+  "drill": [
+   {
+    "p": "\"That's not true.\"",
+    "a": "I'm not sure that's true.",
+    "w": [
+     "That's very not true.",
+     "No, is not true."
+    ]
+   },
+   {
+    "p": "\"You're wrong about the price.\"",
+    "a": "I think the price might be a bit different.",
+    "w": [
+     "You're a bit wrong about the price.",
+     "The price is wrong, you know."
+    ]
+   },
+   {
+    "p": "\"Remote work is bad.\"",
+    "a": "The way I see it, remote work isn't for everyone.",
+    "w": [
+     "The way I see, remote work is bad.",
+     "In my way of seeing, remote work is bad."
+    ]
+   },
+   {
+    "p": "\"It's simple.\"",
+    "a": "Well, it's complicated.",
+    "w": [
+     "Well, it's complicate.",
+     "Well, it's a complicated."
+    ]
+   }
+  ],
+  "say": "Now disagree softly with this: \"Social media is bad for everyone.\""
+ }
 };

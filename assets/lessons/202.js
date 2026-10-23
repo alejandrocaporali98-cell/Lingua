@@ -397,5 +397,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "The wrong train to Florence",
+  "kicker": "Travel · Story",
+  "title": "How I ended up in the wrong city",
+  "before": "Have you ever taken the wrong bus, train or flight? What happened?",
+  "text": [
+   "[[You'll never guess what happened]] on my trip to Italy. [[So there I was]], at Rome station with a coffee and a sandwich, looking for the 9:15 train to Florence. Platform 7. I got on, found a seat and fell asleep.",
+   "Two hours later I woke up and checked my phone. Something was wrong — the map showed the sea. [[It turned out that]] there were two trains on platform 7 that morning, and mine had left five minutes before. I was on the train to Naples.",
+   "I [[was about to]] panic when a woman next to me asked if I was OK. I explained, in my terrible Italian. She laughed, called her son, and [[out of nowhere]] I had a plan: get off in Naples, have lunch at his restaurant, and take the evening train back.",
+   "[[Long story short]], I [[ended up spending]] a whole day in Naples, eating the best pizza of my life with people I'd never met. I arrived in Florence at midnight. Worst mistake, best day of the trip."
+  ],
+  "gloss": {
+   "You'll never guess what happened": "Builds curiosity before the story starts.",
+   "So there I was": "Drops the listener straight into the scene.",
+   "It turned out that": "Introduces the thing you didn't know at the time.",
+   "was about to": "Was going to do something, but didn't.",
+   "out of nowhere": "Suddenly, unexpectedly.",
+   "Long story short": "Jumps to the end without all the details.",
+   "ended up spending": "end up + -ing = how things finished, often unexpectedly."
+  },
+  "questions": [
+   {
+    "q": "Where did the writer want to go?",
+    "a": "Florence",
+    "w": [
+     "Naples",
+     "Rome"
+    ],
+    "ev": "the 9:15 train to Florence"
+   },
+   {
+    "q": "How did the writer realise there was a problem?",
+    "a": "The map on their phone showed the sea.",
+    "w": [
+     "The conductor told them.",
+     "The train stopped in Florence."
+    ],
+    "ev": "the map showed the sea"
+   },
+   {
+    "q": "Why did the writer get on the wrong train?",
+    "a": "Two trains used the same platform, and theirs had already left.",
+    "w": [
+     "They read the wrong ticket.",
+     "Their train was cancelled."
+    ],
+    "ev": "there were two trains on platform 7 that morning"
+   },
+   {
+    "q": "Who helped the writer?",
+    "a": "A woman on the train and her son",
+    "w": [
+     "A police officer",
+     "A tour guide"
+    ],
+    "ev": "called her son"
+   },
+   {
+    "q": "How does the writer feel about the mistake now?",
+    "a": "It became the best day of the trip.",
+    "w": [
+     "They're still angry.",
+     "They never travel by train now."
+    ],
+    "ev": "Worst mistake, best day of the trip."
+   }
+  ],
+  "after": "Tell your teacher about a small travel disaster. Use <b>So there I was…</b>, <b>It turned out that…</b> and <b>I ended up…</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "end up + -ing",
+  "intro": "This is how English tells the unexpected result of a story — what finally happened, often not what you planned.",
+  "pattern": [
+   "I ended up",
+   "+-ing / in + place",
+   "=…"
+  ],
+  "note": "<b>end up + -ing</b>: I ended up staying. <b>end up + place</b>: We ended up in Naples. Never <b>end up to</b>.",
+  "examples": [
+   "I **ended up spending** a day in Naples.",
+   "We **ended up** in a tiny village.",
+   "She **ended up getting** the job.",
+   "They **ended up ordering** pizza."
+  ],
+  "wrong": "I ended up ~~to stay~~ in Naples.",
+  "right": "I ended up **staying** in Naples.",
+  "task": "Your turn · choose the natural sentence",
+  "drill": [
+   {
+    "p": "You planned to go out, but you watched TV all night.",
+    "a": "I ended up watching TV all night.",
+    "w": [
+     "I ended up to watch TV all night.",
+     "I ended to watch TV all night."
+    ]
+   },
+   {
+    "p": "You got lost and arrived at the wrong hotel.",
+    "a": "We ended up at the wrong hotel.",
+    "w": [
+     "We ended up to the wrong hotel.",
+     "We finished up in the wrong hotel to."
+    ]
+   },
+   {
+    "p": "Something surprising you discovered later.",
+    "a": "It turned out that the shop was closed.",
+    "w": [
+     "It turned that the shop was closed.",
+     "It resulted that the shop was closed."
+    ]
+   },
+   {
+    "p": "You almost left, but you didn't.",
+    "a": "I was about to leave when she called.",
+    "w": [
+     "I was about leave when she called.",
+     "I was about to leaving when she called."
+    ]
+   }
+  ],
+  "say": "Now tell a short story that ends with \"…and I ended up…\"."
+ }
 };

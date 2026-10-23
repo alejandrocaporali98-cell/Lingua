@@ -407,5 +407,128 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Slang explained to a parent",
+  "kicker": "Internet · Humour",
+  "title": "My dad tried to understand my group chat",
+  "before": "Which internet words do you use with friends but never with teachers?",
+  "text": [
+   "Last week my dad looked at my phone and asked, \"What does 'that's [[mid]]' mean? Is it a measurement?\" So I sat down and explained my group chat to him. It took an hour.",
+   "First, \"mid\" means average — not terrible, just nothing special. If something is great, it's a [[W]]. If it's a disaster, it's an L. When my friend failed his driving test, we all wrote \"massive L\". He laughed. That's important: with friends it's a joke.",
+   "Then there was \"[[low key]]\", which means \"a little\" or \"secretly\", and \"[[no cap]]\", which means \"I'm not lying\". My dad tried using it at dinner: \"This lasagna is the best, no cap.\" My sister nearly fell off her chair.",
+   "The funniest was \"[[touch grass]]\". It means you've been online too long and need to go outside. My dad loved that one. Now, every time I'm on my phone for hours, he says it. I [[lock in]], finish my homework, and go for a walk. Honestly, it's a W."
+  ],
+  "gloss": {
+   "mid": "Average. Not bad, not good.",
+   "W": "A W = a win, a good result. An L = a loss.",
+   "low key": "A little, or secretly. \"High key\" = openly, a lot.",
+   "no cap": "No lie. I mean it. Very informal.",
+   "touch grass": "A joke: you've been online too long. Go outside.",
+   "lock in": "Concentrate and get something done."
+  },
+  "questions": [
+   {
+    "q": "What did the dad think \"mid\" was?",
+    "a": "A measurement",
+    "w": [
+     "A food",
+     "A video game"
+    ],
+    "ev": "Is it a measurement?"
+   },
+   {
+    "q": "Why did the friends write \"massive L\"?",
+    "a": "Their friend failed his driving test.",
+    "w": [
+     "Their friend won a game.",
+     "Their friend bought a car."
+    ],
+    "ev": "When my friend failed his driving test"
+   },
+   {
+    "q": "Why did the sister nearly fall off her chair?",
+    "a": "Because her dad used slang at dinner",
+    "w": [
+     "Because the lasagna was bad",
+     "Because her dad was angry"
+    ],
+    "ev": "This lasagna is the best, no cap."
+   },
+   {
+    "q": "When does the dad say \"touch grass\" now?",
+    "a": "When the writer is on the phone for hours",
+    "w": [
+     "When the writer is at school",
+     "When the writer does homework"
+    ],
+    "ev": "every time I'm on my phone for hours, he says it"
+   },
+   {
+    "q": "What is the writer's point about slang with friends?",
+    "a": "It's a joke between friends.",
+    "w": [
+     "It's always rude.",
+     "You can use it with teachers."
+    ],
+    "ev": "with friends it's a joke"
+   }
+  ],
+  "after": "Explain three words from your own group chat to your teacher. When is it OK to use them, and when is it not?"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "switching register: informal → neutral",
+  "intro": "Slang isn't wrong — it's just for one place. Good speakers switch to neutral English for teachers, emails and strangers.",
+  "pattern": [
+   "Slang with friends",
+   "+→",
+   "=neutral in class"
+  ],
+  "note": "<b>mid</b> → it's OK / average. <b>no cap</b> → honestly. <b>W</b> → great news. <b>lock in</b> → concentrate. <b>low key</b> → a little.",
+  "examples": [
+   "The film was **mid**. → The film was **just OK**.",
+   "**No cap**, it's good. → **Honestly**, it's good.",
+   "Passing that test was a **W**. → Passing that test was **great news**.",
+   "I need to **lock in**. → I need to **concentrate**."
+  ],
+  "wrong": "Dear Ms Hart, the homework was ~~low key~~ hard.",
+  "right": "Dear Ms Hart, the homework was **a little** hard.",
+  "task": "Your turn · choose the version for a teacher",
+  "drill": [
+   {
+    "p": "\"The book was mid.\"",
+    "a": "The book was average.",
+    "w": [
+     "The book was mid, honestly.",
+     "The book was low key mid."
+    ]
+   },
+   {
+    "p": "\"No cap, I studied all weekend.\"",
+    "a": "Honestly, I studied all weekend.",
+    "w": [
+     "No lie cap, I studied all weekend.",
+     "Fr, I studied all weekend."
+    ]
+   },
+   {
+    "p": "\"I have to lock in for the exam.\"",
+    "a": "I have to concentrate for the exam.",
+    "w": [
+     "I have to lock for the exam.",
+     "I have to lock-in on the exam, fr."
+    ]
+   },
+   {
+    "p": "\"Getting into the team was a huge W.\"",
+    "a": "Getting into the team was great news.",
+    "w": [
+     "Getting into the team was a huge win, no cap.",
+     "Getting into the team was W."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher about your weekend twice: once for a friend, once for a teacher."
+ }
 };

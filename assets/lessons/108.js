@@ -407,5 +407,124 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "When a post blows up",
+  "kicker": "Online life · True story",
+  "title": "My video got 2 million views. Here's how it felt.",
+  "before": "Imagine one of your posts suddenly gets millions of views. How would you feel?",
+  "text": [
+   "Last spring I [[posted]] a twelve-second video of my dog \"helping\" me with maths homework — he sat on my notebook and refused to move. I [[posted it last night]], went to sleep, and woke up to 2 million views. It completely [[blew up]].",
+   "The first day was amazing. People I didn't know were sharing it, and even a famous account reposted it. I spent hours reading comments. Some people asked for more dog videos; others just wrote \"same\".",
+   "By day three, it was too much. I couldn't stop checking my phone. I [[was scrolling]] at dinner, in class, in bed. And when my best friend sent me a message, I didn't answer for hours — she said I [[left her on read]].",
+   "So I deleted the app for two weeks. I'm [[taking a break from]] it again now, actually. The video was funny, but it was [[just a meme]]. My dog doesn't care about views. He still sits on my homework every day."
+  ],
+  "gloss": {
+   "posted": "Post = put something on social media. You post ON Instagram, not IN it.",
+   "posted it last night": "\"Post\" is the verb and the noun.",
+   "blew up": "It blew up = it got a huge number of views very quickly.",
+   "was scrolling": "Scroll = move through a feed without a plan.",
+   "left her on read": "Saw her message and didn't reply.",
+   "taking a break from": "Staying off an app for a while.",
+   "just a meme": "Not serious. Just a joke."
+  },
+  "questions": [
+   {
+    "q": "What was the video about?",
+    "a": "The writer's dog sitting on their homework",
+    "w": [
+     "The writer doing a dance",
+     "A famous account's dog"
+    ],
+    "ev": "he sat on my notebook and refused to move"
+   },
+   {
+    "q": "How did the writer feel on the first day?",
+    "a": "Excited — it was amazing.",
+    "w": [
+     "Embarrassed",
+     "Bored"
+    ],
+    "ev": "The first day was amazing."
+   },
+   {
+    "q": "What was the problem by day three?",
+    "a": "The writer couldn't stop checking their phone.",
+    "w": [
+     "People wrote angry comments.",
+     "The video was deleted."
+    ],
+    "ev": "I couldn't stop checking my phone."
+   },
+   {
+    "q": "Why was the best friend upset?",
+    "a": "The writer didn't answer her message for hours.",
+    "w": [
+     "The writer didn't share the video.",
+     "The writer forgot her birthday."
+    ],
+    "ev": "I didn't answer for hours"
+   },
+   {
+    "q": "What did the writer do in the end?",
+    "a": "Deleted the app for two weeks",
+    "w": [
+     "Made more dog videos",
+     "Bought a new phone"
+    ],
+    "ev": "So I deleted the app for two weeks."
+   }
+  ],
+  "after": "Tell your teacher about something you <b>saw online</b> that <b>blew up</b>. Have you ever <b>taken a break</b> from an app?"
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "past simple or past continuous?",
+  "intro": "Stories need both: one for the background that was going on, one for the things that happened.",
+  "forms": [
+   {
+    "name": "Past continuous",
+    "form": "was / were + -ing",
+    "tl": "span",
+    "use": "The background: what was happening around a moment.",
+    "examples": [
+     "I **was scrolling** in bed.",
+     "We **were having** dinner."
+    ]
+   },
+   {
+    "name": "Past simple",
+    "form": "posted · woke up · deleted",
+    "tl": "point",
+    "use": "The events: short, finished actions in order.",
+    "examples": [
+     "I **posted** it and **went** to sleep.",
+     "She **sent** me a message."
+    ]
+   }
+  ],
+  "task": "Sort them · background or event?",
+  "sort": [
+   {
+    "s": "I ___ TikTok when my mum called me.",
+    "f": 0,
+    "answer": "was watching"
+   },
+   {
+    "s": "Then she ___ my phone away!",
+    "f": 1,
+    "answer": "took"
+   },
+   {
+    "s": "We ___ dinner when the video blew up.",
+    "f": 0,
+    "answer": "were having"
+   },
+   {
+    "s": "Yesterday I ___ the app.",
+    "f": 1,
+    "answer": "deleted"
+   }
+  ]
+ }
 };

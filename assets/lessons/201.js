@@ -397,5 +397,128 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "The question that opens people up",
+  "kicker": "Conversation · Essay",
+  "title": "Stop asking people about their hobbies",
+  "before": "When you meet someone new, what's the first question you usually ask?",
+  "text": [
+   "\"What are your hobbies?\" is a perfectly correct question. It's also the fastest way to make a conversation feel like a job interview. People answer with a list — \"reading, music, travelling\" — and then there's a silence.",
+   "Try \"[[What do you do for fun]]?\" instead. It sounds warmer, and it invites a story, not a list. Last month at a friend's dinner, I asked a quiet guy that question. He said, \"[[I'd say]] mostly cooking. [[I'm really into]] fermenting things right now — kimchi, hot sauce.\" We talked for forty minutes.",
+   "The other half of a good conversation is giving something back. If he'd asked me about cooking, I could say, \"[[I'm not much of a]] cook, honestly,\" and the topic dies. Better: \"I'm not much of a cook, but I love eating spicy food. [[Tell me more]] — how do you make hot sauce?\"",
+   "And never forget the two words that keep things balanced: \"[[How about you]]?\" A conversation is like tennis. If you keep the ball, nobody's playing."
+  ],
+  "gloss": {
+   "What do you do for fun": "Warmer and more natural than \"What are your hobbies?\"",
+   "I'd say": "Introduces your answer gently and gives you a moment to think.",
+   "I'm really into": "You enjoy it a lot. Stronger and more current than \"I like\".",
+   "I'm not much of a": "Says you don't really do or enjoy something, without sounding negative.",
+   "Tell me more": "Shows interest and hands the conversation back.",
+   "How about you": "Passes the question back. Keeps the conversation balanced."
+  },
+  "questions": [
+   {
+    "q": "What's the problem with \"What are your hobbies?\"",
+    "a": "It feels like a job interview and gets a list.",
+    "w": [
+     "It's grammatically wrong.",
+     "It's too personal."
+    ],
+    "ev": "the fastest way to make a conversation feel like a job interview"
+   },
+   {
+    "q": "What is the quiet guy into right now?",
+    "a": "Fermenting things like kimchi and hot sauce",
+    "w": [
+     "Running marathons",
+     "Reading novels"
+    ],
+    "ev": "fermenting things right now"
+   },
+   {
+    "q": "How long did their conversation last?",
+    "a": "Forty minutes",
+    "w": [
+     "Four minutes",
+     "The whole night"
+    ],
+    "ev": "We talked for forty minutes."
+   },
+   {
+    "q": "Why is \"I'm not much of a cook, honestly\" a weak answer alone?",
+    "a": "The topic dies.",
+    "w": [
+     "It's rude.",
+     "It's too long."
+    ],
+    "ev": "and the topic dies"
+   },
+   {
+    "q": "What does the tennis comparison mean?",
+    "a": "Both people need to take turns.",
+    "w": [
+     "Conversations are competitive.",
+     "You should talk about sport."
+    ],
+    "ev": "If you keep the ball, nobody's playing."
+   }
+  ],
+  "after": "Answer <b>What do you do for fun?</b> with a short story, not a list. Then pass it back with <b>How about you?</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "be into / not much of a",
+  "intro": "Two flexible patterns for likes and dislikes that sound far more natural than \"I like\" and \"I don't like\".",
+  "pattern": [
+   "I'm really into",
+   "+noun / -ing",
+   "=right now"
+  ],
+  "note": "<b>be into + noun / -ing</b>: I'm into climbing. <b>not much of a + person noun</b>: I'm not much of a reader / runner / cook.",
+  "examples": [
+   "I'm **really into** climbing at the moment.",
+   "She's **into** fermenting things.",
+   "I'm **not much of a** reader.",
+   "He's **not much of a** morning person."
+  ],
+  "wrong": "I'm into ~~to climb~~.",
+  "right": "I'm into **climbing**.",
+  "task": "Your turn · choose the natural sentence",
+  "drill": [
+   {
+    "p": "You love podcasts these days.",
+    "a": "I'm really into podcasts these days.",
+    "w": [
+     "I'm really in podcasts these days.",
+     "I'm really into listen podcasts these days."
+    ]
+   },
+   {
+    "p": "You don't cook much.",
+    "a": "I'm not much of a cook.",
+    "w": [
+     "I'm not much a cook.",
+     "I'm not very of a cook."
+    ]
+   },
+   {
+    "p": "You started running and love it.",
+    "a": "I'm really into running right now.",
+    "w": [
+     "I'm really into run right now.",
+     "I'm really onto running right now."
+    ]
+   },
+   {
+    "p": "You hate mornings.",
+    "a": "I'm not much of a morning person.",
+    "w": [
+     "I'm not much morning person.",
+     "I'm not a much morning person."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher one thing you're really into and one thing you're not much of a fan of."
+ }
 };

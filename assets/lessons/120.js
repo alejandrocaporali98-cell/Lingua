@@ -407,5 +407,121 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Beyond \"I'm fine\"",
+  "kicker": "Wellbeing · Advice column",
+  "title": "\"How are you?\" — and how to really answer",
+  "before": "How do you usually answer \"How are you?\" Is it always true?",
+  "text": [
+   "Dear Advice Column, every time someone asks me how I am, I say \"Fine.\" But this month I'm not fine. I'm [[shattered]] from studying, and [[I'm nervous about]] my exams in December. How do I say that without making it a big drama? — Emma, 16",
+   "Dear Emma, you don't need a big speech. Small honest phrases work best. Try \"[[I'm a bit stressed about exams]].\" The words \"a bit\" are important: they're honest, but they don't sound dramatic. Or try \"[[It's been a lot lately]]\" — people will understand.",
+   "And when a friend tells you they're having a hard time, keep it simple too. \"[[That sucks]]. I'm sorry,\" is perfect. Then you can ask, \"[[Do you want to talk about it]]?\" — and accept it if they say no. Sometimes just saying \"[[I'm here if you need me]]\" is enough.",
+   "Finally, balance the hard things with the good ones. What's coming that you're excited about? \"I'm [[really looking forward to]] the holidays\" is a great sentence to end a hard week. Good luck with your exams!"
+  ],
+  "gloss": {
+   "shattered": "Very, very tired.",
+   "I'm nervous about": "Feelings use BE in English: I am nervous, not \"I have nervous\".",
+   "I'm a bit stressed about exams": "\"A bit\" makes it honest but not dramatic.",
+   "It's been a lot lately": "Things have been hard, without giving details.",
+   "That sucks": "What friends really say. Informal.",
+   "Do you want to talk about it": "Offers help without pushing.",
+   "I'm here if you need me": "Simple, kind and not dramatic.",
+   "really looking forward to": "look forward to + noun / -ing = be excited about something coming."
+  },
+  "questions": [
+   {
+    "q": "What is Emma's problem?",
+    "a": "She always says \"Fine\" but she's tired and nervous.",
+    "w": [
+     "She doesn't have friends.",
+     "She failed her exams."
+    ],
+    "ev": "But this month I'm not fine."
+   },
+   {
+    "q": "Why is \"a bit\" important, according to the column?",
+    "a": "It's honest but not dramatic.",
+    "w": [
+     "It's more polite to teachers.",
+     "It makes the problem sound bigger."
+    ],
+    "ev": "they're honest, but they don't sound dramatic"
+   },
+   {
+    "q": "What should you do if your friend says no to talking?",
+    "a": "Accept it.",
+    "w": [
+     "Ask again later the same day.",
+     "Tell their parents."
+    ],
+    "ev": "accept it if they say no"
+   },
+   {
+    "q": "How does the column suggest ending a hard week?",
+    "a": "Think of something good that's coming.",
+    "w": [
+     "Study more.",
+     "Say \"I'm fine\"."
+    ],
+    "ev": "balance the hard things with the good ones"
+   }
+  ],
+  "after": "Tell your teacher honestly how your week has been. Use one phrase with <b>a bit</b> and one thing you're <b>looking forward to</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "look forward to + -ing",
+  "intro": "This phrase is a trap: the \"to\" is a preposition, not part of the verb. So the next verb takes -ing.",
+  "pattern": [
+   "I'm looking forward to",
+   "+-ing / a noun",
+   "=."
+  ],
+  "note": "✓ looking forward to <b>seeing</b> you. ✓ looking forward to <b>the holidays</b>. ✗ looking forward to <b>see</b> you.",
+  "examples": [
+   "I'm **looking forward to the holidays**.",
+   "I'm **looking forward to seeing** my cousins.",
+   "We're **looking forward to going** to the beach.",
+   "I **look forward to hearing** from you. (email)"
+  ],
+  "wrong": "I'm looking forward to ~~see~~ you.",
+  "right": "I'm looking forward to **seeing** you.",
+  "task": "Your turn · choose the correct sentence",
+  "drill": [
+   {
+    "p": "You're excited about the weekend.",
+    "a": "I'm looking forward to the weekend.",
+    "w": [
+     "I'm looking forward the weekend.",
+     "I'm looking forward for the weekend."
+    ]
+   },
+   {
+    "p": "You'll see your grandma soon.",
+    "a": "I'm looking forward to seeing my grandma.",
+    "w": [
+     "I'm looking forward to see my grandma.",
+     "I look forward see my grandma."
+    ]
+   },
+   {
+    "p": "You feel nervous about the exam.",
+    "a": "I'm nervous about the exam.",
+    "w": [
+     "I have nervous about the exam.",
+     "I'm nervous of the exam."
+    ]
+   },
+   {
+    "p": "End a formal email.",
+    "a": "I look forward to hearing from you.",
+    "w": [
+     "I look forward to hear from you.",
+     "I'm looking forward hearing from you."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher three things you're looking forward to this year."
+ }
 };

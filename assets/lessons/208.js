@@ -398,5 +398,125 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Catching up after ten years",
+  "kicker": "Conversation · Dialogue",
+  "title": "Running into an old friend at the airport",
+  "before": "Have you ever met an old friend by chance after many years? What did you talk about?",
+  "text": [
+   "Last month, waiting for a flight in Houston, I heard someone shout my name. It was Iván, my best friend from university. The last time I saw him was at our graduation — [[it was ages ago]].",
+   "We had an hour, so we sat down for coffee. \"So, what happened after uni?\" he asked. \"I [[used to]] work in a bank, but I hated it. Then in 2019 I moved to Monterrey and started my own business.\" He laughed. \"You always said you'd do that.\"",
+   "\"[[Have you ever]] been back to the old campus?\" I asked. \"Once. [[I was going to]] visit our old professor, [[but]] [[by the time I got there]], she'd retired.\" \"And are you still playing the guitar?\" \"No, I stopped years ago. [[I've never]] had time since the kids.\"",
+   "Then they called his flight. We swapped numbers and promised to keep in touch. On the plane, I realised we had [[just]] talked about ten years in fifty minutes — and it felt like no time had passed at all."
+  ],
+  "gloss": {
+   "it was ages ago": "A very long time ago.",
+   "used to": "Something true in the past, but not now.",
+   "Have you ever": "Present perfect for life experiences.",
+   "I was going to": "Something you planned to do, but didn't.",
+   "but": "I was going to…, but… = the plan didn't happen.",
+   "by the time I got there": "Something else had already happened first.",
+   "I've never": "Present perfect: no time in your life until now.",
+   "just": "A very short time ago."
+  },
+  "questions": [
+   {
+    "q": "When did they last see each other?",
+    "a": "At their graduation",
+    "w": [
+     "Last year",
+     "In 2019"
+    ],
+    "ev": "The last time I saw him was at our graduation"
+   },
+   {
+    "q": "Why did the writer leave the bank?",
+    "a": "They hated it.",
+    "w": [
+     "They moved abroad.",
+     "The bank closed."
+    ],
+    "ev": "I used to work in a bank, but I hated it."
+   },
+   {
+    "q": "Why didn't Iván see their old professor?",
+    "a": "She had already retired.",
+    "w": [
+     "He forgot.",
+     "He was ill."
+    ],
+    "ev": "she'd retired"
+   },
+   {
+    "q": "Why did Iván stop playing guitar?",
+    "a": "He hasn't had time since his kids were born.",
+    "w": [
+     "He broke his guitar.",
+     "He never liked it."
+    ],
+    "ev": "I've never had time since the kids."
+   },
+   {
+    "q": "How did the conversation feel?",
+    "a": "Like no time had passed",
+    "w": [
+     "Uncomfortable",
+     "Too short to say anything"
+    ],
+    "ev": "it felt like no time had passed at all"
+   }
+  ],
+  "after": "Catch up with your teacher as if you hadn't met for years. Use <b>I used to…</b>, <b>I've never…</b> and <b>I was going to…, but…</b>"
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "used to or past simple?",
+  "intro": "Both talk about the past. Used to is for habits and situations that lasted. The past simple is for one-time events.",
+  "forms": [
+   {
+    "name": "used to",
+    "form": "used to + verb",
+    "tl": "span",
+    "use": "Repeated habits or long situations in the past that are not true now.",
+    "examples": [
+     "I **used to** work in a bank.",
+     "We **used to** play every Friday."
+    ]
+   },
+   {
+    "name": "Past simple",
+    "form": "moved · started · saw",
+    "tl": "point",
+    "use": "A single event at a specific time.",
+    "examples": [
+     "In 2019 I **moved** to Monterrey.",
+     "The last time I **saw** him was in 2014."
+    ]
+   }
+  ],
+  "task": "Sort them · used to or past simple?",
+  "sort": [
+   {
+    "s": "When I was a kid, I ___ hate vegetables.",
+    "f": 0,
+    "answer": "used to"
+   },
+   {
+    "s": "I ___ my first car in 2015.",
+    "f": 1,
+    "answer": "bought"
+   },
+   {
+    "s": "We ___ go to the beach every summer.",
+    "f": 0,
+    "answer": "used to"
+   },
+   {
+    "s": "Last Friday I ___ into an old friend.",
+    "f": 1,
+    "answer": "ran"
+   }
+  ]
+ }
 };

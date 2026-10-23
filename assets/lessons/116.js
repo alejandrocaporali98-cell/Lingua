@@ -407,5 +407,130 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "AI in the classroom",
+  "kicker": "Technology · Debate",
+  "title": "Should students use AI for homework?",
+  "before": "Do you use AI for school? For what exactly?",
+  "text": [
+   "Our English class had a debate last week: should students be allowed to use AI for homework? Half the class said yes, half said no. Here are the best arguments from both sides.",
+   "Daniel was on the \"yes\" side. \"[[It saves me a lot of time]],\" he said. \"[[I asked it to]] explain the French Revolution like I'm ten, and finally I understood it. That's not cheating — it's a tutor.\"",
+   "Camila disagreed. \"[[I see your point, but]] most people don't use it like that. They copy the answer. If the essay is [[AI-generated]], [[that's basically cheating]]. And sometimes [[it just makes it up]]. My friend used it for a history project and it invented a date.\"",
+   "In the end, our teacher said both sides were right. \"[[It depends on how you use it]]. Use it to understand, not to replace your thinking. And always [[double-check]] it.\" Then she gave us homework — to be written by hand."
+  ],
+  "gloss": {
+   "It saves me a lot of time": "Save time = the fixed phrase. Not \"win\" or \"gain\" time.",
+   "I asked it to": "ask something to do something.",
+   "I see your point, but": "Agree a little, then disagree.",
+   "AI-generated": "Made by AI. Note the hyphen.",
+   "that's basically cheating": "Cheating = dishonest work.",
+   "it just makes it up": "Make something up = invent it.",
+   "It depends on how you use it": "The most useful sentence in a debate.",
+   "double-check": "Check again to be sure. Verify."
+  },
+  "questions": [
+   {
+    "q": "How did Daniel use AI?",
+    "a": "To explain a topic in a simple way",
+    "w": [
+     "To write his whole essay",
+     "To invent dates"
+    ],
+    "ev": "explain the French Revolution like I'm ten"
+   },
+   {
+    "q": "What did Daniel compare AI to?",
+    "a": "A tutor",
+    "w": [
+     "A calculator",
+     "A cheat sheet"
+    ],
+    "ev": "it's a tutor"
+   },
+   {
+    "q": "What was Camila's main problem with AI?",
+    "a": "Most people just copy the answer.",
+    "w": [
+     "It's too expensive.",
+     "It's too slow."
+    ],
+    "ev": "They copy the answer."
+   },
+   {
+    "q": "What happened in Camila's friend's project?",
+    "a": "The AI invented a date.",
+    "w": [
+     "The AI wrote the whole project.",
+     "The teacher found the AI."
+    ],
+    "ev": "it invented a date"
+   },
+   {
+    "q": "What was funny about the teacher's homework?",
+    "a": "It had to be written by hand.",
+    "w": [
+     "It was about AI.",
+     "There wasn't any."
+    ],
+    "ev": "to be written by hand"
+   }
+  ],
+  "after": "Debate with your teacher: should AI be allowed in school? Use <b>I see your point, but…</b> and <b>It depends on…</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "ask / tell someone to do something",
+  "intro": "When you report a request, English uses a person + to + verb. Spanish uses \"que\" + subjunctive, which is why this one is hard.",
+  "pattern": [
+   "I asked it",
+   "+to + verb",
+   "=…"
+  ],
+  "note": "Same pattern: <b>tell someone to</b>, <b>want someone to</b>, <b>help someone (to)</b>. Negative: <b>asked it not to</b>.",
+  "examples": [
+   "I **asked it to explain** the French Revolution.",
+   "The teacher **told us to write** by hand.",
+   "My mum **wants me to study** more.",
+   "I **asked it not to use** long words."
+  ],
+  "wrong": "My mum wants ~~that I study~~ more.",
+  "right": "My mum wants **me to study** more.",
+  "task": "Your turn · choose the correct sentence",
+  "drill": [
+   {
+    "p": "You typed: \"Summarise this chapter.\"",
+    "a": "I asked it to summarise the chapter.",
+    "w": [
+     "I asked it that it summarises the chapter.",
+     "I asked to it summarise the chapter."
+    ]
+   },
+   {
+    "p": "The teacher said: \"Double-check your sources.\"",
+    "a": "She told us to double-check our sources.",
+    "w": [
+     "She told us that we double-check our sources.",
+     "She said us to double-check our sources."
+    ]
+   },
+   {
+    "p": "Your dad: \"I'd like you to help me.\"",
+    "a": "My dad wants me to help him.",
+    "w": [
+     "My dad wants that I help him.",
+     "My dad wants I help him."
+    ]
+   },
+   {
+    "p": "You told the AI: \"Don't give me the answer.\"",
+    "a": "I asked it not to give me the answer.",
+    "w": [
+     "I asked it to not giving me the answer.",
+     "I asked it don't give me the answer."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher three things you've asked an AI or a person to do this week."
+ }
 };

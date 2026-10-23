@@ -407,5 +407,130 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "The worst camping trip",
+  "kicker": "Stories · Told out loud",
+  "title": "The night the raccoons stole our dinner",
+  "before": "What's the funniest thing that has happened to you on a trip?",
+  "text": [
+   "\"[[So basically, what happened was]]... last summer we went camping with my uncle. [[I'd never done it before]], so I was really excited. My uncle had a new tent, a big cooler full of food, and a lot of confidence.\"",
+   "\"The first night, [[we were sitting]] around the fire, telling ghost stories, [[when]] we heard a noise behind the tent. My cousin screamed. My uncle stood up with a torch, very brave, and [[out of nowhere]], three raccoons ran out of the trees.\"",
+   "\"[[The worst part was]] that they weren't scared at all. One of them opened the cooler — it actually opened it with its hands! — and took the sausages. My uncle chased it for five minutes and fell in the river.\"",
+   "\"[[Long story short]], we ate crisps for dinner, my uncle slept in wet clothes, and we went home a day early. [[Anyway, that's pretty much it]]. My uncle still says the raccoons were 'professionals'.\""
+  ],
+  "gloss": {
+   "So basically, what happened was": "The standard way to start telling a story.",
+   "I'd never done it before": "Past perfect: something before the story started.",
+   "we were sitting": "Past continuous = the background of the story.",
+   "when": "Background (was …-ing) + when + the event (past simple).",
+   "out of nowhere": "Suddenly. Introduces the surprise.",
+   "The worst part was": "Points to the most important bit.",
+   "Long story short": "Jumps to the end without all the details.",
+   "Anyway, that's pretty much it": "Ends the story and gives the conversation back."
+  },
+  "questions": [
+   {
+    "q": "Why was the storyteller excited?",
+    "a": "It was their first time camping.",
+    "w": [
+     "They loved ghost stories.",
+     "They had a new tent."
+    ],
+    "ev": "I'd never done it before"
+   },
+   {
+    "q": "What were they doing when they heard the noise?",
+    "a": "Telling ghost stories around the fire",
+    "w": [
+     "Sleeping in the tent",
+     "Cooking sausages"
+    ],
+    "ev": "telling ghost stories"
+   },
+   {
+    "q": "What was surprising about the raccoon?",
+    "a": "It opened the cooler with its hands.",
+    "w": [
+     "It was very big.",
+     "It was scared of the torch."
+    ],
+    "ev": "it actually opened it with its hands"
+   },
+   {
+    "q": "What happened to the uncle?",
+    "a": "He fell in the river.",
+    "w": [
+     "He caught the raccoon.",
+     "He lost the tent."
+    ],
+    "ev": "fell in the river"
+   },
+   {
+    "q": "How did the trip end?",
+    "a": "They went home a day early.",
+    "w": [
+     "They stayed an extra day.",
+     "They bought more sausages."
+    ],
+    "ev": "we went home a day early"
+   }
+  ],
+  "after": "Tell your teacher a short story. Start with <b>So basically…</b>, use <b>I was …-ing when…</b>, and finish with <b>Long story short…</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "was …-ing when + past simple",
+  "intro": "Every good story has this shape: something was happening in the background, and then something interrupted it.",
+  "pattern": [
+   "I was walking home",
+   "+when",
+   "=it started to rain"
+  ],
+  "note": "Background = <b>was / were + -ing</b>. The interruption = <b>past simple</b>. You can also start with <b>While</b>: While we were sitting there, …",
+  "examples": [
+   "We **were sitting** by the fire **when** we **heard** a noise.",
+   "I **was walking** home **when** my phone **died**.",
+   "She **was taking** a photo **when** she **fell**.",
+   "**While** we **were eating**, the lights **went** out."
+  ],
+  "wrong": "I ~~walked~~ home when it ~~was starting~~ to rain.",
+  "right": "I **was walking** home when it **started** to rain.",
+  "task": "Your turn · choose the correct sentence",
+  "drill": [
+   {
+    "p": "Background: study. Interruption: the doorbell.",
+    "a": "I was studying when the doorbell rang.",
+    "w": [
+     "I studied when the doorbell was ringing.",
+     "I was study when the doorbell rang."
+    ]
+   },
+   {
+    "p": "Background: play football. Interruption: break my arm.",
+    "a": "He was playing football when he broke his arm.",
+    "w": [
+     "He played football when he was breaking his arm.",
+     "He was playing football when he was broke his arm."
+    ]
+   },
+   {
+    "p": "Background: we / watch a film. Interruption: power cut.",
+    "a": "We were watching a film when the power went out.",
+    "w": [
+     "We was watching a film when the power went out.",
+     "We watched a film when the power was going out."
+    ]
+   },
+   {
+    "p": "Start a story with while.",
+    "a": "While I was waiting for the bus, I saw a celebrity.",
+    "w": [
+     "While I waited for the bus, I was seeing a celebrity.",
+     "While I was wait for the bus, I saw a celebrity."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher about a time something surprising interrupted you."
+ }
 };

@@ -407,5 +407,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "My grandmother and me",
+  "kicker": "Family · School essay",
+  "title": "The person I'm most like",
+  "before": "Who are you most like in your family — in looks or in personality?",
+  "text": [
+   "[[There are four of us]] at home: my parents, my little brother and me. He's [[the youngest]], and he can be a bit annoying sometimes, but we [[get on really well]]. Still, the person I'm most like doesn't live with us. It's my grandmother, Rosa.",
+   "Everyone says I [[take after]] her. We have the same curly hair and the same loud laugh. But it's more than looks. She's really [[easy-going]] — nothing stresses her. When I break something, she just says, \"Things are things.\"",
+   "We're [[really close]]. I visit her every Sunday, and she teaches me to cook. She has made the same chicken soup for fifty years, and she still won't tell me the secret ingredient.",
+   "My best friend Carla says I'm lucky. [[We've known each other since]] primary school, and she says Rosa is like a grandmother to her too. I think that's the best thing about my grandmother: she makes everyone feel like family."
+  ],
+  "gloss": {
+   "There are four of us": "The natural way to say how many people are in your family. Not \"we are four\".",
+   "the youngest": "the oldest / the youngest / the middle child.",
+   "get on really well": "Get on (UK) / get along (US) = have a good relationship.",
+   "take after": "Take after someone = be like them, in looks or personality.",
+   "easy-going": "Relaxed. Not easily annoyed or stressed.",
+   "really close": "We're really close = we have a strong relationship.",
+   "We've known each other since": "since + a starting point; for + a length of time."
+  },
+  "questions": [
+   {
+    "q": "Who does the writer live with?",
+    "a": "Their parents and little brother",
+    "w": [
+     "Their grandmother",
+     "Their best friend Carla"
+    ],
+    "ev": "my parents, my little brother and me"
+   },
+   {
+    "q": "How is the writer like Rosa physically?",
+    "a": "Curly hair and a loud laugh",
+    "w": [
+     "Tall and quiet",
+     "Same eyes and same height"
+    ],
+    "ev": "the same curly hair and the same loud laugh"
+   },
+   {
+    "q": "What does \"Things are things\" show about Rosa?",
+    "a": "She's relaxed and doesn't get stressed.",
+    "w": [
+     "She's strict.",
+     "She loves buying things."
+    ],
+    "ev": "nothing stresses her"
+   },
+   {
+    "q": "What won't Rosa tell the writer?",
+    "a": "The secret ingredient of her soup",
+    "w": [
+     "Her age",
+     "Where she lives"
+    ],
+    "ev": "she still won't tell me the secret ingredient"
+   },
+   {
+    "q": "How long have Carla and the writer been friends?",
+    "a": "Since primary school",
+    "w": [
+     "Since last year",
+     "For two weeks"
+    ],
+    "ev": "since primary school"
+   }
+  ],
+  "after": "Describe someone you're <b>really close</b> to. Who do you <b>take after</b>? How long have you <b>known</b> your best friend?"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "since or for?",
+  "intro": "Both answer \"How long?\". One looks at where it started, the other at how long it has lasted.",
+  "pattern": [
+   "We've known each other",
+   "+since 2018 / for six years",
+   "=."
+  ],
+  "note": "<b>since</b> + a starting point: since Monday, since 2018, since I was eight. <b>for</b> + a length of time: for two days, for six years, for ages.",
+  "examples": [
+   "We've known each other **since** primary school.",
+   "She's made that soup **for** fifty years.",
+   "I've lived here **since** 2020.",
+   "We've been friends **for** ages."
+  ],
+  "wrong": "I've known her ~~since~~ six years.",
+  "right": "I've known her **for** six years.",
+  "task": "Your turn · since or for?",
+  "drill": [
+   {
+    "p": "You met your best friend in 2019.",
+    "a": "I've known her since 2019.",
+    "w": [
+     "I've known her for 2019.",
+     "I know her since 2019."
+    ]
+   },
+   {
+    "p": "Your family has lived in this house — ten years.",
+    "a": "We've lived here for ten years.",
+    "w": [
+     "We've lived here since ten years.",
+     "We live here for ten years."
+    ]
+   },
+   {
+    "p": "Your brother has had a cold — Monday.",
+    "a": "He's been ill since Monday.",
+    "w": [
+     "He's been ill for Monday.",
+     "He's ill since Monday."
+    ]
+   },
+   {
+    "p": "Ask your friend about her dog.",
+    "a": "How long have you had your dog?",
+    "w": [
+     "How long do you have your dog?",
+     "Since when you have your dog?"
+    ]
+   }
+  ],
+  "say": "Now tell your teacher three things about your family with since and for."
+ }
 };

@@ -407,5 +407,130 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "The thrift-shop challenge",
+  "kicker": "Style · Video recap",
+  "title": "One outfit, 300 pesos: our thrift challenge",
+  "before": "Do you buy second-hand clothes? Why or why not?",
+  "text": [
+   "My friend Regina and I did a challenge: each of us had 300 pesos and one hour in a big second-hand market to make a full outfit. Everything we bought was [[second-hand]].",
+   "Regina went for the old-money look: a cream knitted vest, wide trousers and loafers. She looked like she was going to a library in 1950. I said, \"You really [[pull that off]],\" and I meant it.",
+   "I'm [[really into]] Y2K, so I found an [[oversized]] denim jacket, a [[cropped]] top and [[chunky]] silver boots. Low-rise jeans are [[making a comeback]], so I tried a pair — but the colour [[doesn't go with]] the jacket, so I left them.",
+   "We showed our outfits to my mum. She looked at mine and laughed: \"I wore exactly that in 2002!\" Then she found a photo to prove it. Fashion really is a circle. Now she wants to do the challenge with us."
+  ],
+  "gloss": {
+   "second-hand": "Not new. Someone owned it before. Also: thrifted.",
+   "pull that off": "Wear something difficult and make it look good.",
+   "really into": "Be into something = like it a lot right now.",
+   "oversized": "Deliberately too big.",
+   "cropped": "Cut short.",
+   "chunky": "Thick and heavy (boots, jewellery, knits).",
+   "making a comeback": "Becoming popular again.",
+   "doesn't go with": "Things go with each other. Not \"combine with\"."
+  },
+  "questions": [
+   {
+    "q": "What were the rules of the challenge?",
+    "a": "300 pesos and one hour for a full outfit",
+    "w": [
+     "One item each, any price",
+     "Only new clothes"
+    ],
+    "ev": "each of us had 300 pesos and one hour"
+   },
+   {
+    "q": "What look did Regina choose?",
+    "a": "Old money",
+    "w": [
+     "Y2K",
+     "Gorpcore"
+    ],
+    "ev": "Regina went for the old-money look"
+   },
+   {
+    "q": "Why didn't the writer buy the low-rise jeans?",
+    "a": "The colour didn't match the jacket.",
+    "w": [
+     "They were too expensive.",
+     "They didn't fit."
+    ],
+    "ev": "the colour doesn't go with the jacket"
+   },
+   {
+    "q": "Why did the mum laugh?",
+    "a": "She wore the same style in 2002.",
+    "w": [
+     "The outfit was ugly.",
+     "The boots were too big."
+    ],
+    "ev": "I wore exactly that in 2002!"
+   },
+   {
+    "q": "What does the writer conclude?",
+    "a": "Fashion is a circle.",
+    "w": [
+     "Second-hand clothes are boring.",
+     "Mums don't understand fashion."
+    ],
+    "ev": "Fashion really is a circle."
+   }
+  ],
+  "after": "Describe an outfit you love. Use <b>oversized</b>, <b>cropped</b> or <b>chunky</b>, and say what it <b>goes with</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "adjective order: size, colour, material",
+  "intro": "When you use two or three adjectives before a noun, English has an order. Native speakers feel it even if they can't explain it.",
+  "pattern": [
+   "opinion / size",
+   "+colour",
+   "=material + noun"
+  ],
+  "note": "<b>cute oversized black leather</b> jacket. Most of the time, just remember: <b>size → colour → material</b>.",
+  "examples": [
+   "an **oversized denim** jacket",
+   "**chunky silver** boots",
+   "a **cream knitted** vest",
+   "a **cute little black** bag"
+  ],
+  "wrong": "a ~~denim oversized~~ jacket",
+  "right": "an **oversized denim** jacket",
+  "task": "Your turn · choose the natural order",
+  "drill": [
+   {
+    "p": "boots · chunky · black",
+    "a": "chunky black boots",
+    "w": [
+     "black chunky boots",
+     "boots chunky black"
+    ]
+   },
+   {
+    "p": "a top · white · cropped",
+    "a": "a cropped white top",
+    "w": [
+     "a white cropped top",
+     "a top cropped white"
+    ]
+   },
+   {
+    "p": "a jacket · leather · big · brown",
+    "a": "a big brown leather jacket",
+    "w": [
+     "a leather big brown jacket",
+     "a brown big leather jacket"
+    ]
+   },
+   {
+    "p": "The shoes and the bag look good together.",
+    "a": "The shoes go with the bag.",
+    "w": [
+     "The shoes combine with the bag.",
+     "The shoes go to the bag."
+    ]
+   }
+  ],
+  "say": "Now describe what you're wearing right now with two adjectives for each thing."
+ }
 };

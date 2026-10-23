@@ -397,5 +397,127 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Thirty seconds at a meetup",
+  "kicker": "Networking · Guide",
+  "title": "The first thirty seconds at a networking event",
+  "before": "How do you feel at events where you don't know anyone?",
+  "text": [
+   "Most people hate networking events for the same reason: the first thirty seconds. You're holding a drink, you don't know anyone, and every group already looks complete. Here's a simple script that works.",
+   "Find someone standing alone — they're as nervous as you are. Say your name, then ask \"[[What brings you here]]?\" It's open, it's not personal, and it always has an answer: \"My boss sent me,\" \"I'm looking for a job,\" \"Free pizza.\"",
+   "Next comes \"[[So, what do you do]]?\" Listen for one detail and follow it. If they say they work in logistics for a fruit company, don't just nod. Say \"[[Oh really? Tell me more]] — is it all imports?\" Most people love explaining their job to someone who actually listens.",
+   "If the conversation slows down, there's always \"[[Whereabouts are you from]]?\" And if you find something in common, say so: \"[[Same here]]!\" Connection doesn't need perfect English. It needs curiosity — and a good exit line: \"Great to meet you. I'm going to grab another drink.\""
+  ],
+  "gloss": {
+   "What brings you here": "Asks why someone came, without being personal.",
+   "So, what do you do": "Asks about someone's job naturally.",
+   "Oh really? Tell me more": "Shows interest and hands the conversation back.",
+   "Whereabouts are you from": "Softer than \"Where are you from?\"",
+   "Same here": "Me too. Builds connection fast."
+  },
+  "questions": [
+   {
+    "q": "Why do most people hate networking events?",
+    "a": "The first thirty seconds are hard.",
+    "w": [
+     "The food is bad.",
+     "They're too long."
+    ],
+    "ev": "the first thirty seconds"
+   },
+   {
+    "q": "Who should you approach first?",
+    "a": "Someone standing alone",
+    "w": [
+     "The biggest group",
+     "The organiser"
+    ],
+    "ev": "Find someone standing alone"
+   },
+   {
+    "q": "Why is \"What brings you here?\" a good question?",
+    "a": "It's open, not personal, and always has an answer.",
+    "w": [
+     "It's very formal.",
+     "It shows you're an expert."
+    ],
+    "ev": "It's open, it's not personal, and it always has an answer"
+   },
+   {
+    "q": "What should you do when someone explains their job?",
+    "a": "Follow one detail with a question.",
+    "w": [
+     "Nod and change the subject.",
+     "Talk about your own job."
+    ],
+    "ev": "Listen for one detail and follow it."
+   },
+   {
+    "q": "According to the writer, connection needs…",
+    "a": "curiosity",
+    "w": [
+     "perfect English",
+     "business cards"
+    ],
+    "ev": "It needs curiosity"
+   }
+  ],
+  "after": "Role-play: your teacher is a stranger at an event. Open with <b>What brings you here?</b> and keep it going for two minutes."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "question word order",
+  "intro": "In questions, the helper verb (do, does, are, is) comes before the person. Small talk is all questions, so this has to be automatic.",
+  "pattern": [
+   "What",
+   "+do / does / are",
+   "=you + verb?"
+  ],
+  "note": "<b>What do you do?</b> <b>Where are you from?</b> <b>How do you know</b> Ana? Not <b>What you do?</b>",
+  "examples": [
+   "**What do you** do?",
+   "**How do you** know everyone here?",
+   "**What brings** you here?",
+   "**Whereabouts are you** from?"
+  ],
+  "wrong": "~~What you do~~ for work?",
+  "right": "**What do you do** for work?",
+  "task": "Your turn · choose the correct question",
+  "drill": [
+   {
+    "p": "Ask about someone's job.",
+    "a": "What do you do?",
+    "w": [
+     "What you do?",
+     "What do you make?"
+    ]
+   },
+   {
+    "p": "Ask how they know the host.",
+    "a": "How do you know Marta?",
+    "w": [
+     "How you know Marta?",
+     "How do you know to Marta?"
+    ]
+   },
+   {
+    "p": "Ask where they live.",
+    "a": "Whereabouts do you live?",
+    "w": [
+     "Whereabouts you live?",
+     "Whereabouts do you living?"
+    ]
+   },
+   {
+    "p": "Ask how long they've worked there.",
+    "a": "How long have you worked there?",
+    "w": [
+     "How long you have worked there?",
+     "How long do you work there since?"
+    ]
+   }
+  ],
+  "say": "Now ask your teacher five small-talk questions without stopping."
+ }
 };

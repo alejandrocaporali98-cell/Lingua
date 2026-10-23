@@ -397,5 +397,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "The answer that got the job",
+  "kicker": "Careers · Interview story",
+  "title": "Ninety seconds that changed an interview",
+  "before": "What's the hardest interview question you've ever been asked?",
+  "text": [
+   "Carla had been nervous all week about her interview with a logistics company in Houston. The first question was the one everyone gets: \"[[Tell me about yourself]].\" She had practised a simple three-part answer.",
+   "\"[[I've been working in]] supply chain for six years. Right now [[I'm responsible for]] imports from Asia for a furniture company in Monterrey. Before that, I worked in a warehouse, so I know the job from the ground up. [[I'm looking for a role where]] I can manage a bigger team.\"",
+   "Then came the weakness question. Instead of saying \"I'm a perfectionist,\" she was honest: \"[[One thing I'm working on is]] delegating. I used to do everything myself. [[For example, last year I]] trained two junior colleagues to handle customs paperwork, and it freed up ten hours of my week.\"",
+   "At the end, she asked her own question: \"[[What does success look like]] in this role after six months?\" The interviewer smiled and said nobody had asked that before. Two weeks later, Carla got the job."
+  ],
+  "gloss": {
+   "Tell me about yourself": "Not your life story: what you do now, what you did before, why you're here.",
+   "I've been working in": "Started in the past and still true now.",
+   "I'm responsible for": "Explains what you do day to day.",
+   "I'm looking for a role where": "What you want, without criticising your current job.",
+   "One thing I'm working on is": "An honest weakness that you're already improving.",
+   "For example, last year I": "Turns a claim into proof.",
+   "What does success look like": "A strong question to ask the interviewer."
+  },
+  "questions": [
+   {
+    "q": "How long has Carla worked in supply chain?",
+    "a": "Six years",
+    "w": [
+     "Two years",
+     "Ten years"
+    ],
+    "ev": "for six years"
+   },
+   {
+    "q": "Why does she mention the warehouse?",
+    "a": "To show she knows the job from the ground up",
+    "w": [
+     "Because she wants to go back",
+     "Because she didn't like it"
+    ],
+    "ev": "I know the job from the ground up"
+   },
+   {
+    "q": "What weakness did she describe?",
+    "a": "Delegating",
+    "w": [
+     "Being a perfectionist",
+     "Speaking in public"
+    ],
+    "ev": "One thing I'm working on is delegating."
+   },
+   {
+    "q": "What proof did she give?",
+    "a": "She trained two colleagues and saved ten hours a week.",
+    "w": [
+     "She got a promotion.",
+     "She took a course online."
+    ],
+    "ev": "it freed up ten hours of my week"
+   },
+   {
+    "q": "Why did the interviewer smile?",
+    "a": "Nobody had asked that question before.",
+    "w": [
+     "Carla made a joke.",
+     "The interview was over."
+    ],
+    "ev": "nobody had asked that before"
+   }
+  ],
+  "after": "Answer <b>Tell me about yourself</b> in three parts, in under 60 seconds. Then answer the weakness question with <b>For example…</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "I've been working… for",
+  "intro": "For something that started in the past and is still happening, English uses the present perfect continuous — not the present simple.",
+  "pattern": [
+   "I've been",
+   "+verb-ing",
+   "=for six years / since 2019"
+  ],
+  "note": "<b>have / has been + -ing</b> + <b>for</b> (length) or <b>since</b> (start). Spanish \"Trabajo aquí desde hace…\" becomes <b>I've been working here for…</b>",
+  "examples": [
+   "**I've been working** in logistics **for** six years.",
+   "She**'s been leading** the team **since** 2022.",
+   "**How long have you been working** there?",
+   "We**'ve been using** this system **for** a year."
+  ],
+  "wrong": "I ~~work here since~~ 2019.",
+  "right": "I**'ve been working** here **since** 2019.",
+  "task": "Your turn · choose the correct sentence",
+  "drill": [
+   {
+    "p": "You started in sales four years ago. You're still in sales.",
+    "a": "I've been working in sales for four years.",
+    "w": [
+     "I work in sales since four years.",
+     "I'm working in sales for four years."
+    ]
+   },
+   {
+    "p": "She started managing the team in 2021.",
+    "a": "She's been managing the team since 2021.",
+    "w": [
+     "She manages the team since 2021.",
+     "She's been managing the team for 2021."
+    ]
+   },
+   {
+    "p": "Ask the candidate about their current job.",
+    "a": "How long have you been working there?",
+    "w": [
+     "How long are you working there?",
+     "Since when you work there?"
+    ]
+   },
+   {
+    "p": "Describe your responsibility.",
+    "a": "I'm responsible for imports from Asia.",
+    "w": [
+     "I'm responsible of imports from Asia.",
+     "I have the responsible for imports from Asia."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher how long you've been doing three things in your life."
+ }
 };

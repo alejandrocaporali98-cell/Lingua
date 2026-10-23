@@ -397,5 +397,128 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A meeting that went off track",
+  "kicker": "Work · Case study",
+  "title": "The 30-minute meeting that took 90",
+  "before": "What's the most common problem in the meetings you go to?",
+  "text": [
+   "The team meeting was supposed to take thirty minutes: one decision about the launch date. Instead, the marketing lead started talking about the logo. Then someone asked about the budget. Forty minutes later, nobody had mentioned the launch date.",
+   "Finally, Ana raised her hand on the video call. \"[[Sorry to interrupt, but]] we only have twenty minutes left. Can we [[park that for now]] and decide the date first?\" There was a pause — and then everyone agreed.",
+   "The manager suggested March 3rd. Ana wasn't sure. \"[[Just to clarify]] — is that the date for the app or the website?\" \"Both.\" \"Then I need to check with the developers. [[I'll get back to you on that]] by Thursday.\" Then the manager's audio dropped. \"[[Sorry, you cut out]],\" Ana said.",
+   "After the meeting, she sent a two-line email: the decision, the next step, and a question. \"Launch on March 3rd if the developers agree. I'll confirm on Thursday. [[Does that work for you]]?\" Everyone replied in an hour."
+  ],
+  "gloss": {
+   "Sorry to interrupt, but": "Lets you jump in without being rude.",
+   "park that for now": "Move a topic to later, without saying no.",
+   "Just to clarify": "Asks for details and sounds sharp, not lost.",
+   "I'll get back to you on that": "I'll answer later. Give a day if you can.",
+   "Sorry, you cut out": "Your audio stopped for a moment.",
+   "Does that work for you": "Checks if a plan or time is OK."
+  },
+  "questions": [
+   {
+    "q": "What was the meeting supposed to decide?",
+    "a": "The launch date",
+    "w": [
+     "The logo",
+     "The budget"
+    ],
+    "ev": "one decision about the launch date"
+   },
+   {
+    "q": "How did Ana bring the meeting back on track?",
+    "a": "She interrupted politely and suggested parking the other topics.",
+    "w": [
+     "She left the meeting.",
+     "She sent an angry email."
+    ],
+    "ev": "Can we park that for now and decide the date first?"
+   },
+   {
+    "q": "Why couldn't Ana agree to March 3rd immediately?",
+    "a": "She needed to check with the developers.",
+    "w": [
+     "She was on holiday.",
+     "She preferred April."
+    ],
+    "ev": "I need to check with the developers"
+   },
+   {
+    "q": "What was special about Ana's email?",
+    "a": "It was short and clear, with one question.",
+    "w": [
+     "It was very long and detailed.",
+     "It had no question."
+    ],
+    "ev": "she sent a two-line email"
+   },
+   {
+    "q": "How quickly did people reply?",
+    "a": "In an hour",
+    "w": [
+     "The next day",
+     "On Thursday"
+    ],
+    "ev": "Everyone replied in an hour."
+   }
+  ],
+  "after": "Tell your teacher about a meeting at your work. What usually goes wrong? Practise <b>Sorry to interrupt, but…</b> and <b>Let's park that</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "will for promises at work",
+  "intro": "In meetings, will isn't about predicting the future. It's how you commit to a next step — and people will remember it.",
+  "pattern": [
+   "I'll",
+   "+verb",
+   "=by Thursday"
+  ],
+  "note": "<b>I'll get back to you</b>, <b>I'll send it</b>, <b>I'll check</b>. Add a deadline with <b>by</b> + day/time. Not <b>I'm going to get back</b> (sounds like a plan, not a promise).",
+  "examples": [
+   "**I'll get back to you** on that **by** Thursday.",
+   "**I'll send** the notes after the call.",
+   "**I'll check** with the developers.",
+   "**We'll confirm** the date tomorrow."
+  ],
+  "wrong": "~~I will to send~~ the report.",
+  "right": "**I'll send** the report **by** Friday.",
+  "task": "Your turn · choose the best commitment",
+  "drill": [
+   {
+    "p": "Promise to send the slides before Monday.",
+    "a": "I'll send the slides by Monday.",
+    "w": [
+     "I'll send the slides until Monday.",
+     "I send you the slides for Monday."
+    ]
+   },
+   {
+    "p": "You don't know the answer yet.",
+    "a": "I'll get back to you on that.",
+    "w": [
+     "I'll return to you on that.",
+     "I come back to you about that."
+    ]
+   },
+   {
+    "p": "Promise to check the budget.",
+    "a": "I'll check the budget and let you know.",
+    "w": [
+     "I'll checking the budget and let you know.",
+     "I will to check the budget."
+    ]
+   },
+   {
+    "p": "Check if Tuesday is OK for them.",
+    "a": "Does Tuesday work for you?",
+    "w": [
+     "Does Tuesday works for you?",
+     "Is Tuesday working to you?"
+    ]
+   }
+  ],
+  "say": "Now tell your teacher three things you'll do at work this week, each with a deadline."
+ }
 };

@@ -407,5 +407,130 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Where are you from, really?",
+  "kicker": "Culture · Personal essay",
+  "title": "How I explain my city to people abroad",
+  "before": "When someone asks \"Where are you from?\", what do you usually say? Just the city name?",
+  "text": [
+   "When I went on a school exchange to Canada, everyone asked where I was from. At first I just said \"Mexico\", and people said \"Oh, nice\" and changed the subject. So I learned to give a better answer.",
+   "Now I say, \"[[I'm from just outside Monterrey]]. [[It's in the north of the country]], about three hours from Texas.\" Then I add something interesting: \"[[It's known for]] its mountains and its food — especially carne asada on Sundays.\"",
+   "People often imagine Mexico as hot and sandy everywhere. [[That's actually a bit of a myth]]. Monterrey is surrounded by mountains, and [[it gets really hot]] in summer, but in winter it can be freezing. When I explain carne asada, I say: \"[[It's a bit like]] a barbecue, but it's a whole family event that lasts all afternoon.\"",
+   "Some things are harder. \"Sobremesa\" — the time when everyone stays at the table talking after lunch — [[there's no real word for it in English]]. So I describe it. And I always finish the same way: \"If you ever visit, [[you'd love it, honestly]].\""
+  ],
+  "gloss": {
+   "I'm from just outside Monterrey": "Name the big city first, then where you are next to it.",
+   "It's in the north of the country": "in the north / south / east / west OF + a country.",
+   "It's known for": "Famous for. Use it to sum up a place.",
+   "That's actually a bit of a myth": "A soft way to correct a stereotype.",
+   "it gets really hot": "It gets + adjective = a change in the weather.",
+   "It's a bit like": "Compare to something they know, then explain the difference.",
+   "there's no real word for it in English": "Say this, then describe it.",
+   "you'd love it, honestly": "A warm way to end talking about your home."
+  },
+  "questions": [
+   {
+    "q": "What happened when the writer just said \"Mexico\"?",
+    "a": "People changed the subject.",
+    "w": [
+     "People asked a lot of questions.",
+     "People didn't understand."
+    ],
+    "ev": "changed the subject"
+   },
+   {
+    "q": "How far is Monterrey from Texas?",
+    "a": "About three hours",
+    "w": [
+     "Thirty minutes",
+     "Three days"
+    ],
+    "ev": "about three hours from Texas"
+   },
+   {
+    "q": "What myth does the writer correct?",
+    "a": "That Mexico is hot and sandy everywhere",
+    "w": [
+     "That Mexican food is spicy",
+     "That Monterrey is big"
+    ],
+    "ev": "People often imagine Mexico as hot and sandy everywhere."
+   },
+   {
+    "q": "How is carne asada different from a barbecue?",
+    "a": "It's a whole family event that lasts all afternoon.",
+    "w": [
+     "It's always at night.",
+     "It's only for special holidays."
+    ],
+    "ev": "it's a whole family event that lasts all afternoon"
+   },
+   {
+    "q": "What does the writer do with \"sobremesa\"?",
+    "a": "Describes it, because there's no word in English",
+    "w": [
+     "Translates it as \"dessert\"",
+     "Doesn't mention it"
+    ],
+    "ev": "So I describe it."
+   }
+  ],
+  "after": "Answer the question properly: <b>Where are you from?</b> Say where it is, what it's <b>known for</b>, and one thing that's <b>a bit like</b>… but…"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "it gets + adjective",
+  "intro": "To talk about weather that changes with the season or the time of day, English uses get — not \"do\" or \"make\".",
+  "pattern": [
+   "It gets",
+   "+really hot / cold / busy",
+   "=in summer"
+  ],
+  "note": "<b>get</b> = become. Also: <b>it gets dark</b> early, <b>it gets crowded</b> on weekends, <b>it gets windy</b> in March.",
+  "examples": [
+   "**It gets really hot** in summer.",
+   "**It gets dark** at six in winter.",
+   "The centre **gets crowded** on Sundays.",
+   "**It gets** a bit **cold** at night."
+  ],
+  "wrong": "In summer ~~it does a lot of heat~~.",
+  "right": "In summer **it gets really hot**.",
+  "task": "Your turn · choose the natural sentence",
+  "drill": [
+   {
+    "p": "Winter nights in your city: very cold.",
+    "a": "It gets really cold at night.",
+    "w": [
+     "It does very cold at night.",
+     "It makes a lot of cold at night."
+    ]
+   },
+   {
+    "p": "The beach on holidays: lots of people.",
+    "a": "The beach gets really crowded.",
+    "w": [
+     "The beach makes really crowded.",
+     "The beach does crowded."
+    ]
+   },
+   {
+    "p": "Sunset at 6 p.m. in December.",
+    "a": "It gets dark at six.",
+    "w": [
+     "It does dark at six.",
+     "It gets darks at six."
+    ]
+   },
+   {
+    "p": "Describe your city with a comparison.",
+    "a": "It's a bit like Texas, but with more mountains.",
+    "w": [
+     "It's a bit as Texas, but with more mountains.",
+     "It's like a bit Texas, but more mountains."
+    ]
+   }
+  ],
+  "say": "Now describe the weather in your city in summer and in winter."
+ }
 };

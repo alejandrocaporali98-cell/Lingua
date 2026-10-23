@@ -397,5 +397,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A voicemail that gets returned",
+  "kicker": "Phone · How-to",
+  "title": "Why nobody calls you back",
+  "before": "Do you prefer calling or messaging? Why?",
+  "text": [
+   "Phone calls in a second language are hard because you can't see faces. Voicemails are even harder: you get one chance, and many people say too much or too little. Here is a call that went well.",
+   "Domeniko called a clinic to change an appointment. \"Good morning. [[Could I speak to]] Dr Patel's assistant, please?\" The receptionist said she was at lunch. \"[[Can I take a message]]?\" \"Yes, please. [[This is Domeniko speaking]] — that's D-O-M-E-N-I-K-O.\"",
+   "The line was bad. \"Sorry, [[you're breaking up]]. Could you say the time again?\" She repeated it: two thirty. \"[[Sorry, I didn't catch that]] — was it two thirty or three thirty?\" \"Two thirty. [[Hold on a moment, please]], I'll check the email address. [[Could you spell that for me]]?\"",
+   "Later he left a voicemail for a client, following a simple order: who he is, why he's calling, what he needs, and his number — twice, slowly. \"That's 81 2345 6789. Again, 81 2345 6789.\" The client called back within the hour."
+  ],
+  "gloss": {
+   "Could I speak to": "The standard way to ask for someone on the phone.",
+   "Can I take a message": "What you say when the person isn't available.",
+   "This is Domeniko speaking": "On the phone: \"This is…\" — never \"I am…\"",
+   "you're breaking up": "The audio keeps cutting.",
+   "Sorry, I didn't catch that": "Asks for a repeat in a relaxed way.",
+   "Hold on a moment, please": "Wait a moment. Casual: \"Hang on\".",
+   "Could you spell that for me": "Essential for names and emails."
+  },
+  "questions": [
+   {
+    "q": "Why are phone calls hard in a second language?",
+    "a": "You can't see faces.",
+    "w": [
+     "They're too expensive.",
+     "People speak more formally."
+    ],
+    "ev": "you can't see faces"
+   },
+   {
+    "q": "Why did Domeniko call the clinic?",
+    "a": "To change an appointment",
+    "w": [
+     "To ask for a doctor's email",
+     "To cancel his insurance"
+    ],
+    "ev": "to change an appointment"
+   },
+   {
+    "q": "Why did he spell his name?",
+    "a": "So the message would be correct",
+    "w": [
+     "Because the receptionist asked twice",
+     "Because it's a short name"
+    ],
+    "ev": "that's D-O-M-E-N-I-K-O"
+   },
+   {
+    "q": "What time was the appointment?",
+    "a": "2:30",
+    "w": [
+     "3:30",
+     "12:30"
+    ],
+    "ev": "Two thirty."
+   },
+   {
+    "q": "What did Domeniko say twice in the voicemail?",
+    "a": "His phone number",
+    "w": [
+     "His name",
+     "The reason for calling"
+    ],
+    "ev": "his number — twice, slowly"
+   }
+  ],
+  "after": "Leave a 20-second voicemail for your teacher: <b>who you are</b>, <b>why you're calling</b>, <b>what you need</b> and your <b>number twice</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "This is… on the phone",
+  "intro": "On the phone, English doesn't say \"I am\" or \"Here is\". It uses this — for you, and for the other person.",
+  "pattern": [
+   "This is",
+   "+your name",
+   "=(speaking)."
+  ],
+  "note": "Answering: <b>This is Ana.</b> Asking: <b>Who's this?</b> / <b>Is this Mark?</b> Asking for someone: <b>Could I speak to…?</b>",
+  "examples": [
+   "Hello, **this is** Domeniko **speaking**.",
+   "**Is this** the sales department?",
+   "**Could I speak to** Sarah, please?",
+   "Sorry, **who's this**?"
+  ],
+  "wrong": "Hello, ~~I am~~ Domeniko. ~~Is there~~ Sarah?",
+  "right": "Hello, **this is** Domeniko. **Could I speak to** Sarah?",
+  "task": "Your turn · choose what you say on the phone",
+  "drill": [
+   {
+    "p": "Say your name when you call.",
+    "a": "Hi, this is Domeniko.",
+    "w": [
+     "Hi, here is Domeniko.",
+     "Hi, I'm being Domeniko."
+    ]
+   },
+   {
+    "p": "Ask for Mr Brown.",
+    "a": "Could I speak to Mr Brown, please?",
+    "w": [
+     "Could I talk with Mr Brown, please?",
+     "Is there Mr Brown, please?"
+    ]
+   },
+   {
+    "p": "You don't know who's calling.",
+    "a": "Sorry, who's this?",
+    "w": [
+     "Sorry, who are you?",
+     "Sorry, who is talking?"
+    ]
+   },
+   {
+    "p": "The audio is cutting.",
+    "a": "Sorry, you're breaking up.",
+    "w": [
+     "Sorry, you're breaking.",
+     "Sorry, you're cutting yourself."
+    ]
+   }
+  ],
+  "say": "Now role-play: call your teacher's \"office\" and ask for someone who isn't there."
+ }
 };

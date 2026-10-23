@@ -501,5 +501,120 @@ window.CLASE = {
    "No conviertas esto en una lista de vocabulario: lo importante es que elija una variedad y la sostenga.",
    "«Half four» y los pisos son los dos malentendidos que de verdad pasan. Vale la pena insistir."
   ]
+ },
+ "read": {
+  "short": "Two Englishes, one email",
+  "kicker": "Language · Story",
+  "title": "The meeting on 03/04",
+  "before": "Do you learn British or American English? Can you name three differences?",
+  "text": [
+   "Mariana works for a company with offices in London and Chicago. Last spring, she sent an invitation to both teams for a meeting on \"03/04\". The London team arrived on the 3rd of April. The Chicago team logged on on the 4th of March. Nobody was happy.",
+   "That was when she realised that British and American English aren't just accents. The UK writes the day first; the US writes the month first. Now she always writes \"[[4 March]]\" — no confusion possible.",
+   "The vocabulary is different too. Her London colleague lives in a [[flat]] on the [[ground floor]]; her Chicago colleague lives in an apartment on the first floor — the same level. One takes the [[lift]], the other takes the elevator. One asks \"[[Have you got]] a minute?\", the other \"Do you have a minute?\"",
+   "Her rule now is simple: choose one system and be consistent. Her reports use American spelling — color, organize — because most of her clients are in the US. \"Nobody minds which one you use,\" she says. \"They mind when you mix them.\""
+  ],
+  "gloss": {
+   "4 March": "Write the month in words to avoid confusion. UK 15/03 = US 03/15.",
+   "flat": "UK flat = US apartment.",
+   "ground floor": "UK ground floor = US first floor. UK first floor = US second floor.",
+   "lift": "UK lift = US elevator.",
+   "Have you got": "Have you got…? feels British. Do you have…? is universal."
+  },
+  "questions": [
+   {
+    "q": "What went wrong with the meeting?",
+    "a": "The two teams read the date differently.",
+    "w": [
+     "The link didn't work.",
+     "Mariana forgot to invite Chicago."
+    ],
+    "ev": "The London team arrived on the 3rd of April."
+   },
+   {
+    "q": "How does Mariana write dates now?",
+    "a": "With the month in words",
+    "w": [
+     "Only in the US format",
+     "Only in the UK format"
+    ],
+    "ev": "Now she always writes \"4 March\""
+   },
+   {
+    "q": "A London \"ground floor\" is a Chicago…",
+    "a": "first floor",
+    "w": [
+     "ground floor",
+     "second floor"
+    ],
+    "ev": "on the first floor — the same level"
+   },
+   {
+    "q": "Why does she use American spelling in reports?",
+    "a": "Most of her clients are in the US.",
+    "w": [
+     "It's easier.",
+     "Her boss is American."
+    ],
+    "ev": "most of her clients are in the US"
+   },
+   {
+    "q": "What do people mind, according to Mariana?",
+    "a": "Mixing the two systems",
+    "w": [
+     "Using British English",
+     "Using American English"
+    ],
+    "ev": "They mind when you mix them."
+   }
+  ],
+  "after": "Tell your teacher which English you prefer and why. Then describe your home using both British and American words."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "British or American?",
+  "intro": "Both are correct everywhere. The skill is recognising them — and staying consistent in your own writing.",
+  "forms": [
+   {
+    "name": "British",
+    "form": "flat · lift · colour · organise",
+    "use": "UK, and often Australia, Ireland and much of Europe.",
+    "examples": [
+     "I live in a **flat** on the **ground floor**.",
+     "**Have you got** a minute?"
+    ]
+   },
+   {
+    "name": "American",
+    "form": "apartment · elevator · color · organize",
+    "use": "US, and often Canada and Mexico.",
+    "examples": [
+     "I live in an **apartment** on the **first floor**.",
+     "**Do you have** a minute?"
+    ]
+   }
+  ],
+  "task": "Sort them · British or American?",
+  "sort": [
+   {
+    "s": "Let's take the ___ to the fifth floor.",
+    "f": 0,
+    "answer": "lift"
+   },
+   {
+    "s": "My favorite ___ is blue.",
+    "f": 1,
+    "answer": "color"
+   },
+   {
+    "s": "We need to ___ the files by Friday.",
+    "f": 0,
+    "answer": "organise"
+   },
+   {
+    "s": "They just moved into a new ___ downtown.",
+    "f": 1,
+    "answer": "apartment"
+   }
+  ]
  }
 };

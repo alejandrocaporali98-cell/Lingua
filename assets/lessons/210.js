@@ -397,5 +397,122 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Splitting the bill in New York",
+  "kicker": "Money · Travel story",
+  "title": "Why the bill was bigger than the menu",
+  "before": "Do you know how tax and tips work in the US? How is it different from Mexico?",
+  "text": [
+   "On my first trip to New York, four of us went to a diner on the [[fourth of July]]. The menu looked cheap: burgers for fourteen dollars, milkshakes for seven. We ordered without thinking. Then the bill came: [[two hundred and fifty]] dollars.",
+   "\"[[How much is it]] each?\" my friend asked. We checked. The prices on the menu [[didn't include tax]] — almost nine percent in New York. Then there was the tip. In the US, you're expected to leave between eighteen and twenty percent.",
+   "\"[[Shall we split it]]?\" said Ana. But Pablo had only had a coffee, so splitting it four ways wasn't fair. In the end, everyone paid for what they ordered, plus tax and tip. Pablo paid twelve dollars; I paid seventy-one.",
+   "It was [[twenty to eight]] when we left, and we were all doing maths on our phones. The lesson: in the US, add about thirty percent to every price on the menu. My dad, who travelled there in [[nineteen ninety-eight]], said it was the same back then."
+  ],
+  "gloss": {
+   "fourth of July": "Dates are said with ordinals: the fourth of July / July fourth.",
+   "two hundred and fifty": "Hundred never takes -s after a number. UK English adds \"and\".",
+   "How much is it": "How much for prices and uncountable things.",
+   "didn't include tax": "In the US, menu prices usually don't include tax.",
+   "Shall we split it": "Shall we divide the cost?",
+   "twenty to eight": "7:40. After the half hour, count \"to\" the next hour.",
+   "nineteen ninety-eight": "Years before 2000 are said in two halves."
+  },
+  "questions": [
+   {
+    "q": "How much was the total bill?",
+    "a": "$250",
+    "w": [
+     "$150",
+     "$71"
+    ],
+    "ev": "two hundred and fifty dollars"
+   },
+   {
+    "q": "Why was the bill higher than expected?",
+    "a": "Prices didn't include tax, and there was a tip.",
+    "w": [
+     "They ordered more food.",
+     "The waiter made a mistake."
+    ],
+    "ev": "The prices on the menu didn't include tax"
+   },
+   {
+    "q": "Why didn't they split it four ways?",
+    "a": "Pablo only had a coffee.",
+    "w": [
+     "Ana didn't have money.",
+     "The diner didn't allow it."
+    ],
+    "ev": "Pablo had only had a coffee"
+   },
+   {
+    "q": "What time did they leave?",
+    "a": "7:40",
+    "w": [
+     "8:20",
+     "7:20"
+    ],
+    "ev": "It was twenty to eight"
+   },
+   {
+    "q": "What is the writer's tip for the US?",
+    "a": "Add about 30% to the menu price.",
+    "w": [
+     "Never leave a tip.",
+     "Always split the bill."
+    ],
+    "ev": "add about thirty percent to every price on the menu"
+   }
+  ],
+  "after": "Read these aloud: <b>$1,450</b>, <b>1987</b>, <b>12/03</b>, <b>7:45</b>. Then explain how tips work in Mexico."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "how much or how many?",
+  "intro": "Money and prices use how much. Things you can count one by one use how many.",
+  "forms": [
+   {
+    "name": "How much",
+    "form": "How much + uncountable",
+    "use": "Prices, money, time, water, information…",
+    "examples": [
+     "**How much** is it?",
+     "**How much** time do we have?"
+    ]
+   },
+   {
+    "name": "How many",
+    "form": "How many + plural",
+    "use": "Things you can count: people, dollars, nights, bags.",
+    "examples": [
+     "**How many** people are coming?",
+     "**How many** nights are you staying?"
+    ]
+   }
+  ],
+  "task": "Sort them · how much or how many?",
+  "sort": [
+   {
+    "s": "___ is the room per night?",
+    "f": 0,
+    "answer": "How much"
+   },
+   {
+    "s": "___ bags are you checking in?",
+    "f": 1,
+    "answer": "How many"
+   },
+   {
+    "s": "___ money do we need for the trip?",
+    "f": 0,
+    "answer": "How much"
+   },
+   {
+    "s": "___ dollars did you leave as a tip?",
+    "f": 1,
+    "answer": "How many"
+   }
+  ]
+ }
 };

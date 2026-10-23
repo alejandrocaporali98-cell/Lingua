@@ -501,5 +501,124 @@ window.CLASE = {
    "Ojo con «very» + adjetivo fuerte. Márcalo con M la primera vez.",
    "Si el remate lo suelta al principio, hazle notar que en inglés va al final. Pídele que lo vuelva a contar."
   ]
+ },
+ "read": {
+  "short": "Lost in Tokyo",
+  "kicker": "Stories · Told well",
+  "title": "The night we missed the last train",
+  "before": "Have you ever been lost in a city at night? How did you get home?",
+  "text": [
+   "[[You'll never guess what happened]] in Tokyo. [[There we were]], three friends at midnight in Shinjuku, [[absolutely exhausted]] after a twelve-hour day of walking. The plan was simple: catch the last train back to the hotel.",
+   "We [[were walking]] towards the station, laughing about something, when my friend Ana stopped. \"Wait. What time is the last train?\" I checked. 12:04. It was 12:06. We just stood there, staring at each other.",
+   "The taxi queue was [[absolutely enormous]], and a ride would cost around 8,000 yen. We were [[so]] tired [[that]] we seriously considered sleeping in a park. [[And then, out of nowhere]], an old man who had heard us came over and said in perfect English: \"Karaoke. Open all night. Cheaper than a hotel.\"",
+   "So we sang until 5 a.m. — terribly — and took the first train home as the sun came up. It was the worst night's sleep of my life and the best memory of the trip. [[Absolutely]] no regrets."
+  ],
+  "gloss": {
+   "You'll never guess what happened": "Builds curiosity before you start.",
+   "There we were": "Drops the listener into the middle of the moment.",
+   "absolutely exhausted": "Strong adjectives take absolutely, not very. exhausted = very tired.",
+   "were walking": "Past continuous = the background when something happened.",
+   "absolutely enormous": "enormous = very big. Strong adjective → absolutely.",
+   "so": "so + adjective + that + result.",
+   "that": "so tired that… = the result of how tired we were.",
+   "And then, out of nowhere": "The moment the story changes. Slow down here.",
+   "Absolutely": "Completely. Very emphatic."
+  },
+  "questions": [
+   {
+    "q": "Why were they so tired?",
+    "a": "They'd walked all day.",
+    "w": [
+     "They'd been dancing.",
+     "Their flight was late."
+    ],
+    "ev": "after a twelve-hour day of walking"
+   },
+   {
+    "q": "How late were they for the last train?",
+    "a": "Two minutes",
+    "w": [
+     "Twenty minutes",
+     "An hour"
+    ],
+    "ev": "12:04. It was 12:06."
+   },
+   {
+    "q": "Why didn't they take a taxi?",
+    "a": "Long queues and expensive",
+    "w": [
+     "There were no taxis at all.",
+     "They didn't have the address."
+    ],
+    "ev": "a ride would cost around 8,000 yen"
+   },
+   {
+    "q": "What did the old man suggest?",
+    "a": "A karaoke that's open all night",
+    "w": [
+     "Sleeping in the park",
+     "Walking to the hotel"
+    ],
+    "ev": "Karaoke. Open all night."
+   },
+   {
+    "q": "How does the narrator feel about that night now?",
+    "a": "It's the best memory of the trip.",
+    "w": [
+     "They regret it.",
+     "They don't remember it."
+    ],
+    "ev": "the best memory of the trip"
+   }
+  ],
+  "after": "Tell your teacher a travel story with detail: <b>There we were…</b>, a strong adjective with <b>absolutely</b>, and <b>so… that…</b>"
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "very or absolutely?",
+  "intro": "English has strong adjectives that already mean \"very\". They can't take very — they take absolutely.",
+  "forms": [
+   {
+    "name": "very + normal",
+    "form": "very tired · very big · very good",
+    "use": "Normal adjectives that can be more or less.",
+    "examples": [
+     "I was **very tired**.",
+     "The queue was **very long**."
+    ]
+   },
+   {
+    "name": "absolutely + strong",
+    "form": "absolutely exhausted · enormous · amazing",
+    "use": "Strong adjectives: already extreme.",
+    "examples": [
+     "I was **absolutely exhausted**.",
+     "The view was **absolutely stunning**."
+    ]
+   }
+  ],
+  "task": "Sort them · very or absolutely?",
+  "sort": [
+   {
+    "s": "The food was ___ delicious!",
+    "f": 1,
+    "answer": "absolutely"
+   },
+   {
+    "s": "The hotel was ___ small.",
+    "f": 0,
+    "answer": "very"
+   },
+   {
+    "s": "After the hike we were ___ starving.",
+    "f": 1,
+    "answer": "absolutely"
+   },
+   {
+    "s": "The museum was ___ interesting.",
+    "f": 0,
+    "answer": "very"
+   }
+  ]
  }
 };

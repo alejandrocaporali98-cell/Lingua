@@ -501,5 +501,128 @@ window.CLASE = {
    "Pregunta 3 es de opinión: si dice que sí quiere hablar rápido, vale la pena explicarle que claridad gana a velocidad.",
    "Marca con M cualquier frase de las secciones 1-5 que haya olvidado al hablar."
   ]
+ },
+ "read": {
+  "short": "Why fast English is hard",
+  "kicker": "Listening · Explainer",
+  "title": "You know the words. So why can't you hear them?",
+  "before": "When you watch a series in English without subtitles, what's the hardest part?",
+  "text": [
+   "Most learners know the problem: you can read a sentence easily, but when a native speaker says it, it sounds like one long word. The reason isn't your vocabulary. It's that spoken English doesn't have spaces.",
+   "Listen to a friend at a party: \"[[Whaddaya]] [[wanna]] do later? I [[dunno]], we're [[gonna]] get food, [[lemme]] check.\" On paper that's \"What do you want to do later? I don't know, we're going to get food, let me check.\" Same words — but in speech, half the sounds disappear.",
+   "Two things happen. First, words join together: \"an apple\" becomes \"anapple\", and \"turn it off\" becomes \"tur-ni-toff\". Second, sounds vanish. The [[t]] in \"next week\" or \"most people\" is almost silent.",
+   "The good news: these changes follow patterns. Once you know them, you start hearing them everywhere. A great exercise is to take thirty seconds of a podcast and write down exactly what you hear, then compare it with the transcript. It's slow at first — but it works."
+  ],
+  "gloss": {
+   "Whaddaya": "whaddaya = what do you. The d and y join.",
+   "wanna": "wanna = want to. Very common in speech, never in emails.",
+   "dunno": "dunno = don't know.",
+   "gonna": "gonna = going to (for the future only).",
+   "lemme": "lemme = let me.",
+   "t": "Between consonants, t often disappears: nex(t) week, mos(t) people."
+  },
+  "questions": [
+   {
+    "q": "According to the writer, why is fast English hard to understand?",
+    "a": "Spoken English doesn't have spaces between words.",
+    "w": [
+     "Learners don't know enough vocabulary.",
+     "Native speakers use different grammar."
+    ],
+    "ev": "spoken English doesn't have spaces"
+   },
+   {
+    "q": "What is \"whaddaya wanna\" in full?",
+    "a": "What do you want to",
+    "w": [
+     "What are you wanting",
+     "What did you want"
+    ],
+    "ev": "What do you want to do later?"
+   },
+   {
+    "q": "What happens to the t in \"next week\"?",
+    "a": "It's almost silent.",
+    "w": [
+     "It becomes a d.",
+     "It gets stronger."
+    ],
+    "ev": "is almost silent"
+   },
+   {
+    "q": "Why is there good news?",
+    "a": "The changes follow patterns.",
+    "w": [
+     "Natives will slow down for you.",
+     "Subtitles are always available."
+    ],
+    "ev": "these changes follow patterns"
+   },
+   {
+    "q": "What exercise does the writer recommend?",
+    "a": "Write down 30 seconds of a podcast and check it with the transcript.",
+    "w": [
+     "Watch films with subtitles in Spanish.",
+     "Read the dictionary."
+    ],
+    "ev": "write down exactly what you hear"
+   }
+  ],
+  "after": "Your teacher will say three sentences at full speed. Write down every word, then compare."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "gonna, wanna, gotta",
+  "intro": "These are how people really say going to, want to and have got to. Understanding them is essential; using them in writing is not.",
+  "pattern": [
+   "I'm gonna / I wanna / I gotta",
+   "+base verb",
+   "=(speech only)"
+  ],
+  "note": "<b>gonna</b> = going to (only for the future, not \"going to the shop\"). <b>wanna</b> = want to. <b>gotta</b> = have got to / have to. Never in emails.",
+  "examples": [
+   "I'm **gonna** call you later. = I'm **going to** call you later.",
+   "Do you **wanna** come? = Do you **want to** come?",
+   "I **gotta** go. = I **have to** go.",
+   "I'm **going to** the shop. (no gonna here!)"
+  ],
+  "wrong": "I'm ~~gonna~~ the shop.",
+  "right": "I'm **going to** the shop. / I'm **gonna** buy milk.",
+  "task": "Your turn · what did they say?",
+  "drill": [
+   {
+    "p": "You hear: \"I'm gonna be late.\"",
+    "a": "I'm going to be late.",
+    "w": [
+     "I'm going be late.",
+     "I'm gone to be late."
+    ]
+   },
+   {
+    "p": "You hear: \"Whaddaya wanna eat?\"",
+    "a": "What do you want to eat?",
+    "w": [
+     "What are you want eat?",
+     "What you wanted to eat?"
+    ]
+   },
+   {
+    "p": "You hear: \"I dunno.\"",
+    "a": "I don't know.",
+    "w": [
+     "I do now.",
+     "I didn't know."
+    ]
+   },
+   {
+    "p": "Which one is correct?",
+    "a": "I'm gonna buy some milk.",
+    "w": [
+     "I'm gonna the supermarket.",
+     "I'm gonna to buy some milk."
+    ]
+   }
+  ],
+  "say": "Now say three sentences fast, the way a native would, with gonna and wanna."
  }
 };

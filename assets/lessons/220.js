@@ -397,5 +397,130 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Two messages, ten minutes apart",
+  "kicker": "Work · Writing",
+  "title": "Same news, two very different messages",
+  "before": "Do you write differently to your boss and to your friends? How?",
+  "text": [
+   "Last Friday, a delivery to an important client arrived two days late. Andrés had to tell two people: the client, and his colleague Mariana. He wrote both messages in ten minutes — and they look like they come from two different people.",
+   "To the client: \"Dear Mr Hall, [[regarding]] your order from 3 March, I [[apologise]] for the delay in delivery. The shipment was held at customs. [[I'd like to]] offer a 10% discount on your next order. [[Please find attached]] the updated tracking information. Kind regards, Andrés Molina.\"",
+   "To Mariana on chat: \"Hey! So the Hall order showed up late — customs again. [[Sorry]], I know you told me to check it. [[Can you]] send me the discount code thing? I wanna sort it today. [[Here's]] the tracking 👇\"",
+   "Both messages are good English. The difference is distance. Formal language creates space and shows respect. Casual language — [[contractions]], short sentences, \"hey\" — shows trust. The skill isn't knowing one style. It's knowing when to switch."
+  ],
+  "gloss": {
+   "regarding": "Formal for \"about\". Mostly in emails.",
+   "apologise": "I apologise = formal and serious. \"Sorry\" covers everything else.",
+   "I'd like to": "The neutral, polite default. \"I want to\" sounds blunt.",
+   "Please find attached": "Formal email phrase. Casual: \"Here's…\"",
+   "Sorry": "The casual apology for almost everything.",
+   "Can you": "Fine with friends and close colleagues. \"Could you\" is softer.",
+   "Here's": "The casual way to share something.",
+   "contractions": "I'm, don't, we'll. Natural and relaxed. Full forms sound formal."
+  },
+  "questions": [
+   {
+    "q": "What was the problem?",
+    "a": "A delivery arrived two days late.",
+    "w": [
+     "The client cancelled the order.",
+     "The wrong product was sent."
+    ],
+    "ev": "arrived two days late"
+   },
+   {
+    "q": "Why was the shipment late?",
+    "a": "It was held at customs.",
+    "w": [
+     "The driver got lost.",
+     "The factory closed."
+    ],
+    "ev": "The shipment was held at customs."
+   },
+   {
+    "q": "What did Andrés offer the client?",
+    "a": "A 10% discount on the next order",
+    "w": [
+     "A full refund",
+     "Free shipping forever"
+    ],
+    "ev": "a 10% discount on your next order"
+   },
+   {
+    "q": "What does Andrés ask Mariana for?",
+    "a": "The discount code",
+    "w": [
+     "The tracking number",
+     "The client's phone number"
+    ],
+    "ev": "send me the discount code thing"
+   },
+   {
+    "q": "According to the writer, what's the real skill?",
+    "a": "Knowing when to switch styles",
+    "w": [
+     "Always writing formally",
+     "Using lots of emojis"
+    ],
+    "ev": "It's knowing when to switch."
+   }
+  ],
+  "after": "Write the same message twice: tell your <b>boss</b> and then a <b>friend</b> that you'll be late tomorrow."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "up or down a register",
+  "intro": "Most phrases have a formal version and a casual version. Moving between them is a skill you can practise like grammar.",
+  "pattern": [
+   "Casual",
+   "+↔",
+   "=Formal"
+  ],
+  "note": "about ↔ <b>regarding</b> · sorry ↔ <b>I apologise</b> · I want ↔ <b>I'd like</b> · here's ↔ <b>please find attached</b> · can you ↔ <b>could you</b>",
+  "examples": [
+   "**About** the meeting… → **Regarding** the meeting…",
+   "**Sorry** for the delay. → **I apologise** for the delay.",
+   "**I want** to change the date. → **I'd like** to change the date.",
+   "**Here's** the file. → **Please find attached** the file."
+  ],
+  "wrong": "Dear Mr Hall, ~~I want~~ a refund. ~~Here's~~ my receipt.",
+  "right": "Dear Mr Hall, **I'd like** a refund. **Please find attached** my receipt.",
+  "task": "Your turn · choose the formal version",
+  "drill": [
+   {
+    "p": "\"About your email from Monday…\"",
+    "a": "Regarding your email from Monday…",
+    "w": [
+     "Respecting your email from Monday…",
+     "About of your email from Monday…"
+    ]
+   },
+   {
+    "p": "\"Sorry for the mistake.\"",
+    "a": "I apologise for the mistake.",
+    "w": [
+     "I apologise the mistake.",
+     "I'm apologising of the mistake."
+    ]
+   },
+   {
+    "p": "\"Can you send me the contract?\"",
+    "a": "Could you send me the contract, please?",
+    "w": [
+     "You could send me the contract?",
+     "Could you to send me the contract?"
+    ]
+   },
+   {
+    "p": "\"I want to book a meeting.\"",
+    "a": "I'd like to book a meeting.",
+    "w": [
+     "I'd like book a meeting.",
+     "I would want booking a meeting."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher about your weekend twice: once casually, once as if to a client."
+ }
 };

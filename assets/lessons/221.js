@@ -397,5 +397,125 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Meeting at the conference",
+  "kicker": "Messages · Arranging to meet",
+  "title": "\"Where exactly are you?\"",
+  "before": "Have you ever had trouble finding someone at a big event? What happened?",
+  "text": [
+   "Tomás and Clara work for the same company but live in different countries. They planned to meet [[in]] person for the first time at a conference [[in]] Madrid. The plan seemed simple: \"Let's meet [[on]] Thursday [[at]] lunch.\"",
+   "Thursday morning, Tomás messaged: \"I'm [[at]] the conference centre. Where are you?\" Clara: \"I'm [[in]] the taxi — sorry, traffic! I'll be there [[in]] twenty minutes.\" Then: \"OK, I'm here. I'm [[at]] the entrance.\" Tomás: \"Which entrance? There are four!\"",
+   "Clara sent a photo. \"I'm standing [[on]] the second floor, next to the coffee machine. There's a big poster [[on]] the wall.\" Tomás: \"I'm [[on]] the second floor too… oh wait, I can see you!\"",
+   "They had lunch together and laughed about it. \"Next time,\" Clara said, \"let's be more specific. Not 'at lunch' — at 1:15, [[at]] the café [[on]] the ground floor.\" Tomás agreed. \"And I'll send a pin [[on]] the map.\""
+  ],
+  "gloss": {
+   "in": "in = big spaces and periods: in Madrid, in the taxi, in twenty minutes, in person.",
+   "on": "on = days, floors, surfaces: on Thursday, on the second floor, on the wall, on the map.",
+   "at": "at = exact points: at lunch, at the entrance, at 1:15, at the conference centre."
+  },
+  "questions": [
+   {
+    "q": "Why was this meeting special?",
+    "a": "They were meeting in person for the first time.",
+    "w": [
+     "It was their last meeting.",
+     "They were signing a contract."
+    ],
+    "ev": "for the first time"
+   },
+   {
+    "q": "Why was Clara late?",
+    "a": "There was traffic.",
+    "w": [
+     "She went to the wrong city.",
+     "She forgot the time."
+    ],
+    "ev": "traffic!"
+   },
+   {
+    "q": "What was the problem with \"I'm at the entrance\"?",
+    "a": "There were four entrances.",
+    "w": [
+     "The entrance was closed.",
+     "Tomás was outside."
+    ],
+    "ev": "There are four!"
+   },
+   {
+    "q": "Where was Clara standing?",
+    "a": "On the second floor, next to the coffee machine",
+    "w": [
+     "On the ground floor, at the café",
+     "In the taxi"
+    ],
+    "ev": "next to the coffee machine"
+   },
+   {
+    "q": "What will they do next time?",
+    "a": "Be more specific about time and place.",
+    "w": [
+     "Meet online instead.",
+     "Meet in the taxi."
+    ],
+    "ev": "let's be more specific"
+   }
+  ],
+  "after": "Arrange to meet your teacher next week. Give the <b>day</b>, the <b>time</b> and the exact <b>place</b> — with <b>in</b>, <b>on</b> and <b>at</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "in, on, at: big, medium, small",
+  "intro": "Think of a pyramid. In is for big things, on is for medium things, at is for exact points — in time and in space.",
+  "pattern": [
+   "in · big",
+   "+on · medium",
+   "=at · exact point"
+  ],
+  "note": "Time: <b>in</b> March / 2026 · <b>on</b> Thursday / 3 May · <b>at</b> 1:15 / lunch. Place: <b>in</b> Madrid · <b>on</b> the second floor · <b>at</b> the entrance.",
+  "examples": [
+   "The conference is **in** Madrid, **in** May.",
+   "Let's meet **on** Thursday.",
+   "I'm **on** the second floor.",
+   "See you **at** 1:15 **at** the café."
+  ],
+  "wrong": "Let's meet ~~in~~ Thursday ~~in~~ 1:15.",
+  "right": "Let's meet **on** Thursday **at** 1:15.",
+  "task": "Your turn · choose the correct prepositions",
+  "drill": [
+   {
+    "p": "The meeting · Monday · 9 a.m.",
+    "a": "The meeting is on Monday at 9 a.m.",
+    "w": [
+     "The meeting is in Monday at 9 a.m.",
+     "The meeting is on Monday in 9 a.m."
+    ]
+   },
+   {
+    "p": "Your office · Monterrey · the fifth floor",
+    "a": "My office is in Monterrey, on the fifth floor.",
+    "w": [
+     "My office is at Monterrey, in the fifth floor.",
+     "My office is on Monterrey, at the fifth floor."
+    ]
+   },
+   {
+    "p": "You'll arrive · 20 minutes from now.",
+    "a": "I'll be there in twenty minutes.",
+    "w": [
+     "I'll be there on twenty minutes.",
+     "I'll be there at twenty minutes."
+    ]
+   },
+   {
+    "p": "Night vs morning.",
+    "a": "I work at night and sleep in the morning.",
+    "w": [
+     "I work in the night and sleep at the morning.",
+     "I work on night and sleep in morning."
+    ]
+   }
+  ],
+  "say": "Now describe your typical week with in, on and at: days, times and places."
+ }
 };

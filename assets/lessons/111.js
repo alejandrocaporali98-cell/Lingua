@@ -407,5 +407,121 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "The jacket that didn't fit",
+  "kicker": "Shopping · Short story",
+  "title": "The perfect jacket (in the wrong size)",
+  "before": "Have you ever bought clothes that didn't fit? What did you do?",
+  "text": [
+   "Valeria walked into the shop and a man asked if she needed help. \"[[I'm just looking]], thanks,\" she said. Then she saw it: a green corduroy jacket, exactly like the one in her favourite film.",
+   "\"[[Can I try this on]]?\" she asked. The man showed her the changing room. The jacket was beautiful, but the sleeves were too long. \"Do you have this [[in a medium]]?\" He checked. \"Sorry, only large.\"",
+   "Her friend Inés said, \"[[That colour really suits you]].\" It was 1,200 pesos — [[a bit pricey]] — but Valeria bought it anyway. At home, she put it on again. It still [[doesn't fit]], she thought. It looked like her dad's jacket.",
+   "The next day she went back. \"[[Can I get a refund]]? It doesn't fit.\" The man looked at the receipt and said, \"Of course. Or we're getting mediums on Friday.\" She waited. On Friday, the jacket was hers — and this time, it was perfect."
+  ],
+  "gloss": {
+   "I'm just looking": "What you say when you don't need help in a shop.",
+   "Can I try this on": "Try on = put on clothes to see if they're OK. \"Try it on\".",
+   "in a medium": "in a + size: small, medium, large.",
+   "That colour really suits you": "Suits you = looks good on you.",
+   "a bit pricey": "A softer way to say expensive.",
+   "doesn't fit": "Fit = the right size. Suit = looks good on you.",
+   "Can I get a refund": "Refund = your money back."
+  },
+  "questions": [
+   {
+    "q": "Why did Valeria want the jacket?",
+    "a": "It looked like one from her favourite film.",
+    "w": [
+     "It was very cheap.",
+     "Her friend recommended it."
+    ],
+    "ev": "exactly like the one in her favourite film"
+   },
+   {
+    "q": "What was the problem with the jacket?",
+    "a": "The sleeves were too long.",
+    "w": [
+     "The colour was ugly.",
+     "It was too small."
+    ],
+    "ev": "the sleeves were too long"
+   },
+   {
+    "q": "What did Inés think?",
+    "a": "The colour looked good on Valeria.",
+    "w": [
+     "It was too expensive.",
+     "Valeria shouldn't buy it."
+    ],
+    "ev": "That colour really suits you."
+   },
+   {
+    "q": "What did the shop offer on Friday?",
+    "a": "The same jacket in a medium",
+    "w": [
+     "A discount",
+     "A different colour"
+    ],
+    "ev": "we're getting mediums on Friday"
+   },
+   {
+    "q": "True or false: Valeria got her money back.",
+    "a": "False",
+    "w": [
+     "True"
+    ],
+    "ev": "On Friday, the jacket was hers"
+   }
+  ],
+  "after": "Role-play with your teacher: you want to <b>try on</b> something, ask for <b>another size</b>, then ask for a <b>refund</b>."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "fit or suit?",
+  "intro": "Spanish often uses one idea for both. In English, one is about size, the other is about style.",
+  "forms": [
+   {
+    "name": "fit",
+    "form": "It fits · It doesn't fit",
+    "use": "The size. Is it too big, too small, or just right?",
+    "examples": [
+     "These jeans **don't fit** — they're too small.",
+     "The medium **fits** perfectly."
+    ]
+   },
+   {
+    "name": "suit",
+    "form": "It suits you · It doesn't suit me",
+    "use": "The look. Does the colour or style look good on you?",
+    "examples": [
+     "Green really **suits** you.",
+     "Short hair **doesn't suit** me."
+    ]
+   }
+  ],
+  "task": "Sort them · fit or suit?",
+  "sort": [
+   {
+    "s": "Those shoes don't ___ — they're a size too small.",
+    "f": 0,
+    "answer": "fit"
+   },
+   {
+    "s": "That colour really ___ you!",
+    "f": 1,
+    "answer": "suits"
+   },
+   {
+    "s": "The large didn't ___, so I got a medium.",
+    "f": 0,
+    "answer": "fit"
+   },
+   {
+    "s": "I love yellow, but it doesn't ___ me.",
+    "f": 1,
+    "answer": "suit"
+   }
+  ]
+ }
 };

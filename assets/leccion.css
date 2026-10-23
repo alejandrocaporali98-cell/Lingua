@@ -158,8 +158,8 @@ body.present .pctl:hover, body.present .pctl:focus-within { opacity: 1; }
 .rd-body { display: grid; gap: 14px; }
 .rd-body p { font-size: 1.06em; line-height: 1.78; }
 .rd-body mark { background: #fff3c4; color: inherit; border-radius: 3px; padding: 1px 0; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-.gl { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; font-weight: 700; border-bottom: 2px dotted var(--brand); line-height: inherit; }
-.gl:hover, .gl.on { color: var(--brand-dark); background: var(--brand-soft); border-radius: 3px; }
+.rd-gl { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; font-weight: 700; border-bottom: 2px dotted var(--brand); line-height: inherit; }
+.rd-gl:hover, .rd-gl.on { color: var(--brand-dark); background: var(--brand-soft); border-radius: 3px; }
 .rd-gloss { display: flex; gap: 12px; align-items: flex-start; background: var(--bg); border-radius: var(--r-m); padding: 12px 14px; font-size: .94em; line-height: 1.5; }
 .rd-gloss .eyebrow { color: var(--brand); flex: none; margin-top: 2px; }
 .rd-qs { display: grid; gap: 18px; padding: 20px; position: sticky; top: 80px; }

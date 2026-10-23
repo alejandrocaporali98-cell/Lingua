@@ -501,5 +501,133 @@ window.CLASE = {
    "«Depends of» en vez de «depends on»: casi seguro que sale. Márcalo con M.",
    "Si explica algo de su trabajo, aprovecha para vocabulario técnico que le sirva de verdad."
   ]
+ },
+ "read": {
+  "short": "Training the new guy",
+  "kicker": "Work · Onboarding",
+  "title": "How to explain a process so people remember it",
+  "before": "Think of a process you know well at work. Could you explain it in one minute?",
+  "text": [
+   "On his first day at the warehouse, Tomás was trained by Lupita, who had worked there for eleven years. She didn't give him a manual. She walked him through the process of receiving a delivery, step by step.",
+   "\"[[First]], check the truck number against the list. [[Then]] count the boxes before you sign anything. [[Once you've]] signed, you can't complain later. [[Make sure you]] take a photo of any damaged box, [[so that]] the supplier can't say it happened here.\"",
+   "\"[[After that]], scan each box and put it on the right shelf. Keep scanning [[until]] the screen shows zero. [[Otherwise]], the system thinks something is missing and the manager gets an alert at 3 a.m. — and he will call you.\"",
+   "\"What if the order is incomplete?\" Tomás asked. \"[[It depends on whether]] the missing items are urgent. If they are, call the supplier. If not, just write it on the form. [[In other words]], don't panic. [[Finally]], always say thank you to the driver. You'll see him every week.\""
+  ],
+  "gloss": {
+   "First": "First… then… after that… finally = the basic sequence.",
+   "Then": "The next step.",
+   "Once you've": "Once you've + past participle = after you finish.",
+   "Make sure you": "Marks the step people usually forget.",
+   "so that": "Explains why the step exists.",
+   "After that": "The next step in the sequence.",
+   "until": "Continue up to the moment something changes.",
+   "Otherwise": "What goes wrong if you skip it.",
+   "It depends on whether": "For a process with two paths.",
+   "In other words": "Says it again more simply.",
+   "Finally": "The last step."
+  },
+  "questions": [
+   {
+    "q": "How did Lupita train Tomás?",
+    "a": "She walked him through it step by step.",
+    "w": [
+     "She gave him a manual.",
+     "She showed him a video."
+    ],
+    "ev": "She walked him through the process"
+   },
+   {
+    "q": "Why should you count before signing?",
+    "a": "Once you've signed, you can't complain later.",
+    "w": [
+     "The driver is in a hurry.",
+     "The scanner doesn't work."
+    ],
+    "ev": "Once you've signed, you can't complain later."
+   },
+   {
+    "q": "Why take photos of damaged boxes?",
+    "a": "So the supplier can't say it happened in the warehouse",
+    "w": [
+     "For the company's website",
+     "To send them to the driver"
+    ],
+    "ev": "so that the supplier can't say it happened here"
+   },
+   {
+    "q": "What happens if you stop scanning too early?",
+    "a": "The manager gets an alert at 3 a.m.",
+    "w": [
+     "The truck leaves.",
+     "The boxes are returned."
+    ],
+    "ev": "the manager gets an alert at 3 a.m."
+   },
+   {
+    "q": "What should you do if non-urgent items are missing?",
+    "a": "Write it on the form.",
+    "w": [
+     "Call the supplier immediately.",
+     "Refuse the delivery."
+    ],
+    "ev": "just write it on the form"
+   }
+  ],
+  "after": "Explain a process from your job (or making your favourite dish) using <b>First</b>, <b>Once you've…</b>, <b>Make sure…</b> and <b>Otherwise…</b>"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "Once you've… / until",
+  "intro": "In instructions, \"once\" and \"until\" connect the steps. After them, English uses a present tense — never will.",
+  "pattern": [
+   "Once you've",
+   "+past participle",
+   "=, + next step"
+  ],
+  "note": "<b>Once you've signed</b>, you can't complain. Keep scanning <b>until</b> the screen <b>shows</b> zero. ✗ until it <b>will show</b> · ✗ once you <b>will</b> sign.",
+  "examples": [
+   "**Once you've** signed, you can't complain.",
+   "Keep scanning **until** the screen **shows** zero.",
+   "**Once** the truck **arrives**, check the number.",
+   "Wait **until** I **call** you."
+  ],
+  "wrong": "Wait here until the driver ~~will arrive~~.",
+  "right": "Wait here until the driver **arrives**.",
+  "task": "Your turn · choose the correct instruction",
+  "drill": [
+   {
+    "p": "Finish the form → send it to HR.",
+    "a": "Once you've finished the form, send it to HR.",
+    "w": [
+     "Once you will finish the form, send it to HR.",
+     "Once you finished the form, you will send it to HR."
+    ]
+   },
+   {
+    "p": "Keep stirring → the sauce is thick.",
+    "a": "Keep stirring until the sauce is thick.",
+    "w": [
+     "Keep stirring until the sauce will be thick.",
+     "Keep stirring until that the sauce is thick."
+    ]
+   },
+   {
+    "p": "Important step people forget.",
+    "a": "Make sure you save the file.",
+    "w": [
+     "Make sure to you save the file.",
+     "Be sure you saving the file."
+    ]
+   },
+   {
+    "p": "Explain the consequence of not saving.",
+    "a": "Otherwise, you'll lose everything.",
+    "w": [
+     "Otherwise, you lose everything will.",
+     "If not otherwise, you lose everything."
+    ]
+   }
+  ],
+  "say": "Now explain to your teacher how to make a good coffee, in five steps."
  }
 };

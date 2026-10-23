@@ -501,5 +501,122 @@ window.CLASE = {
    "Ojo con «actually»: si lo usa como «actualmente», márcalo con M; es el error que más se repite.",
    "Objetivo realista: que salga de aquí usando «well» y «I mean» sin pensarlo."
   ]
+ },
+ "read": {
+  "short": "The question you weren't ready for",
+  "kicker": "Speaking · Real example",
+  "title": "How to survive a question you didn't expect",
+  "before": "What do you do when someone asks you something and your mind goes blank?",
+  "text": [
+   "In a team meeting last month, Rodrigo's director suddenly turned to him: \"Rodrigo, why do you think sales dropped in Q3?\" He hadn't prepared anything. In his first language, he'd have improvised easily. In English, his mind went blank.",
+   "But he didn't freeze. \"[[Well]]... [[let me think]] for a second.\" That gave him three seconds. \"[[The thing is]], it wasn't one problem. [[Basically]], two things happened at the same time.\" Now everyone was listening, and he had time to organise his ideas.",
+   "\"First, a competitor cut their prices in July. Second — [[how can I put this]] — our delivery times got worse. [[I mean]], not terrible, but slower than before. [[Actually]], I think the second problem was bigger.\"",
+   "His director nodded and asked him to prepare a short report. Later, a colleague said, \"You sounded so calm.\" Rodrigo laughed. \"I wasn't. I was just using every filler I know.\" The secret isn't avoiding pauses — it's filling them with the right words."
+  ],
+  "gloss": {
+   "Well": "Buys a second before any answer that isn't a simple yes.",
+   "let me think": "Completely acceptable. Nobody minds a pause you announce.",
+   "The thing is": "The important part is coming. Adds weight and time.",
+   "Basically": "Introduces a summary.",
+   "how can I put this": "Warns that what's coming is delicate, and buys time.",
+   "I mean": "Lets you rephrase or clarify what you just said.",
+   "Actually": "Corrects or adds a surprising detail. Not \"actualmente\"!"
+  },
+  "questions": [
+   {
+    "q": "What was the director's question about?",
+    "a": "Why sales dropped in Q3",
+    "w": [
+     "A new product",
+     "Rodrigo's vacation"
+    ],
+    "ev": "why do you think sales dropped in Q3?"
+   },
+   {
+    "q": "How did Rodrigo get his first few seconds?",
+    "a": "He said \"Well... let me think\".",
+    "w": [
+     "He asked to answer later.",
+     "He stayed silent."
+    ],
+    "ev": "That gave him three seconds."
+   },
+   {
+    "q": "What were the two causes?",
+    "a": "A competitor's lower prices and slower deliveries",
+    "w": [
+     "Bad weather and holidays",
+     "A new director and a new website"
+    ],
+    "ev": "a competitor cut their prices in July"
+   },
+   {
+    "q": "Which problem did Rodrigo think was bigger?",
+    "a": "The delivery times",
+    "w": [
+     "The competitor's prices",
+     "Neither"
+    ],
+    "ev": "I think the second problem was bigger"
+   },
+   {
+    "q": "What's the secret, according to the writer?",
+    "a": "Filling pauses with the right words",
+    "w": [
+     "Never pausing",
+     "Preparing every answer"
+    ],
+    "ev": "it's filling them with the right words"
+   }
+  ],
+  "after": "Your teacher will ask you a surprise question. Answer for one minute without stopping, using at least four fillers."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "actually or currently?",
+  "intro": "This is the most famous false friend for Spanish speakers. \"Actualmente\" is not \"actually\".",
+  "forms": [
+   {
+    "name": "actually",
+    "form": "= en realidad / de hecho",
+    "use": "Corrects something or adds a surprising fact.",
+    "examples": [
+     "I thought it was Monday. **Actually**, it's Tuesday.",
+     "**Actually**, the second problem was bigger."
+    ]
+   },
+   {
+    "name": "currently",
+    "form": "= actualmente / ahora",
+    "use": "At the present time.",
+    "examples": [
+     "I'm **currently** working in sales.",
+     "We **currently** have 40 employees."
+    ]
+   }
+  ],
+  "task": "Sort them · actually or currently?",
+  "sort": [
+   {
+    "s": "She's ___ living in Toronto.",
+    "f": 1,
+    "answer": "currently"
+   },
+   {
+    "s": "Everyone thinks he's British, but he's ___ Australian.",
+    "f": 0,
+    "answer": "actually"
+   },
+   {
+    "s": "The office is ___ closed for repairs.",
+    "f": 1,
+    "answer": "currently"
+   },
+   {
+    "s": "I said Thursday? ___, I meant Friday.",
+    "f": 0,
+    "answer": "Actually"
+   }
+  ]
  }
 };

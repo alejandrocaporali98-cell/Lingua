@@ -397,5 +397,128 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A show that grew on me",
+  "kicker": "Series · Recommendation",
+  "title": "I almost quit this show after episode one",
+  "before": "Have you ever stopped watching a show and then gone back to it? What happened?",
+  "text": [
+   "A friend kept telling me to watch \"Frieren\", and for weeks I said no. The first episode is quiet: an elf, a few old friends and a long walk. Nothing explodes. I turned it off after twenty minutes and thought, \"Not for me.\"",
+   "A month later I was bored and tried again. It's about an elf who lives for a thousand years and only realises, after her friend dies, that she never really got to know him. It's a bit of a [[slow burn]], but that's the point. The story is about time.",
+   "It really [[grew on me]]. By episode six I was completely [[invested]]. The [[character development]] is amazing — Frieren starts cold and distant, and slowly learns to notice people. And the [[animation]] is stunning, especially the scenes with flowers and stars.",
+   "[[Without spoiling anything]], episode ten made me cry in a way I didn't expect. So if you start it and think it's boring, give it four episodes. You have to watch it. Just don't watch it when you're tired."
+  ],
+  "gloss": {
+   "slow burn": "A story that starts slowly and gets better and better.",
+   "grew on me": "It grew on me = I didn't like it at first, but I came to love it.",
+   "invested": "I'm so invested = I care a lot about the characters and the story.",
+   "character development": "How the characters change and grow during the story.",
+   "animation": "How an anime moves and looks. \"Stunning\" = extremely beautiful.",
+   "Without spoiling anything": "Talking about a story without telling what happens."
+  },
+  "questions": [
+   {
+    "q": "What did the writer think after the first episode?",
+    "a": "That the show wasn't for them",
+    "w": [
+     "That it was the best show ever",
+     "That it was too violent"
+    ],
+    "ev": "Not for me."
+   },
+   {
+    "q": "What is the show really about, according to the writer?",
+    "a": "Time",
+    "w": [
+     "Fighting monsters",
+     "A school for elves"
+    ],
+    "ev": "The story is about time."
+   },
+   {
+    "q": "How does Frieren change?",
+    "a": "She starts cold and slowly learns to notice people.",
+    "w": [
+     "She starts kind and becomes cold.",
+     "She doesn't change at all."
+    ],
+    "ev": "Frieren starts cold and distant, and slowly learns to notice people"
+   },
+   {
+    "q": "What does the writer say about episode ten?",
+    "a": "It made them cry.",
+    "w": [
+     "It was boring.",
+     "It was the last episode."
+    ],
+    "ev": "episode ten made me cry in a way I didn't expect"
+   },
+   {
+    "q": "What is the writer's advice?",
+    "a": "Give it four episodes before you decide.",
+    "w": [
+     "Watch it when you're tired.",
+     "Skip the first episode."
+    ],
+    "ev": "give it four episodes"
+   }
+  ],
+  "after": "Recommend a show to your teacher <b>without spoiling anything</b>. Say what <b>it's about</b> and why you're so <b>invested</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "telling a story in the present",
+  "intro": "When we explain what a show or a book is about, English uses the present simple — even though we watched it in the past.",
+  "pattern": [
+   "It's about",
+   "+someone who + verb-s",
+   "=…"
+  ],
+  "note": "Plots are told in the <b>present simple</b>: <b>It's about a girl who finds…</b>, <b>She learns…</b>. Your own experience stays in the past: <b>I watched it last month</b>.",
+  "examples": [
+   "**It's about** an elf who **lives** for a thousand years.",
+   "She **realises** she never knew him.",
+   "In the end, they **win** the tournament.",
+   "I **watched** it last month."
+  ],
+  "wrong": "It's about a girl who ~~found~~ a dragon.",
+  "right": "It's about a girl who **finds** a dragon.",
+  "task": "Your turn · choose the natural sentence",
+  "drill": [
+   {
+    "p": "Explain the plot of a detective show.",
+    "a": "It's about a detective who solves crimes in Tokyo.",
+    "w": [
+     "It's about a detective who solved crimes in Tokyo.",
+     "It's of a detective solving crimes in Tokyo."
+    ]
+   },
+   {
+    "p": "Describe what the hero does in season one.",
+    "a": "In season one, he joins a band.",
+    "w": [
+     "In season one, he joined to a band.",
+     "In season one, he is join a band."
+    ]
+   },
+   {
+    "p": "Say when you saw it.",
+    "a": "I watched it last summer.",
+    "w": [
+     "I watch it last summer.",
+     "I've watched it last summer."
+    ]
+   },
+   {
+    "p": "Explain the main character.",
+    "a": "It's about a boy who can't speak.",
+    "w": [
+     "It's about a boy who he can't speak.",
+     "It's about a boy which can't speak."
+    ]
+   }
+  ],
+  "say": "Now explain the plot of your favourite series in three present simple sentences."
+ }
 };

@@ -397,5 +397,126 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A hotel mix-up",
+  "kicker": "Travel · Email and reply",
+  "title": "\"I think there's been a mistake\"",
+  "before": "Has a hotel, airline or restaurant ever made a mistake with your booking? How did you fix it?",
+  "text": [
+   "Domingo arrived at his hotel in Toronto at 11 p.m. after a long flight. \"Hi, [[I have a reservation under]] Ruiz,\" he said. The receptionist typed, frowned, and typed again. \"I'm sorry, I don't see anything for tonight.\"",
+   "He stayed calm. \"[[I think there's been a mistake]]. I booked two nights, starting today.\" He showed the confirmation email on his phone. The receptionist spoke quickly about \"the system\" and \"another booking platform\". Domingo said, \"Sorry, [[could you speak a bit more slowly]]?\"",
+   "It turned out the booking was for the same dates — next month. The hotel was full, but the receptionist made a call and found him a room at their other hotel. \"[[Is it within walking distance]]?\" he asked. \"About ten minutes,\" she said. \"But we'll pay for your taxi.\"",
+   "The next morning, he wrote a short, polite review. He didn't blame anyone; he just said what happened and how well the staff fixed it. Two days later, the manager wrote back and offered him a free night on his next visit."
+  ],
+  "gloss": {
+   "I have a reservation under": "The standard opening at a hotel or restaurant desk.",
+   "I think there's been a mistake": "Raises a problem without blaming anyone.",
+   "could you speak a bit more slowly": "Completely normal to ask. Most people slow down happily.",
+   "Is it within walking distance": "Can I walk there?"
+  },
+  "questions": [
+   {
+    "q": "What was the problem when Domingo arrived?",
+    "a": "The hotel couldn't find his reservation.",
+    "w": [
+     "His room was dirty.",
+     "He arrived on the wrong day."
+    ],
+    "ev": "I don't see anything for tonight"
+   },
+   {
+    "q": "How did Domingo prove his booking?",
+    "a": "He showed the confirmation email.",
+    "w": [
+     "He called the airline.",
+     "He showed his passport."
+    ],
+    "ev": "He showed the confirmation email on his phone."
+   },
+   {
+    "q": "What was the real mistake?",
+    "a": "The booking was for next month.",
+    "w": [
+     "The booking was at a different hotel.",
+     "The booking was cancelled."
+    ],
+    "ev": "next month"
+   },
+   {
+    "q": "How did the hotel solve it?",
+    "a": "They found a room at their other hotel and paid for a taxi.",
+    "w": [
+     "They gave him a bigger room.",
+     "They gave him his money back."
+    ],
+    "ev": "we'll pay for your taxi"
+   },
+   {
+    "q": "What happened after his review?",
+    "a": "The manager offered a free night.",
+    "w": [
+     "The receptionist lost her job.",
+     "Nothing."
+    ],
+    "ev": "offered him a free night on his next visit"
+   }
+  ],
+  "after": "Role-play: you arrive at a hotel and your booking isn't there. Use <b>I have a reservation under…</b> and <b>I think there's been a mistake</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "polite requests: Could you…? / Would you mind…?",
+  "intro": "With strangers, English requests are usually questions. The more you need from the person, the softer the question.",
+  "pattern": [
+   "Could you",
+   "+verb",
+   "=, please?"
+  ],
+  "note": "<b>Could you + verb?</b> = polite. <b>Would you mind + -ing?</b> = extra polite. Answer to \"Would you mind…?\" is <b>No, not at all</b> (= yes, I'll do it).",
+  "examples": [
+   "**Could you** speak a bit more slowly?",
+   "**Would you mind repeating** that?",
+   "**Could you tell me** how to get to the station?",
+   "**Would you mind calling** a taxi for me?"
+  ],
+  "wrong": "Would you mind ~~to repeat~~ that?",
+  "right": "Would you mind **repeating** that?",
+  "task": "Your turn · choose the correct request",
+  "drill": [
+   {
+    "p": "The receptionist is talking too fast.",
+    "a": "Could you speak a bit more slowly, please?",
+    "w": [
+     "Could you to speak more slowly, please?",
+     "You could speak more slow, please?"
+    ]
+   },
+   {
+    "p": "You didn't hear the price.",
+    "a": "Would you mind repeating that?",
+    "w": [
+     "Would you mind to repeat that?",
+     "Would you mind repeat that?"
+    ]
+   },
+   {
+    "p": "You need directions to the museum.",
+    "a": "Could you tell me how to get to the museum?",
+    "w": [
+     "Could you tell me how do I get to the museum?",
+     "Could you say me how to get to the museum?"
+    ]
+   },
+   {
+    "p": "Someone asks: \"Would you mind waiting?\" You agree.",
+    "a": "No, not at all.",
+    "w": [
+     "Yes, I mind.",
+     "Yes, not at all."
+    ]
+   }
+  ],
+  "say": "Now make three polite requests you might need at an airport."
+ }
 };

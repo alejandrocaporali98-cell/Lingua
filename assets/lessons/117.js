@@ -407,5 +407,124 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A new student's first week",
+  "kicker": "School · Blog",
+  "title": "First week at a new school: what I learned",
+  "before": "What's the hardest thing about starting at a new school?",
+  "text": [
+   "I changed schools in September. [[I'm in Year 10]] now, and on my first day I didn't know anybody. A girl called Paula showed me around, and by Friday she was my best friend.",
+   "The [[timetable]] is very different. On Mondays we have maths [[first period]], which is a terrible way to start the week. Our maths teacher, Mr Ortiz, is [[strict but fair]]. He doesn't accept late homework, but he explains things really well.",
+   "And the homework! I've [[got loads of homework]] — an essay for English, a lab report for chemistry, and a project that's [[due on Friday]]. I'm [[rubbish at chemistry]], so the lab report took me three hours.",
+   "The best moment? In my first English test, [[I did really well]]. Paula said, \"See? You're going to be fine.\" The worst moment? I forgot my pencil case on Tuesday and had to ask five people, \"[[Can I borrow a pen]]?\""
+  ],
+  "gloss": {
+   "I'm in Year 10": "Say your year or grade, not your age. US: \"I'm in 10th grade\".",
+   "timetable": "Your class schedule for the week. US: schedule.",
+   "first period": "Period = one block of class.",
+   "strict but fair": "Has rules, but treats everyone the same way.",
+   "got loads of homework": "Homework is uncountable — never \"homeworks\".",
+   "due on Friday": "Due = the day you must hand it in.",
+   "rubbish at chemistry": "Rubbish at (UK) = bad at.",
+   "I did really well": "Do well / badly in a test or subject.",
+   "Can I borrow a pen": "You borrow FROM someone. They lend TO you."
+  },
+  "questions": [
+   {
+    "q": "Who showed the writer around?",
+    "a": "Paula",
+    "w": [
+     "Mr Ortiz",
+     "A teacher"
+    ],
+    "ev": "A girl called Paula showed me around"
+   },
+   {
+    "q": "Why is maths on Monday \"terrible\"?",
+    "a": "It's the first class of the week.",
+    "w": [
+     "Mr Ortiz is unfair.",
+     "The class is very long."
+    ],
+    "ev": "which is a terrible way to start the week"
+   },
+   {
+    "q": "What does Mr Ortiz not accept?",
+    "a": "Late homework",
+    "w": [
+     "Questions in class",
+     "Phones"
+    ],
+    "ev": "He doesn't accept late homework"
+   },
+   {
+    "q": "Why did the lab report take three hours?",
+    "a": "The writer is bad at chemistry.",
+    "w": [
+     "It was very long.",
+     "The writer forgot it."
+    ],
+    "ev": "I'm rubbish at chemistry"
+   },
+   {
+    "q": "What happened on Tuesday?",
+    "a": "The writer forgot their pencil case.",
+    "w": [
+     "The writer failed a test.",
+     "The writer met Paula."
+    ],
+    "ev": "I forgot my pencil case on Tuesday"
+   }
+  ],
+  "after": "Describe your school week: your <b>timetable</b>, a teacher who is <b>strict but fair</b>, and what's <b>due</b> soon."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "borrow or lend?",
+  "intro": "Spanish uses \"prestar\" for both. English has two verbs — it depends who gives and who receives.",
+  "forms": [
+   {
+    "name": "borrow",
+    "form": "borrow something FROM someone",
+    "use": "You receive it for a short time.",
+    "examples": [
+     "Can I **borrow** a pen?",
+     "I **borrowed** a book **from** Paula."
+    ]
+   },
+   {
+    "name": "lend",
+    "form": "lend someone something",
+    "use": "You give it for a short time.",
+    "examples": [
+     "Can you **lend** me a pen?",
+     "Paula **lent** me her notes."
+    ]
+   }
+  ],
+  "task": "Sort them · borrow or lend?",
+  "sort": [
+   {
+    "s": "Can I ___ your charger for a minute?",
+    "f": 0,
+    "answer": "borrow"
+   },
+   {
+    "s": "Could you ___ me your calculator?",
+    "f": 1,
+    "answer": "lend"
+   },
+   {
+    "s": "My brother never ___ me his headphones.",
+    "f": 1,
+    "answer": "lends"
+   },
+   {
+    "s": "I ___ a jacket from my cousin yesterday.",
+    "f": 0,
+    "answer": "borrowed"
+   }
+  ]
+ }
 };

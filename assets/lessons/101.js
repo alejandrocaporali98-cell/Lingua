@@ -397,5 +397,130 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "The band nobody knows",
+  "kicker": "Music · Blog post",
+  "title": "Why my favourite band only has 3,000 listeners",
+  "before": "Do you have a favourite artist that your friends don't know? How did you find them?",
+  "text": [
+   "I found Paper Lanterns by accident. I was doing homework with a random playlist on, and suddenly a song started that made me stop writing. I checked the name, and they had just 3,000 monthly listeners. I've been [[into]] them ever since.",
+   "It's hard to describe their sound. It's kind of a [[mix]] of folk and electronic music — soft guitars, but with strange beats underneath. Their singer has a quiet voice, almost like she's telling you a secret.",
+   "Their song \"Northbound\" has been [[on repeat]] for about three weeks. It's about leaving your home town, and the [[lyrics]] really [[hit]] me, because my family moved last year. Every time I hear the last verse, I think of my old street.",
+   "I honestly think they're [[underrated]]. They don't have a big label or expensive videos, just good songs. So if you like music with a calm [[vibe]], you should [[give them a listen]]. And if you hate it, that's fine too — at least now you know."
+  ],
+  "gloss": {
+   "into": "be really into = to love a band, a genre or a hobby. Stronger than \"I like\".",
+   "mix": "It's kind of a mix of… = music that blends two styles.",
+   "on repeat": "It's been on repeat = you've listened to it again and again.",
+   "lyrics": "The words of a song.",
+   "hit": "The lyrics really hit = the words moved you emotionally.",
+   "underrated": "Better than people think. It deserves more attention.",
+   "vibe": "The mood or feeling of a song or a place.",
+   "give them a listen": "A friendly way to recommend music without being pushy."
+  },
+  "questions": [
+   {
+    "q": "How did the writer find Paper Lanterns?",
+    "a": "By accident, on a random playlist",
+    "w": [
+     "A friend recommended them",
+     "At a concert"
+    ],
+    "ev": "I was doing homework with a random playlist on"
+   },
+   {
+    "q": "How does the writer describe their sound?",
+    "a": "A mix of folk and electronic music",
+    "w": [
+     "Loud rock with a big voice",
+     "Classical music with no singer"
+    ],
+    "ev": "It's kind of a mix of folk and electronic music"
+   },
+   {
+    "q": "Why do the lyrics of \"Northbound\" hit the writer?",
+    "a": "Because their family moved last year",
+    "w": [
+     "Because the singer is a friend",
+     "Because it's about a holiday"
+    ],
+    "ev": "because my family moved last year"
+   },
+   {
+    "q": "Why does the writer think the band is underrated?",
+    "a": "They have good songs but no big label or expensive videos.",
+    "w": [
+     "They have bad videos and bad songs.",
+     "Too many people listen to them."
+    ],
+    "ev": "They don't have a big label or expensive videos, just good songs."
+   },
+   {
+    "q": "What is the tone of the last sentence?",
+    "a": "Relaxed — it's OK if you don't like them.",
+    "w": [
+     "Angry — you must like them.",
+     "Sad — nobody will listen."
+    ],
+    "ev": "And if you hate it, that's fine too"
+   }
+  ],
+  "after": "Tell your teacher about an artist you think is <b>underrated</b>. What's their <b>sound</b>? Which song has been <b>on repeat</b>?"
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "how long: present perfect + for / since",
+  "intro": "When something started in the past and is still true now, English uses have + past participle — not the present simple.",
+  "pattern": [
+   "I've been / I've had",
+   "+for three weeks / since May",
+   "=."
+  ],
+  "note": "<b>for</b> + a length of time (for two years). <b>since</b> + a starting point (since 2023, since I was ten). Ask with <b>How long have you…?</b>",
+  "examples": [
+   "It's **been on repeat for** three weeks.",
+   "I've **been into** them **since** last year.",
+   "I've **known** this song **for** ages.",
+   "**How long have you** listened to them?"
+  ],
+  "wrong": "I ~~listen to them since~~ 2023.",
+  "right": "I've **listened to them since** 2023.",
+  "task": "Your turn · choose the natural sentence",
+  "drill": [
+   {
+    "p": "You started liking K-pop two years ago. You still like it.",
+    "a": "I've been into K-pop for two years.",
+    "w": [
+     "I'm into K-pop since two years.",
+     "I was into K-pop for two years."
+    ]
+   },
+   {
+    "p": "This song started being on repeat on Monday.",
+    "a": "It's been on repeat since Monday.",
+    "w": [
+     "It's on repeat since Monday.",
+     "It's been on repeat for Monday."
+    ]
+   },
+   {
+    "p": "Ask a friend about their favourite band.",
+    "a": "How long have you liked them?",
+    "w": [
+     "How long do you like them?",
+     "Since when you like them?"
+    ]
+   },
+   {
+    "p": "You got your guitar when you were twelve.",
+    "a": "I've had my guitar since I was twelve.",
+    "w": [
+     "I have my guitar since I was twelve.",
+     "I've had my guitar for I was twelve."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher about a band or a song: how long have you been into it?"
+ }
 };

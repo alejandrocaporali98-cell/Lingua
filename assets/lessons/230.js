@@ -501,5 +501,128 @@ window.CLASE = {
    "«Tell me about it» es el malentendido más probable. Pruébalo en vivo y ve si contesta explicando.",
    "Si el humor le cuesta, no lo fuerces: entenderlo ya es la mitad del objetivo."
   ]
+ },
+ "read": {
+  "short": "When \"brilliant\" isn't",
+  "kicker": "Culture · Column",
+  "title": "My first month in a British office",
+  "before": "Have you ever not realised someone was joking? What happened?",
+  "text": [
+   "When I started working in Manchester, I thought my colleagues were the most positive people in the world. Then the printer broke for the third time in a day, and my colleague Tom said, \"[[Oh, brilliant]].\" He didn't look happy at all.",
+   "That's when I learned that British humour often says the opposite of what it means. The tone does the work. When it rained all week, people said \"Lovely weather.\" When the project was three weeks late, my manager called it \"[[a bit of a problem]].\"",
+   "The opposite also happens. After my first presentation, my boss said, \"[[Not bad]].\" I was worried for a whole day. Then Tom explained: from her, \"not bad\" means \"really good\". The bigger the feeling, the smaller the words.",
+   "Now I'm learning to join in. Last week, Tom complained about the long meetings. I said, \"[[Tell me about it]].\" He laughed — I'd used it correctly. Then I told him I loved Mondays. \"[[Yeah, right]],\" he said. I said, \"[[Just kidding]].\" I think I'm finally fitting in."
+  ],
+  "gloss": {
+   "Oh, brilliant": "Positive words + a flat tone = the opposite meaning.",
+   "a bit of a problem": "British understatement: a big disaster, described with small words.",
+   "Not bad": "Often means genuinely good.",
+   "Tell me about it": "Not a request! It means: I know, I've experienced it too.",
+   "Yeah, right": "Two positive words that mean: I don't believe you.",
+   "Just kidding": "I was joking."
+  },
+  "questions": [
+   {
+    "q": "Why did Tom say \"Oh, brilliant\"?",
+    "a": "He was annoyed because the printer broke again.",
+    "w": [
+     "He fixed the printer.",
+     "He liked the new printer."
+    ],
+    "ev": "the printer broke for the third time in a day"
+   },
+   {
+    "q": "What did the manager call a project three weeks late?",
+    "a": "A bit of a problem",
+    "w": [
+     "A disaster",
+     "Not bad"
+    ],
+    "ev": "my manager called it \"a bit of a problem.\""
+   },
+   {
+    "q": "What did \"Not bad\" really mean from the boss?",
+    "a": "Really good",
+    "w": [
+     "Bad",
+     "Average"
+    ],
+    "ev": "means \"really good\""
+   },
+   {
+    "q": "Why did Tom laugh at \"Tell me about it\"?",
+    "a": "The writer used it correctly.",
+    "w": [
+     "It was a strange question.",
+     "The writer said it in Spanish."
+    ],
+    "ev": "I'd used it correctly"
+   },
+   {
+    "q": "What did \"Yeah, right\" show?",
+    "a": "Tom didn't believe the writer loved Mondays.",
+    "w": [
+     "Tom also loves Mondays.",
+     "Tom agreed completely."
+    ],
+    "ev": "Then I told him I loved Mondays."
+   }
+  ],
+  "after": "Your teacher will say some sentences. Decide: <b>sincere or sarcastic?</b> Then try saying \"Oh, brilliant\" both ways."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "understatement: small words, big meaning",
+  "intro": "Much English humour, especially British, uses understatement: describing something extreme with soft, small words.",
+  "pattern": [
+   "a disaster",
+   "+→",
+   "=a bit of a problem"
+  ],
+  "note": "<b>not bad</b> = good · <b>not great</b> = bad · <b>a bit annoying</b> = very annoying · <b>could be worse</b> = it's OK · <b>not ideal</b> = a problem.",
+  "examples": [
+   "The project is three weeks late. That's **not ideal**.",
+   "Your presentation was **not bad** at all. (= very good)",
+   "It's raining again. **Could be worse**.",
+   "We lost the client. That's **a bit of a problem**."
+  ],
+  "wrong": "(Your boss says \"not bad\") ~~Oh no, she hated it.~~",
+  "right": "(Your boss says \"not bad\") **She liked it!**",
+  "task": "Your turn · what do they really mean?",
+  "drill": [
+   {
+    "p": "A British colleague tastes your cake: \"Not bad at all.\"",
+    "a": "It's really good.",
+    "w": [
+     "It's terrible.",
+     "It's average."
+    ]
+   },
+   {
+    "p": "The server crashed before the launch: \"Well, that's not ideal.\"",
+    "a": "This is a serious problem.",
+    "w": [
+     "This is a small detail.",
+     "This is good news."
+    ]
+   },
+   {
+    "p": "You say \"Meetings are so long.\" Your friend: \"Tell me about it.\"",
+    "a": "I completely agree.",
+    "w": [
+     "Explain what you mean.",
+     "I don't believe you."
+    ]
+   },
+   {
+    "p": "\"I'll finish all the reports tonight.\" — \"Yeah, right.\"",
+    "a": "I don't believe you.",
+    "w": [
+     "Good idea.",
+     "That's correct."
+    ]
+   }
+  ],
+  "say": "Now describe a really bad day to your teacher using only understatement."
  }
 };

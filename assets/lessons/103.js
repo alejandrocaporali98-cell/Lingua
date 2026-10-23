@@ -397,5 +397,120 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Three tenses, one story",
+  "kicker": "Language · Column",
+  "title": "The three tenses that tell your whole story",
+  "before": "Which English tense do you find hardest? Why?",
+  "text": [
+   "Most students learn tenses one by one, in separate chapters. But in a real conversation, they work together. Listen to this short story from a student called Marta.",
+   "\"I [[used to]] hate English. In primary school I failed two exams, and I thought I was just bad at languages. Then, when I was thirteen, I [[watched]] a Korean drama with English subtitles and I couldn't stop.\"",
+   "\"Since then, I've [[watched]] about forty series that way. My English has changed completely. I'm reading a fantasy novel in English at the moment, and next year I'm [[going to]] do an exchange in Canada.\"",
+   "Look at what Marta does. The past simple tells finished moments: \"I failed\", \"I watched\". The present perfect connects the past to now: \"I've watched forty series\", \"My English has changed\". And the future comes with a plan: \"I'm going to\". That's the whole story of a person — in three tenses."
+  ],
+  "gloss": {
+   "used to": "For something that was true before, but not now: \"I used to hate English.\"",
+   "watched": "Past simple (\"I watched it\") = finished. Present perfect (\"I've watched forty\") = it connects to now.",
+   "going to": "\"Going to\" = a plan you already have."
+  },
+  "questions": [
+   {
+    "q": "What is the writer's main point?",
+    "a": "In real conversations, tenses work together.",
+    "w": [
+     "You should learn tenses one by one.",
+     "The present perfect is not important."
+    ],
+    "ev": "in a real conversation, they work together"
+   },
+   {
+    "q": "How did Marta feel about English in primary school?",
+    "a": "She hated it.",
+    "w": [
+     "She loved it.",
+     "She didn't have English classes."
+    ],
+    "ev": "I used to hate English."
+   },
+   {
+    "q": "What changed everything for Marta?",
+    "a": "A Korean drama with English subtitles",
+    "w": [
+     "An exchange in Canada",
+     "A new English teacher"
+    ],
+    "ev": "I watched a Korean drama with English subtitles"
+   },
+   {
+    "q": "Why does Marta say \"I've watched about forty series\" and not \"I watched\"?",
+    "a": "Because it connects the past to now — she's still watching.",
+    "w": [
+     "Because it happened only once.",
+     "Because it's a future plan."
+    ],
+    "ev": "The present perfect connects the past to now"
+   },
+   {
+    "q": "What is Marta going to do next year?",
+    "a": "An exchange in Canada",
+    "w": [
+     "Read a fantasy novel",
+     "Watch a Korean drama"
+    ],
+    "ev": "next year I'm going to do an exchange in Canada"
+   }
+  ],
+  "after": "Tell your story in three tenses: something you <b>used to</b> do, something you've <b>done</b> since then, and something you're <b>going to</b> do."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "past simple or present perfect?",
+  "intro": "Both talk about the past. The question is: is it finished, or does it still connect to now?",
+  "forms": [
+   {
+    "name": "Past simple",
+    "form": "I watched · I failed · I went",
+    "tl": "point",
+    "use": "A finished moment. Often with a time: yesterday, in 2022, when I was ten.",
+    "examples": [
+     "I **watched** it last summer.",
+     "I **failed** two exams in primary."
+    ]
+   },
+   {
+    "name": "Present perfect",
+    "form": "I've watched · it has changed",
+    "tl": "span",
+    "use": "From the past until now, or experience with no exact time: ever, never, since, for.",
+    "examples": [
+     "I've **watched** forty series.",
+     "My English **has changed** a lot."
+    ]
+   }
+  ],
+  "task": "Sort them · which tense?",
+  "sort": [
+   {
+    "s": "I ___ that film last weekend.",
+    "f": 0,
+    "answer": "saw"
+   },
+   {
+    "s": "I ___ three books in English this year.",
+    "f": 1,
+    "answer": "have read"
+   },
+   {
+    "s": "She ___ to Canada in 2023.",
+    "f": 0,
+    "answer": "went"
+   },
+   {
+    "s": "Have you ever ___ sushi?",
+    "f": 1,
+    "answer": "tried"
+   }
+  ]
+ }
 };

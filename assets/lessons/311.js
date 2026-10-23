@@ -521,5 +521,124 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "“The demo was better”",
+  "kicker": "Music · Opinion",
+  "title": "Why the demo always sounds better than the album",
+  "before": "Have you ever preferred a rough, live or demo version of a song to the final studio version? Why?",
+  "text": [
+   "Every band knows the curse. You record a demo in someone's bedroom: one mic, a cheap amp, the drummer counting in too loud. It's rough, but it has something. Then you spend three weeks and your entire budget in a real studio, and the result sounds… correct. Polished. Dead.",
+   "Part of it is the [[groove]]. On the demo, everyone was playing in the same room, reacting to each other. Nobody was trying to [[nail]] every note; they were [[jamming]]. The timing wasn't perfect, but it breathed. In the studio, each instrument is recorded separately to a click track, and the band ends up [[tight]] in a way that feels clinical rather than alive.",
+   "The other part is the [[tone]]. Producers love to clean things up, and a slightly crunchy guitar becomes perfectly smooth. Ironically, adding layers often makes the mix [[muddy]] — twelve guitars blur into one grey wall, and the [[riff]] that made the song [[catchy]] in the first place gets buried.",
+   "The bands that avoid the curse usually do one thing: they record the core live, together, and fix only what's genuinely broken. A little sloppiness is not a mistake to correct. Sometimes it's the whole reason the song [[grows on you]]."
+  ],
+  "gloss": {
+   "jamming": "to jam = to play together informally, improvising.",
+   "grows on you": "it grows on you = you don't love it at first, but you like it more each time."
+  },
+  "questions": [
+   {
+    "q": "What is \"the curse\" the writer describes?",
+    "a": "The expensive studio version sounds less alive than the cheap demo.",
+    "w": [
+     "Demos are always too loud.",
+     "Bands never finish their albums."
+    ],
+    "ev": "It's rough, but it has something."
+   },
+   {
+    "q": "Why did the demo have a better groove?",
+    "a": "The band played together in one room, reacting to each other.",
+    "w": [
+     "They used a click track.",
+     "The drummer was more experienced."
+    ],
+    "ev": "everyone was playing in the same room, reacting to each other"
+   },
+   {
+    "q": "What does \"tight in a way that feels clinical\" suggest?",
+    "a": "The playing is precise but has lost its feeling.",
+    "w": [
+     "The band played badly.",
+     "The recording was too quiet."
+    ],
+    "ev": "feels clinical rather than alive"
+   },
+   {
+    "q": "According to the writer, what can happen when you add many layers?",
+    "a": "The mix becomes muddy and the riff gets lost.",
+    "w": [
+     "The song becomes more catchy.",
+     "The tone becomes crunchier."
+    ],
+    "ev": "twelve guitars blur into one grey wall"
+   },
+   {
+    "q": "What is the writer's attitude to \"a little sloppiness\"?",
+    "a": "It can be part of what makes a song work.",
+    "w": [
+     "It should always be fixed.",
+     "It only matters on demos."
+    ],
+    "ev": "A little sloppiness is not a mistake to correct."
+   }
+  ],
+  "after": "Pick a song where you prefer one version over another. Explain why to your teacher using <b>the groove</b>, <b>the tone</b>, and <b>tight / sloppy / muddy</b>."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "comparing with \"rather than\"",
+  "intro": "At C1, contrast gets more precise. \"Rather than\" sets two ideas side by side and tells the listener which one you mean.",
+  "pattern": [
+   "It feels clinical",
+   "+rather than",
+   "=alive"
+  ],
+  "note": "Use it with matching forms: adjective + <b>rather than</b> + adjective; verb + <b>rather than</b> + base verb or -ing. Very natural for feedback: <b>…, rather than…</b>",
+  "examples": [
+   "It sounds polished **rather than** raw.",
+   "Record it live **rather than** to a click.",
+   "I'd go for a warmer tone **rather than** a bright one.",
+   "**Rather than** adding more guitars, cut two."
+  ],
+  "wrong": "Rather than ~~add~~ more layers, ~~you should to~~ cut some.",
+  "right": "**Rather than adding** more layers, cut some.",
+  "task": "Your turn · turn the comment into precise feedback",
+  "drill": [
+   {
+    "p": "The chorus is busy. It should be simple.",
+    "a": "The chorus could be simple rather than busy.",
+    "w": [
+     "The chorus could be simple rather busy.",
+     "The chorus could be simple than rather busy."
+    ]
+   },
+   {
+    "p": "Don't add a second guitar. Turn the bass up.",
+    "a": "Rather than adding a second guitar, turn the bass up.",
+    "w": [
+     "Rather than add a second guitar, turn the bass up it.",
+     "Rather to add a second guitar, turn the bass up."
+    ]
+   },
+   {
+    "p": "The take is perfect but cold.",
+    "a": "It's precise rather than exciting.",
+    "w": [
+     "It's precise rather of exciting.",
+     "It's rather precise than exciting."
+    ]
+   },
+   {
+    "p": "Play it together, not one by one.",
+    "a": "Let's record it together rather than separately.",
+    "w": [
+     "Let's record it together than rather separately.",
+     "Let's record it together rather separately."
+    ]
+   }
+  ],
+  "say": "Now give your teacher feedback on a song you know, using rather than at least twice."
+ }
 };

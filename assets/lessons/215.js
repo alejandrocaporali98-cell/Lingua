@@ -397,5 +397,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A support call that worked",
+  "kicker": "Tech · Story",
+  "title": "Forty minutes with tech support",
+  "before": "Have you ever called tech support? How did it go?",
+  "text": [
+   "On Monday morning, ten minutes before an important video call, Daniel's laptop froze. Not slow — completely [[frozen]]. When he restarted it, things got worse: the video app [[kept crashing]], and [[the wifi kept dropping]] every two minutes.",
+   "He called his company's IT support. The first agent asked, \"Have you tried turning it off?\" Daniel said, \"Yes, [[I've tried turning it off and on again]], twice. Now [[it won't let me log in]] to the VPN either.\" That saved them five minutes.",
+   "The agent asked him to describe exactly what happened. \"The app opens, then [[it keeps crashing]] after ten seconds. No error message.\" The agent took control of the laptop remotely and found the problem: an automatic update had installed overnight and hadn't finished.",
+   "Twenty minutes later, everything was [[working]] again. Daniel joined the call a little late, apologised, and explained, \"Sorry — tech problems.\" Everybody nodded. It had happened to all of them."
+  ],
+  "gloss": {
+   "frozen": "The screen is stuck and nothing responds.",
+   "kept crashing": "keep + -ing = it happens again and again.",
+   "the wifi kept dropping": "The connection disconnects again and again.",
+   "I've tried turning it off and on again": "Say this early. It saves time with support.",
+   "it won't let me log in": "It won't let me + verb = it doesn't allow me.",
+   "it keeps crashing": "It closes unexpectedly again and again.",
+   "working": "It's (not) working = it does (not) do its job."
+  },
+  "questions": [
+   {
+    "q": "When did the laptop freeze?",
+    "a": "Just before an important video call",
+    "w": [
+     "During the night",
+     "On Friday afternoon"
+    ],
+    "ev": "ten minutes before an important video call"
+   },
+   {
+    "q": "What did Daniel say to save time?",
+    "a": "That he had already restarted it twice",
+    "w": [
+     "That he needed a new laptop",
+     "That it was urgent"
+    ],
+    "ev": "I've tried turning it off and on again"
+   },
+   {
+    "q": "What else couldn't Daniel do?",
+    "a": "Log in to the VPN",
+    "w": [
+     "Open his email",
+     "Charge the laptop"
+    ],
+    "ev": "it won't let me log in to the VPN"
+   },
+   {
+    "q": "What was causing the problem?",
+    "a": "An unfinished automatic update",
+    "w": [
+     "A virus",
+     "A broken wifi router"
+    ],
+    "ev": "an automatic update had installed overnight and hadn't finished"
+   },
+   {
+    "q": "How did the others react on the call?",
+    "a": "They understood — it had happened to them too.",
+    "w": [
+     "They were angry.",
+     "They ended the call."
+    ],
+    "ev": "It had happened to all of them."
+   }
+  ],
+  "after": "Describe a tech problem to your teacher as if they were support: what it <b>keeps doing</b>, what you've <b>tried</b>, and what it <b>won't let you</b> do."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "keep + -ing / won't let me",
+  "intro": "Two patterns do most of the work when something breaks: one for repeated problems, one for things that are blocked.",
+  "pattern": [
+   "It keeps",
+   "+-ing",
+   "=every two minutes"
+  ],
+  "note": "<b>keep + -ing</b> = again and again. <b>It won't let me + verb</b> = it doesn't allow me. Not <b>it doesn't let me to</b>.",
+  "examples": [
+   "It **keeps crashing**.",
+   "The wifi **keeps dropping**.",
+   "It **won't let me log in**.",
+   "The printer **won't let me print** in colour."
+  ],
+  "wrong": "It doesn't let me ~~to log in~~.",
+  "right": "It **won't let me log in**.",
+  "task": "Your turn · choose the clearest description",
+  "drill": [
+   {
+    "p": "The app closes again and again.",
+    "a": "The app keeps crashing.",
+    "w": [
+     "The app keeps to crash.",
+     "The app is crashing always."
+    ]
+   },
+   {
+    "p": "You can't download the file.",
+    "a": "It won't let me download the file.",
+    "w": [
+     "It won't let me to download the file.",
+     "It doesn't leave me download the file."
+    ]
+   },
+   {
+    "p": "The screen is stuck.",
+    "a": "It's frozen.",
+    "w": [
+     "It's blocked.",
+     "It's freezed."
+    ]
+   },
+   {
+    "p": "You already restarted it.",
+    "a": "I've tried restarting it.",
+    "w": [
+     "I've tried to restarting it.",
+     "I tried restart it already."
+    ]
+   }
+  ],
+  "say": "Now describe a real problem with your phone or computer in three sentences."
+ }
 };

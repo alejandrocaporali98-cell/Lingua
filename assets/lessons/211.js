@@ -397,5 +397,129 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "A dinner with an allergy",
+  "kicker": "Food · Review",
+  "title": "Eating out with a nut allergy",
+  "before": "Do you or anyone you know have a food allergy? How does it change eating out?",
+  "text": [
+   "My wife has a serious nut allergy, so eating out abroad can be stressful. Last week in Vancouver, we went to a small Thai restaurant, and it turned into one of our best meals of the trip.",
+   "Before we even sat down, she said, \"Hi, [[I'm allergic to]] peanuts and tree nuts. Is that OK?\" The waiter didn't panic. He went to the kitchen and came back with a list of dishes that were completely safe.",
+   "\"[[What do you recommend]]?\" I asked. He suggested the green curry or the grilled fish. \"[[I'll have the]] fish, please,\" she said. I wanted the pad thai, but it normally has peanuts. \"[[I'd rather have]] the curry, then,\" I said. \"[[Could I get a glass of water]] too?\"",
+   "When the food came, my curry had peanuts on top — a small mistake. I said calmly, \"Sorry, [[it's not quite what I ordered]].\" The waiter took it back immediately and changed my wife's cutlery just in case. At the end, we asked, \"[[Could we get the bill]], please?\" — and left a very big tip."
+  ],
+  "gloss": {
+   "I'm allergic to": "Say it clearly and early. Staff take it seriously.",
+   "What do you recommend": "Gets a real answer and gives you time to read.",
+   "I'll have the": "The standard way to order.",
+   "I'd rather have": "A preference between options.",
+   "Could I get a glass of water": "Softer than \"give me\". Normal in restaurants.",
+   "it's not quite what I ordered": "Flags a mistake with zero aggression.",
+   "Could we get the bill": "UK: bill. US: check."
+  },
+  "questions": [
+   {
+    "q": "Why can eating out be stressful for the writer's wife?",
+    "a": "She has a serious nut allergy.",
+    "w": [
+     "She doesn't like Thai food.",
+     "She doesn't speak English."
+    ],
+    "ev": "My wife has a serious nut allergy"
+   },
+   {
+    "q": "When did she mention her allergy?",
+    "a": "Before sitting down",
+    "w": [
+     "After ordering",
+     "When the food came"
+    ],
+    "ev": "Before we even sat down"
+   },
+   {
+    "q": "Why didn't the writer order the pad thai?",
+    "a": "It normally has peanuts.",
+    "w": [
+     "It was too spicy.",
+     "It was sold out."
+    ],
+    "ev": "it normally has peanuts"
+   },
+   {
+    "q": "What was wrong with the curry?",
+    "a": "It had peanuts on top.",
+    "w": [
+     "It was cold.",
+     "It was the wrong dish."
+    ],
+    "ev": "my curry had peanuts on top"
+   },
+   {
+    "q": "Why did they leave a big tip?",
+    "a": "The waiter handled everything very well.",
+    "w": [
+     "The food was free.",
+     "It was a holiday."
+    ],
+    "ev": "The waiter took it back immediately"
+   }
+  ],
+  "after": "Role-play with your teacher: order a meal, ask for a recommendation, mention an allergy, and send something back politely."
+ },
+ "grammar": {
+  "kind": "rule",
+  "title": "I'd rather + verb",
+  "intro": "To choose between options without rejecting anything, use I'd rather. It's softer than \"I want\" and more natural than \"I prefer to\".",
+  "pattern": [
+   "I'd rather",
+   "+base verb",
+   "=(than…)"
+  ],
+  "note": "<b>I'd rather have</b> the fish. <b>I'd rather not</b> (= no, thanks). <b>Would you rather</b> sit inside or outside? No \"to\" after it.",
+  "examples": [
+   "**I'd rather have** the curry.",
+   "**I'd rather sit** outside, if that's OK.",
+   "**I'd rather not**, thanks.",
+   "**Would you rather** share a dessert?"
+  ],
+  "wrong": "I'd rather ~~to have~~ the fish.",
+  "right": "I'd rather **have** the fish.",
+  "task": "Your turn · choose the natural sentence",
+  "drill": [
+   {
+    "p": "Water instead of soda.",
+    "a": "I'd rather have water, thanks.",
+    "w": [
+     "I'd rather to have water, thanks.",
+     "I'd rather having water, thanks."
+    ]
+   },
+   {
+    "p": "Politely refuse dessert.",
+    "a": "I'd rather not, thanks.",
+    "w": [
+     "I'd rather no, thanks.",
+     "I'd not rather, thanks."
+    ]
+   },
+   {
+    "p": "Ask your friend: inside or outside?",
+    "a": "Would you rather sit inside or outside?",
+    "w": [
+     "Would you rather to sit inside or outside?",
+     "Do you rather sit inside or outside?"
+    ]
+   },
+   {
+    "p": "Order the salmon.",
+    "a": "I'll have the salmon, please.",
+    "w": [
+     "I want the salmon.",
+     "I'll take me the salmon, please."
+    ]
+   }
+  ],
+  "say": "Now tell your teacher three things you'd rather do this weekend, and one you'd rather not."
+ }
 };

@@ -407,5 +407,124 @@ window.CLASE = {
    ],
    "why": ""
   }
- ]
+ ],
+ "read": {
+  "short": "Making weekend plans",
+  "kicker": "Messages · Group chat",
+  "title": "The group chat that planned a Saturday",
+  "before": "How do you usually make plans with friends — by message, by voice note or in person?",
+  "text": [
+   "Friday, 6 p.m. Sofi wrote in the group chat: \"[[What are you up to this weekend]]? The weather app says [[it's going to rain]] on Sunday, so Saturday?\"",
+   "Mateo answered first: \"[[I'm meeting Ana at]] the cinema at four, but I'm free in the morning.\" Lía wrote: \"[[I might]] come, I'm not sure yet. My cousins are visiting. [[I'll let you know]] tonight.\"",
+   "Sofi suggested the new climbing gym. \"I'm going to try it at some point anyway. It opens at ten.\" Mateo said yes. Then Lía sent a voice note: \"OK, my cousins aren't coming till the afternoon. I'm in!\"",
+   "\"Perfect,\" Sofi wrote. \"[[Let's say]] ten thirty at the entrance, then.\" Mateo replied: \"I'll bring snacks.\" Lía added: \"And [[I'll get]] the tickets online — it's cheaper.\" The whole plan took eleven minutes."
+  ],
+  "gloss": {
+   "What are you up to this weekend": "The most natural way to ask about someone's plans.",
+   "it's going to rain": "going to = you can see the evidence (here, the weather app).",
+   "I'm meeting Ana at": "Present continuous = an arrangement with a person and a time.",
+   "I might": "Might = possible, but not decided.",
+   "I'll let you know": "A polite way to say \"I'll tell you later\".",
+   "Let's say": "Agrees a final detail, like a time.",
+   "I'll get": "will = a decision or an offer, made right now."
+  },
+  "questions": [
+   {
+    "q": "Why did Sofi suggest Saturday?",
+    "a": "Because it's going to rain on Sunday",
+    "w": [
+     "Because Mateo was busy on Sunday",
+     "Because the gym is closed on Sunday"
+    ],
+    "ev": "it's going to rain on Sunday"
+   },
+   {
+    "q": "Why wasn't Mateo free in the afternoon?",
+    "a": "He's meeting Ana at the cinema.",
+    "w": [
+     "He's visiting his cousins.",
+     "He's going climbing."
+    ],
+    "ev": "I'm meeting Ana at the cinema at four"
+   },
+   {
+    "q": "Why wasn't Lía sure at first?",
+    "a": "Her cousins were visiting.",
+    "w": [
+     "She doesn't like climbing.",
+     "She didn't have money."
+    ],
+    "ev": "My cousins are visiting."
+   },
+   {
+    "q": "What time did they agree to meet?",
+    "a": "10:30",
+    "w": [
+     "10:00",
+     "4:00"
+    ],
+    "ev": "ten thirty at the entrance"
+   },
+   {
+    "q": "What did Lía offer to do?",
+    "a": "Buy the tickets online",
+    "w": [
+     "Bring snacks",
+     "Drive everyone"
+    ],
+    "ev": "I'll get the tickets online"
+   }
+  ],
+  "after": "Plan a Saturday with your teacher. Ask <b>What are you up to?</b> and answer with <b>I'm …-ing</b>, <b>I'm going to</b>, <b>I might</b> and <b>I'll</b>."
+ },
+ "grammar": {
+  "kind": "compare",
+  "title": "going to or will?",
+  "intro": "Both talk about the future, but not in the same way. One is a plan you made before. The other is a decision you make right now.",
+  "forms": [
+   {
+    "name": "going to",
+    "form": "I'm going to + verb",
+    "tl": "future",
+    "use": "A plan you already decided, or something you can see coming.",
+    "examples": [
+     "I'm **going to** try the climbing gym.",
+     "Look at those clouds — it's **going to** rain."
+    ]
+   },
+   {
+    "name": "will",
+    "form": "I'll + verb",
+    "tl": "future",
+    "use": "A decision at the moment of speaking, an offer or a promise.",
+    "examples": [
+     "I'**ll** bring snacks.",
+     "I'**ll** let you know tonight."
+    ]
+   }
+  ],
+  "task": "Sort them · going to or will?",
+  "sort": [
+   {
+    "s": "I ___ study medicine when I finish school. I decided last year.",
+    "f": 0,
+    "answer": "am going to"
+   },
+   {
+    "s": "The phone's ringing! — I ___ get it.",
+    "f": 1,
+    "answer": "will"
+   },
+   {
+    "s": "Be careful — you ___ drop that!",
+    "f": 0,
+    "answer": "are going to"
+   },
+   {
+    "s": "You forgot your pen? I ___ lend you one.",
+    "f": 1,
+    "answer": "will"
+   }
+  ]
+ }
 };
