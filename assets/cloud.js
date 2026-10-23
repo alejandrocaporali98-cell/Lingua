@@ -236,6 +236,9 @@
         rules: ru.error ? null : (ru.data || []), admin: ad.error ? null : (ad.data || []), payments: pa.error ? null : (pa.data || []), staff: sf.error ? null : (sf.data || []),
         charges: ch.error ? null : (ch.data || []), bank: bi.error ? null : ((bi.data || [])[0] || {}), notes: nt.error ? null : (nt.data || []) };
     },
+    // Trial classes (clases muestra). null when supabase/v7.sql hasn't been run yet.
+    async trials() { const { data, error } = await sb.from("trials").select("*").order("created_at", { ascending: false }); return error ? null : (data || []); },
+    async trial(id) { const { data, error } = await sb.from("trials").select("*").eq("id", id).maybeSingle(); if (error) throw error; return data; },
     async addHomework(row) { const { data, error } = await sb.from("homework").insert(row).select(); if (error) throw error; return data; },
     async deleteHomework(id) { const { error } = await sb.from("homework").delete().eq("id", id); if (error) throw error; },
     async saveClass(row) { const q = row.id ? sb.from("classes").update(row).eq("id", row.id) : sb.from("classes").insert(row); const { error } = await q; if (error) throw error; },

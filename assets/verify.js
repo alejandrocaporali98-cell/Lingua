@@ -18,6 +18,22 @@
       return data && typeof data === "object" ? { state: "ok", data } : { state: "invalid" };
     } catch (e) { return { state: "error" }; }
   };
+  // Any public database function (trial class form and report). Only the publishable key is sent.
+  window.linguaRpc = async function (name, args) {
+    const c = cfg();
+    if (!c.url || !c.key) return { state: "off" };
+    try {
+      const r = await fetch(c.url + "/rest/v1/rpc/" + name, {
+        method: "POST", cache: "no-store",
+        headers: { apikey: c.key, "Content-Type": "application/json" },
+        body: JSON.stringify(args || {})
+      });
+      if (!r.ok) return { state: "error", status: r.status };
+      const data = await r.json();
+      return { state: "ok", data };
+    } catch (e) { return { state: "error" }; }
+  };
+  window.linguaUuid = s => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s || "");
   // "Derek y Erick Molina" · "Ana Pérez y Luis Gómez"
   window.linguaNames = function (list) {
     const n = (list || []).map(x => String(x || "").trim()).filter(Boolean);

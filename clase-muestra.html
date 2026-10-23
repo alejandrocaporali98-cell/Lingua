@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en" class="auth-pending">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Trial class</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/lingua.css">
+<script src="assets/config.js"></script>
+<script src="assets/game.js"></script>
+<script src="assets/avatar.js"></script>
+<script src="assets/vendor/supabase.js"></script>
+<script src="assets/cloud.js"></script>
+<script src="assets/placement-data.js"></script>
+<script src="assets/muestra-data.js"></script>
+<style>
+  body { background: var(--bg); }
+  /* Teacher bar: only the teacher uses it */
+  .tbar { position: sticky; top: 0; z-index: 30; min-height: 46px; background: #141826; color: #fff; display: flex; align-items: center; gap: 14px; padding: 6px 16px; flex-wrap: wrap; }
+  .tbar .k { font-size: 11px; font-weight: 800; letter-spacing: .1em; color: #f5c518; white-space: nowrap; }
+  .tbar .tsteps { flex: 1; display: flex; align-items: center; gap: 6px; justify-content: center; flex-wrap: wrap; min-width: 0; }
+  .tbar .st { display: flex; align-items: center; gap: 6px; font: inherit; font-size: 12.5px; font-weight: 600; color: #8a91a8; background: none; border: 0; cursor: pointer; padding: 4px 2px; white-space: nowrap; }
+  .tbar .st i { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #4a5170; color: #8a91a8; font-size: 11px; font-weight: 700; font-style: normal; display: grid; place-items: center; box-sizing: border-box; }
+  .tbar .st.done { color: #aab4ff; } .tbar .st.done i { background: #3b5bdb; border-color: #3b5bdb; color: #fff; }
+  .tbar .st.on { color: #fff; font-weight: 800; } .tbar .st.on i { background: #f5c518; border-color: #f5c518; color: #141826; font-weight: 800; }
+  .tbar .sep { width: 12px; height: 1px; background: #3a4160; }
+  .tbar .clock { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 15px; background: #232a40; border-radius: 8px; padding: 5px 10px; }
+  .tbar .tb { font: inherit; font-size: 12.5px; font-weight: 700; color: #fff; background: none; border: 1px solid #3a4160; border-radius: 8px; padding: 6px 10px; cursor: pointer; min-height: 34px; }
+  .tbar .tb:hover { background: #232a40; } .tbar .tb.y { background: #f5c518; border-color: #f5c518; color: #141826; }
+  .tbar select { font: inherit; font-size: 12.5px; font-weight: 700; color: #fff; background: #232a40; border: 1px solid #3a4160; border-radius: 8px; padding: 6px 8px; max-width: 220px; }
+  .tbar .tag { font-size: 11px; color: #8a91a8; }
+  @media (max-width: 1500px) { .tbar .st span { display: none; } .tbar .st.on span { display: inline; } }
+  .ahead { height: 60px; display: flex; align-items: center; gap: 14px; padding: 0 24px; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .ahead b.w { font-size: 20px; letter-spacing: -.02em; } .ahead .sp { width: 1px; height: 28px; background: var(--line); }
+  .ahead .crumb { font-weight: 700; font-size: 15px; } .ahead .crumb span { color: var(--mute); font-weight: 600; }
+  .ahead .r { margin-left: auto; font-size: 13px; color: var(--mute); font-weight: 600; }
+  .main { max-width: 1152px; margin: 0 auto; padding: 40px 32px 60px; display: grid; gap: 26px; }
+  .kick { font-size: 12px; font-weight: 800; letter-spacing: .1em; color: #be123c; text-transform: uppercase; }
+  .big { margin: 0; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.1; letter-spacing: -.03em; font-weight: 800; }
+  .hl { background: linear-gradient(transparent 62%, #f5c518 62%); }
+  .lead { margin: 0; font-size: 16px; color: var(--ink-2); max-width: 62ch; line-height: 1.55; }
+  .cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 860px) { .cards3 { grid-template-columns: 1fr; } }
+  .lock { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 24px; display: grid; gap: 16px; align-content: start; }
+  .lock .n { font-size: 12px; font-weight: 800; color: var(--mute); letter-spacing: .08em; }
+  .lock b.es { font-size: 22px; line-height: 1.3; letter-spacing: -.015em; }
+  .lock .en { border-top: 1px dashed var(--line); padding-top: 14px; display: flex; align-items: center; gap: 10px; color: var(--mute); font-size: 14px; font-weight: 600; }
+  .lock .en i { flex: 1; height: 10px; border-radius: 5px; background: repeating-linear-gradient(90deg, var(--line) 0 34px, transparent 34px 42px); }
+  .lock .pad { width: 30px; height: 30px; border-radius: 8px; background: var(--bg); display: grid; place-items: center; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 20px; flex-wrap: wrap; }
+  .who { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--mute); }
+  .who i { width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: var(--surface); font-weight: 800; font-style: normal; display: grid; place-items: center; }
+  .plan { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  @media (max-width: 860px) { .plan { grid-template-columns: 1fr 1fr; } }
+  .plan div { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 4px; }
+  .plan small { color: var(--mute); font-weight: 700; font-size: 12px; } .plan b { font-size: 14.5px; }
+  .chipsr { display: flex; flex-wrap: wrap; gap: 8px; } .chipsr span { padding: 7px 12px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); font-weight: 700; font-size: 13.5px; }
+  /* Mini test */
+  .qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 30px; display: grid; gap: 22px; max-width: 760px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+  .qtop { display: flex; justify-content: space-between; align-items: center; color: var(--mute); font-weight: 700; font-size: 13px; }
+  .qbar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; } .qbar i { display: block; height: 100%; background: var(--brand); border-radius: 3px; transition: width .3s; }
+  .qp { font-size: 26px; font-weight: 800; letter-spacing: -.02em; line-height: 1.3; }
+  .qp .gap { display: inline-block; min-width: 90px; border-bottom: 3px solid var(--brand); color: var(--brand); text-align: center; }
+  .qopts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 640px) { .qopts { grid-template-columns: 1fr; } .qp { font-size: 21px; } }
+  .qo { font: inherit; font-size: 17px; font-weight: 700; text-align: left; padding: 16px 18px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; min-height: 56px; }
+  .qo:hover { border-color: var(--brand); } .qo.ok { background: #e8f6ee; border-color: #15803d; color: #14532d; } .qo.bad { background: #fdecec; border-color: #be123c; color: #9f1239; }
+  /* Lesson and game frames */
+  .frame { display: block; width: 100%; height: calc(100vh - 106px); border: 0; background: var(--bg); }
+  .gframe { background: #0b0f19; }
+  /* Now you can say */
+  .close { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; }
+  @media (max-width: 900px) { .close { grid-template-columns: 1fr; } }
+  .panel2 { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+  .resc { padding: 28px 24px; display: grid; gap: 18px; justify-items: center; text-align: center; align-content: start; align-self: start; }
+  .ring { position: relative; width: 168px; height: 168px; } .ring > div { position: absolute; inset: 0; display: grid; place-content: center; }
+  .ring b { font-size: 46px; letter-spacing: -.03em; line-height: 1; } .ring span { font-size: 12px; font-weight: 700; color: var(--mute); }
+  .stats3 { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; border-top: 1px solid var(--line); padding-top: 16px; }
+  .stats3 span { display: grid; gap: 2px; } .stats3 span + span { border-left: 1px solid var(--line); } .stats3 b { font-size: 20px; } .stats3 small { font-size: 11.5px; color: var(--mute); }
+  .phr { display: grid; grid-template-columns: 28px 1fr auto; gap: 16px; align-items: center; padding: 16px 20px; } .phr + .phr { border-top: 1px solid var(--line); }
+  .phr .ck { width: 28px; height: 28px; border-radius: 50%; background: #15803d; display: grid; place-items: center; transform: scale(0); transition: transform .35s cubic-bezier(.3,1.6,.6,1); }
+  .phr.on .ck { transform: none; }
+  .phr .en { font-size: 19px; font-weight: 800; letter-spacing: -.01em; } .phr .es { font-size: 13px; color: var(--mute); }
+  .phr .en.hid { filter: blur(7px); user-select: none; }
+  .weeks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 700px) { .weeks { grid-template-columns: 1fr 1fr; } }
+  .weeks div { border-top: 3px solid var(--line); padding-top: 9px; display: grid; gap: 2px; align-content: start; } .weeks div:first-child { border-color: var(--brand); }
+  .weeks small { font-size: 11.5px; color: var(--mute); font-weight: 700; } .weeks b { font-size: 13.5px; line-height: 1.35; }
+  /* Report form (Spanish, teacher only) */
+  .rf { display: grid; gap: 18px; max-width: 920px; width: 100%; margin: 0 auto; }
+  .rf .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 14px; }
+  .rf h2 { margin: 0; font-size: 17px; } .rf .hint { font-size: 13px; color: var(--mute); margin: -8px 0 0; }
+  .rf label { font-size: 12.5px; font-weight: 700; color: var(--ink-2); display: grid; gap: 6px; }
+  .rf input, .rf select, .rf textarea { font: inherit; font-size: 14.5px; color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; box-sizing: border-box; }
+  .rf input, .rf textarea { font-weight: 500; }
+  .rf textarea { min-height: 116px; resize: vertical; line-height: 1.5; }
+  .rf .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } .rf .g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 700px) { .rf .g2, .rf .g4 { grid-template-columns: 1fr; } }
+  .rf .sk { display: grid; grid-template-columns: 170px 124px 1fr; gap: 10px; align-items: center; } .rf .sk b { font-size: 14px; }
+  @media (max-width: 700px) { .rf .sk { grid-template-columns: 1fr 124px; } .rf .sk input { grid-column: 1 / -1; } }
+  .rf .er { display: grid; grid-template-columns: 1fr 1fr 1fr 34px; gap: 8px; align-items: center; }
+  @media (max-width: 700px) { .rf .er { grid-template-columns: 1fr; } }
+  .rf .x { font: inherit; border: 0; background: none; color: var(--mute); font-size: 20px; cursor: pointer; }
+  .rf .pl { display: grid; grid-template-columns: 110px 1fr 2fr; gap: 8px; }
+  @media (max-width: 700px) { .rf .pl { grid-template-columns: 1fr; } }
+  .rf .act { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .rf .sent { background: #e8f6ee; border: 1px solid #b7e1c6; border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; }
+  .rf .sent code { font-size: 12.5px; word-break: break-all; }
+  .empty-s { text-align: center; padding: 60px 20px; color: var(--mute); }
+</style>
+</head>
+<body>
+<div id="tbar" class="tbar" aria-label="Teacher controls"></div>
+<header class="ahead"><span id="mk"></span><b class="w">Lingua</b><span class="sp"></span><span class="crumb" id="crumb"><span>Trial class</span></span><span class="r" id="who"></span></header>
+<div id="view"></div>
+<script>
+(async function () {
+  const G = window.LINGUA, M = window.MUESTRA, esc = G.esc;
+  document.getElementById("mk").innerHTML = G.mark(30);
+  const view = document.getElementById("view"), bar = document.getElementById("tbar");
+  const id = new URLSearchParams(location.search).get("id") || "";
+  const STEPS = ["Bienvenida", "3 frases", "Mini examen", "Lección", "Juego", "Now you can say", "Reporte"];
+  const CK = (s, c) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c || "#fff"}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+  const LOCK = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8a91a8" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>`;
+  await G.ready;
+  if (!G.isTeacher) { view.innerHTML = `<p class="empty-s">Only the teacher can open trial classes.</p>`; return; }
+  let T;
+  try { T = await G.teacher.trial(id); } catch (e) { T = null; }
+  if (!T) { view.innerHTML = `<p class="empty-s">We couldn’t find this trial class. <a href="teacher.html#trials">Back to Trial classes</a></p>`; return; }
+
+  const R = T.results || {};
+  R.step = R.step || 0; R.at = R.at || {}; R.t0 = R.t0 || Date.now();
+  R.lesson = R.lesson || M.suggest(T);
+  const first = (T.name || "").trim().split(/\s+/)[0] || "there";
+  const allLessons = G.modulos.flatMap(m => m.lecciones.map(l => ({ ...l, owner: m.owner })));
+  const lessonOf = lid => allLessons.find(l => l.id === lid) || { id: lid, titulo: "Lesson " + lid, archivo: "clases/leccion-" + lid + ".html" };
+  const phrases = () => M.PHRASES[R.lesson] || M.PHRASES[M.DEFAULT_LESSON];
+  const QS = M.miniTest();
+  R.test = R.test || { answers: [] };
+  let saveT = null;
+  const save = (now) => { clearTimeout(saveT); const go = () => G.teacher.update("trials", T.id, { results: R }).catch(e => G.toast("Couldn’t save: " + esc(e.message))); if (now) return go(); saveT = setTimeout(go, 700); };
+  const mins = ms => { const m = Math.max(0, Math.floor(ms / 60000)); return Math.floor(m / 60) + ":" + String(m % 60).padStart(2, "0"); };
+  document.getElementById("who").textContent = (T.name || "Trial") + " · Trial class";
+  document.getElementById("crumb").innerHTML = `<span>Trial class /</span> ${esc(M.topic(T))}`;
+
+  // ── Teacher bar ──
+  function drawBar() {
+    const s = R.step;
+    bar.innerHTML = `<span class="k">MODO CLASE MUESTRA</span>
+      ${s <= 1 ? `<select id="lsel" aria-label="Lección de la clase">${[...new Set(Object.keys(M.PHRASES))].map(lid => `<option value="${lid}" ${lid === R.lesson ? "selected" : ""}>${esc(lid + " · " + lessonOf(lid).titulo)}</option>`).join("")}</select>` : `<span class="tag">${esc(R.lesson + " · " + lessonOf(R.lesson).titulo)}</span>`}
+      <span class="tsteps">${STEPS.map((t, i) => `${i ? '<span class="sep"></span>' : ""}<button type="button" class="st ${i < s ? "done" : ""} ${i === s ? "on" : ""}" data-s="${i}"><i>${i < s ? CK(11) : i + 1}</i><span>${t}</span></button>`).join("")}</span>
+      <span class="clock" id="clock">${mins(Date.now() - R.t0)}</span>
+      ${s > 0 ? `<button type="button" class="tb" id="prev">←</button>` : ""}
+      ${s < STEPS.length - 1 ? `<button type="button" class="tb y" id="next">Siguiente →</button>` : `<a class="tb" href="teacher.html#trials" style="text-decoration:none">Salir</a>`}`;
+    bar.querySelectorAll("[data-s]").forEach(b => b.onclick = () => go(+b.dataset.s));
+    const p = document.getElementById("prev"), n = document.getElementById("next"), ls = document.getElementById("lsel");
+    if (p) p.onclick = () => go(s - 1);
+    if (n) n.onclick = () => go(s + 1);
+    if (ls) ls.onchange = () => { R.lesson = ls.value; save(); draw(); };
+  }
+  setInterval(() => { const c = document.getElementById("clock"); if (c) c.textContent = mins(Date.now() - R.t0); }, 15000);
+  function go(i) {
+    R.step = Math.max(0, Math.min(STEPS.length - 1, i));
+    if (!(R.step in R.at)) R.at[R.step] = Date.now() - R.t0;
+    save(); draw(); window.scrollTo({ top: 0 });
+  }
+  function draw() { drawBar(); [welcome, locked, test, lesson, game, unlock, reportForm][R.step](); }
+
+  // ── 1 Welcome ──
+  function welcome() {
+    const ints = (T.interests || []).map(k => M.interest(k)).filter(Boolean).map(i => i.en).concat(T.other ? [T.other] : []);
+    view.innerHTML = `<main class="main">
+      <div style="display:grid;gap:10px"><span class="kick">Trial class · ${esc(M.topic(T))}</span>
+        <h1 class="big">Hi, ${esc(first)}! Welcome to your<br><span class="hl">first English class.</span></h1>
+        <p class="lead">This class was made for you, with things you like. No stress: there are no wrong answers today — we just want to see where you are and have some fun.</p></div>
+      ${ints.length ? `<div class="chipsr">${ints.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}
+      <div style="display:grid;gap:12px"><b style="font-size:15px">Today’s plan · 45 minutes</b>
+        <div class="plan">${[["1", "Three phrases", "you can’t say yet"], ["2", "Mini test", "15 quick questions"], ["3", "Read & grammar", esc(lessonOf(R.lesson).titulo)], ["4", "A game", "with what you learned"], ["5", "Now you can say", "the three phrases"]].map(([n, a, b]) => `<div><small>${n}</small><b>${a}</b><span class="muted" style="font-size:13px">${b}</span></div>`).join("")}</div></div>
+      <div class="foot"><span class="who"><i>${esc((G.maestroNombre || G.maestro)[0])}</i>${esc(G.maestroNombre || G.maestro)} · your teacher today</span><button class="btn primary" id="st">Let’s start →</button></div></main>`;
+    document.getElementById("st").onclick = () => go(1);
+  }
+  // ── 2 Three locked phrases ──
+  function locked() {
+    view.innerHTML = `<main class="main">
+      <div style="display:grid;gap:10px"><span class="kick">Trial class · ${esc(M.topic(T))}</span>
+        <h1 class="big">By the end of today, you'll be able<br>to say <span class="hl">these three things.</span></h1>
+        <p class="lead">Right now they're in Spanish. Don't answer yet — just read them. We'll come back to them at the end of the class.</p></div>
+      <div class="cards3">${phrases().map((p, i) => `<div class="lock"><span class="n">PHRASE ${i + 1}</span><b class="es">“${esc(p[0])}”</b><div class="en"><span class="pad">${LOCK}</span>In English…<i></i></div></div>`).join("")}</div>
+      <div class="foot"><span class="who"><i>${esc((G.maestroNombre || G.maestro)[0])}</i>${esc(G.maestroNombre || G.maestro)} · your teacher today</span><button class="btn primary" id="nx">Next: mini test →</button></div></main>`;
+    document.getElementById("nx").onclick = () => go(2);
+  }
+  // ── 3 Mini test ──
+  const shuffled = (q, i) => { const o = [q.a, ...q.w]; return o.map((t, k) => ({ t, r: Math.sin((i + 1) * 97 + k * 13) })).sort((a, b) => a.r - b.r).map(x => x.t); };
+  function test() {
+    const A = R.test.answers, i = A.length;
+    if (i >= QS.length) {
+      const ok = QS.filter((q, k) => A[k] === q.a).length;
+      view.innerHTML = `<main class="main"><div class="qcard" style="text-align:center;justify-items:center"><span style="width:56px;height:56px;border-radius:50%;background:#15803d;display:grid;place-items:center">${CK(28)}</span>
+        <h1 class="big" style="font-size:32px">Mini test done!</h1><p class="lead">${ok} of ${QS.length} correct. Your teacher will tell you your level at the end of the class.</p>
+        <div class="act" style="display:flex;gap:10px"><button class="btn" id="again">Do it again</button><button class="btn primary" id="nx">Next: the lesson →</button></div></div></main>`;
+      document.getElementById("nx").onclick = () => go(3);
+      document.getElementById("again").onclick = () => { R.test = { answers: [] }; save(); test(); };
+      return;
+    }
+    const q = QS[i], opts = shuffled(q, i);
+    view.innerHTML = `<main class="main"><div class="qcard">
+      <div class="qtop"><span>Question ${i + 1} of ${QS.length}</span><span>${esc(window.SEGMENTS[q.seg].lvl)}</span></div>
+      <div class="qbar"><i style="width:${i / QS.length * 100}%"></i></div>
+      <div class="qp">${esc(q.p).replace("___", '<span class="gap">&nbsp;</span>')}</div>
+      <div class="qopts">${opts.map(t => `<button type="button" class="qo" data-t="${esc(t)}">${esc(t)}</button>`).join("")}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center"><span class="muted" style="font-size:13px">Not sure? Choose the one that sounds best.</span><button class="btn ghost sm" id="skip">I don't know</button></div></div></main>`;
+    let busy = false;
+    const pick = t => {
+      if (busy) return; busy = true;
+      view.querySelectorAll(".qo").forEach(b => { if (b.dataset.t === q.a) b.classList.add("ok"); else if (b.dataset.t === t) b.classList.add("bad"); b.disabled = true; });
+      G.sfx && G.sfx(t === q.a ? "ok" : "bad");
+      A.push(t); save();
+      setTimeout(test, 750);
+    };
+    view.querySelectorAll(".qo").forEach(b => b.onclick = () => pick(b.dataset.t));
+    document.getElementById("skip").onclick = () => pick("");
+  }
+  // ── 4 Lesson: reading and grammar, inside the platform ──
+  function lesson() {
+    const l = lessonOf(R.lesson);
+    view.innerHTML = `<iframe class="frame" title="Lesson ${esc(l.id)}" src="${esc(l.archivo)}?embed=1&only=read,grammar"></iframe>`;
+  }
+  window.addEventListener("message", e => {
+    if (e.origin !== location.origin || !e.data || e.data.lingua !== "lesson") return;
+    if (e.data.done === "read") { R.read = e.data.score || R.read || null; R.at.read = Date.now() - R.t0; }
+    if (e.data.done === "grammar") { R.grammar = e.data.score || R.grammar || null; R.at.grammar = Date.now() - R.t0; }
+    save();
+  });
+  // ── 5 Game ──
+  function game() {
+    R.game = R.game || "played";
+    view.innerHTML = `<iframe class="frame gframe" title="Class games" src="juegos.html?l=${encodeURIComponent(R.lesson)}&embed=1"></iframe>`;
+  }
+  // ── 6 Now you can say ──
+  function unlock() {
+    const lv = M.levelOf(R.test.answers, QS), ok = QS.filter((q, k) => R.test.answers[k] === q.a).length;
+    const l = lessonOf(R.lesson), same = allLessons.filter(x => x.owner === l.owner && x.estado === "lista"), at = same.findIndex(x => x.id === l.id);
+    const next = (at >= 0 ? same.slice(at + 1).concat(same.slice(0, at)) : same).slice(0, 4);
+    const ring = `<svg width="168" height="168" viewBox="0 0 168 168" aria-hidden="true"><circle cx="84" cy="84" r="70" fill="none" stroke="var(--line)" stroke-width="12"/><circle id="rg" cx="84" cy="84" r="70" fill="none" stroke="var(--brand)" stroke-width="12" stroke-linecap="round" stroke-dasharray="439.8" stroke-dashoffset="439.8" transform="rotate(-90 84 84)" style="transition:stroke-dashoffset 1.2s ease"/></svg>`;
+    view.innerHTML = `<main class="main"><div class="close">
+      <div class="panel2 resc"><div class="ring">${ring}<div><b id="rn">0/3</b><span>phrases unlocked</span></div></div>
+        <div style="display:grid;gap:4px"><b style="font-size:22px;letter-spacing:-.02em">Great class, ${esc(first)}!</b><span class="muted" style="font-size:13.5px">Trial class · ${esc(M.topic(T))} · ${Math.max(1, Math.round((Date.now() - R.t0) / 60000))} min</span></div>
+        <div class="stats3"><span><b>${esc(lv.lvl)}</b><small>your level</small></span><span><b>${ok}/${QS.length}</b><small>mini test</small></span><span><b>${R.read ? R.read.ok + "/" + R.read.n : "—"}</b><small>reading</small></span></div></div>
+      <div style="display:grid;gap:16px;align-content:start">
+        <div style="display:grid;gap:6px"><span class="eyebrow">Now you can say</span><h1 style="margin:0;font-size:30px;letter-spacing:-.02em">At the start of class, these were locked.</h1><p class="muted" style="margin:0">Tap each one and say it out loud.</p></div>
+        <div class="panel2" style="overflow:hidden">${phrases().map((p, i) => `<div class="phr" data-i="${i}"><span class="ck">${CK(15)}</span><span style="display:grid;gap:2px"><b class="en hid">${esc(p[1])}</b><span class="es">${esc(p[0])}</span></span>${G.sayBtn(p[1], "Listen")}</div>`).join("")}</div>
+        <div class="panel2" style="padding:18px 20px;display:grid;gap:12px"><b style="font-size:15px">Your next 4 weeks</b>
+          <div class="weeks">${next.map((x, k) => `<div><small>Week ${k + 1}</small><b>${esc(x.titulo)}</b></div>`).join("")}</div></div>
+      </div></div></main>`;
+    let n = 0;
+    const open = row => { if (row.classList.contains("on")) return; row.classList.add("on"); row.querySelector(".en").classList.remove("hid"); n++; document.getElementById("rn").textContent = n + "/3"; document.getElementById("rg").style.strokeDashoffset = 439.8 * (1 - n / 3); G.sfx && G.sfx("ok"); if (n === 3) { G.confetti && G.confetti(70); R.unlocked = 3; save(); } };
+    view.querySelectorAll(".phr").forEach(r => r.onclick = e => { if (!e.target.closest("[data-say]")) open(r); });
+    view.querySelectorAll("[data-say]").forEach(b => b.addEventListener("click", () => open(b.closest(".phr"))));
+  }
+
+  // ── 7 Report (Spanish, for the family or the person) ──
+  function defaults() {
+    const lv = M.levelOf(R.test.answers, QS), A = R.test.answers, ok = QS.filter((q, k) => A[k] === q.a).length;
+    const AR = window.AREAS || {}, miss = QS.map((q, k) => ({ q, a: A[k] })).filter(x => x.a !== x.q.a);
+    const missAreas = [...new Set(miss.map(x => x.q.ar))], okAreas = [...new Set(QS.filter((q, k) => A[k] === q.a).map(q => q.ar))].filter(a => !missAreas.includes(a));
+    const adult = !!T.adult, l = lessonOf(R.lesson), C = window.__C || {};
+    const ratio = (s) => s && s.n ? s.ok / s.n : null, r5 = x => x == null ? 3 : Math.max(1, Math.min(5, Math.round(x * 5)));
+    const su = adult ? "" : "";
+    const skills = [
+      ["Comprensión de lectura", r5(ratio(R.read)), R.read ? `${adult ? "Contestaste" : "Contestó"} ${R.read.ok} de ${R.read.n} preguntas de la lectura a la primera.` : ""],
+      ["Vocabulario", 3, ""],
+      ["Gramática", r5((ok / QS.length + (ratio(R.grammar) == null ? ok / QS.length : ratio(R.grammar))) / 2), missAreas.length ? `${adult ? "Te cuesta" : "Le cuesta"} ${((AR[missAreas[0]] || {}).es || "").replace(/^./, c => c.toLowerCase())}`.trim() + "." : ""],
+      ["Comprensión auditiva", 3, ""],
+      ["Expresión oral", 3, ""]
+    ];
+    const errs = miss.filter(x => x.a).slice(0, 4).map(x => [x.q.p.replace("___", x.a), x.q.p.replace("___", x.q.a), (AR[x.q.ar] || {}).es || ""]);
+    const work = missAreas.slice(0, 3).map(a => (AR[a] || {}).es).filter(Boolean).concat([adult ? "Hablar más seguido para ganar fluidez." : "Hablar más seguido para ganar fluidez y confianza."]);
+    const good = okAreas.slice(0, 2).map(a => `${adult ? "Dominas" : "Domina"} ${((AR[a] || {}).es || "").replace(/^./, c => c.toLowerCase())}.`)
+      .concat(ratio(R.read) >= .8 ? [adult ? "Entiendes bien lo que lees." : "Entiende bien lo que lee."] : []).concat([adult ? "Te animas a hablar, que es lo más difícil." : "Se anima a hablar, que es lo más difícil."]);
+    const work_goal = adult && T.goal === "work";
+    const plan = work_goal ? M.WORK_PLAN.map(x => [...x]) : (M.MONTHS[lv.idx] || M.MONTHS[1]).map((x, k) => ["Mes " + (k + 1), x[0], x[1]]);
+    const home = (T.interests || []).map(k => M.HOME[k]).filter(Boolean).slice(0, 3).concat(["10 minutos diarios en la plataforma Lingua."]).concat(adult ? [] : ["Un reporte mensual de avance para ustedes."]);
+    const nextLv = M.NEXT[lv.idx] || "B1";
+    const msg = adult
+      ? `Fue un gusto conocerte, ${first}. Con dos clases por semana y un poco de práctica entre clases, en unos meses puedes llegar a ${nextLv}. Para apartar tu horario, responde a este mensaje con los días y horas que te acomodan.`
+      : `Me dio mucho gusto conocer a ${first}. Tiene buena base y ganas; lo que más le va a ayudar es la constancia: dos clases por semana y un poco de práctica en casa. Para apartar su horario, respondan a este mensaje con los días y horas que les acomodan.`;
+    return { lvl: lv.lvl, skills, good, work, errs, plan_t: work_goal ? "Plan · 12 semanas" : "Plan sugerido · 3 meses", plan, home, msg,
+      rate: G.store.get("__trialRate", 260), perWeek: 2, cur: "MXN" };
+  }
+  function buildReport(f) {
+    const lv = M.levelOf(R.test.answers, QS), ok = QS.filter((q, k) => R.test.answers[k] === q.a).length, l = lessonOf(R.lesson);
+    const L = (window.LEVELS || []).find(x => x.lvl === f.lvl) || { lvl: f.lvl, es: "" };
+    const at = k => R.at[k] != null ? R.at[k] : null, m = ms => ms == null ? "" : mins(ms);
+    const ints = (T.interests || []).map(k => (M.interest(k) || {}).es).filter(Boolean).concat(T.other ? [T.other] : []);
+    const steps = [
+      [m(0), "Bienvenida", `platicamos de ${ints.length ? (a => a.length < 2 ? a[0] : a.slice(0, -1).join(", ") + " y " + a[a.length - 1])(ints.slice(0, 3).map(x => /^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(x) ? x.charAt(0).toLowerCase() + x.slice(1) : x)) : (T.adult ? "tus gustos" : "sus gustos")}`, "Conversación"],
+      [m(at(1)), "Tres frases", T.adult ? "viste tres frases en español que todavía no sabías decir en inglés" : "vio tres frases en español que todavía no sabía decir en inglés", "Objetivo"],
+      [m(at(2)), "Mini examen", `${QS.length} preguntas de nivel A1 a B2`, ok + " / " + QS.length],
+      [m(at(3)), "Lectura", `lección ${l.id} · ${l.titulo}`, R.read ? R.read.ok + " / " + R.read.n : "—"],
+      [m(R.at.read != null ? R.at.read : at(3)), "Gramática", "práctica de la gramática de la lección", R.grammar ? R.grammar.ok + " / " + R.grammar.n : "—"],
+      [m(at(4)), "Juego", "juego en inglés con lo que vimos en la clase", f.game || "Jugó"],
+      [m(at(5)), "Cierre", T.adult ? "dijiste las tres frases del inicio en inglés" : "dijo las tres frases del inicio en inglés", (R.unlocked || 3) + " / 3"]
+    ].filter(s => s[0] !== "");
+    const n = Math.max(1, Number(f.perWeek) || 2), rate = Math.max(0, Number(f.rate) || 0);
+    return { v: 1, name: T.name || "", adult: !!T.adult, interests: ints, goal: (M.goal(T.goal) || {}).rep || "", date: new Date().toISOString().slice(0, 10),
+      level: { lvl: L.lvl, es: L.es || "" }, next: M.NEXT[Math.max(0, (window.LEVELS || []).findIndex(x => x.lvl === f.lvl))] || "B1",
+      test: { ok, n: QS.length }, read: R.read || null, grammar: R.grammar || null, minutes: Math.max(1, Math.round(((R.at[6] != null ? R.at[6] : Date.now() - R.t0)) / 60000)),
+      lesson: { id: l.id, titulo: l.titulo }, steps, phrases: phrases(), skills: f.skills, good: f.good, work: f.work, errs: f.errs, plan_t: f.plan_t, plan: f.plan, home: f.home, msg: f.msg,
+      price: { rate, perWeek: n, cur: f.cur || "MXN" }, teacher: G.maestroNombre || G.maestro };
+  }
+  function reportForm() {
+    const F = R.form || defaults();
+    const lines = a => (a || []).join("\n"), unl = t => t.split("\n").map(x => x.trim()).filter(Boolean);
+    const link = location.origin + location.pathname.replace(/clase-muestra\.html$/, "") + "reporte-muestra.html?t=" + T.token;
+    const waText = `Hola${T.adult ? " " + first : ""}, gracias por la clase muestra de inglés${T.adult ? "" : " de " + first}. Aquí está el reporte con su nivel, lo que vimos y el plan de clases: ${link}`;
+    const phone = String(T.contact || "").replace(/\D/g, ""), wa = "https://wa.me/" + (phone.length === 10 ? "52" + phone : phone) + "?text=" + encodeURIComponent(waText);
+    view.innerHTML = `<main class="main"><div class="rf">
+      <div style="display:grid;gap:6px"><span class="eyebrow">Solo tú ves esta pantalla</span><h1 style="margin:0;font-size:28px;letter-spacing:-.02em">Reporte de la clase muestra</h1>
+        <p class="muted" style="margin:0">Ya llené lo que salió de la clase. Revisa, corrige lo que quieras y envíalo. Se manda en español${T.adult ? ", hablándole de tú" : ", para los papás"}.</p></div>
+      ${T.report_at ? `<div class="sent"><b>Reporte enviado el ${esc(new Date(T.report_at).toLocaleDateString("es-MX", { day: "numeric", month: "long" }))}</b><code>${esc(link)}</code>
+        <div class="act"><a class="btn sm primary" href="${esc(link)}" target="_blank" rel="noopener">Abrir</a><a class="btn sm" href="${esc(wa)}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm" id="cp">Copiar link</button></div>
+        <span class="muted" style="font-size:12.5px">Si cambias algo abajo y vuelves a guardar, el mismo link muestra la versión nueva.</span></div>` : ""}
+      <div class="card"><h2>Nivel</h2><div class="g4">
+        <label>Nivel de hoy<select id="fLv">${["A1", "A2", "B1", "B2", "B2+"].map(x => `<option ${x === F.lvl ? "selected" : ""}>${x}</option>`).join("")}</select></label>
+        <label>Juego<input id="fGame" value="${esc(F.game || "Jugó")}" maxlength="20"></label>
+        <label>Tarifa por clase<input id="fRate" type="number" min="0" step="10" value="${esc(F.rate)}"></label>
+        <label>Clases por semana<input id="fPw" type="number" min="1" max="7" value="${esc(F.perWeek)}"></label></div>
+        <p class="hint" style="margin:0">El mini examen dio <b>${esc(M.levelOf(R.test.answers, QS).lvl)}</b> (${QS.filter((q, k) => R.test.answers[k] === q.a).length} de ${QS.length}). Lectura: ${R.read ? R.read.ok + " de " + R.read.n : "sin hacer"} · Gramática: ${R.grammar ? R.grammar.ok + " de " + R.grammar.n : "sin hacer"}.</p></div>
+      <div class="card"><h2>Habilidad por habilidad</h2><p class="hint">Del 1 al 5, con un comentario corto.</p>
+        ${F.skills.map((s, i) => `<div class="sk"><b>${esc(s[0])}</b><select data-sk="${i}">${[1, 2, 3, 4, 5].map(n => `<option value="${n}" ${n === s[1] ? "selected" : ""}>${"●".repeat(n)}${"○".repeat(5 - n)}</option>`).join("")}</select><input data-skc="${i}" maxlength="140" value="${esc(s[2])}" placeholder="Comentario"></div>`).join("")}</div>
+      <div class="card"><div class="g2"><label>Fortalezas <span class="muted" style="font-weight:500">(una por línea)</span><textarea id="fGood">${esc(lines(F.good))}</textarea></label>
+        <label>Áreas a trabajar <span class="muted" style="font-weight:500">(una por línea)</span><textarea id="fWork">${esc(lines(F.work))}</textarea></label></div></div>
+      <div class="card"><h2>Errores escuchados en clase</h2><p class="hint">Lo que dijo, cómo se dice y por qué. Ya puse los del mini examen.</p>
+        <div id="errs">${F.errs.map(e => errRow(e)).join("")}</div><button class="btn sm" id="addErr" style="justify-self:start">+ Agregar error</button></div>
+      <div class="card"><h2>Plan</h2><label>Título<input id="fPlanT" value="${esc(F.plan_t)}" maxlength="60"></label>
+        ${F.plan.map((p, i) => `<div class="pl"><input data-pm="${i}" value="${esc(p[0])}" maxlength="20"><input data-pt="${i}" value="${esc(p[1])}" maxlength="80"><input data-pd="${i}" value="${esc(p[2].replace(/<\/?i>/g, ""))}" maxlength="200"></div>`).join("")}</div>
+      <div class="card"><div class="g2"><label>Para practicar entre clases <span class="muted" style="font-weight:500">(una por línea)</span><textarea id="fHome">${esc(lines(F.home))}</textarea></label>
+        <label>Mensaje tuyo al final<textarea id="fMsg" maxlength="800">${esc(F.msg)}</textarea></label></div></div>
+      <div class="act"><button class="btn" id="prev">Vista previa</button><button class="btn primary" id="send">${T.report_at ? "Guardar cambios" : "Guardar y enviar"}</button><span id="fOut" class="muted" style="font-size:13px"></span></div>
+    </div></main>`;
+    function errRow(e) { return `<div class="er"><input data-ew value="${esc(e[0])}" maxlength="120" placeholder="Dijo"><input data-er value="${esc(e[1])}" maxlength="120" placeholder="Lo correcto"><input data-ey value="${esc(e[2])}" maxlength="140" placeholder="Por qué"><button type="button" class="x" aria-label="Quitar">×</button></div>`; }
+    const wireX = () => view.querySelectorAll(".er .x").forEach(b => b.onclick = () => b.closest(".er").remove());
+    wireX();
+    document.getElementById("addErr").onclick = () => { document.getElementById("errs").insertAdjacentHTML("beforeend", errRow(["", "", ""])); wireX(); };
+    const cp = document.getElementById("cp"); if (cp) cp.onclick = () => navigator.clipboard.writeText(link).then(() => G.toast("<b>Link copiado</b>"), () => window.prompt("Copia este link:", link));
+    const read = () => ({
+      lvl: document.getElementById("fLv").value, game: document.getElementById("fGame").value.trim(), rate: Number(document.getElementById("fRate").value) || 0, perWeek: Number(document.getElementById("fPw").value) || 2, cur: F.cur || "MXN",
+      skills: F.skills.map((s, i) => [s[0], Number(view.querySelector(`[data-sk="${i}"]`).value), view.querySelector(`[data-skc="${i}"]`).value.trim()]),
+      good: unl(document.getElementById("fGood").value), work: unl(document.getElementById("fWork").value),
+      errs: [...view.querySelectorAll(".er")].map(r => [r.querySelector("[data-ew]").value.trim(), r.querySelector("[data-er]").value.trim(), r.querySelector("[data-ey]").value.trim()]).filter(e => e[0] && e[1]),
+      plan_t: document.getElementById("fPlanT").value.trim(), plan: F.plan.map((p, i) => [view.querySelector(`[data-pm="${i}"]`).value.trim(), view.querySelector(`[data-pt="${i}"]`).value.trim(), view.querySelector(`[data-pd="${i}"]`).value.trim()]).filter(p => p[1]),
+      home: unl(document.getElementById("fHome").value), msg: document.getElementById("fMsg").value.trim()
+    });
+    view.querySelectorAll("input, select, textarea").forEach(el => el.addEventListener("change", () => { R.form = read(); save(); }));
+    document.getElementById("prev").onclick = () => { R.form = read(); save(); try { localStorage.setItem("lingua.__trialPreview", JSON.stringify(buildReport(R.form))); } catch (e) {} window.open("reporte-muestra.html?preview=1", "_blank", "noopener"); };
+    document.getElementById("send").onclick = async () => {
+      const f = read(), b = document.getElementById("send"), out = document.getElementById("fOut");
+      R.form = f; G.store.set("__trialRate", f.rate); b.disabled = true; out.textContent = "Guardando…";
+      try {
+        const rep = buildReport(f), when = T.report_at || new Date().toISOString();
+        await G.teacher.update("trials", T.id, { results: R, report: rep, report_at: when });
+        T.report = rep; T.report_at = when; G.toast("<b>Reporte listo</b> Ya puedes mandarlo.");
+        reportForm(); window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (e) { b.disabled = false; out.textContent = "No se pudo guardar: " + e.message; }
+    };
+  }
+
+  window.__C = null;
+  if (!(R.step in R.at)) R.at[R.step] = Date.now() - R.t0;
+  save(true); draw();
+})();
+</script>
+</body>
+</html>

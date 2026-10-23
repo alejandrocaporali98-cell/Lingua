@@ -2,7 +2,8 @@
 (function () {
   const C = window.CLASE, G = window.LINGUA, AB = "ABCD";
   // Five core sections, plus optional ones a lesson can bring (reading, grammar, spot the error, say it in English, talk about it)
-  const SECS = [
+  const QS = new URLSearchParams(location.search), EMB = !!G.embedded, ONLY = (QS.get("only") || "").split(",").filter(Boolean);
+  const ALL = [
     { id: "flash", t: "Vocabulary", min: 10 },
     ...(C.read && C.read.text && C.read.text.length ? [{ id: "read", t: "Read", min: 12 }] : []),
     { id: "frases", t: "Sound natural", min: 10 },
@@ -14,9 +15,14 @@
     ...(C.talk && C.talk.questions && C.talk.questions.length ? [{ id: "talk", t: "Over to you", min: 15 }] : []),
     { id: "final", t: "Final quiz", min: 15 }
   ];
+  // Inside the trial class only some sections are shown (e.g. ?embed=1&only=read,grammar)
+  const SECS = ONLY.length && ALL.some(s => ONLY.includes(s.id)) ? ALL.filter(s => ONLY.includes(s.id)) : ALL;
+  const score = {};
+  const tell = (msg) => { if (EMB && window.parent !== window) try { window.parent.postMessage({ lingua: "lesson", lesson: C.id, ...msg }, location.origin); } catch (e) {} };
   const st = { sec: G.store.get("sec." + C.id, 0), done: new Set(G.store.get("done." + C.id, [])) };
   // Progress is saved by section number: when a lesson gains sections, move what was done to the new numbers
   (function relayout() {
+    if (EMB) return;
     const now = SECS.map(s => s.id), key = "secl." + C.id;
     const before = G.store.get(key, null) || now.filter(id => id !== "read" && id !== "grammar");
     if (before.join() === now.join()) { if (!G.store.get(key, null)) G.store.set(key, now); return; }
@@ -94,6 +100,7 @@
   function markDone(i) {
     const first = !st.done.has(i);
     st.done.add(i); G.store.set("done." + C.id, [...st.done]); drawToc();
+    tell({ done: SECS[i].id, score: score[SECS[i].id] || null });
     if (first && G.game) { G.game.award(20, { once: "sec." + C.id + "." + i, label: "Section complete" }); G.sfx("pop"); }
   }
   function head(title, text) {
@@ -102,8 +109,8 @@
   function pager() {
     const i = st.sec;
     return `<div class="pager">
-      ${i > 0 ? `<button class="btn" data-prev>← ${SECS[i - 1].t}</button>` : `<a class="btn" href="../index.html">← My learning</a>`}
-      ${i < SECS.length - 1 ? `<button class="btn primary" data-next>Next: ${SECS[i + 1].t} →</button>` : `<a class="btn primary" href="../index.html">Finish lesson</a>`}
+      ${i > 0 ? `<button class="btn" data-prev>← ${SECS[i - 1].t}</button>` : EMB ? "<span></span>" : `<a class="btn" href="../index.html">← My learning</a>`}
+      ${i < SECS.length - 1 ? `<button class="btn primary" data-next>Next: ${SECS[i + 1].t} →</button>` : EMB ? "" : `<a class="btn primary" href="../index.html">Finish lesson</a>`}
     </div>`;
   }
   function wirePager() {
@@ -200,7 +207,7 @@
 
   // ── Read: an article with questions; each answer lights up its sentence in the text ──
   function drawRead() {
-    const R = C.read, qs = R.questions || [], ans = qs.map(() => null);
+    const R = C.read, qs = R.questions || [], ans = qs.map(() => null), miss = new Set();
     const strip = w => w.toLowerCase().replace(/[.…!?,;:"“”]/g, "").replace(/^(to|a|an|the)\s+/, "").trim();
     const glossOf = w => { const g = R.gloss && (R.gloss[w] || R.gloss[w.toLowerCase()]); if (g) return { d: g }; const f = (C.flash || []).find(f => strip(f.en) === strip(w) || strip(w).startsWith(strip(f.en)) || strip(f.en).startsWith(strip(w))); return f ? { d: f.def, card: C.flash.indexOf(f) + 1 } : null; };
     const para = t => t.replace(/\[\[([^\]]+)\]\]/g, (m, w) => `<button type="button" class="rd-gl" data-w="${G.esc(w)}">${w}</button>`);
@@ -242,13 +249,13 @@
       const i = +box.dataset.i, q = qs[i], ok = +b.dataset.k === +box.dataset.c;
       if (ans[i] === true) return;
       b.classList.add(ok ? "ok" : "bad"); G.sfx(ok ? "ok" : "bad");
-      if (!ok) { ans[i] = ans[i] === null ? false : ans[i]; setTimeout(() => b.classList.remove("bad"), 700); return; }
+      if (!ok) { ans[i] = ans[i] === null ? false : ans[i]; miss.add(i); setTimeout(() => b.classList.remove("bad"), 700); return; }
       ans[i] = true; box.classList.add("done"); box.querySelectorAll(".rd-opt").forEach(x => x.disabled = true);
       const why = box.querySelector(".rd-why"); if (q.why || q.ev) { why.hidden = false; why.innerHTML = q.why || "It’s highlighted in the text."; }
       mark(q);
       const n = ans.filter(x => x === true).length; document.getElementById("rdN").textContent = n + " / " + qs.length;
       G.game && G.game.award(2, { once: "rd." + C.id + "." + i, silent: true });
-      if (n === qs.length) { G.confetti(50); markDone(st.sec); }
+      if (n === qs.length) { score.read = { ok: ans.filter(x => x === true).length - miss.size, n: qs.length }; G.confetti(50); markDone(st.sec); }
     }));
   }
 
@@ -278,12 +285,12 @@
           ${items.map((x, i) => { const o = [...x.w]; const p = (i * 2 + 1) % (o.length + 1); o.splice(p, 0, x.a); return `<div class="gr-item" data-i="${i}" data-c="${p}"><span class="gr-p">${hi(x.p)}</span><span class="gr-btns">${o.map((t, k) => `<button type="button" class="opt gr-b" data-k="${k}">${t}</button>`).join("")}</span></div>`; }).join("")}
           ${M.say ? `<p class="gr-say">${M.say}</p>` : ""}</div>`;
     stage.innerHTML = head("Grammar: " + M.title, M.intro || "") + body + practice + pager();
-    let n = 0;
-    const done = (row, i) => { row.classList.add("done"); row.querySelectorAll(".gr-b").forEach(x => x.disabled = true); n++; document.getElementById("grN").textContent = n + " / " + items.length; G.game && G.game.award(2, { once: "gr." + C.id + "." + i, silent: true }); if (n === items.length) { G.confetti(50); G.sfx("win"); markDone(st.sec); } };
+    let n = 0; const miss = new Set();
+    const done = (row, i) => { row.classList.add("done"); row.querySelectorAll(".gr-b").forEach(x => x.disabled = true); n++; document.getElementById("grN").textContent = n + " / " + items.length; G.game && G.game.award(2, { once: "gr." + C.id + "." + i, silent: true }); if (n === items.length) { score.grammar = { ok: items.length - miss.size, n: items.length }; G.confetti(50); G.sfx("win"); markDone(st.sec); } };
     stage.querySelectorAll(".gr-item, .gr-sort").forEach(row => row.querySelectorAll(".gr-b").forEach(b => b.onclick = () => {
       const i = +row.dataset.i, x = items[i], ok = M.kind === "compare" ? +b.dataset.k === x.f : +b.dataset.k === +row.dataset.c;
       b.classList.add(ok ? "ok" : "bad"); G.sfx(ok ? "ok" : "bad");
-      if (!ok) { setTimeout(() => b.classList.remove("bad"), 700); return; }
+      if (!ok) { miss.add(i); setTimeout(() => b.classList.remove("bad"), 700); return; }
       if (M.kind === "compare" && x.answer) { const g = row.querySelector(".gap"); if (g) { g.textContent = x.answer; g.classList.add("filled"); } row.querySelector(".s").insertAdjacentHTML("beforeend", " " + G.sayBtn(clean(x.s).replace("___", x.answer), "Listen")); }
       done(row, i);
     }));

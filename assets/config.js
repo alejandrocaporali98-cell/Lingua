@@ -129,6 +129,13 @@ window.LINGUA.store = {
     if (window.LINGUA.onSet) window.LINGUA.onSet(k);
   }
 };
+// Pages opened inside the trial class (?embed=1) keep everything in memory: nothing is saved to anyone's account
+if (/[?&]embed=1(&|$)/.test(location.search)) {
+  const real = window.LINGUA.store, mem = {}, keep = ["textSize", "theme", "sounds", "voice", "voiceRate"];
+  window.LINGUA.store = { get(k, d) { return k in mem ? mem[k] : (keep.indexOf(k) >= 0 || k.indexOf("__") === 0 ? real.get(k, d) : d); }, set(k, v) { mem[k] = v; } };
+  window.LINGUA.embedded = true;
+  document.documentElement.classList.add("embed");
+}
 window.LINGUA.icons = {
   helmet: '<path d="M8 34c0-12 9-22 21-22 9 0 17 6 19 15l2 9H30a4 4 0 0 0-4 4v4H12a4 4 0 0 1-4-4z"/><path d="M30 27h18"/>',
   car: '<path d="M8 34l4-11c1-3 3-5 7-5h18c4 0 6 2 7 5l4 11"/><rect x="6" y="34" width="44" height="9" rx="3"/><circle cx="16" cy="45" r="3"/><circle cx="40" cy="45" r="3"/>',

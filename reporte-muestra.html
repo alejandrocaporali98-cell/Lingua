@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clases de Inglés · Reporte de clase muestra</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<style>
+  :root { --ink: #111; --mute: #6b6b6b; --line: #e3e3e3; --blue: #2233e6; --black: #0d0d0d; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #e9e9ec; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .bar { max-width: 816px; margin: 18px auto 0; display: flex; justify-content: flex-end; gap: 8px; padding: 0 12px; }
+  .bar button { font: inherit; font-size: 14px; font-weight: 700; padding: 9px 16px; border-radius: 8px; border: 1px solid #c9c9cf; background: #fff; cursor: pointer; min-height: 44px; }
+  .bar button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .sheet { width: 816px; min-height: 1056px; margin: 12px auto 30px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.12); display: flex; flex-direction: column; }
+  header.big { background: var(--black); color: #fff; padding: 46px 60px 42px; display: flex; justify-content: space-between; gap: 24px; }
+  header.big h1 { font-size: 30px; font-weight: 800; letter-spacing: .5px; }
+  .kick { font-size: 10.5px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #8f9bff; margin-top: 12px; }
+  header.big .r { text-align: right; display: grid; gap: 8px; align-content: start; }
+  header.big .date { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .lbl { font-size: 9.5px; letter-spacing: 2.5px; text-transform: uppercase; color: #9a9a9a; }
+  header.small { background: var(--black); color: #fff; padding: 18px 60px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  header.small b { font-size: 14px; letter-spacing: .5px; }
+  main { padding: 30px 60px 10px; display: grid; gap: 24px; align-content: start; flex: 1; }
+  .intro h2 { font-size: 16px; font-weight: 700; } .intro p { font-size: 11.5px; color: #444; line-height: 1.6; margin-top: 6px; }
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--line); padding: 14px 0; }
+  .facts > div { display: grid; gap: 6px; } .facts b { font-size: 17px; letter-spacing: -.3px; } .facts b.lv { font-size: 24px; color: var(--blue); } .facts span:last-child { font-size: 10.5px; color: #555; }
+  .lab { font-size: 9.5px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--mute); }
+  .sec { display: grid; gap: 2px; }
+  .sh { display: flex; align-items: center; gap: 10px; font-size: 11.5px; font-weight: 800; letter-spacing: 3.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .sh .n { color: var(--blue); } .sh::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .row { display: grid; gap: 14px; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 11.5px; }
+  .row .m { color: #555; line-height: 1.5; }
+  .r-skill { grid-template-columns: 150px 1fr auto; } .r-step { grid-template-columns: 44px 1fr auto; } .r-phr { grid-template-columns: 1fr 1fr auto; }
+  .r-err { grid-template-columns: 1fr 1fr 1.25fr; } .r-plan { grid-template-columns: 92px 1fr; }
+  .t { font-variant-numeric: tabular-nums; color: var(--blue); font-weight: 700; }
+  .tag { font-size: 8.5px; letter-spacing: 2px; color: #9a9a9a; text-transform: uppercase; white-space: nowrap; }
+  .tag.b { color: var(--blue); font-weight: 800; }
+  .dots { white-space: nowrap; } .dots i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-left: 4px; background: var(--line); } .dots i.on { background: var(--blue); }
+  .en { font-size: 12.5px; font-weight: 700; } .es { color: var(--mute); }
+  s.w { color: #9a3412; text-decoration-color: #e3a58a; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  .dash { display: grid; grid-template-columns: 20px 1fr; font-size: 11.5px; line-height: 1.55; padding: 4px 0; color: #333; } .dash::before { content: "—"; color: var(--blue); font-weight: 800; }
+  .cost { display: grid; grid-template-columns: 1fr auto; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 11.5px; color: #555; }
+  .cost span:last-child { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .cost.strong { color: var(--ink); font-weight: 700; } .cost.strong span:last-child { color: var(--blue); font-weight: 800; }
+  .cost.total { border-bottom: 0; border-top: 1.5px solid var(--ink); font-weight: 700; color: var(--ink); }
+  .msg { margin: 6px 60px 6px; background: var(--black); color: #fff; border-radius: 10px; padding: 22px 24px 18px; display: grid; gap: 10px; }
+  .msg .k { font-size: 9px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; }
+  .msg p { font-size: 11px; line-height: 1.65; color: #e6e6e6; max-width: 560px; white-space: pre-wrap; }
+  .msg small { justify-self: end; font-size: 10px; color: #9a9a9a; letter-spacing: .5px; }
+  footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 60px 26px; font-size: 9.5px; color: #9a9a9a; letter-spacing: .5px; }
+  footer .brand { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+  .missing { padding: 60px; font-size: 15px; line-height: 1.6; }
+  .preview { max-width: 816px; margin: 14px auto 0; padding: 10px 14px; border-radius: 8px; background: #fff7d6; color: #6b5200; font-size: 13px; }
+  @media (max-width: 840px) {
+    .sheet { width: 100%; min-height: 0; margin: 10px 0 20px; }
+    header.big { padding: 30px 22px; flex-direction: column; } header.big .r { text-align: left; } header.small { padding: 14px 22px; }
+    main { padding: 24px 22px 10px; } .msg { margin: 6px 22px; } footer { padding: 14px 22px 22px; }
+    .facts { grid-template-columns: 1fr 1fr; } .two { grid-template-columns: 1fr; gap: 24px; }
+    .r-skill { grid-template-columns: 1fr auto; } .r-skill .m { grid-column: 1 / -1; order: 3; }
+    .r-phr { grid-template-columns: 1fr auto; } .r-phr .es { grid-column: 1 / -1; order: 3; }
+    .r-err { grid-template-columns: 1fr; gap: 4px; } .r-err.head { display: none; }
+    .r-step { grid-template-columns: 40px 1fr; } .r-step .tag { grid-column: 2; }
+  }
+  @media print {
+    html, body { background: #fff; } .bar, .preview { display: none; }
+    .sheet { width: auto; height: 100vh; min-height: 0; margin: 0; box-shadow: none; overflow: hidden; break-after: page; }
+    .sheet:last-child { break-after: auto; }
+    @page { size: letter; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="bar"><button type="button" class="primary" id="pr">Imprimir o guardar PDF</button></div>
+<div id="doc"><p class="missing sheet">Cargando…</p></div>
+<script src="assets/config.js"></script>
+<script src="assets/verify.js"></script>
+<script>
+(async function () {
+  const G = window.LINGUA, doc = document.getElementById("doc");
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const qs = new URLSearchParams(location.search), token = qs.get("t") || "";
+  const miss = t => { doc.innerHTML = `<div class="sheet"><p class="missing">${t}</p></div>`; };
+  let D = null;
+  if (qs.get("preview") === "1") {
+    try { D = JSON.parse(localStorage.getItem("lingua.__trialPreview")); } catch (e) {}
+    if (D) document.body.insertAdjacentHTML("afterbegin", `<div class="preview"><b>Vista previa.</b> Así lo verá la familia cuando lo envíes. Este link no se puede compartir.</div>`);
+  } else {
+    if (!window.linguaUuid(token)) return miss("Este enlace no está completo. Pide que te lo vuelvan a mandar.");
+    const r = await window.linguaRpc("trial_report", { t: token });
+    if (r.state === "error") return miss("No pudimos cargar el reporte. Revisa tu conexión e intenta de nuevo.");
+    D = r.data;
+  }
+  if (!D || !D.name) return miss("Este reporte todavía no está listo o el enlace ya no es válido.");
+
+  const A = !!D.adult, first = D.name.trim().split(/\s+/)[0];
+  const money = n => "$" + Number(n || 0).toLocaleString("en-US", { maximumFractionDigits: 2 });
+  const dt = new Date((D.date || new Date().toISOString().slice(0, 10)) + "T12:00");
+  const dateS = dt.toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const sh = (n, t) => `<div class="sh"><span class="n">${n}</span>· ${esc(t)}</div>`;
+  const dots = n => `<span class="dots">${[0, 1, 2, 3, 4].map(k => `<i class="${k < n ? "on" : ""}"></i>`).join("")}</span>`;
+  const MARK = s => `<svg width="${s}" height="${s}" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2346d0"/><path d="M8.5 9h15a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5H16l-4.5 4v-4h-3A2.5 2.5 0 0 1 6 19v-7.5A2.5 2.5 0 0 1 8.5 9z" fill="#fff"/><circle cx="20.5" cy="15.25" r="2.4" fill="#f5c518"/></svg>`;
+  const foot = n => `<footer><span class="brand">${MARK(20)}Lingua</span><span>REPORTE DE CLASE MUESTRA · ${esc(first.toUpperCase())} · ${n} / 2</span></footer>`;
+  const pct = D.test && D.test.n ? Math.round(D.test.ok / D.test.n * 100) : null;
+  const goal = D.goal ? (A ? `Tu meta: ${D.goal}` : `Su meta: ${D.goal}`) : "";
+  const lc = x => /^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(x) ? x.charAt(0).toLowerCase() + x.slice(1) : x, yjoin = a => a.length < 2 ? (a[0] || "") : a.slice(0, -1).join(", ") + " y " + a[a.length - 1];
+  const ints = yjoin((D.interests || []).slice(0, 3).map(lc));
+  const intro = A
+    ? `Tomaste una clase de ${D.minutes || 45} ${D.minutes === 1 ? "minuto" : "minutos"}${ints ? " preparada sobre lo que te gusta: " + esc(ints) : ""}. Este reporte resume tu nivel, cómo te fue en cada parte de la clase y cómo trabajaríamos a partir de aquí.`
+    : `${esc(first)} tomó una clase de ${D.minutes || 45} ${D.minutes === 1 ? "minuto" : "minutos"}${ints ? " preparada sobre lo que más le gusta: " + esc(ints) : ""}. Este reporte resume su nivel, cómo le fue en cada parte de la clase y cómo trabajaríamos a partir de aquí.`;
+  const p = D.price || {}, perWeek = Number(p.perWeek) || 2, rate = Number(p.rate) || 0;
+  document.title = `Clases de Inglés · Reporte de clase muestra · ${D.name}`;
+
+  const pg1 = `<div class="sheet">
+    <header class="big"><div><h1>CLASES DE INGLÉS</h1><p class="kick">Reporte de clase muestra</p></div>
+      <div class="r"><span class="date">${esc(dateS)}</span><span class="lbl">Clase muestra · ${esc(D.minutes || 45)} min</span><span class="kick" style="margin-top:0">Para: ${esc(D.name.toUpperCase())}</span></div></header>
+    <main>
+      <div class="intro"><h2>${goal ? esc(goal.charAt(0).toUpperCase() + goal.slice(1)) : "Resultado de la clase muestra"}</h2><p>${intro}</p></div>
+      <div class="facts">
+        <div><span class="lab">Nivel actual</span><b class="lv">${esc(D.level && D.level.lvl)}</b><span>${esc(D.level && D.level.es)}</span></div>
+        <div><span class="lab">Siguiente meta</span><b>${esc(D.next || "")}</b><span>Con ${perWeek} clases por semana</span></div>
+        <div><span class="lab">Mini examen</span><b>${D.test ? esc(D.test.ok + " de " + D.test.n) : "—"}</b><span>${pct != null ? pct + "% de aciertos" : ""}</span></div>
+        <div><span class="lab">Lectura</span><b>${D.read ? esc(D.read.ok + " de " + D.read.n) : "—"}</b><span>Preguntas a la primera</span></div>
+      </div>
+      <section class="sec">${sh(1, "Nivel por habilidad")}${(D.skills || []).map(s => `<div class="row r-skill"><b>${esc(s[0])}</b><span class="m">${esc(s[2])}</span>${dots(Number(s[1]) || 0)}</div>`).join("")}</section>
+      <section class="sec">${sh(2, "Desarrollo de la clase")}${(D.steps || []).map(s => `<div class="row r-step"><span class="t">${esc(s[0])}</span><span><b>${esc(s[1])}</b><span class="m"> — ${esc(s[2])}</span></span><span class="tag">${esc(s[3])}</span></div>`).join("")}</section>
+      <section class="sec">${sh(3, A ? "Lo que ya dices" : "Lo que ya puede decir")}${(D.phrases || []).map(x => `<div class="row r-phr"><span class="en">${esc(x[1])}</span><span class="es">${esc(x[0])}</span><span class="tag b">Nuevo</span></div>`).join("")}</section>
+    </main>${foot(1)}</div>`;
+  const pg2 = `<div class="sheet">
+    <header class="small"><b>CLASES DE INGLÉS</b><span class="lbl">Reporte de clase muestra · ${esc(D.name)}</span></header>
+    <main>
+      <div class="two"><section>${sh(4, "Fortalezas")}${(D.good || []).map(t => `<div class="dash"><span>${esc(t)}</span></div>`).join("")}</section>
+        <section>${sh(5, "Áreas a trabajar")}${(D.work || []).map(t => `<div class="dash"><span>${esc(t)}</span></div>`).join("")}</section></div>
+      ${(D.errs || []).length ? `<section class="sec">${sh(6, "Errores escuchados en clase")}<div class="row r-err head"><span class="lab">Dijo</span><span class="lab">Lo correcto</span><span class="lab">Por qué</span></div>
+        ${D.errs.map(e => `<div class="row r-err"><s class="w">${esc(e[0])}</s><b>${esc(e[1])}</b><span class="m">${esc(e[2])}</span></div>`).join("")}</section>` : ""}
+      <section class="sec">${sh(7, D.plan_t || "Plan sugerido")}${(D.plan || []).map(x => `<div class="row r-plan"><b>${esc(x[0])}</b><span><b>${esc(x[1])}</b><span class="m">${x[2] ? " — " + esc(x[2]) : ""}</span></span></div>`).join("")}</section>
+      <div class="two"><section class="sec">${sh(8, "Clases y costo")}
+          <div class="cost"><span>Clases por semana</span><span>${perWeek} ${perWeek === 1 ? "clase" : "clases"} · 1 hora</span></div>
+          <div class="cost"><span>Tarifa por clase</span><span>${money(rate)}</span></div>
+          <div class="cost strong"><span>Costo por semana</span><span>${money(rate * perWeek)}</span></div>
+          <div class="cost total"><span>Costo por mes (${perWeek * 4} clases)</span><span>${money(rate * perWeek * 4)}</span></div>
+          <span class="lbl" style="margin-top:6px">${(p.cur || "MXN") === "USD" ? "Precios en dólares (USD)" : "Precios en pesos mexicanos (MXN)"}</span></section>
+        <section>${sh(9, "Para practicar entre clases")}${(D.home || []).map(t => `<div class="dash"><span>${esc(t)}</span></div>`).join("")}</section></div>
+    </main>
+    ${D.msg ? `<div class="msg"><span class="k">${A ? "Mensaje para ti" : "Mensaje para los papás"}</span><p>${esc(D.msg)}</p><small>— ${esc(D.teacher || G.maestroNombre || G.maestro)} · Profesor de inglés</small></div>` : ""}
+    ${foot(2)}</div>`;
+  doc.innerHTML = pg1 + pg2;
+})();
+document.getElementById("pr").onclick = () => window.print();
+</script>
+</body>
+</html>

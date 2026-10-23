@@ -208,3 +208,8 @@ body.present .pctl:hover, body.present .pctl:focus-within { opacity: 1; }
 .gr-sort .gap.filled { color: var(--brand); border-color: var(--brand); }
 .gr-say { font-weight: 700; color: var(--ok-ink); }
 .rd-opt .letter { margin-left: 0; color: var(--ink); }
+
+/* Inside the trial class (?embed=1): just the sections, no header, side panel or menus */
+html.embed header.nav, html.embed .side, html.embed .classbar, html.embed .lg-menu, html.embed .lg-top { display: none !important; }
+html.embed .player { grid-template-columns: 1fr; min-height: 0; }
+html.embed .stage { padding-block: 22px 32px; }

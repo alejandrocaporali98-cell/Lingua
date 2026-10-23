@@ -150,3 +150,16 @@ Run `supabase/v6.sql` once in Supabase → SQL Editor (it includes v5). It:
 - gives every payment slip and payment a secret code; `ficha.html` and `recibo.html` check it with the database (`slip_check`, `receipt_check`) and show the real folio, amount, names and bank details. A link that was edited or made up shows a warning instead of bank details.
 
 Also in Supabase → Authentication → Sign In / Providers: turn off **Allow new users to sign up** (accounts are only created from the teacher panel) and set the minimum password length to 8.
+
+## v7 setup (trial classes · clases muestra)
+
+Run `supabase/v7.sql` once in Supabase → SQL Editor. It adds the `trials` table (teacher only) and three
+public functions that only work with a trial's secret code: read the form (`trial_get`), send it
+(`trial_intake`, only before the report exists) and read the finished report (`trial_report`).
+
+How it works: Teacher panel → Trial classes → New trial class → send the link (`muestra.html?t=…`).
+The person answers name, age group, interests and goal. "Start class" opens `clase-muestra.html`
+(welcome, three locked phrases, 15-question mini test, reading + grammar from a lesson that matches
+their interests, a game, "Now you can say", and the report form). The report is shared at
+`reporte-muestra.html?t=…` in the same style as the slips and proposals. Interests, lessons and
+phrases live in `assets/muestra-data.js`.
