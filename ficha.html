@@ -56,18 +56,34 @@
   .due { display: inline-flex; gap: 8px; align-items: center; font-size: 10px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #b42318; border: 1.5px solid #b42318; border-radius: 6px; padding: 6px 10px; justify-self: start; }
   @media (max-width: 640px) { .bank .row { grid-template-columns: 1fr auto; } .bank .row span { grid-column: 1 / -1; } }
   @media print { .cp { display: none; } }
+  .warn { margin: 40px; padding: 26px 28px; border: 2px solid #b42318; border-radius: 12px; color: #7a1a12; background: #fff5f4; display: grid; gap: 10px; }
+  .warn h2 { font-size: 20px; } .warn p { font-size: 14px; line-height: 1.55; } .warn button { justify-self: start; font: inherit; font-weight: 700; padding: 9px 16px; border-radius: 8px; border: 1px solid #c9c9cf; background: #fff; cursor: pointer; min-height: 44px; }
+  .ok { font-size: 11px; font-weight: 700; color: #12754a; display: flex; gap: 6px; align-items: center; }
 </style>
+<script src="assets/config.js"></script>
+<script src="assets/verify.js"></script>
 </head>
 <body>
 <div class="bar"><button type="button" id="cpBar" hidden>Copiar CLABE</button><button type="button" class="primary" onclick="window.print()">Guardar como PDF</button></div>
 <div class="doc" id="doc"></div>
 <script>
 (function () {
-  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   let D = null;
   try { const q = new URLSearchParams(location.search).get("d"); const b = atob(q.replace(/-/g, "+").replace(/_/g, "/")); D = JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) {}
   const doc = document.getElementById("doc");
-  if (!D) { doc.innerHTML = `<p class="missing">Este enlace de ficha no es válido.</p>`; return; }
+  const bad = (t, m, retry) => { doc.innerHTML = `<div class="warn" role="alert"><h2>${t}</h2><p>${m}</p>${retry ? `<button type="button" onclick="location.reload()">Intentar de nuevo</button>` : ""}</div>`; document.getElementById("cpBar").hidden = true; };
+  if (!D) return bad("Este enlace de ficha no es válido", "No hagas ninguna transferencia con él. Pide una ficha nueva a tu maestro.");
+  doc.innerHTML = `<p class="missing">Verificando la ficha…</p>`;
+  // The folio, names, amount and bank details come from the database, never from the link
+  window.linguaVerify("slip", D.t).then(v => {
+    if (v.state === "error") return bad("No pudimos verificar la ficha", "Revisa tu conexión a internet y vuelve a abrir el enlace. No transfieras hasta que la ficha se vea completa.", true);
+    const S = v.data;
+    if (v.state === "invalid" || (S && (S.folio !== D.f || Math.abs(Number(S.amount) - Number(D.a)) > .005))) return bad("Esta ficha no es válida", "No coincide con ninguna ficha emitida. No hagas ninguna transferencia con ella y pide una ficha nueva a tu maestro.");
+    if (S) { D.n = window.linguaNames(S.names) || D.n; D.c = S.concept || ""; D.a = Number(S.amount); D.cur = S.currency || D.cur; D.e = window.linguaDay(S.created); D.b = S.bank || {}; D.ok = true; }
+    render();
+  });
+  function render() {
   const cur = D.cur || "MXN", money = n => "$" + Number(n || 0).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " " + cur;
   const date = d => new Date(d + "T12:00").toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" });
   const group = (v, n) => String(v || "").replace(new RegExp(`(.{${n}})`, "g"), "$1 ").trim();
@@ -95,11 +111,13 @@
           <div class="row ref"><span>Concepto / referencia</span><b>${esc(D.f)}</b><button type="button" class="cp" data-cp="${esc(D.f)}">Copiar</button></div></div></div>` : ""}
       ${B.ins || B.to ? `<p class="note">${B.ins ? esc(B.ins) : ""}${B.ins && B.to ? "\n" : ""}${B.to ? "Envía tu comprobante a: <b>" + esc(B.to) + "</b>" : ""}</p>` : ""}
       ${D.nt ? `<p class="note">${esc(D.nt)}</p>` : ""}
+      ${D.ok ? `<p class="ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Ficha verificada en el sistema de Lingua</p>` : ""}
     </main>
     <div class="sign"><div class="brand"><svg width="38" height="38" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2346d0"/><path d="M8.5 9h15a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5H16l-4.5 4v-4h-3A2.5 2.5 0 0 1 6 19v-7.5A2.5 2.5 0 0 1 8.5 9z" fill="#fff"/><circle cx="20.5" cy="15.25" r="2.4" fill="#f5c518"/></svg>Lingua</div><small>Al recibir tu pago te mandamos el recibo. ¡Gracias por tu confianza!</small></div>`;
   const copy = (v, btn) => navigator.clipboard.writeText(v).then(() => { const t = btn.textContent; btn.textContent = "¡Copiado!"; setTimeout(() => btn.textContent = t, 1400); }, () => window.prompt("Copia:", v));
   doc.querySelectorAll("[data-cp]").forEach(b => b.onclick = () => copy(b.dataset.cp, b));
   const cb = document.getElementById("cpBar"); if (B.clabe) { cb.hidden = false; cb.onclick = () => copy(B.clabe, cb); }
+  }
 })();
 </script>
 </body>

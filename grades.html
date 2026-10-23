@@ -155,7 +155,7 @@ function render() {
   </div>
 
   <div class="panel" style="grid-template-columns:minmax(0,1fr) auto;align-items:center">
-    <div><h2>Placement test</h2><p class="muted" style="font-size:.9em">${pl ? `Level <b style="color:var(--ink)">${pl.nivel}</b> · taken ${fmt(pl.fecha + "T12:00")}` : "Not taken yet."}</p></div>
+    <div><h2>Placement test</h2><p class="muted" style="font-size:.9em">${pl ? `Level <b style="color:var(--ink)">${G.esc(pl.nivel)}</b> · taken ${fmt(pl.fecha + "T12:00")}` : "Not taken yet."}</p></div>
     <a class="btn" href="${pl ? "reporte.html" : "examen.html"}">${pl ? "View report" : "Take the test"}</a>
   </div>`;
 }

@@ -165,7 +165,7 @@ function wireClassActs() {
 const setupNote = () => `<div class="alert info">Falta un paso de instalación: Alejandro tiene que correr <b>supabase/v4.sql</b> en Supabase.</div>`;
 
 // ── Sheets (pop-ups) ──
-function closeSheet() { const w = $("sheet"); if (w) w.remove(); document.body.classList.remove("sheet-open"); }
+function closeSheet() { const w = $("sheet"); if (w) w.remove(); document.body.classList.remove("sheet-open"); if (window.__shKey) { document.removeEventListener("keydown", window.__shKey); window.__shKey = null; } }
 window.addEventListener("hashchange", closeSheet);
 function sheet(title, sub, body) {
   closeSheet();
@@ -175,7 +175,7 @@ function sheet(title, sub, body) {
     <div class="sh-body">${body}</div></div>`;
   document.body.appendChild(w); document.body.classList.add("sheet-open");
   w.querySelectorAll("[data-x]").forEach(x => x.onclick = closeSheet);
-  w.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+  window.__shKey = e => { if (e.key === "Escape") closeSheet(); }; document.addEventListener("keydown", window.__shKey);
   requestAnimationFrame(() => w.classList.add("in"));
   setTimeout(() => { const f = w.querySelector("input:not([type=file]), select, button.btn"); f && f.focus(); }, 60);
   return w;
@@ -194,7 +194,7 @@ function moveSheet(c) {
 // ── Receipts, slips and proofs ──
 function receiptLink(p) {
   const a = adminOf(p.student_id), wk = p.week ? G.billing.week(DATA, p.student_id, p.week) : null, b = wk ? null : billOf(p.student_id, p.month);
-  const D = { no: "R-" + (p.week || p.month).replace(/-/g, "") + "-" + String(p.id).replace(/-/g, "").slice(0, 4).toUpperCase(), n: famName(p.student_id),
+  const D = { t: p.token || "", no: "R-" + (p.week || p.month).replace(/-/g, "") + "-" + String(p.id).replace(/-/g, "").slice(0, 4).toUpperCase(), n: famName(p.student_id),
     m: wk ? "semana del " + wkLabel(p.student_id, p.week, true) : new Date(p.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
     d: p.paid_on, a: Number(p.amount), cur: a.currency || "MXN", pl: wk ? "weekly" : a.billing, k: wk ? wk.attended || wk.k : b.attended, r: Number(a.rate) || 0, by: wk && famIds(p.student_id).length > 1 ? byLine(p.student_id, wk) : "",
     nt: p.note || "", ow: G.maestroNombre || G.maestro, du: wk ? wk.rate : b.due, pt: wk ? wk.paid : b.paid, mt: p.method || "", rf: p.reference || "" };
@@ -202,9 +202,8 @@ function receiptLink(p) {
 }
 function slipLink(ch) {
   const a = adminOf(ch.student_id), bk = DATA.bank || {}, wk = ch.week ? G.billing.week(DATA, ch.student_id, ch.week) : null, sg = wk ? null : suggested(ch.student_id, ch.month);
-  const D = { f: ch.folio, n: famName(ch.student_id), c: ch.concept || "", m: wk ? "semana del " + wkLabel(ch.student_id, ch.week, true) : new Date(ch.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }), a: Number(ch.amount), cur: a.currency || "MXN",
-    du: "", e: day(ch.created_at || new Date()), pl: wk ? "weekly" : a.billing, r: Number(a.rate) || 0, k: wk ? wk.k : sg.k, by: wk && famIds(ch.student_id).length > 1 ? byLine(ch.student_id, wk) : "", nt: ch.note || "", ow: G.maestroNombre || G.maestro,
-    b: { bank: bk.bank || "", holder: bk.holder || "", clabe: bk.clabe || "", account: bk.account || "", card: bk.card || "", to: bk.send_to || "", ins: bk.instructions || "" } };
+  const D = { t: ch.token || "", f: ch.folio, n: famName(ch.student_id), c: ch.concept || "", m: wk ? "semana del " + wkLabel(ch.student_id, ch.week, true) : new Date(ch.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }), a: Number(ch.amount), cur: a.currency || "MXN",
+    du: "", e: day(ch.created_at || new Date()), pl: wk ? "weekly" : a.billing, r: Number(a.rate) || 0, k: wk ? wk.k : sg.k, by: wk && famIds(ch.student_id).length > 1 ? byLine(ch.student_id, wk) : "", nt: ch.note || "", ow: G.maestroNombre || G.maestro };
   return site() + "ficha.html?d=" + b64(D);
 }
 const firstName = s => (s && s.p.display_name || "").split(" ")[0];

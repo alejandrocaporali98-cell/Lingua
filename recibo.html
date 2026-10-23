@@ -43,18 +43,34 @@
   @media (max-width: 640px) { header { padding: 32px 24px; flex-direction: column; } header .r { text-align: left; } main { padding: 26px 24px 20px; } .sign { padding: 24px 24px 34px; grid-template-columns: 1fr; gap: 20px; } .who { grid-template-columns: 1fr; } }
   .missing { padding: 60px; font-size: 15px; }
   @media print { html, body { background: #fff; } .bar { display: none; } .doc { width: auto; margin: 0; box-shadow: none; } @page { size: letter; margin: 0; } }
+  .warn { margin: 40px; padding: 26px 28px; border: 2px solid #b42318; border-radius: 12px; color: #7a1a12; background: #fff5f4; display: grid; gap: 10px; }
+  .warn h2 { font-size: 20px; } .warn p { font-size: 14px; line-height: 1.55; } .warn button { justify-self: start; font: inherit; font-weight: 700; padding: 9px 16px; border-radius: 8px; border: 1px solid #c9c9cf; background: #fff; cursor: pointer; min-height: 44px; }
+  .ok { font-size: 11px; font-weight: 700; color: #12754a; display: flex; gap: 6px; align-items: center; }
 </style>
+<script src="assets/config.js"></script>
+<script src="assets/verify.js"></script>
 </head>
 <body>
 <div class="bar"><button type="button" class="primary" onclick="window.print()">Guardar como PDF</button></div>
 <div class="doc" id="doc"></div>
 <script>
 (function () {
-  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   let D = null;
   try { const q = new URLSearchParams(location.search).get("d"); const b = atob(q.replace(/-/g, "+").replace(/_/g, "/")); D = JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) {}
   const doc = document.getElementById("doc");
-  if (!D) { doc.innerHTML = `<p class="missing">Este enlace de recibo no es válido.</p>`; return; }
+  const bad = (t, m, retry) => { doc.innerHTML = `<div class="warn" role="alert"><h2>${t}</h2><p>${m}</p>${retry ? `<button type="button" onclick="location.reload()">Intentar de nuevo</button>` : ""}</div>`; };
+  if (!D) return bad("Este enlace de recibo no es válido", "Pide el recibo de nuevo a tu maestro.");
+  doc.innerHTML = `<p class="missing">Verificando el recibo…</p>`;
+  // Amount, date, names and payment details come from the database, never from the link
+  window.linguaVerify("receipt", D.t).then(v => {
+    if (v.state === "error") return bad("No pudimos verificar el recibo", "Revisa tu conexión a internet y vuelve a abrir el enlace.", true);
+    const S = v.data;
+    if (v.state === "invalid" || (S && (Math.abs(Number(S.amount) - Number(D.a)) > .005 || S.paid_on !== D.d))) return bad("Este recibo no es válido", "No coincide con ningún pago registrado. Pide el recibo de nuevo a tu maestro.");
+    if (S) { D.n = window.linguaNames(S.names) || D.n; D.cur = S.currency || D.cur; D.mt = S.method || ""; D.rf = S.reference || ""; D.ok = true; }
+    render();
+  });
+  function render() {
   const cur = D.cur || "MXN", money = n => "$" + Number(n || 0).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " " + cur;
   const date = d => new Date(d + "T12:00").toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" });
   const lines = [];
@@ -76,8 +92,10 @@
       <div class="total"><span class="lab">Total pagado</span><b>${esc(money(D.a))}</b></div>
       ${D.du > 0 && D.pt < D.du ? `<div style="display:grid;gap:8px"><div class="line" style="border-top:1px solid var(--line)"><span>Pagado en ${esc(D.m)}</span><span>${esc(money(D.pt))} de ${esc(money(D.du))}</span></div><div class="line"><span><b>Saldo pendiente</b></span><span><b>${esc(money(D.du - D.pt))}</b></span></div></div><span class="paid part">Pago parcial</span>` : `<span class="paid">Pagado</span>`}
       ${D.nt ? `<p class="note">${esc(D.nt)}</p>` : ""}
+      ${D.ok ? `<p class="ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Recibo verificado en el sistema de Lingua</p>` : ""}
     </main>
     <div class="sign"><div class="s"><b>${esc(D.ow || "")}</b>Recibió</div><small>Gracias por tu confianza. Este recibo confirma el pago de las clases indicadas.</small></div>`;
+  }
 })();
 </script>
 </body>

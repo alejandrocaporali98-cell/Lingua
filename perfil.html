@@ -115,7 +115,7 @@ const INTERESTS = ["Formula 1", "JDM cars", "Anime", "Football", "Video games", 
 const COLORS = ["#2346d0", "#0f766e", "#b45309", "#6d3fd6", "#15803d", "#be123c", "#1b1f2a"];
 const LV = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", "B2+": "Upper intermediate +" };
 
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const esc = window.LINGUA.esc;
 function localProfile() { return G.store.get("profileLocal", {}); }
 function stats() {
   const all = G.modulos.flatMap(m => m.lecciones), ready = all.filter(l => l.estado === "lista");
@@ -145,7 +145,7 @@ function render() {
       <div class="muted" style="font-size:.9em">${since ? "Student since " + since + " · " : ""}Instructor: ${G.maestro}</div>
       ${sync}
     </div>
-    <div class="lvl"><span>Level</span><b>${st.place ? st.place.nivel : "—"}</b><span>${st.place ? LV[st.place.nivel] || "" : "Not tested"}</span></div>
+    <div class="lvl"><span>Level</span><b>${st.place ? esc(st.place.nivel) : "—"}</b><span>${st.place ? LV[st.place.nivel] || "" : "Not tested"}</span></div>
   </div>
 
   ${setup ? "" : `<div class="stats">

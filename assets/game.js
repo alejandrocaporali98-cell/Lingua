@@ -3,7 +3,7 @@
 (function () {
   const L = window.LINGUA, S = L.store;
   const reduced = () => window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   L.esc = esc;
 
   // ── Pronunciation (the browser's own voices) ──

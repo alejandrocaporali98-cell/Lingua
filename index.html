@@ -221,7 +221,7 @@
   const lvl = P ? P.nivel : null, idx = lvl ? L.indexOf(lvl.replace("+", "")) : -1;
   document.getElementById("level").innerHTML = `
     <span class="eyebrow">Your level</span>
-    ${lvl ? `<div style="display:flex;align-items:baseline;gap:10px"><span class="big">${lvl}</span><span style="font-weight:700;color:var(--ink-2)">${names[lvl] || ""}</span></div>`
+    ${lvl ? `<div style="display:flex;align-items:baseline;gap:10px"><span class="big">${C.esc(lvl)}</span><span style="font-weight:700;color:var(--ink-2)">${names[lvl] || ""}</span></div>`
           : `<div class="big pend">Not tested yet</div>`}
     <div class="cefr">${L.map((x, i) => `<span class="${i === idx ? "on" : i < idx ? "past" : ""}">${x}</span>`).join("")}</div>
     <p class="muted" style="font-size:.9em">${lvl ? (P.partial ? "Your level so far. Finish the test to confirm it." : "From your placement test on " + new Date(P.fecha + "T12:00").toLocaleDateString("en-US", { month: "long", day: "numeric" }) + ".") : "Take the placement test to find your starting point. Do it all at once or one section at a time."}</p>

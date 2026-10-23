@@ -3,6 +3,7 @@
 (function () {
   const L = window.LINGUA;
   const A = L.avatar = {};
+  const escA = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
   A.SHELLS = { white: "#f2f3f6", black: "#1b1f2a", red: "#d7263d", blue: "#2346d0", teal: "#0f766e", orange: "#f97316", yellow: "#f5c518", purple: "#6d3fd6", pink: "#e84a8a", green: "#15803d", silver: "#a3aab6", gold: "#c9a227" };
   A.BGS = { sky: "#dbe6ff", mint: "#d5f2e6", sand: "#fbe8cc", rose: "#fbdbe5", lilac: "#e7defb", fog: "#e6e9ef", night: "#1b1f2a", track: "#3a4150" };
@@ -131,10 +132,10 @@
     const kind = opts.kind || (L.style && L.style.avatar) || "helmet";
     if (cfg.style !== "initial" && kind !== "helmet" && OTHER[kind]) {
       const o = OTHER[kind]({ id, bg, shell, acc, vis, num, designs, cfg });
-      return `<svg class="av-svg" width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="${opts.label || "Avatar"}" style="display:block;border-radius:50%">${o}</svg>`;
+      return `<svg class="av-svg" width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="${escA(opts.label || "Avatar")}" style="display:block;border-radius:50%">${o}</svg>`;
     }
     const body = cfg.style === "initial"
-      ? `<circle cx="50" cy="50" r="50" fill="${opts.initialBg || bg}"/><text x="50" y="50" dy=".35em" text-anchor="middle" font-family="Plus Jakarta Sans, Segoe UI, sans-serif" font-weight="800" font-size="46" fill="${ink(opts.initialBg || bg)}">${(opts.initial || "?").toUpperCase()}</text>`
+      ? `<circle cx="50" cy="50" r="50" fill="${opts.initialBg || bg}"/><text x="50" y="50" dy=".35em" text-anchor="middle" font-family="Plus Jakarta Sans, Segoe UI, sans-serif" font-weight="800" font-size="46" fill="${ink(opts.initialBg || bg)}">${escA((opts.initial || "?").toUpperCase())}</text>`
       : `<circle cx="50" cy="50" r="50" fill="${bg}"/>
         <defs>
           <clipPath id="${id}c"><path d="${shellPath}"/></clipPath>
@@ -150,7 +151,7 @@
         <circle cx="31" cy="60" r="8.5" fill="#fff" stroke="#1b1f2a" stroke-opacity=".15"/>
         <text x="31" y="60" dy=".36em" text-anchor="middle" font-family="Plus Jakarta Sans, Segoe UI, sans-serif" font-weight="800" font-size="${num.length > 1 ? 9 : 10.5}" fill="#1b1f2a">${num}</text>
         <path d="${shellPath}" fill="none" stroke="#1b1f2a" stroke-opacity=".18" stroke-width="1.2"/>`;
-    return `<svg class="av-svg" width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="${opts.label || "Avatar"}" style="display:block;border-radius:50%">${body}</svg>`;
+    return `<svg class="av-svg" width="${size}" height="${size}" viewBox="0 0 100 100" role="img" aria-label="${escA(opts.label || "Avatar")}" style="display:block;border-radius:50%">${body}</svg>`;
   };
 
   // Avatar for the current student (helmet if they made one, else their initial)

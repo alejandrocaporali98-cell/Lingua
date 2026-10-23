@@ -142,3 +142,11 @@ Neither function needs any key pasted in: Supabase gives them their own.
 ## v5 setup (weekly plans and siblings)
 
 Run `supabase/v5.sql` once in Supabase → SQL Editor. It adds the **Weekly** plan (with a pay day, Saturday by default), **families** (siblings who pay together: one plan, one payment, one receipt) and the week on payments and slips. Set it in a student's file → Billing (or in the office panel → Alumnos → the student): choose *Weekly*, the amount per week, and tick the siblings under *Pays together with*. Weeks with no class taken aren't charged.
+
+## v6 setup (security)
+
+Run `supabase/v6.sql` once in Supabase → SQL Editor (it includes v5). It:
+- moves the teacher's private notes about each student to a teacher-only table (`student_notes`), so the office account can't read them;
+- gives every payment slip and payment a secret code; `ficha.html` and `recibo.html` check it with the database (`slip_check`, `receipt_check`) and show the real folio, amount, names and bank details. A link that was edited or made up shows a warning instead of bank details.
+
+Also in Supabase → Authentication → Sign In / Providers: turn off **Allow new users to sign up** (accounts are only created from the teacher panel) and set the minimum password length to 8.

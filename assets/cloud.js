@@ -227,14 +227,14 @@
   // Teacher panel: read every student (allowed only for accounts in the "teachers" table)
   L.teacher = {
     async load() {
-      const [p, g, h, c, st, ru, ad, pa, sf, ch, bi] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
+      const [p, g, h, c, st, ru, ad, pa, sf, ch, bi, nt] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
         sb.from("classes").select("*").order("starts_at", { ascending: false }), sb.from("student_settings").select("*"),
         sb.from("class_rules").select("*"), sb.from("student_admin").select("*"), sb.from("payments").select("*").order("paid_on", { ascending: false }), sb.from("staff").select("*"),
-        sb.from("charges").select("*").order("created_at", { ascending: false }), sb.from("billing_info").select("*")]);
+        sb.from("charges").select("*").order("created_at", { ascending: false }), sb.from("billing_info").select("*"), sb.from("student_notes").select("*")]);
       const err = p.error || g.error || h.error; if (err) throw err;
       return { profiles: p.data || [], progress: g.data || [], homework: h.data || [], classes: c.error ? null : (c.data || []), settings: st.error ? null : (st.data || []),
         rules: ru.error ? null : (ru.data || []), admin: ad.error ? null : (ad.data || []), payments: pa.error ? null : (pa.data || []), staff: sf.error ? null : (sf.data || []),
-        charges: ch.error ? null : (ch.data || []), bank: bi.error ? null : ((bi.data || [])[0] || {}) };
+        charges: ch.error ? null : (ch.data || []), bank: bi.error ? null : ((bi.data || [])[0] || {}), notes: nt.error ? null : (nt.data || []) };
     },
     async addHomework(row) { const { data, error } = await sb.from("homework").insert(row).select(); if (error) throw error; return data; },
     async deleteHomework(id) { const { error } = await sb.from("homework").delete().eq("id", id); if (error) throw error; },
