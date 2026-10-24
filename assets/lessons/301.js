@@ -315,10 +315,10 @@ window.CLASE = {
    "“We open on…”"
   ],
   "notes": [
-   "Derek quiere ser filmmaker: deja que hable mucho y empújalo a usar el vocabulario técnico.",
-   "Si dice \"very + adjetivo fuerte\" (very hilarious, very amazing), márcalo.",
-   "En la pregunta 2, pídele que dé la nota con suavidad (I wonder if…, a bit…).",
-   "Cierra pidiéndole su logline en una sola frase, cronometrada a 15 segundos."
+   "Derek wants to be a filmmaker: let him talk a lot and push him to use the technical vocabulary.",
+   "If he says \"very\" + a strong adjective (very hilarious, very amazing), flag it.",
+   "In question 2, ask him to give the note softly (I wonder if…, a bit…).",
+   "Finish by asking for his logline in one sentence, timed at 15 seconds."
   ]
  },
  "final": [

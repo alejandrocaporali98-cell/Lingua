@@ -108,7 +108,7 @@ window.CLASE = {
     "\"Truth? And then what passed?\"",
     "\"For real. And what happened to you after?\""
    ],
-   "why": "Short reaction plus a question is what keeps a story going. \"And after?\" is a direct translation of \"¿y después?\" that sounds abrupt."
+   "why": "Short reaction plus a question is what keeps a story going. \"And after?\" sounds abrupt in English."
   },
   {
    "p": "\"It ___ for about an hour before we gave up.\"",

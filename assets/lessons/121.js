@@ -50,7 +50,7 @@ window.CLASE = {
   {
    "img": "",
    "en": "It doesn't go with those shoes.",
-   "def": "Things GO WITH each other. Never \"combine with\" — that is a direct translation of \"combinar\" and sounds like chemistry.",
+   "def": "Things GO WITH each other. Never \"combine with\" — it sounds like chemistry.",
    "ex": "I love the skirt, it just doesn't go with the boots.",
    "tag": "matching"
   },
@@ -88,7 +88,7 @@ window.CLASE = {
     "match with",
     "combine"
    ],
-   "why": "Things \"go with\" each other. \"Combine with\" is a direct translation of \"combinar\" and is not used this way in English."
+   "why": "Things \"go with\" each other. \"Combine with\" is not used this way in English."
   },
   {
    "p": "Liking something right now: \"I'm really ___ that aesthetic.\"",
@@ -118,7 +118,7 @@ window.CLASE = {
     "\"Cargo trousers come back to fashion.\"",
     "\"Cargo trousers are in return.\""
    ],
-   "why": "\"Make a comeback\" is the fixed phrase. \"The mode\" is a false friend — \"la moda\" is \"fashion\" in English."
+   "why": "\"Make a comeback\" is the fixed phrase. \"The mode\" is a false friend — the word you need is \"fashion\"."
   }
  ],
  "gaps": {

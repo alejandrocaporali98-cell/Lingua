@@ -98,7 +98,7 @@ window.CLASE = {
     "makes",
     "puts"
    ],
-   "why": "English uses \"get\" for a change in weather. \"It does heat\" is a direct translation of \"hace calor\" and does not work."
+   "why": "English uses \"get\" for a change in weather: it gets hot. \"It does heat\" doesn't work."
   },
   {
    "p": "Explaining something with no English word:",

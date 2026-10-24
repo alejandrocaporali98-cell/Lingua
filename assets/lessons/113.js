@@ -382,7 +382,7 @@ window.CLASE = {
    "a": "good",
    "w": [
     "well",
-    "bueno",
+    "goodly",
     "strong of"
    ],
    "why": ""

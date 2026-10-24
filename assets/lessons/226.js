@@ -442,37 +442,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Holding your ground out loud",
-  "text": "Say each one before revealing the model. Notice how much softer English sounds than the Spanish original.",
+  "text": "Read the situation, then say it out loud before revealing the model. Keep it soft — that's what makes it work in English.",
   "items": [
    {
-    "es": "Está un poco fuera de nuestro presupuesto.",
     "en": "That's a bit outside our budget.",
-    "note": "Never ‘very expensive’ if you still want the deal."
+    "note": "Never ‘very expensive’ if you still want the deal.",
+    "cue": "The price is a little more than you can pay. Say so without killing the deal."
    },
    {
-    "es": "¿Habría posibilidad de mejorar el precio?",
     "en": "Would there be any flexibility on the price?",
-    "note": "Flexibility is the key negotiating noun."
+    "note": "Flexibility is the key negotiating noun.",
+    "cue": "Ask, politely, if the price can change."
    },
    {
-    "es": "Si pedimos el doble, ¿nos harías descuento?",
     "en": "If we ordered double, would you give us a discount?",
-    "note": "Past form after if, would in the main clause."
+    "note": "Past form after if, would in the main clause.",
+    "cue": "Offer to order twice as much — if they give you a discount."
    },
    {
-    "es": "Necesito consultarlo con mi jefe.",
     "en": "I'd need to run that past my manager.",
-    "note": "Also: I'd need to check with my manager."
+    "note": "Also: I'd need to check with my manager.",
+    "cue": "You can't decide now; your manager has to approve it."
    },
    {
-    "es": "Me temo que así no nos funciona.",
     "en": "I'm afraid that doesn't work for us.",
-    "note": "Follow it with an alternative to keep talking."
+    "note": "Follow it with an alternative to keep talking.",
+    "cue": "Their offer doesn't work for you. Say it politely."
    },
    {
-    "es": "Estoy de acuerdo, cerremos así.",
     "en": "I agree — let's go with that.",
-    "note": "Never ‘I am agree’."
+    "note": "Never ‘I am agree’.",
+    "cue": "You accept the deal. Close it."
    }
   ]
  },
@@ -495,11 +495,11 @@ window.CLASE = {
    "“That’s where I’d draw the line.”"
   ],
   "notes": [
-   "Escucha si usa condicionales. Si negocia en presente simple («you give me discount»), es el punto a corregir.",
-   "Error casi seguro: «I am agree». Márcalo con M la primera vez y déjalo correr.",
-   "Pregunta 4 es la mejor: pídele que lo actúe, no que lo describa.",
-   "Si suena demasiado directo en inglés, hazle notar que en español ese tono pasa y en inglés no.",
-   "Objetivo: que salga usando «would» y «if» sin pensarlo."
+   "Listen for conditionals. If they negotiate in the present simple (\"you give me discount\"), that's the point to fix.",
+   "Almost certain mistake: \"I am agree\". Press M the first time and let it go.",
+   "Question 4 is the best one: ask them to act it out, not describe it.",
+   "If they sound too direct, point out that the same tone that's fine in their first language can sound rude in English.",
+   "Goal: leaving the class using \"would\" and \"if\" without thinking."
   ]
  },
  "read": {

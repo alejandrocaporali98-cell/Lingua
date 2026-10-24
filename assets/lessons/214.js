@@ -476,7 +476,7 @@ window.CLASE = {
    "+verb-ing",
    "=for six years / since 2019"
   ],
-  "note": "<b>have / has been + -ing</b> + <b>for</b> (length) or <b>since</b> (start). Spanish \"Trabajo aquí desde hace…\" becomes <b>I've been working here for…</b>",
+  "note": "<b>have / has been + -ing</b> + <b>for</b> (length) or <b>since</b> (start): <b>I've been working here for six years</b>. Never <b>I work here since…</b>",
   "examples": [
    "**I've been working** in logistics **for** six years.",
    "She**'s been leading** the team **since** 2022.",

@@ -345,10 +345,10 @@ window.CLASE = {
    "“The worst part was…”"
   ],
   "notes": [
-   "Ada tiene 15 y monta: deja que hable mucho de su caballo y de sus competencias; la clase es de conversación.",
-   "Vigila \"I ride since…\" → \"I've been riding since…\".",
-   "Que use fall off / get back on al contar una caída.",
-   "Pregunta 6: que defienda su opinión con dos razones; ayúdale con \"For a start…\" y \"On top of that…\"."
+   "Ada is 15 and rides: let her talk a lot about her horse and her competitions — this is a conversation class.",
+   "Watch for \"I ride since…\" → \"I've been riding since…\".",
+   "When she tells a story about a fall, push for fall off / get back on.",
+   "Question 6: ask her to defend her opinion with two reasons; help with \"For a start…\" and \"On top of that…\"."
   ]
  },
  "final": [
@@ -470,7 +470,7 @@ window.CLASE = {
     "haven't to",
     "don't must"
    ],
-   "why": "Don't have to = no es necesario."
+   "why": "Don't have to = it isn't necessary."
   },
   {
    "p": "It's dangerous to walk behind a horse: you ___ do it.",
@@ -480,7 +480,7 @@ window.CLASE = {
     "haven't",
     "not must"
    ],
-   "why": "Mustn't = está prohibido."
+   "why": "Mustn't = don't do it; it's forbidden or dangerous."
   },
   {
    "p": "\"We got a clear round and ___ third.\"",

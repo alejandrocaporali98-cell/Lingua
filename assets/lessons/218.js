@@ -36,7 +36,7 @@ window.CLASE = {
   {
    "img": "",
    "en": "I'm a teacher.",
-   "def": "Spanish says soy profesor; English requires a or an before a job.",
+   "def": "English needs a or an before a job: I'm a teacher, she's an engineer. Never \"I'm teacher\".",
    "ex": "He's an engineer.\" (not He's engineer)",
    "tag": "jobs need an article"
   },
@@ -470,7 +470,7 @@ window.CLASE = {
  "grammar": {
   "kind": "compare",
   "title": "the or nothing?",
-  "intro": "Spanish uses \"el / la / los\" for things in general. English doesn't. The only appears when we mean a specific one.",
+  "intro": "When you talk about things in general, English uses no article: I love dogs. The only appears when we mean a specific one.",
   "forms": [
    {
     "name": "Nothing",

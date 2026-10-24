@@ -15,7 +15,7 @@ window.CLASE = {
   {
    "img": "",
    "en": "I'm nervous about it.",
-   "def": "English uses BE for feelings: I am nervous, hungry, cold, scared, 15. Spanish uses \"tener\", which is why \"I have nervous\" slips out.",
+   "def": "English uses BE for feelings: I am nervous, hungry, cold, scared, 15. Never \"I have nervous\".",
    "ex": "I'm really nervous about the presentation.",
    "tag": "BE, not have"
   },
@@ -78,7 +78,7 @@ window.CLASE = {
     "has",
     "make"
    ],
-   "why": "English uses BE for feelings and states: I am nervous, cold, hungry, scared. Spanish uses \"tener\", which is where \"I have nervous\" comes from."
+   "why": "English uses BE for feelings and states: I am nervous, cold, hungry, scared. \"I have nervous\" is wrong."
   },
   {
    "p": "\"I'm looking forward ___ the holidays.\"",
@@ -108,7 +108,7 @@ window.CLASE = {
     "\"I feel it a lot.\"",
     "\"Poor of you.\""
    ],
-   "why": "\"That sucks, I'm sorry\" is what friends actually say. \"I feel it a lot\" is a direct translation of \"lo siento mucho\" and does not exist in English."
+   "why": "\"That sucks, I'm sorry\" is what friends actually say. \"I feel it a lot\" doesn't exist in English."
   },
   {
    "p": "\"I'm really ___ about the trip.\"",

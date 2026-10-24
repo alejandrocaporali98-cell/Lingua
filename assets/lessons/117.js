@@ -98,7 +98,7 @@ window.CLASE = {
     "borrow to",
     "lend from"
    ],
-   "why": "You BORROW from someone (you take); they LEND to you (they give). Spanish \"prestar\" covers both, which is why this gets mixed up."
+   "why": "You BORROW from someone (you take); they LEND to you (they give). Mixing them up is one of the most common mistakes."
   },
   {
    "p": "\"The project is ___ on Monday.\"",
@@ -482,7 +482,7 @@ window.CLASE = {
  "grammar": {
   "kind": "compare",
   "title": "borrow or lend?",
-  "intro": "Spanish uses \"prestar\" for both. English has two verbs — it depends who gives and who receives.",
+  "intro": "In English these are two different verbs — it depends who gives and who receives.",
   "forms": [
    {
     "name": "borrow",

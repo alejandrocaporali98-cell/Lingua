@@ -442,37 +442,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Both versions out loud",
-  "text": "Say each one before revealing the model. Where the two differ, the note tells you both.",
+  "text": "Read the situation, then say it out loud before revealing the model. Where British and American differ, the note tells you both.",
   "items": [
    {
-    "es": "Vivo en un departamento en el centro.",
     "en": "I live in an apartment downtown.",
-    "note": "UK: I live in a flat in the city centre."
+    "note": "UK: I live in a flat in the city centre.",
+    "cue": "Tell someone you live in a flat in the centre of the city — the American way."
    },
    {
-    "es": "¿Dónde está el elevador?",
     "en": "Where's the elevator?",
-    "note": "UK: Where's the lift?"
+    "note": "UK: Where's the lift?",
+    "cue": "Ask where the lift is — the American way."
    },
    {
-    "es": "Me voy de vacaciones en otoño.",
     "en": "I'm going on vacation in the fall.",
-    "note": "UK: on holiday in the autumn."
+    "note": "UK: on holiday in the autumn.",
+    "cue": "Say you're going on holiday in autumn — the American way."
    },
    {
-    "es": "Necesito cargar gasolina.",
     "en": "I need to get gas.",
-    "note": "UK: I need to get petrol."
+    "note": "UK: I need to get petrol.",
+    "cue": "Your car needs fuel — the American way."
    },
    {
-    "es": "Acabo de terminarlo.",
     "en": "I just finished it.",
-    "note": "UK: I've just finished it."
+    "note": "UK: I've just finished it.",
+    "cue": "You finished it a moment ago — the American way."
    },
    {
-    "es": "La reunión es el 15 de marzo.",
     "en": "The meeting is on March 15th.",
-    "note": "Writing 15/03 or 03/15 causes real mix-ups."
+    "note": "Writing 15/03 or 03/15 causes real mix-ups.",
+    "cue": "Say the date of the meeting: the fifteenth of March — the American way."
    }
   ]
  },
@@ -495,11 +495,11 @@ window.CLASE = {
    "“The first thing I’d want to know is…”"
   ],
   "notes": [
-   "Buen momento para decirle cuál variedad usan tus materiales, porque las 30 clases mezclan un poco.",
-   "Si trabaja o quiere trabajar con empresas de EE.UU., la recomendación práctica es americano y ser consistente.",
-   "Pregunta 2 suele sacar anécdotas buenas; aprovéchala para pasado.",
-   "No conviertas esto en una lista de vocabulario: lo importante es que elija una variedad y la sostenga.",
-   "«Half four» y los pisos son los dos malentendidos que de verdad pasan. Vale la pena insistir."
+   "Good moment to tell them which variety your materials use, because the lessons mix both a little.",
+   "If they work or want to work with US companies, the practical advice is American English, used consistently.",
+   "Question 2 usually brings out good stories; use it to practise the past.",
+   "Don't turn this into a vocabulary list: what matters is choosing one variety and sticking to it.",
+   "\"Half four\" and floor numbers are the two misunderstandings that really happen. Worth insisting on."
   ]
  },
  "read": {

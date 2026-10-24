@@ -88,7 +88,7 @@ window.CLASE = {
     "is hurt",
     "has pain"
    ],
-   "why": "\"My back hurts\" is the natural sentence. \"Has pain\" is a direct translation of tener dolor."
+   "why": "\"My back hurts\" is the natural sentence. \"I have pain in the back\" sounds like a translation."
   },
   {
    "p": "Duration: \"I've had it ___ three days.\"",
@@ -469,7 +469,7 @@ window.CLASE = {
  "grammar": {
   "kind": "rule",
   "title": "I've got a… / my… hurts",
-  "intro": "English describes most symptoms with two simple patterns. Spanish \"me duele\" doesn't translate word for word.",
+  "intro": "English describes most symptoms with two simple patterns — and neither of them is \"I have pain in…\".",
   "pattern": [
    "I've got",
    "+a headache / a cold / a temperature",

@@ -233,7 +233,7 @@ window.CLASE = {
     "sentence": "He touched the solo perfectly.",
     "wrong": 1,
     "fixed": "He played the solo perfectly. / He nailed the solo.",
-    "why": "You play an instrument or a solo; touch sounds like Spanish tocar."
+    "why": "You play an instrument or a solo. \"Touch\" is a false friend here."
    }
   ]
  },
@@ -314,10 +314,10 @@ window.CLASE = {
    "“I've been playing for…”"
   ],
   "notes": [
-   "Erick toca guitarra: deja que hable de su equipo y su sonido con detalle.",
-   "Vigila \"I play since…\" — debe ser present perfect continuous.",
-   "En la pregunta 2, si puede, que toque o tararee el riff y lo describa.",
-   "Pídele que dé una nota a un músico imaginario usando pull back / a bit / I think."
+   "Erick plays guitar: let him talk about his gear and his sound in detail.",
+   "Watch for \"I play since…\" — it should be present perfect continuous.",
+   "In question 2, if he can, ask him to play or hum the riff and describe it.",
+   "Ask him to give a note to an imaginary musician using pull back / a bit / I think."
   ]
  },
  "final": [

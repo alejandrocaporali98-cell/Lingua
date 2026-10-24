@@ -348,11 +348,11 @@ window.CLASE = {
    "“Rather than…, it…”"
   ],
   "notes": [
-   "Clase de 2 horas por pantalla compartida: deja que ponga canciones (Frank Ocean, J. Cole, The Neighbourhood, Arctic Monkeys) y que las analice.",
-   "Exige cleft sentences: corrige cada \"I like the song because…\" → \"What I like about it is…\".",
-   "Vigila \"love of\" → \"love about\" y adjetivos con -s.",
-   "Pregunta 9 es debate: cronometra 2 minutos a favor y 2 en contra; después da retroalimentación de fluidez.",
-   "No repasen letras completas en pantalla; mejor que las parafrasee y explique."
+   "Two-hour class on screen share: let him play songs (Frank Ocean, J. Cole, The Neighbourhood, Arctic Monkeys) and break them down.",
+   "Insist on cleft sentences: turn every \"I like the song because…\" into \"What I like about it is…\".",
+   "Watch for \"love of\" → \"love about\" and adjectives with -s.",
+   "Question 9 is a debate: time 2 minutes for and 2 against, then give feedback on fluency.",
+   "Don't show full lyrics on screen; ask him to paraphrase and explain them instead."
   ]
  },
  "final": [

@@ -5,7 +5,7 @@ window.CLASE = {
  "nivel": "B1",
  "color": "#2346d0",
  "icono": "book",
- "tema": "Spanish uses en for almost everything.",
+ "tema": "Three little words that place everything in time and space.",
  "objetivos": [
   "Big, medium, small",
   "Cities, streets, addresses",
@@ -88,7 +88,7 @@ window.CLASE = {
     "at",
     "the"
    ],
-   "why": "Days take on. “In Tuesday” is a very common error from Spanish en."
+   "why": "Days take on. “In Tuesday” is one of the most common errors."
   },
   {
    "p": "\"The train leaves ___ 7:30.\"",

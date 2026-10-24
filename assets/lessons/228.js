@@ -442,37 +442,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Saying sorry out loud",
-  "text": "Say each one before revealing the model. Notice how English separates the apology from the excuse.",
+  "text": "Read the situation, then say it out loud before revealing the model. Keep the apology separate from the excuse.",
   "items": [
    {
-    "es": "Perdón, fue mi error.",
     "en": "Sorry — that was my mistake.",
-    "note": "Naming yourself is stronger than ‘there was a mistake’."
+    "note": "Naming yourself is stronger than ‘there was a mistake’.",
+    "cue": "You made the mistake. Say so directly."
    },
    {
-    "es": "Le pido disculpas por la demora.",
     "en": "I apologise for the delay.",
-    "note": "Apologise for, never of."
+    "note": "Apologise for, never of.",
+    "cue": "Apologise formally to a client for the delay."
    },
    {
-    "es": "Debí haberlo revisado antes.",
     "en": "I should have checked it beforehand.",
-    "note": "Always should have, even though it sounds like should of."
+    "note": "Always should have, even though it sounds like should of.",
+    "cue": "You didn't check the document, and you should have."
    },
    {
-    "es": "No volverá a pasar.",
     "en": "It won't happen again.",
-    "note": "Not ‘it doesn't happen again’."
+    "note": "Not ‘it doesn't happen again’.",
+    "cue": "Promise it won't be repeated."
    },
    {
-    "es": "¿Qué puedo hacer para arreglarlo?",
     "en": "What can I do to put it right?",
-    "note": "Also: to make it up to you (more personal)."
+    "note": "Also: to make it up to you (more personal).",
+    "cue": "Ask how you can fix the problem."
    },
    {
-    "es": "Lamento las molestias ocasionadas.",
     "en": "I'm sorry for the inconvenience caused.",
-    "note": "Inconvenience, not inconvenient."
+    "note": "Inconvenience, not inconvenient.",
+    "cue": "Formal email: apologise for the trouble this caused."
    }
   ]
  },
@@ -495,11 +495,11 @@ window.CLASE = {
    "“That’s a fair question, but…”"
   ],
   "notes": [
-   "Pregunta 1 es perfecta para practicar pasado: escucha si mezcla past simple y present perfect.",
-   "«Should have» es el objetivo gramatical de la clase. Si no sale solo, pídeselo directamente.",
-   "Pregunta 5 es incómoda a propósito: obliga a ser firme y cortés a la vez, que es lo difícil en inglés.",
-   "Si se disculpa demasiado (muy común), hazle ver que en inglés el exceso suena inseguro.",
-   "Ojo con «sorry for» vs «sorry about»: ambos valen; «sorry of» no."
+   "Question 1 is perfect for past tenses: listen for a mix-up between past simple and present perfect.",
+   "\"Should have\" is the grammar goal of this class. If it doesn't come up on its own, ask for it directly.",
+   "Question 5 is uncomfortable on purpose: it forces them to be firm and polite at the same time, which is the hard part in English.",
+   "If they over-apologise (very common), point out that too many apologies sound insecure in English.",
+   "Watch \"sorry for\" vs \"sorry about\": both work; \"sorry of\" doesn't."
   ]
  },
  "read": {

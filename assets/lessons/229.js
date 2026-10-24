@@ -442,37 +442,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Telling it out loud",
-  "text": "Say each one before revealing the model. Aim for the version you'd actually tell a friend.",
+  "text": "Read the situation, then say it out loud before revealing the model. Aim for the version you'd actually tell a friend.",
   "items": [
    {
-    "es": "Estaba agotado después del vuelo.",
     "en": "I was absolutely shattered after the flight.",
-    "note": "Shattered is very British; exhausted works anywhere."
+    "note": "Shattered is very British; exhausted works anywhere.",
+    "cue": "You were extremely tired after a long flight."
    },
    {
-    "es": "Hacía tanto frío que nos fuimos.",
     "en": "It was so cold that we left.",
-    "note": "Such would need a noun: such a cold day."
+    "note": "Such would need a noun: such a cold day.",
+    "cue": "It was so cold that you left the party."
    },
    {
-    "es": "Estábamos cenando cuando sonó el teléfono.",
     "en": "We were having dinner when the phone rang.",
-    "note": "Continuous for background, simple for the event."
+    "note": "Continuous for background, simple for the event.",
+    "cue": "The phone rang in the middle of dinner."
    },
    {
-    "es": "Y de repente, se fue la luz.",
     "en": "And then, out of nowhere, the power went out.",
-    "note": "Slow down on this line when telling it."
+    "note": "Slow down on this line when telling it.",
+    "cue": "Suddenly, the lights went out."
    },
    {
-    "es": "No te imaginas lo que pasó ayer.",
     "en": "You'll never guess what happened yesterday.",
-    "note": "Never ‘yesterday happened something’."
+    "note": "Never ‘yesterday happened something’.",
+    "cue": "Start a story about something surprising that happened yesterday."
    },
    {
-    "es": "Fue lo más gracioso que he visto.",
     "en": "It was the funniest thing I've ever seen.",
-    "note": "Ever goes before the past participle."
+    "note": "Ever goes before the past participle.",
+    "cue": "It was the funniest thing you've seen in your life."
    }
   ]
  },
@@ -495,11 +495,11 @@ window.CLASE = {
    "“And that’s when I realised…”"
   ],
   "notes": [
-   "Esta es la sección más larga de todas: deja que cuente sin interrumpir, aunque tarde.",
-   "Escucha la mezcla past simple / past continuous. Es el objetivo gramatical real de la clase.",
-   "Si cuenta todo en presente (muy común), déjalo terminar y luego pídele que lo repita en pasado.",
-   "Ojo con «very» + adjetivo fuerte. Márcalo con M la primera vez.",
-   "Si el remate lo suelta al principio, hazle notar que en inglés va al final. Pídele que lo vuelva a contar."
+   "This is the longest section: let them tell the story without interrupting, even if it takes a while.",
+   "Listen for the past simple / past continuous mix. That's the real grammar goal of this class.",
+   "If they tell everything in the present (very common), let them finish and then ask them to retell it in the past.",
+   "Watch \"very\" + a strong adjective. Press M the first time.",
+   "If they give away the punchline at the start, point out that in English it goes at the end. Ask them to tell it again."
   ]
  },
  "read": {

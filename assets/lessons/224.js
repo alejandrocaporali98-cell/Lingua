@@ -442,37 +442,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Now the other direction",
-  "text": "Say each one out loud in natural, fast English before you reveal the model. Aim for how it sounds, not how it's spelled.",
+  "text": "Read the situation, then say it out loud in fast, natural English before you reveal the model. Aim for how it sounds, not how it's spelled.",
   "items": [
    {
-    "es": "Voy a llamarte más tarde.",
     "en": "I'm gonna call you later.",
-    "note": "In writing: I'm going to call you later."
+    "note": "In writing: I'm going to call you later.",
+    "cue": "Tell a friend you'll call them later today."
    },
    {
-    "es": "¿Quieres que te ayude?",
     "en": "D'you want me to give you a hand?",
-    "note": "Do you often shrinks to d'you in speech."
+    "note": "Do you often shrinks to d'you in speech.",
+    "cue": "Offer to help someone carry their bags."
    },
    {
-    "es": "No sé, déjame pensarlo.",
     "en": "I dunno, lemme think about it.",
-    "note": "Written: I don't know, let me think about it."
+    "note": "Written: I don't know, let me think about it.",
+    "cue": "Someone asks you a hard question. You need a moment."
    },
    {
-    "es": "¿Qué opinas de la idea?",
     "en": "Whaddaya think of the idea?",
-    "note": "Written: What do you think of the idea?"
+    "note": "Written: What do you think of the idea?",
+    "cue": "Ask a friend their opinion of your idea."
    },
    {
-    "es": "Es medio complicado, la verdad.",
     "en": "It's kinda complicated, to be honest.",
-    "note": "Kinda and sorta work the same way."
+    "note": "Kinda and sorta work the same way.",
+    "cue": "Admit the situation is a little complicated."
    },
    {
-    "es": "Te aviso la próxima semana.",
     "en": "I'll let you know next week.",
-    "note": "Said fast: I'll letcha know nex-week."
+    "note": "Said fast: I'll letcha know nex-week.",
+    "cue": "Promise to tell someone your answer next week."
    }
   ]
  },
@@ -495,11 +495,11 @@ window.CLASE = {
    "“To be honest, I still struggle with…”"
   ],
   "notes": [
-   "Objetivo: que hable 10-15 minutos seguidos. No corrijas cada error — anota dos o tres y los ves al final.",
-   "Escucha si usa el pasado bien al contar la anécdota (pregunta 4). Es donde más se cae.",
-   "Si contesta muy corto, pide un ejemplo concreto: «give me an example» funciona mejor que «why?».",
-   "Pregunta 3 es de opinión: si dice que sí quiere hablar rápido, vale la pena explicarle que claridad gana a velocidad.",
-   "Marca con M cualquier frase de las secciones 1-5 que haya olvidado al hablar."
+   "Goal: 10–15 minutes of non-stop talking. Don't correct every mistake — note two or three and go over them at the end.",
+   "Listen for the past tense in the story (question 4). That's where it usually breaks.",
+   "If the answers are short, ask for a concrete example: \"give me an example\" works better than \"why?\".",
+   "Question 3 is about opinions: if they want to speak fast, point out that clarity beats speed.",
+   "Press M on any phrase from sections 1–5 they forgot while speaking."
   ]
  },
  "read": {

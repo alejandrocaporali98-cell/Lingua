@@ -57,7 +57,7 @@ window.CLASE = {
   {
    "img": "",
    "en": "Actually\" / \"Basically",
-   "def": "Actually corrects or surprises; basically summarises. Neither means what actualmente or básicamente mean.",
+   "def": "Actually corrects or surprises; basically summarises. Actually does NOT mean \"currently\".",
    "ex": "Actually, I disagree.\" / \"Basically, it didn't work.",
    "tag": "softeners with a catch"
   },
@@ -191,7 +191,7 @@ window.CLASE = {
     "you": true,
     "cue": "Natural response.",
     "model": "How can I put this — something firm but not aggressive. Basically, that we value the relationship, but the delays are costing us. Actually, could I draft it and send it to you first?",
-    "tip": "“How can I put this” warns that a careful answer is coming. “Actually” here introduces a small change of direction — not the Spanish actualmente."
+    "tip": "“How can I put this” warns that a careful answer is coming. “Actually” here introduces a small change of direction — it doesn't mean “currently”."
    }
   ],
   "extra": ""
@@ -442,37 +442,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Buying time out loud",
-  "text": "Say each one out loud before revealing the model — and take your time doing it. That's the point of the exercise.",
+  "text": "Read the situation, then say it out loud — and take your time doing it. That's the point of the exercise.",
   "items": [
    {
-    "es": "Bueno, déjame pensarlo un momento.",
     "en": "Well, let me think about it for a second.",
-    "note": "Never ‘let me to think’."
+    "note": "Never ‘let me to think’.",
+    "cue": "Someone asks you something difficult. Ask for a second to think."
    },
    {
-    "es": "O sea, la idea no es mala, pero…",
     "en": "I mean, the idea isn't bad, but…",
-    "note": "I mean is the closest thing English has to o sea."
+    "note": "I mean lets you rephrase what you just said.",
+    "cue": "Rephrase what you said: the idea isn't bad, but there's a problem."
    },
    {
-    "es": "Lo importante es que lleguemos a tiempo.",
     "en": "The thing is, we need to get there on time.",
-    "note": "Not ‘the important is’."
+    "note": "Not ‘the important is’.",
+    "cue": "Point out the important part: arriving on time."
    },
    {
-    "es": "Actualmente trabajo en calidad.",
     "en": "I currently work in quality.",
-    "note": "‘Actually’ would mean the opposite of what you want."
+    "note": "‘Actually’ would mean the opposite of what you want.",
+    "cue": "Say what you do now: you work in quality."
    },
    {
-    "es": "La verdad, no estoy seguro todavía.",
     "en": "To be honest, I'm not sure yet.",
-    "note": "Also: honestly, I'm not sure yet."
+    "note": "Also: honestly, I'm not sure yet.",
+    "cue": "Be honest: you're not sure yet."
    },
    {
-    "es": "¿Cómo te lo explico? Es complicado.",
     "en": "How can I put this? It's complicated.",
-    "note": "Signals that something awkward is coming."
+    "note": "Signals that something awkward is coming.",
+    "cue": "Warn someone that a difficult explanation is coming."
    }
   ]
  },
@@ -495,11 +495,11 @@ window.CLASE = {
    "“How can I put this…”"
   ],
   "notes": [
-   "Esta sección es la prueba real de la clase: cuenta cuántas veces usa un filler en vez de quedarse callado.",
-   "Si se queda en silencio, no rescates enseguida — espera y luego recuérdale una frase de la sección 01.",
-   "Pregunta 1 suele destapar que traduce mentalmente del español. Vale la pena hablarlo.",
-   "Ojo con «actually»: si lo usa como «actualmente», márcalo con M; es el error que más se repite.",
-   "Objetivo realista: que salga de aquí usando «well» y «I mean» sin pensarlo."
+   "This section is the real test of the class: count how many times they use a filler instead of going silent.",
+   "If they go quiet, don't rescue them straight away — wait, then remind them of a phrase from section 1.",
+   "Question 1 often shows they're translating in their head. Worth talking about.",
+   "Watch \"actually\": if it's used to mean \"currently\", press M — it's the most common mistake here.",
+   "Realistic goal: leaving the class using \"well\" and \"I mean\" without thinking."
   ]
  },
  "read": {
@@ -520,7 +520,7 @@ window.CLASE = {
    "Basically": "Introduces a summary.",
    "how can I put this": "Warns that what's coming is delicate, and buys time.",
    "I mean": "Lets you rephrase or clarify what you just said.",
-   "Actually": "Corrects or adds a surprising detail. Not \"actualmente\"!"
+   "Actually": "Corrects or adds a surprising detail. It does NOT mean \"currently\"!"
   },
   "questions": [
    {
@@ -574,11 +574,11 @@ window.CLASE = {
  "grammar": {
   "kind": "compare",
   "title": "actually or currently?",
-  "intro": "This is the most famous false friend for Spanish speakers. \"Actualmente\" is not \"actually\".",
+  "intro": "This is the most famous false friend in English. \"Actually\" does not mean \"currently\".",
   "forms": [
    {
     "name": "actually",
-    "form": "= en realidad / de hecho",
+    "form": "= in fact / to be honest",
     "use": "Corrects something or adds a surprising fact.",
     "examples": [
      "I thought it was Monday. **Actually**, it's Tuesday.",
@@ -587,7 +587,7 @@ window.CLASE = {
    },
    {
     "name": "currently",
-    "form": "= actualmente / ahora",
+    "form": "= now / at the moment",
     "use": "At the present time.",
     "examples": [
      "I'm **currently** working in sales.",

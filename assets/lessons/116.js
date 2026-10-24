@@ -342,7 +342,7 @@ window.CLASE = {
    "a": "good",
    "w": [
     "well",
-    "bueno",
+    "goodly",
     "strong of"
    ],
    "why": ""
@@ -481,7 +481,7 @@ window.CLASE = {
  "grammar": {
   "kind": "rule",
   "title": "ask / tell someone to do something",
-  "intro": "When you report a request, English uses a person + to + verb. Spanish uses \"que\" + subjunctive, which is why this one is hard.",
+  "intro": "When you report a request, English uses a person + to + verb: I asked it to explain. Never \"I asked that it explains\".",
   "pattern": [
    "I asked it",
    "+to + verb",

@@ -442,37 +442,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Playing it down out loud",
-  "text": "Say each one before revealing the model. The trick is sounding casual about something big.",
+  "text": "Read the situation, then say it out loud before revealing the model. The trick is sounding casual about something big.",
   "items": [
    {
-    "es": "Salió bastante bien, la verdad.",
     "en": "Not bad, actually.",
-    "note": "Saying it plainly would sound boastful to British ears."
+    "note": "Saying it plainly would sound boastful to British ears.",
+    "cue": "Your presentation went really well. Say it the British way."
    },
    {
-    "es": "Sí, claro. (con ironía)",
     "en": "Yeah, right.",
-    "note": "Tone carries all the meaning here."
+    "note": "Tone carries all the meaning here.",
+    "cue": "Your friend says he'll go to the gym every day. You don't believe him."
    },
    {
-    "es": "Ni me lo digas, a mí me pasó igual.",
     "en": "Tell me about it.",
-    "note": "Pure agreement — no explanation expected."
+    "note": "Pure agreement — no explanation expected.",
+    "cue": "Your colleague complains about traffic — the same happens to you every day."
    },
    {
-    "es": "Tenemos un problemita… bueno, un problemón.",
     "en": "We've got a slight issue — well, a disaster.",
-    "note": "The understatement then the reveal is a common joke structure."
+    "note": "The understatement then the reveal is a common joke structure.",
+    "cue": "Something has gone very wrong. Start small, then reveal how big it is."
    },
    {
-    "es": "No te voy a mentir, estuvo horrible.",
     "en": "I'm not gonna lie, it was awful.",
-    "note": "Very common opener in casual speech."
+    "note": "Very common opener in casual speech.",
+    "cue": "Be honest: the film was terrible."
    },
    {
-    "es": "Era broma, no te lo tomes a mal.",
     "en": "I was only joking — no offence.",
-    "note": "Never ‘I joke you’."
+    "note": "Never ‘I joke you’.",
+    "cue": "Your joke didn't go down well. Say it was only a joke."
    }
   ]
  },
@@ -495,11 +495,11 @@ window.CLASE = {
    "“That went straight over my head.”"
   ],
   "notes": [
-   "Pregunta 4 da miedo a propósito: contar un chiste en otro idioma es de lo más difícil que hay. Si se traba, cuéntale tú uno primero.",
-   "Esta clase depende del tono, así que vale mucho que leas las frases en voz alta con la entonación correcta.",
-   "Si no capta un sarcasmo tuyo durante la clase, no lo expliques enseguida — deja que lo procese.",
-   "«Tell me about it» es el malentendido más probable. Pruébalo en vivo y ve si contesta explicando.",
-   "Si el humor le cuesta, no lo fuerces: entenderlo ya es la mitad del objetivo."
+   "Question 4 is scary on purpose: telling a joke in another language is one of the hardest things there is. If they get stuck, tell one yourself first.",
+   "This class depends on tone, so read the phrases out loud with the right intonation.",
+   "If they miss one of your sarcastic comments during class, don't explain it straight away — let them process it.",
+   "\"Tell me about it\" is the most likely misunderstanding. Try it live and see if they answer by explaining.",
+   "If humour is hard for them, don't force it: understanding it is already half the goal."
   ]
  },
  "read": {

@@ -29,7 +29,7 @@ window.CLASE = {
   {
    "img": "",
    "en": "make a mistake",
-   "def": "Spanish says hacer un error. English always says make, never do.",
+   "def": "Mistakes are always made, never done: make a mistake.",
    "ex": "Sorry, I made a mistake.\" (not I did a mistake)",
    "tag": "the classic trap"
   },
@@ -108,7 +108,7 @@ window.CLASE = {
     "give",
     "have"
    ],
-   "why": "Favours are done. “Make me a favour” is a direct translation from hacer."
+   "why": "Favours are done. “Make me a favour” is wrong."
   },
   {
    "p": "\"I don't want to ___ anything this weekend.\"",
@@ -473,7 +473,7 @@ window.CLASE = {
  "grammar": {
   "kind": "compare",
   "title": "say or tell?",
-  "intro": "Both mean \"decir\". The difference is simple: tell needs a person right after it. Say doesn't.",
+  "intro": "Both are about words people say. The difference is simple: tell needs a person right after it. Say doesn't.",
   "forms": [
    {
     "name": "say",

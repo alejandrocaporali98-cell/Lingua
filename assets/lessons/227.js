@@ -442,37 +442,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Explaining out loud",
-  "text": "Say each one before revealing the model. Short sentences beat long ones here.",
+  "text": "Read the situation, then say it out loud before revealing the model. Short sentences beat long ones here.",
   "items": [
    {
-    "es": "Primero se revisa el lote, luego se registra.",
     "en": "First you check the batch, then you log it.",
-    "note": "English rarely uses the passive for instructions."
+    "note": "English rarely uses the passive for instructions.",
+    "cue": "Explain the first two steps: check the batch, then record it."
    },
    {
-    "es": "Una vez que termines, avísame.",
     "en": "Once you've finished, let me know.",
-    "note": "Never ‘once you will finish’."
+    "note": "Never ‘once you will finish’.",
+    "cue": "Ask a colleague to tell you when they finish."
    },
    {
-    "es": "Espera hasta que la luz se ponga verde.",
     "en": "Wait until the light turns green.",
-    "note": "Not ‘until the light will turn’."
+    "note": "Not ‘until the light will turn’.",
+    "cue": "Tell someone to wait for the green light."
    },
    {
-    "es": "Lo hacemos así para evitar errores.",
     "en": "We do it this way to avoid mistakes.",
-    "note": "Or: so that we don't make mistakes."
+    "note": "Or: so that we don't make mistakes.",
+    "cue": "Explain why you do it this way: to avoid mistakes."
    },
    {
-    "es": "Asegúrate de guardarlo antes de salir.",
     "en": "Make sure you save it before you leave.",
-    "note": "Make sure + subject + verb."
+    "note": "Make sure + subject + verb.",
+    "cue": "Remind someone to save the file before leaving."
    },
    {
-    "es": "Depende de si pasó la inspección.",
     "en": "It depends on whether it passed inspection.",
-    "note": "The subject it, and depend on, not of."
+    "note": "The subject it, and depend on, not of.",
+    "cue": "The next step changes if the part passed inspection or not."
    }
   ]
  },
@@ -495,11 +495,11 @@ window.CLASE = {
    "“Does that make sense so far?”"
   ],
   "notes": [
-   "La pregunta 5 es la joya: sigue sus instrucciones literalmente, incluso si están mal. Así ve dónde falló la explicación.",
-   "Escucha si dice «until it will stop» o «once you will finish». Es el error número uno de esta clase.",
-   "Si se enreda en frases largas, pídele que lo diga en tres pasos. La claridad aquí vale más que el vocabulario.",
-   "«Depends of» en vez de «depends on»: casi seguro que sale. Márcalo con M.",
-   "Si explica algo de su trabajo, aprovecha para vocabulario técnico que le sirva de verdad."
+   "Question 5 is the gem: follow their instructions literally, even if they're wrong. That shows where the explanation failed.",
+   "Listen for \"until it will stop\" or \"once you will finish\". It's the number one mistake in this class.",
+   "If they get lost in long sentences, ask them to say it in three steps. Clarity matters more than vocabulary here.",
+   "\"Depends of\" instead of \"depends on\": it will almost certainly come up. Press M.",
+   "If they explain something from their job, use it to teach technical vocabulary they'll really use."
   ]
  },
  "read": {
