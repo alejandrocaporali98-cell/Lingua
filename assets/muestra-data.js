@@ -10,7 +10,7 @@
     { k: "anime", es: "Anime", en: "Anime", kid: "04", adult: "102" },
     { k: "football", es: "Fútbol", en: "Football", kid: "05", adult: "05" },
     { k: "sports", es: "Otros deportes", en: "Sports", kid: "113", adult: "113" },
-    { k: "horses", es: "Caballos", en: "Horses & riding", kid: "113", adult: "113" },
+    { k: "horses", es: "Caballos", en: "Horses & riding", kid: "122", adult: "122" },
     { k: "gym", es: "Gym", en: "Fitness", kid: "113", adult: "113" },
     { k: "travel", es: "Viajes", en: "Travel", kid: "109", adult: "109" },
     { k: "tech", es: "Tecnología", en: "Technology", kid: "116", adult: "116" },
@@ -46,6 +46,7 @@
     "117": [["Estoy en tercero de secundaria.", "I'm in Year 10."], ["Tengo muchísima tarea.", "I've got loads of homework."], ["¿Me prestas una pluma?", "Can I borrow a pen?"]],
     "118": [["Iba caminando a casa cuando empezó a llover.", "I was walking home when it started to rain."], ["En resumen, regresamos un día antes.", "Long story short, we went home a day early."], ["Nunca lo había hecho.", "I'd never done it before."]],
     "121": [["Te queda increíble ese look.", "You really pull that off."], ["Lo compré de segunda mano.", "I got it second-hand."], ["Ese color no combina con mis tenis.", "That colour doesn't go with my shoes."]],
+    "122": [["Monto desde que tenía nueve años.", "I've been riding since I was nine."], ["Me caí, pero me volví a subir.", "I fell off, but I got back on."], ["No debes caminar detrás del caballo.", "You mustn't walk behind the horse."]],
     "201": [["¿Qué haces para divertirte?", "What do you do for fun?"], ["No soy muy de cocinar.", "I'm not much of a cook."], ["¿Y tú?", "How about you?"]],
     "214": [["Llevo seis años trabajando aquí.", "I've been working here for six years."], ["Soy responsable de un equipo de cinco personas.", "I'm responsible for a team of five."], ["Algo en lo que estoy trabajando es delegar.", "One thing I'm working on is delegating."]],
     "226": [["Eso se sale un poco de nuestro presupuesto.", "That's a bit outside our budget."], ["Si firmamos por dos años, ¿lo dejaría en 6%?", "If we sign for two years, would you consider 6%?"], ["Me parece bien.", "That works for me."]]

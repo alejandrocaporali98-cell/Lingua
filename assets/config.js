@@ -37,7 +37,8 @@ window.LINGUA = {
       {"id": "118", "archivo": "clases/leccion-118.html", "titulo": "Telling a Story", "tema": "A good story in English is not about long words — it is about a few connecting phrases and knowing where to pause.", "nivel": "B1", "min": 60, "icono": "book", "color": "#a16207", "estado": "lista", "secs": 7},
       {"id": "119", "archivo": "clases/leccion-119.html", "titulo": "Where I Am From", "tema": "Everyone you meet in English will ask where you are from, and the good answer is never just the name of a city.", "nivel": "B1", "min": 60, "icono": "plane", "color": "#7c3aed", "estado": "lista", "secs": 7},
       {"id": "120", "archivo": "clases/leccion-120.html", "titulo": "How Are You Really", "tema": "English has a whole layer of phrases between \"fine\" and \"terrible\", and most learners never reach it.", "nivel": "B1", "min": 60, "icono": "chat", "color": "#0e7490", "estado": "lista", "secs": 7},
-      {"id": "121", "archivo": "clases/leccion-121.html", "titulo": "Aesthetics & What Is In", "tema": "Every aesthetic online has an English name and a set of words that go with it.", "nivel": "B1", "min": 60, "icono": "chat", "color": "#2346d0", "estado": "lista", "secs": 7}
+      {"id": "121", "archivo": "clases/leccion-121.html", "titulo": "Aesthetics & What Is In", "tema": "Every aesthetic online has an English name and a set of words that go with it.", "nivel": "B1", "min": 60, "icono": "chat", "color": "#2346d0", "estado": "lista", "secs": 7},
+      {"id": "122", "archivo": "clases/leccion-122.html", "titulo": "Life at the Stables", "tema": "Riding has its own English — and most of it is about the horse, not the rider.", "nivel": "B1", "min": 60, "icono": "horse", "color": "#a16207", "estado": "lista", "secs": 10}
     ]},
     { titulo: "Foundations", owner: "Ada", lecciones: [
       {"id": "103", "archivo": "clases/leccion-103.html", "titulo": "Grammar That Actually Matters", "tema": "Forget the endless rules.", "nivel": "B1", "min": 60, "icono": "book", "color": "#b45309", "estado": "lista", "secs": 7},
@@ -99,7 +100,8 @@ window.LINGUA = {
       {"id": "301", "archivo": "clases/leccion-301.html", "titulo": "Talking Like a Filmmaker", "tema": "Directors don't say a scene was \"good\" — they talk about pacing, framing and what lands.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 10}
     ]},
     { titulo: "C1 · Music", owner: "Erick", lecciones: [
-      {"id": "311", "archivo": "clases/leccion-311.html", "titulo": "Talking Shop: Sound, Gear & Playing", "tema": "Musicians don't say a song is \"nice\" — they talk about tone, groove and what makes it hit.", "nivel": "C1", "min": 90, "icono": "guitar", "color": "#0f766e", "estado": "lista", "secs": 10}
+      {"id": "311", "archivo": "clases/leccion-311.html", "titulo": "Talking Shop: Sound, Gear & Playing", "tema": "Musicians don't say a song is \"nice\" — they talk about tone, groove and what makes it hit.", "nivel": "C1", "min": 90, "icono": "guitar", "color": "#0f766e", "estado": "lista", "secs": 10},
+      {"id": "312", "archivo": "clases/leccion-312.html", "titulo": "Breaking Down a Song", "tema": "Saying a song is \"fire\" is easy. Explaining why it works — the writing, the production, the feel — is the C1 skill.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 10}
     ]}
   ],
 
@@ -148,6 +150,7 @@ window.LINGUA.icons = {
   guitar: '<path d="M33 23l11-11M40 8l8 8"/><path d="M30 26c-3-3-9-2-11 2-1 2-1 4-3 5-5 1-8 5-6 10 2 4 6 6 10 6 5 0 8-3 9-8 1-2 3-2 5-3 4-2 5-8 2-11z"/><circle cx="24" cy="38" r="3"/>',
   book: '<path d="M10 12h14a4 4 0 0 1 4 4v28a3 3 0 0 0-3-3H10z"/><path d="M46 12H32a4 4 0 0 0-4 4v28a3 3 0 0 1 3-3h15z"/>',
   plane: '<path d="M8 32l40-18-12 32-8-12z"/><path d="M28 34l20-20"/>',
+  horse: '<path d="M15 46c-5-8-6-19-1-27 3-5 8-8 14-8s11 3 14 8c5 8 4 19-1 27"/><path d="M23 44c-3-6-3-14 0-19 1-2 3-3 5-3s4 1 5 3c3 5 3 13 0 19"/><path d="M15 46h8M33 44h8"/><circle cx="17" cy="30" r="1.3"/><circle cx="39" cy="30" r="1.3"/><circle cx="20" cy="20" r="1.3"/><circle cx="36" cy="20" r="1.3"/>',
   food: '<path d="M10 30h36a18 18 0 0 1-36 0z"/><path d="M22 22c0-4 3-4 3-8M30 22c0-4 3-4 3-8"/><path d="M14 48h28"/>'
 };
 // Portada de lección: misma serie para todas (color, textura, título, ícono recortado)
