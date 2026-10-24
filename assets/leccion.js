@@ -443,7 +443,7 @@
   pctl.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { if (b.dataset.p === "x") return present(false); markDone(st.sec); go(st.sec + +b.dataset.p); pt(); });
   document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.body.classList.contains("present")) present(false); });
   document.addEventListener("keydown", e => {
-    if (e.target.tagName === "INPUT" || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT" || e.target.isContentEditable || e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key.toLowerCase();
     if (k === "c") { toggleClass(); return; }
     if (k === "p") { present(!document.body.classList.contains("present")); return; }

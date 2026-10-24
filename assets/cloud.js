@@ -301,12 +301,61 @@
     const first = (L.actingAs.name || "your student").split(/\s+/)[0];
     const bar = document.createElement("div");
     bar.id = "classBar"; bar.className = "classbar";
-    bar.innerHTML = `<span class="dot" aria-hidden="true"></span><span><b>Class mode</b> · You’re teaching ${L.esc ? L.esc(first) : first}. Everything saves to ${L.esc ? L.esc(first) : first}’s account.</span><button type="button" class="btn sm" id="endClass">End class</button>`;
+    bar.innerHTML = `<span class="dot" aria-hidden="true"></span><span><b>Class mode</b> · You’re teaching ${L.esc ? L.esc(first) : first}. Everything saves to ${L.esc ? L.esc(first) : first}’s account.</span><button type="button" class="btn sm" id="notesBtn" aria-expanded="false" title="Class notes (N)">Notes <span class="kbd">N</span></button><button type="button" class="btn sm" id="endClass">End class</button>`;
     bar.querySelector("#endClass").onclick = () => L.actAs(null);
+    bar.querySelector("#notesBtn").onclick = () => classNotes();
     const put = () => { if (!bar.isConnected || document.body.firstElementChild !== bar) document.body.prepend(bar); };
     put();
     new MutationObserver(put).observe(document.body, { childList: true });
   }
+  // Class notes drawer (class mode): what you write goes to today's class, and the student reads it in Class notes
+  let cn = null;
+  async function classNotes(force) {
+    if (!L.actingAs) return;
+    const first = (L.actingAs.name || "your student").split(/\s+/)[0], esc = L.esc || (x => x);
+    if (!cn) {
+      cn = document.createElement("aside"); cn.id = "cnotes"; cn.className = "cnotes"; cn.setAttribute("aria-label", "Class notes"); cn.hidden = true;
+      cn.innerHTML = `<div class="cn-head"><div><b>Class notes</b><small id="cnWhen"></small></div><button type="button" class="cn-x" aria-label="Close notes">×</button></div>
+        <div class="cn-body" id="cnBody"><p class="cn-hint">Loading…</p></div>`;
+      document.body.appendChild(cn);
+      cn.querySelector(".cn-x").onclick = () => classNotes(false);
+    }
+    const open = force === undefined ? cn.hidden : force;
+    cn.hidden = !open; document.body.classList.toggle("cn-open", open);
+    const b = document.getElementById("notesBtn"); if (b) b.setAttribute("aria-expanded", open);
+    try { sessionStorage.setItem("lingua.cnOpen", open ? "1" : ""); } catch (e) {}
+    if (!open || cn.dataset.ready) { if (open) { const t = cn.querySelector("textarea"); t && t.focus(); } return; }
+    cn.dataset.ready = "1";
+    const body = cn.querySelector("#cnBody"), now = new Date();
+    const d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()), d1 = new Date(d0); d1.setDate(d0.getDate() + 1);
+    cn.querySelector("#cnWhen").textContent = now.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" }) + " · " + first;
+    let data = null, error = null;
+    try { ({ data, error } = await sb.from("classes").select("*").eq("student_id", tid).gte("starts_at", d0.toISOString()).lt("starts_at", d1.toISOString()).order("starts_at")); } catch (e) { error = e; }
+    if (error) { body.innerHTML = `<p class="cn-hint">Couldn’t load today’s class: ${esc(error.message)}</p>`; cn.dataset.ready = ""; return; }
+    const pick = (data || []).filter(c => c.status !== "cancelled" && new Date(c.starts_at) >= d0 && new Date(c.starts_at) < d1).sort((a, b) => Math.abs(new Date(a.starts_at) - now) - Math.abs(new Date(b.starts_at) - now))[0];
+    const paint = c => {
+      body.innerHTML = `<textarea id="cnText" maxlength="4000" placeholder="New words, corrections, what to practise…">${esc(c.notes || "")}</textarea>
+        <div class="cn-foot"><span id="cnSaved" class="cn-hint">${first} sees these in <b>Class notes</b>.</span></div>`;
+      const ta = body.querySelector("#cnText"), out = body.querySelector("#cnSaved"); let t = null;
+      const save = async () => { try { await L.teacher.update("classes", c.id, { notes: ta.value.trim() || null }); c.notes = ta.value; out.innerHTML = "Saved ✓ · " + esc(first) + " sees these in <b>Class notes</b>."; } catch (e) { out.textContent = "Not saved: " + e.message; } };
+      ta.addEventListener("input", () => { out.textContent = "Saving…"; clearTimeout(t); t = setTimeout(save, 900); });
+      ta.addEventListener("blur", () => { if (t) { clearTimeout(t); t = null; save(); } });
+      ta.focus();
+    };
+    if (pick) return paint(pick);
+    body.innerHTML = `<p class="cn-hint">There’s no class on ${esc(first)}’s schedule today. Add one to write notes — it counts as an attended class.</p><button type="button" class="btn primary sm" id="cnAdd">Add today’s class</button>`;
+    body.querySelector("#cnAdd").onclick = async () => {
+      try { const [c] = await L.teacher.insert("classes", [{ student_id: tid, starts_at: new Date().toISOString(), status: "attended" }]); paint(c); }
+      catch (e) { body.insertAdjacentHTML("beforeend", `<p class="cn-hint">Couldn’t add it: ${esc(e.message)}</p>`); }
+    };
+  }
+  L.classNotes = classNotes;
+  document.addEventListener("keydown", e => {
+    if (!L.actingAs || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "Escape" && cn && !cn.hidden) { classNotes(false); return; }
+    const tg = e.target; if (tg && (tg.tagName === "INPUT" || tg.tagName === "TEXTAREA" || tg.tagName === "SELECT" || tg.isContentEditable)) return;
+    if (e.key === "n" || e.key === "N") { e.preventDefault(); classNotes(); }
+  });
   L.signOut = async () => {
     if (timer) { clearTimeout(timer); await push(); }
     await sb.auth.signOut();
@@ -349,6 +398,7 @@
     if (L.isAdmin && page !== "admin.html") { location.replace(root + "admin.html"); return null; }
     if (!L.isAdmin && !L.actingAs && !(L.profile && L.profile.display_name) && page !== "perfil.html") { location.replace(root + "perfil.html?setup=1"); return null; }
     decorate(); classBar(); show();
+    try { if (L.actingAs && sessionStorage.getItem("lingua.cnOpen")) classNotes(true); } catch (e) {}
     L.homework.list().catch(() => {});
     L.classes.list().catch(() => {});
     return session.user;
