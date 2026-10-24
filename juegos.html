@@ -201,7 +201,7 @@
     words: () => (C.flash || []).filter(f => f.def && f.en).map(f => ({ cat: "Words", q: `What’s the word? <span style="opacity:.85;font-weight:600">${esc(f.def)}</span>`, a: f.en })),
     phrases: () => (C.frases || []).filter(x => /___/.test(x.p)).map(x => ({ cat: "Phrases", q: gapQ(x.p), a: x.p.replace("___", x.a) })),
     fix: () => ((C.errors && C.errors.items) || []).map(e => ({ cat: "Fix it", q: "“" + e.sentence.split(/\s+/).map((w, k) => k === e.wrong ? `<mark>${esc(w)}</mark>` : esc(w)).join(" ") + "”", a: e.fixed })),
-    say: () => ((C.translate && C.translate.items) || []).map(t => ({ cat: "Say it", q: `<span lang="es">${esc(t.es)}</span>`, a: t.en })),
+    say: () => ((C.translate && C.translate.items) || []).map(t => ({ cat: "Say it", q: t.cue ? esc(t.cue) : `<span lang="es">${esc(t.es)}</span>`, a: t.en })),
     gaps: () => ((C.gaps && C.gaps.items) || []).filter(g => /___/.test(g.s) && g.a && g.a[0]).map(g => ({ cat: "Fill it", q: gapQ(g.s), a: g.s.replace("___", g.a[0]) })),
     quiz: () => { const seen = new Set((C.frases || []).map(x => x.p)); return (C.final || []).filter(x => !seen.has(x.p)).map(x => ({ cat: "Quiz", q: /___/.test(x.p) ? gapQ(x.p) : esc(x.p), a: /___/.test(x.p) ? x.p.replace("___", x.a) : x.a })); }
   };

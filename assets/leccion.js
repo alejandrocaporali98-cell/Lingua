@@ -10,7 +10,7 @@
     ...(C.grammar && (C.grammar.drill || C.grammar.sort) ? [{ id: "grammar", t: "Grammar", min: 12 }] : []),
     { id: "gaps", t: "Fill in the gaps", min: 10 },
     ...(C.errors && C.errors.items && C.errors.items.length ? [{ id: "errors", t: "Spot the error", min: 10 }] : []),
-    ...(C.translate && C.translate.items && C.translate.items.length ? [{ id: "translate", t: "Say it in English", min: 10 }] : []),
+    ...(C.translate && C.translate.items && C.translate.items.length ? [{ id: "translate", t: C.translate.items.every(t => t.cue) ? "Say it naturally" : "Say it in English", min: 10 }] : []),
     { id: "rp", t: "Role‑play", min: 15 },
     ...(C.talk && C.talk.questions && C.talk.questions.length ? [{ id: "talk", t: "Over to you", min: 15 }] : []),
     { id: "final", t: "Final quiz", min: 15 }
@@ -371,9 +371,9 @@
     const T = C.translate;
     stage.innerHTML = head(T.title || "Say it in English", T.text || "Say each sentence in English out loud, then scratch to see the model.") + `<div class="panel trs">${T.items.map((t, i) => `
       <div class="tr" data-i="${i}"><span class="n num">${i + 1}.</span><div style="display:grid;gap:8px;min-width:0">
-        <p class="src" lang="es">${G.esc(t.es)}</p>
+        ${t.cue ? `<p class="src">${G.esc(t.cue)}</p>` : `<p class="src" lang="es">${G.esc(t.es)}</p>`}
         <div class="model"><b>${G.esc(t.en)}</b> ${G.sayBtn(t.en, "Listen")} ${G.micBtn(t.en, "Say it")}${t.note ? `<p class="muted">${G.esc(t.note)}</p>` : ""}</div></div></div>`).join("")}</div>` + pager();
-    stage.querySelectorAll(".tr").forEach(r => G.fx.scratch(r.querySelector(".model"), { label: "Show the English for sentence " + (+r.dataset.i + 1), hint: "Scratch to see the English", onReveal: () => G.game && G.game.award(1, { once: "tr." + C.id + "." + r.dataset.i, silent: true }) }));
+    stage.querySelectorAll(".tr").forEach(r => G.fx.scratch(r.querySelector(".model"), { label: "Show a natural version of sentence " + (+r.dataset.i + 1), hint: T.items[+r.dataset.i].cue ? "Scratch to see a natural version" : "Scratch to see the English", onReveal: () => G.game && G.game.award(1, { once: "tr." + C.id + "." + r.dataset.i, silent: true }) }));
   }
   // ── Optional: open conversation ──
   function drawTalk() {

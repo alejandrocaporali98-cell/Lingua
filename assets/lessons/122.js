@@ -253,37 +253,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Say it like a rider",
-  "text": "Say each one in English out loud, then scratch to see a natural version.",
+  "text": "Read the situation and say it out loud in your own words. Then scratch to compare with a natural version.",
   "items": [
    {
-    "es": "Monto desde que tenía nueve años.",
     "en": "I've been riding since I was nine.",
-    "note": "Since + a moment. Not \"I ride since\"."
+    "note": "Since + a moment, for + a length of time.",
+    "cue": "Tell someone how long you've been riding. You started when you were nine."
    },
    {
-    "es": "Mi caballo se asustó con una bolsa.",
     "en": "My horse got spooked by a plastic bag.",
-    "note": ""
+    "note": "",
+    "cue": "Your horse got scared by a plastic bag. Tell your friend."
    },
    {
-    "es": "Me caí, pero me volví a subir luego luego.",
     "en": "I fell off, but I got straight back on.",
-    "note": "Get back on = subirse otra vez."
+    "note": "Get back on = ride again right after a fall.",
+    "cue": "You fell, but you rode again immediately. Say it with two phrasal verbs."
    },
    {
-    "es": "No tienes que saber montar para venir; solo tienes que traer botas.",
     "en": "You don't have to know how to ride to come — you just have to bring boots.",
-    "note": "Don't have to = no es necesario."
+    "note": "Don't have to = it isn't necessary.",
+    "cue": "A friend wants to come. They don't need to know how to ride, but they need boots."
    },
    {
-    "es": "No debes caminar detrás del caballo.",
     "en": "You mustn't walk behind the horse.",
-    "note": "Mustn't = está prohibido / es peligroso."
+    "note": "Mustn't = don't do it.",
+    "cue": "Warn a new rider: walking behind the horse is dangerous."
    },
    {
-    "es": "Hicimos el recorrido sin faltas y quedamos terceros.",
     "en": "We got a clear round and came third.",
-    "note": "Come first / second / third = quedar en ese lugar."
+    "note": "Come first / second / third.",
+    "cue": "You had no faults in the competition and finished in third place."
    }
   ]
  },

@@ -239,32 +239,32 @@ window.CLASE = {
  },
  "translate": {
   "title": "Say it like a musician",
-  "text": "Say each one in English out loud, then scratch to see a natural version.",
+  "text": "Read the situation and say it out loud like a musician. Then scratch to compare with a natural version.",
   "items": [
    {
-    "es": "Toco la guitarra desde hace seis años.",
     "en": "I've been playing guitar for six years.",
-    "note": "For + a length of time; since + a starting point."
+    "note": "For + a length of time; since + a starting point.",
+    "cue": "Tell someone how long you've played guitar: six years, and you still do."
    },
    {
-    "es": "Al final le salió perfecto el solo.",
     "en": "He finally nailed the solo.",
-    "note": ""
+    "note": "",
+    "cue": "Your friend played the solo perfectly in the end."
    },
    {
-    "es": "La mezcla suena confusa, no se oye la voz.",
     "en": "The mix is muddy — you can't hear the vocals.",
-    "note": ""
+    "note": "",
+    "cue": "In the mix, everything blurs together and the vocals disappear."
    },
    {
-    "es": "Estuvimos improvisando toda la tarde.",
     "en": "We were jamming all afternoon.",
-    "note": ""
+    "note": "",
+    "cue": "Your band spent the whole afternoon improvising together."
    },
    {
-    "es": "Al principio no me gustó, pero me fue gustando.",
     "en": "I didn't like it at first, but it grew on me.",
-    "note": "Past: it grew on me."
+    "note": "Past: it grew on me.",
+    "cue": "You didn't like the album at first, but now you love it."
    }
   ]
  },

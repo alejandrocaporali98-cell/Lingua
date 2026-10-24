@@ -240,32 +240,32 @@ window.CLASE = {
  },
  "translate": {
   "title": "Say it like a director",
-  "text": "Say each one in English out loud, then scratch to see a natural version.",
+  "text": "Read the situation and say it out loud like a filmmaker. Then scratch to compare with a natural version.",
   "items": [
    {
-    "es": "La escena es demasiado lenta.",
     "en": "The scene drags a bit.",
-    "note": "\"A bit\" softens the note."
+    "note": "\"A bit\" softens the note.",
+    "cue": "Give a soft note: the scene is too slow."
    },
    {
-    "es": "El chiste no funcionó.",
     "en": "The joke didn't land.",
-    "note": ""
+    "note": "",
+    "cue": "Nobody laughed at the joke at the screening."
    },
    {
-    "es": "Grabamos todo en dos días.",
     "en": "We shot everything in two days.",
-    "note": "Shoot / shot / shot."
+    "note": "Shoot / shot / shot.",
+    "cue": "Tell someone the whole film was filmed in only two days."
    },
    {
-    "es": "Me pregunto si podríamos empezar con el plano general.",
     "en": "I wonder if we could open on the wide shot.",
-    "note": "Open on = start the film with."
+    "note": "Open on = start the film with.",
+    "cue": "Suggest, politely, starting the film on the wide shot."
    },
    {
-    "es": "El diálogo es demasiado obvio.",
     "en": "The dialogue is a bit on the nose.",
-    "note": ""
+    "note": "",
+    "cue": "The dialogue says exactly what the character feels — too obvious."
    }
   ]
  },

@@ -253,37 +253,37 @@ window.CLASE = {
  },
  "translate": {
   "title": "Say it like a critic",
-  "text": "Say each one in English out loud, then scratch to see a natural version.",
+  "text": "Read the situation and say it out loud like a critic, with a cleft sentence where you can. Then scratch to compare.",
   "items": [
    {
-    "es": "Lo que más me gusta es cómo suena la voz, casi improvisada.",
     "en": "What I love most is the delivery — it sounds almost improvised.",
-    "note": "Cleft: What I love most is…"
+    "note": "Cleft: What I love most is…",
+    "cue": "The best thing about the track is the vocal — it sounds almost improvised. Start with \"What…\"."
    },
    {
-    "es": "Es el puente lo que hace que el último coro pegue.",
     "en": "It's the bridge that makes the last chorus hit.",
-    "note": ""
+    "note": "",
+    "cue": "The bridge is the part that makes the last chorus so powerful. Start with \"It's…\"."
    },
    {
-    "es": "Tomó un sample viejo y lo volvió algo totalmente nuevo.",
     "en": "He took an old sample and flipped it into something completely new.",
-    "note": ""
+    "note": "",
+    "cue": "The producer took an old sample and turned it into something new."
    },
    {
-    "es": "La versión del disco está sobreproducida.",
     "en": "The album version is over-produced.",
-    "note": ""
+    "note": "",
+    "cue": "The album version has too many layers and effects."
    },
    {
-    "es": "No es la letra lo que me engancha, es el beat.",
     "en": "It isn't the lyrics that hook me — it's the beat.",
-    "note": ""
+    "note": "",
+    "cue": "You're hooked because of the beat, not the lyrics. Use a cleft sentence."
    },
    {
-    "es": "Dura dos minutos y no aburre.",
     "en": "It's two minutes long and doesn't overstay its welcome.",
-    "note": ""
+    "note": "",
+    "cue": "The song is short and never gets boring."
    }
   ]
  },
