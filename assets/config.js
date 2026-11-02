@@ -10,7 +10,7 @@ window.LINGUA = {
   modulos: [
     { titulo: "Module 1 · The basics", owner: "Emiliano", lecciones: [
       { id: "01", archivo: "clases/leccion-01.html", titulo: "Driver Profile", tema: "Introduce yourself: your name, age, where you’re from and what you like.", nivel: "A1–A2", min: 60, icono: "helmet", color: "#2346d0", estado: "lista", secs: 7 },
-      { id: "02", archivo: "clases/leccion-02.html", titulo: "My Garage", tema: "Describe things with have / has, colors and big numbers.", nivel: "A1–A2", min: 60, icono: "car", color: "#0f766e", estado: "lista", secs: 7 },
+      { id: "02", archivo: "clases/leccion-02.html", titulo: "My Garage", tema: "Describe things with have / has, colors and big numbers.", nivel: "A1–A2", min: 60, icono: "car", color: "#0f766e", estado: "lista", secs: 8 },
       { id: "03", archivo: "clases/leccion-03.html", titulo: "Race Day", tema: "Your daily routine and telling the time with the present simple.", nivel: "A2", min: 60, icono: "clock", color: "#b45309", estado: "lista", secs: 7 }
     ]},
     { titulo: "Module 2 · Tell and compare", owner: "Emiliano", lecciones: [

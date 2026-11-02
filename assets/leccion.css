@@ -213,3 +213,14 @@ body.present .pctl:hover, body.present .pctl:focus-within { opacity: 1; }
 html.embed header.nav, html.embed .side, html.embed .classbar, html.embed .lg-menu, html.embed .lg-top { display: none !important; }
 html.embed .player { grid-template-columns: 1fr; min-height: 0; }
 html.embed .stage { padding-block: 22px 32px; }
+
+/* Class plan (teacher only) */
+.planbox { margin: 0 20px 6px; border: 1px solid var(--badge-line); background: var(--badge-soft); border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px; }
+.planbox[hidden] { display: none; }
+.plan-h { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.plan-l { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: .86em; }
+.plan-l li { display: grid; grid-template-columns: 44px 1fr; gap: 8px; align-items: baseline; padding: 4px 6px; border-radius: 8px; }
+.plan-l li.on { background: var(--surface); box-shadow: 0 0 0 1.5px var(--brand) inset; }
+.plan-l .pm { font-variant-numeric: tabular-nums; font-weight: 800; color: var(--brand); font-size: .92em; }
+.plan-l small { display: block; color: var(--mute); line-height: 1.4; margin-top: 1px; }
+.plan-hw { margin: 0; font-size: .84em; color: var(--ink-2); line-height: 1.45; }

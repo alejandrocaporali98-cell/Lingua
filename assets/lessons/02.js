@@ -683,5 +683,68 @@ window.CLASE = {
    }
   ],
   "say": "Now tell your teacher what your family has: a car, a bike, a pet…"
+ },
+ "warmup": {
+  "title": "Warm-up · Driver Profile",
+  "text": "Quick review of lesson 01. No looking at your notes — answer out loud.",
+  "questions": [
+   "What's your name? Do you have a nickname?",
+   "How old are you?",
+   "Where are you from? Where do you live?",
+   "What are you into right now?",
+   "What are you good at? What can't you stand?",
+   "What's your dream car? Why?"
+  ],
+  "kit": [
+   "I'm 15. (not I have 15)",
+   "I'm from…",
+   "I live in…",
+   "I'm really into…",
+   "I'm good at…",
+   "I can't stand…",
+   "My dream car is…"
+  ]
+ },
+ "plan": {
+  "min": 60,
+  "steps": [
+   {
+    "sec": "warmup",
+    "min": 5,
+    "tip": "Lesson 01 review. Listen for \"I'm 15\", not \"I have 15\". His dream car leads into today's topic."
+   },
+   {
+    "sec": "flash",
+    "min": 10,
+    "tip": "He reads each card out loud before scratching it."
+   },
+   {
+    "sec": "read",
+    "min": 12,
+    "tip": "At the end: he describes a car he knows — color, engine, top speed, price."
+   },
+   {
+    "sec": "frases",
+    "min": 8,
+    "tip": "Watch for \"we has\" and \"a car red\"."
+   },
+   {
+    "sec": "grammar",
+    "min": 10,
+    "tip": "have / has is today's main point."
+   },
+   {
+    "sec": "rp",
+    "min": 12,
+    "tip": "He buys his first car: Does it have…? How much is it?"
+   },
+   {
+    "label": "Wrap-up",
+    "sec": "_end",
+    "min": 3,
+    "tip": "Set homework. If there's time: Games → Jeopardy."
+   }
+  ],
+  "homework": "Fill in the gaps and the Final quiz of this lesson (and lesson 01's Final quiz if it's still pending)."
  }
 };

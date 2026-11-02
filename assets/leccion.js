@@ -4,6 +4,7 @@
   // Five core sections, plus optional ones a lesson can bring (reading, grammar, spot the error, say it in English, talk about it)
   const QS = new URLSearchParams(location.search), EMB = !!G.embedded, ONLY = (QS.get("only") || "").split(",").filter(Boolean);
   const ALL = [
+    ...(C.warmup && C.warmup.questions && C.warmup.questions.length ? [{ id: "warmup", t: "Warm-up", min: 5 }] : []),
     { id: "flash", t: "Vocabulary", min: 10 },
     ...(C.read && C.read.text && C.read.text.length ? [{ id: "read", t: "Read", min: 12 }] : []),
     { id: "frases", t: "Sound natural", min: 10 },
@@ -24,7 +25,7 @@
   (function relayout() {
     if (EMB) return;
     const now = SECS.map(s => s.id), key = "secl." + C.id;
-    const before = G.store.get(key, null) || now.filter(id => id !== "read" && id !== "grammar");
+    const before = G.store.get(key, null) || now.filter(id => id !== "read" && id !== "grammar" && id !== "warmup");
     if (before.join() === now.join()) { if (!G.store.get(key, null)) G.store.set(key, now); return; }
     const map = i => now.indexOf(before[i]);
     st.done = new Set([...st.done].map(map).filter(i => i >= 0));
@@ -61,6 +62,7 @@
           ${C.objetivos ? `<div style="display:grid;gap:8px"><span class="eyebrow">What you’ll learn</span><ul class="obj">${C.objetivos.map(o => `<li>${o}</li>`).join("")}</ul></div>` : ""}
           <div class="instructor"><span class="in">${G.maestro[0]}</span><span style="font-size:.88em"><span class="muted">Instructor</span><br><b>${G.maestroNombre || G.maestro}</b></span></div>
         </div>
+        <div class="planbox" id="planBox" hidden></div>
         <h3>Lesson content</h3>
         <ul class="toc" id="toc"></ul>
         <div class="side-extra">
@@ -76,15 +78,27 @@
   const stage = document.getElementById("stage");
 
   // ── Shell ──
+  // Class plan (teacher only): minutes for each section in today's class, and what's left for homework
+  const TEACH = () => G.isTeacher || !!G.actingAs;
+  const PLAN = C.plan && C.plan.steps ? C.plan : null;
+  const planOf = id => PLAN && PLAN.steps.find(x => x.sec === id);
+  function planBox() {
+    const el = document.getElementById("planBox"); if (!el) return;
+    if (!PLAN || !TEACH()) { el.hidden = true; return; }
+    el.hidden = false;
+    let t = 0;
+    const rows = PLAN.steps.map(x => { const a = t; t += x.min; const s = SECS.find(y => y.id === x.sec); return `<li class="${SECS[st.sec] && SECS[st.sec].id === x.sec ? "on" : ""}"><span class="pm">${a}–${t}</span><span><b>${G.esc(x.label || (s ? s.t : x.sec))}</b>${x.tip ? `<small>${G.esc(x.tip)}</small>` : ""}</span></li>`; }).join("");
+    el.innerHTML = `<div class="plan-h"><span class="eyebrow">Class plan · ${PLAN.min || t} min</span><span class="muted" style="font-size:.78em">teacher</span></div><ol class="plan-l">${rows}</ol>${PLAN.homework ? `<p class="plan-hw"><b>Homework:</b> ${G.esc(PLAN.homework)}</p>` : ""}`;
+  }
   function drawToc() {
     document.getElementById("toc").innerHTML = SECS.map((s, i) => `
       <li><button class="${i === st.sec ? "active" : ""} ${st.done.has(i) ? "done" : ""}" data-i="${i}" aria-current="${i === st.sec ? "step" : "false"}">
-        <span class="box"></span><span><span class="t">${i + 1}. ${s.t}</span><span class="m">${s.min} min</span></span>
+        <span class="box"></span><span><span class="t">${i + 1}. ${s.t}</span><span class="m">${PLAN && TEACH() ? (planOf(s.id) ? planOf(s.id).min + " min in class" : "Homework") : s.min + " min"}</span></span>
       </button></li>`).join("");
     document.querySelectorAll("#toc button").forEach(b => b.onclick = () => go(+b.dataset.i));
     const n = st.done.size, pct = n / SECS.length * 100;
     document.getElementById("ring").innerHTML = `<span style="width:30px;height:30px;border-radius:50%;background:conic-gradient(var(--brand) ${pct}%, var(--line) 0);display:grid;place-items:center"><span style="width:22px;height:22px;border-radius:50%;background:var(--surface)"></span></span>${n} of ${SECS.length} complete`;
-    drawFlags();
+    drawFlags(); planBox();
   }
   function drawFlags() {
     const list = G.store.get(repKey, []);
@@ -120,7 +134,7 @@
   }
   function draw() {
     quiz = null;
-    ({ flash: drawFlash, read: drawRead, grammar: drawGrammar, frases: drawFrases, gaps: drawGaps, errors: drawErrors, translate: drawTranslate, rp: drawRP, talk: drawTalk, final: drawFinal })[SECS[st.sec].id]();
+    ({ warmup: drawWarmup, flash: drawFlash, read: drawRead, grammar: drawGrammar, frases: drawFrases, gaps: drawGaps, errors: drawErrors, translate: drawTranslate, rp: drawRP, talk: drawTalk, final: drawFinal })[SECS[st.sec].id]();
     wirePager();
   }
 
@@ -376,6 +390,13 @@
     stage.querySelectorAll(".tr").forEach(r => G.fx.scratch(r.querySelector(".model"), { label: "Show a natural version of sentence " + (+r.dataset.i + 1), hint: T.items[+r.dataset.i].cue ? "Scratch to see a natural version" : "Scratch to see the English", onReveal: () => G.game && G.game.award(1, { once: "tr." + C.id + "." + r.dataset.i, silent: true }) }));
   }
   // ── Optional: open conversation ──
+  // ── Optional: warm-up (review the last lesson out loud) ──
+  function drawWarmup() {
+    const K = C.warmup;
+    stage.innerHTML = head(K.title || "Warm-up", K.text || "Quick review before we start. Answer out loud.") + `
+      <div class="panel" style="display:grid;gap:14px"><ol class="talkq">${K.questions.map(q => `<li><span>${G.esc(q)} ${G.sayBtn(q, "Listen")}</span></li>`).join("")}</ol></div>
+      ${K.kit && K.kit.length ? `<div class="panel" style="display:grid;gap:10px"><span class="eyebrow">Remember</span><div class="bank">${K.kit.map(k => `<span>${G.esc(k)}</span>`).join("")}</div></div>` : ""}` + pager();
+  }
   function drawTalk() {
     const K = C.talk, teacher = G.isTeacher || !!G.actingAs;
     stage.innerHTML = head(K.title || "Talk about it", K.text || "No right answers here. Speak freely and let your teacher correct as you go.") + `
@@ -454,6 +475,7 @@
     if ((e.shiftKey || pres) && k === "arrowleft") { go(st.sec - 1); pt(); }
   });
   drawToc(); draw();
+  if (G.ready && G.ready.then) G.ready.then(() => drawToc()).catch(() => {});
   if (new URLSearchParams(location.search).get("present") === "1") setTimeout(() => present(true), 0);
   if (G.decorate) G.decorate();
   if (G.theme && G.theme.mount) G.theme.mount();
