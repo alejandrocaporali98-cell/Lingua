@@ -390,3 +390,8 @@ a.li { color: inherit; text-decoration: none; } a.li:hover { background: var(--b
 .chks label:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
 .field .chks input[type=checkbox] { width: 18px; height: 18px; padding: 0; margin: 0; flex: none; accent-color: var(--brand); }
 .chks label { white-space: nowrap; }
+
+.btn.danger { background: var(--bad, #be123c); border-color: var(--bad, #be123c); color: #fff; }
+.btn.danger:disabled { opacity: .45; cursor: not-allowed; }
+.btn.ghost.danger { background: none; color: var(--bad-ink, #9f1239); border-color: transparent; }
+.btn.ghost.danger:hover { background: var(--bad-soft, #fdecec); }

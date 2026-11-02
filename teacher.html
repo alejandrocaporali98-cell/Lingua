@@ -1369,7 +1369,7 @@ function accounts() {
     <div id="aMsg" hidden></div>
     ${ACC ? `<div class="hw">${ACC.filter(u => u.id !== (G.user && G.user.id)).map(u => `<div class="hw-item">
       <div style="min-width:0"><b>${esc((u.email || "").replace("@" + dom, ""))}</b>${(DATA.staff || []).some(x => x.user_id === u.id) ? ` <span class="tag">Office</span>` : ""}<br><small>${u.last_sign_in_at ? "Last sign-in " + ago(u.last_sign_in_at) : "Never signed in"} · created ${fmt(u.created_at)}</small></div>
-      <div class="actions"><input class="pw" data-pwfor="${u.id}" type="text" placeholder="New password" aria-label="New password" style="font:inherit;padding:7px 10px;border:1px solid var(--line-2);border-radius:var(--r-s);width:150px;background:var(--surface);color:var(--ink)"><button class="btn sm" data-pw="${u.id}">Change password</button></div></div>`).join("")}</div>` : ""}
+      <div class="actions"><input class="pw" data-pwfor="${u.id}" type="text" placeholder="New password" aria-label="New password" style="font:inherit;padding:7px 10px;border:1px solid var(--line-2);border-radius:var(--r-s);width:150px;background:var(--surface);color:var(--ink)"><button class="btn sm" data-pw="${u.id}">Change password</button><button class="btn sm ghost danger" data-del="${u.id}">Delete</button></div></div>`).join("")}</div>` : ""}
   </div>`;
 }
 async function loadAccounts() {
@@ -1408,6 +1408,36 @@ function wireAccounts() {
     b.disabled = false;
   });
   const r = document.getElementById("accReload"); if (r) r.onclick = async () => { await loadAccounts(); render(); };
+  document.querySelectorAll("[data-del]").forEach(b => b.onclick = () => deleteAccountSheet(b.dataset.del));
+}
+// Delete a student (or office) account for good: their progress, classes, payments and files go with it
+function deleteAccountSheet(id) {
+  const dom = (G.cloud && G.cloud.usernameDomain) || "student.lingua.app";
+  const u = (ACC || []).find(x => x.id === id); if (!u) return;
+  const user = (u.email || "").replace("@" + dom, ""), st = students().find(x => x.p.id === id), name = (st && st.p.display_name) || user;
+  const office = (DATA.staff || []).some(x => x.user_id === id);
+  const w = sheet("Delete " + name, office ? "Office account" : "Student account · " + user, `
+    <div class="alert bad" style="display:grid;gap:6px"><b>This can’t be undone.</b><span>${office ? "The office account will stop working right away." : `Everything of ${esc(name.split(" ")[0])}’s is deleted too: progress, homework, classes and notes, voice recordings, payments, slips and transfer screenshots.`}</span></div>
+    ${!office ? `<p class="hint">If you might need their payment history, download it from Billing first.</p>` : ""}
+    <div class="field"><label for="dlC">Type <b>${esc(user)}</b> to confirm</label><input id="dlC" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+    <div id="dlMsg" hidden></div>
+    <div class="actions"><button class="btn danger" id="dlGo" disabled>Delete for good</button><button class="btn ghost" data-close>Cancel</button></div>`);
+  const inp = w.querySelector("#dlC"), go = w.querySelector("#dlGo");
+  inp.addEventListener("input", () => { go.disabled = inp.value.trim().toLowerCase() !== user.toLowerCase(); });
+  const cl = w.querySelector("[data-close]"); if (cl) cl.onclick = closeSheet;
+  go.onclick = async () => {
+    go.disabled = true; go.textContent = "Deleting…";
+    try {
+      await G.admin("delete", { user_id: id });
+      closeSheet();
+      G.toast(`<b>${esc(name)} was deleted</b>`);
+      await loadAccounts(); await load();
+    } catch (e) {
+      const m = w.querySelector("#dlMsg"); m.hidden = false; m.className = "alert bad";
+      m.textContent = /unknown action/i.test(e.message || "") ? "First update the admin-users helper in Supabase (Edge Functions → admin-users → paste the new code → Deploy), then try again." : "Couldn’t delete it: " + e.message;
+      go.disabled = false; go.textContent = "Delete for good";
+    }
+  };
 }
 
 function wireDetail(s) {

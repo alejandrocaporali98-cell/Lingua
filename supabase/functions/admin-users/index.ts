@@ -1,5 +1,5 @@
 // Lingua · admin-users Edge Function
-// Lets a teacher create student accounts and change passwords from the teacher panel.
+// Lets a teacher create student accounts, change passwords and delete accounts from the teacher panel.
 // The secret key never leaves Supabase: it comes from the function's own environment.
 // Deploy: Supabase → Edge Functions → Deploy a new function → Via Editor → name "admin-users" → paste this file.
 // Then in the function's Details, turn OFF "Verify JWT" (this code checks the user itself).
@@ -59,6 +59,30 @@ Deno.serve(async (req) => {
     case "password": {
       if (!okPassword(body.password)) return json({ error: "Password: at least 8 characters." }, 400);
       const { error } = await admin.auth.admin.updateUserById(String(body.user_id), { password: body.password as string });
+      if (error) return json({ error: error.message }, 400);
+      return json({ ok: true });
+    }
+    case "delete": {
+      // Deletes the account and everything that belongs to it (progress, classes, payments, voice notes, screenshots)
+      const id = String(body.user_id || "");
+      if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "Bad account id." }, 400);
+      if (id === who.user.id) return json({ error: "You can't delete your own account." }, 400);
+      const { data: isTeacher } = await admin.from("teachers").select("user_id").eq("user_id", id).maybeSingle();
+      if (isTeacher) return json({ error: "Teacher accounts can't be deleted here." }, 400);
+      // Files are not deleted with the account, so remove the student's folders first
+      const listAll = async (bucket: string, prefix: string): Promise<string[]> => {
+        const { data } = await admin.storage.from(bucket).list(prefix, { limit: 1000 });
+        const out: string[] = [];
+        for (const it of data || []) {
+          const path = `${prefix}/${it.name}`;
+          if (it.id === null) out.push(...await listAll(bucket, path)); else out.push(path);
+        }
+        return out;
+      };
+      for (const bucket of ["voice", "comprobantes"]) {
+        try { const files = await listAll(bucket, id); for (let i = 0; i < files.length; i += 100) await admin.storage.from(bucket).remove(files.slice(i, i + 100)); } catch (_) { /* bucket may not exist yet */ }
+      }
+      const { error } = await admin.auth.admin.deleteUser(id);
       if (error) return json({ error: error.message }, 400);
       return json({ ok: true });
     }
