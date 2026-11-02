@@ -168,4 +168,5 @@ phrases live in `assets/muestra-data.js`.
 
 Run `supabase/v8.sql` once in Supabase → SQL Editor. It adds `meet_link` to `student_admin` (teacher only).
 Paste each student's Teams/Meet/Zoom link in their page → "WhatsApp and class link"; the WhatsApp class
-reminders then include it ("Join here: …" for students, "Liga para entrar a la clase: …" for parents).
+reminders then send the invitation: "Hola qué tal muy buenas tardes, / Te comparto el link de la clase del día de hoy! / link"
+(greeting and day adjust on their own).

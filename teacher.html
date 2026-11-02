@@ -418,8 +418,14 @@ function reminder(s, kind, who, item) {
     const en = dd === 0 ? "today" : dd === 1 ? "tomorrow" : "on " + d.toLocaleDateString("en-US", { weekday: "long" });
     const es = dd === 0 ? "hoy" : dd === 1 ? "mañana" : "el " + d.toLocaleDateString("es-MX", { weekday: "long" });
     const link = adminOf(s.p.id).meet_link || "";
-    return who === "parent" ? `Hola, le recuerdo que ${first} tiene clase de inglés ${es} a las ${d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" })}.${link ? ` Liga para entrar a la clase: ${link}` : ""} ¡Saludos! – ${me}`
-      : `Hi ${first}! Just a reminder: we have English class ${en} at ${hhmm(item.starts_at)}.${link ? ` Join here: ${link}` : ""} See you there! – ${me}`;
+    // With a class link: Alejandro's own invitation message (greeting and day adjust on their own)
+    if (link) {
+      const h = new Date().getHours(), greet = h < 12 ? "buenos días" : h < 19 ? "buenas tardes" : "buenas noches";
+      const day = dd === 0 ? "del día de hoy" : dd === 1 ? "de mañana" : "del " + d.toLocaleDateString("es-MX", { weekday: "long" });
+      return `Hola qué tal muy ${greet},\nTe comparto el link de la clase ${day}!\n${link}`;
+    }
+    return who === "parent" ? `Hola, le recuerdo que ${first} tiene clase de inglés ${es} a las ${d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" })}. ¡Saludos! – ${me}`
+      : `Hi ${first}! Just a reminder: we have English class ${en} at ${hhmm(item.starts_at)}. See you there! – ${me}`;
   }
   const due = item.due ? new Date(item.due + "T12:00") : null;
   return who === "parent" ? `Hola, le comparto que ${first} tiene pendiente la tarea de inglés “${item.title}”${due ? ` para el ${due.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })}` : ""}. La puede entregar en Lingua: ${site} ¡Gracias! – ${me}`
@@ -1142,7 +1148,7 @@ function overviewTab(s) {
           <div class="field"><label for="ctP">Student</label><input id="ctP" type="tel" inputmode="tel" autocomplete="off" placeholder="81 1234 5678" value="${esc(adm.phone || "")}"></div>
           <div class="field"><label for="ctPP">Parent or guardian</label><input id="ctPP" type="tel" inputmode="tel" autocomplete="off" placeholder="81 1234 5678" value="${esc(adm.parent_phone || "")}"></div>
           <div class="field" style="grid-column:1/-1"><label for="ctL">Class link <span class="muted" style="font-weight:500">(Teams, Meet or Zoom)</span></label><input id="ctL" type="url" inputmode="url" autocomplete="off" maxlength="500" placeholder="https://teams.microsoft.com/…" value="${esc(adm.meet_link || "")}"></div>
-          <div class="actions" style="grid-column:1/-1"><button class="btn sm" type="submit">Save</button><span class="muted" style="font-size:.8em">Class reminders include this link. Messages to students go in English, to parents in Spanish.</span></div>
+          <div class="actions" style="grid-column:1/-1"><button class="btn sm" type="submit">Save</button><span class="muted" style="font-size:.8em">With a link, the class button sends your invitation: “Hola qué tal… Te comparto el link de la clase…”.</span></div>
         </form></div>`}
       <div class="card"><div class="card-head"><h2>Recent activity</h2></div>${acts.length ? `<div class="feed">${acts.map(e => `<div class="fe ${e.cls}"><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}</div>
     </div>
