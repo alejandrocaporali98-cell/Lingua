@@ -417,8 +417,9 @@ function reminder(s, kind, who, item) {
     const d = new Date(item.starts_at), dd = Math.round((new Date(d.toDateString()) - new Date(new Date().toDateString())) / 864e5);
     const en = dd === 0 ? "today" : dd === 1 ? "tomorrow" : "on " + d.toLocaleDateString("en-US", { weekday: "long" });
     const es = dd === 0 ? "hoy" : dd === 1 ? "mañana" : "el " + d.toLocaleDateString("es-MX", { weekday: "long" });
-    return who === "parent" ? `Hola, le recuerdo que ${first} tiene clase de inglés ${es} a las ${d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" })}. ¡Saludos! – ${me}`
-      : `Hi ${first}! Just a reminder: we have English class ${en} at ${hhmm(item.starts_at)}. See you there! – ${me}`;
+    const link = adminOf(s.p.id).meet_link || "";
+    return who === "parent" ? `Hola, le recuerdo que ${first} tiene clase de inglés ${es} a las ${d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" })}.${link ? ` Liga para entrar a la clase: ${link}` : ""} ¡Saludos! – ${me}`
+      : `Hi ${first}! Just a reminder: we have English class ${en} at ${hhmm(item.starts_at)}.${link ? ` Join here: ${link}` : ""} See you there! – ${me}`;
   }
   const due = item.due ? new Date(item.due + "T12:00") : null;
   return who === "parent" ? `Hola, le comparto que ${first} tiene pendiente la tarea de inglés “${item.title}”${due ? ` para el ${due.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })}` : ""}. La puede entregar en Lingua: ${site} ¡Gracias! – ${me}`
@@ -1136,11 +1137,12 @@ function overviewTab(s) {
     <div class="cols">
       <div class="card"><div class="card-head"><h2>Private notes</h2><span class="muted" style="font-size:.8em">Only you see these</span></div>
         ${DATA.admin === null ? setupNote("private notes") : `<textarea id="pnText" class="pnotes" maxlength="5000" placeholder="What’s hard for them, topics they enjoy, things to follow up…">${esc(pn.notes || "")}</textarea><div class="actions"><button class="btn sm primary" id="pnSave">Save notes</button>${pn.updated_at ? `<span class="muted" style="font-size:.8em">Saved ${ago(pn.updated_at)}</span>` : ""}</div>`}</div>
-      ${DATA.admin === null ? "" : `<div class="card"><div class="card-head"><h2>WhatsApp for reminders</h2><span class="muted" style="font-size:.8em">Only you see these</span></div>
+      ${DATA.admin === null ? "" : `<div class="card"><div class="card-head"><h2>WhatsApp and class link</h2><span class="muted" style="font-size:.8em">Only you see these</span></div>
         <form id="ctForm" class="grid2" style="align-items:end" novalidate>
           <div class="field"><label for="ctP">Student</label><input id="ctP" type="tel" inputmode="tel" autocomplete="off" placeholder="81 1234 5678" value="${esc(adm.phone || "")}"></div>
           <div class="field"><label for="ctPP">Parent or guardian</label><input id="ctPP" type="tel" inputmode="tel" autocomplete="off" placeholder="81 1234 5678" value="${esc(adm.parent_phone || "")}"></div>
-          <div class="actions" style="grid-column:1/-1"><button class="btn sm" type="submit">Save numbers</button><span class="muted" style="font-size:.8em">Messages to students go in English, to parents in Spanish.</span></div>
+          <div class="field" style="grid-column:1/-1"><label for="ctL">Class link <span class="muted" style="font-weight:500">(Teams, Meet or Zoom)</span></label><input id="ctL" type="url" inputmode="url" autocomplete="off" maxlength="500" placeholder="https://teams.microsoft.com/…" value="${esc(adm.meet_link || "")}"></div>
+          <div class="actions" style="grid-column:1/-1"><button class="btn sm" type="submit">Save</button><span class="muted" style="font-size:.8em">Class reminders include this link. Messages to students go in English, to parents in Spanish.</span></div>
         </form></div>`}
       <div class="card"><div class="card-head"><h2>Recent activity</h2></div>${acts.length ? `<div class="feed">${acts.map(e => `<div class="fe ${e.cls}"><div><p>${e.html}</p><small>${agoShort(e.at)} ago</small></div></div>`).join("")}</div>` : `<p class="empty">No activity yet.</p>`}</div>
     </div>
@@ -1228,8 +1230,12 @@ function wireContact(s) {
   f.onsubmit = async e => {
     e.preventDefault(); const b = f.querySelector("button"); b.disabled = true;
     const clean = v => v.replace(/[^\d+]/g, "").slice(0, 20) || null;
-    try { await G.teacher.upsert("student_admin", { ...adminOf(s.p.id), student_id: s.p.id, phone: clean(document.getElementById("ctP").value), parent_phone: clean(document.getElementById("ctPP").value), updated_at: new Date().toISOString() }); G.toast("Numbers saved"); await load(); }
-    catch (err) { b.disabled = false; G.toast(/column|schema/i.test(err.message) ? "Run supabase/v3.sql first (one-time setup)." : "Couldn’t save: " + esc(err.message)); }
+    const cur = adminOf(s.p.id), link = (document.getElementById("ctL").value.trim().match(/https:\/\/\S+/) || [""])[0].slice(0, 500);
+    if (document.getElementById("ctL").value.trim() && !link) { b.disabled = false; G.toast("<b>Check the class link</b><span>Paste the full link, starting with https://</span>"); return; }
+    const row = { ...cur, student_id: s.p.id, phone: clean(document.getElementById("ctP").value), parent_phone: clean(document.getElementById("ctPP").value), updated_at: new Date().toISOString() };
+    if (link || "meet_link" in cur) row.meet_link = link || null;
+    try { await G.teacher.upsert("student_admin", row); G.toast("Saved"); await load(); }
+    catch (err) { b.disabled = false; G.toast(/meet_link/i.test(err.message) ? "<b>One-time setup</b><span>Run supabase/v8.sql in Supabase first.</span>" : /column|schema/i.test(err.message) ? "Run supabase/v3.sql first (one-time setup)." : "Couldn’t save: " + esc(err.message)); }
   };
 }
 function lessonsPanel(s) {

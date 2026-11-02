@@ -163,3 +163,9 @@ The person answers name, age group, interests and goal. "Start class" opens `cla
 their interests, a game, "Now you can say", and the report form). The report is shared at
 `reporte-muestra.html?t=…` in the same style as the slips and proposals. Interests, lessons and
 phrases live in `assets/muestra-data.js`.
+
+## v8 setup (class link)
+
+Run `supabase/v8.sql` once in Supabase → SQL Editor. It adds `meet_link` to `student_admin` (teacher only).
+Paste each student's Teams/Meet/Zoom link in their page → "WhatsApp and class link"; the WhatsApp class
+reminders then include it ("Join here: …" for students, "Liga para entrar a la clase: …" for parents).
