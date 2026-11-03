@@ -97,7 +97,8 @@ window.LINGUA = {
     ]},
     // ── Derek and Erick (C1) ──
     { titulo: "C1 · Film", owner: "Derek", lecciones: [
-      {"id": "301", "archivo": "clases/leccion-301.html", "titulo": "Talking Like a Filmmaker", "tema": "Directors don't say a scene was \"good\" — they talk about pacing, framing and what lands.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 10}
+      {"id": "301", "archivo": "clases/leccion-301.html", "titulo": "Talking Like a Filmmaker", "tema": "Directors don't say a scene was \"good\" — they talk about pacing, framing and what lands.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 10},
+      {"id": "302", "archivo": "clases/leccion-302.html", "titulo": "They Don't Make Them Like That", "tema": "Why classic films still hold up — and how to talk about the way they were made.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 11}
     ]},
     { titulo: "C1 · Music", owner: "Erick", lecciones: [
       {"id": "311", "archivo": "clases/leccion-311.html", "titulo": "Talking Shop: Sound, Gear & Playing", "tema": "Musicians don't say a song is \"nice\" — they talk about tone, groove and what makes it hit.", "nivel": "C1", "min": 90, "icono": "guitar", "color": "#0f766e", "estado": "lista", "secs": 10},
