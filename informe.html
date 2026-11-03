@@ -6,11 +6,14 @@
 <title>Clases de Inglés · Reporte de avance</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <style>
-  :root { --ink: #111; --mute: #6b6b6b; --line: #e3e3e3; --blue: #2233e6; --amber: #c98a00; --black: #0d0d0d; --good: #0f7a4a; }
+  :root { --ink: #111; --mute: #6b6b6b; --line: #e3e3e3; --blue: #2346d0; --amber: #c98a00; --black: #0b0f19; --good: #0f7a4a;
+    --jeo: #2346d0; --whl: #6d28d9; --jam: #be123c; --ttt: #0f766e; --race: #c2410c; --gold: #f5c518; --stage: #0b0f19; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { background: #e9e9ec; }
-  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: "Plus Jakarta Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .bar { max-width: 816px; margin: 18px auto 0; display: flex; justify-content: flex-end; align-items: center; gap: 8px; padding: 0 12px; }
   .bar button { font: inherit; font-size: 14px; font-weight: 700; padding: 9px 16px; border-radius: 8px; border: 1px solid #c9c9cf; background: #fff; cursor: pointer; min-height: 44px; color: var(--ink); }
   .bar button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
@@ -20,7 +23,7 @@
   .sheet { width: 816px; margin: 12px auto 30px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.12); }
   header.big { background: var(--black); color: #fff; padding: 46px 60px 42px; display: flex; justify-content: space-between; gap: 24px; }
   header.big h1 { font-size: 30px; font-weight: 800; letter-spacing: .5px; }
-  .kick { font-size: 10.5px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #8f9bff; margin-top: 12px; }
+  .kick { font-size: 10.5px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-top: 12px; }
   header.big .r { text-align: right; display: grid; gap: 8px; align-content: start; }
   header.big .date { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .lbl { font-size: 9.5px; letter-spacing: 2.5px; text-transform: uppercase; color: #9a9a9a; }
@@ -70,37 +73,61 @@
   .msg small { justify-self: end; font-size: 10px; color: #9a9a9a; letter-spacing: .5px; }
   footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 60px 26px; font-size: 9.5px; color: #9a9a9a; letter-spacing: .5px; }
   footer .brand { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
-  /* Summary visuals: verdict, rings, level path, practice calendar, highlights, signature */
-  .verdict { display: grid; grid-template-columns: 210px 1fr; gap: 26px; align-items: center; border-left: 4px solid var(--vc, var(--blue)); padding: 4px 0 4px 20px; }
-  .verdict .w { display: grid; gap: 6px; } .verdict .w b { font-size: 25px; letter-spacing: -.5px; line-height: 1.05; color: var(--vc, var(--blue)); }
-  .verdict .w small { font-size: 10px; color: #8a8a8a; line-height: 1.45; }
-  .verdict p { font-size: 11.5px; color: #333; line-height: 1.65; }
-  .rings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--line); padding: 18px 0 16px; }
-  .ring { display: grid; gap: 10px; align-content: start; }
-  .ring svg { width: 76px; height: 76px; display: block; } .ring .bg { stroke: #ececf0; } .ring .fg { stroke: var(--rc, var(--blue)); }
-  .ring .v { font-size: 13.5px; font-weight: 800; fill: var(--ink); font-family: inherit; letter-spacing: -.3px; } .ring .na { font-size: 14px; fill: #b5b5b5; }
-  .ring .rt { display: grid; gap: 4px; } .ring .rt .lab { color: var(--ink); } .ring .rt span:last-child { font-size: 10.5px; color: #666; line-height: 1.4; }
-  .path { display: grid; grid-template-columns: 1.35fr 1fr; gap: 34px; align-items: start; }
-  .lvl { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 6px; }
-  .lvl div { display: grid; gap: 6px; } .lvl i { height: 8px; background: #ececf0; } .lvl div:first-child i { border-radius: 4px 0 0 4px; } .lvl div:last-child i { border-radius: 0 4px 4px 0; }
-  .lvl .past i { background: #b9bff7; } .lvl .now i { background: var(--blue); }
-  .lvl b { font-size: 12px; } .lvl .now b { color: var(--blue); } .lvl small { font-size: 9px; color: #8a8a8a; line-height: 1.3; }
-  .lvl .now small { color: var(--blue); font-weight: 700; }
-  .course { display: grid; gap: 8px; margin-top: 6px; } .course .big { font-size: 22px; font-weight: 800; letter-spacing: -.3px; } .course .big small { font-size: 12px; font-weight: 400; color: #666; margin-left: 4px; }
-  .course .trk { height: 8px; background: #ececf0; border-radius: 4px; overflow: hidden; } .course .trk i { display: block; height: 100%; background: var(--blue); }
-  .course p { font-size: 10.5px; color: #666; line-height: 1.45; }
-  .cal-wrap { display: grid; grid-template-columns: auto 1fr; gap: 34px; align-items: start; }
-  .cal { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 13px); gap: 3px; margin-top: 6px; }
-  .cal span { width: 13px; height: 13px; border-radius: 2px; background: #f0f0f3; } .cal span.out { background: transparent; }
-  .cal span.l1 { background: #c9cdf9; } .cal span.l2 { background: #8f98f2; } .cal span.l3 { background: #4c58ec; } .cal span.l4 { background: var(--blue); }
-  .cal-days { display: grid; grid-template-rows: repeat(7, 13px); gap: 3px; margin-top: 6px; font-size: 8.5px; color: #9a9a9a; line-height: 13px; }
-  .cal-box { display: flex; gap: 6px; }
-  .cal-leg { display: flex; align-items: center; gap: 3px; font-size: 9px; color: #8a8a8a; margin-top: 8px; } .cal-leg span { width: 10px; height: 10px; border-radius: 2px; }
-  .hl3 { display: grid; gap: 14px; } .hl3 > div { border-top: 2px solid var(--ink); padding-top: 9px; display: grid; gap: 5px; }
-  .hl3 .lab { color: var(--blue); } .hl3 p { font-size: 11.5px; line-height: 1.5; color: #222; }
+  /* Summary board (same visual language as the Games page) */
+  .board { display: grid; grid-template-columns: 1.3fr 1fr 1fr; grid-template-rows: auto auto; gap: 12px; }
+  .bx { position: relative; border-radius: 22px; color: #fff; padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 6px; overflow: hidden; min-width: 0; break-inside: avoid; }
+  .bx .eb { font-size: 9.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+  .bx .bt { font-size: 21px; font-weight: 800; letter-spacing: -.02em; line-height: 1.08; }
+  .bx p { font-size: 11px; font-weight: 600; line-height: 1.45; opacity: .9; }
+  .bx .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 8px; } .bx .chips span { font-size: 9.5px; font-weight: 800; padding: 4px 10px; border-radius: 99px; background: rgba(255,255,255,.18); }
+  .bx.jeo { background: var(--jeo); grid-row: span 2; gap: 10px; padding: 22px; }
+  .bx.jeo .eb { color: var(--gold); opacity: 1; } .bx.jeo .bt { font-size: 32px; }
+  .bx.whl { background: var(--whl); } .bx.jam { background: var(--jam); } .bx.ttt { background: var(--ttt); } .bx.race { background: var(--race); }
+  .bx.dark { background: var(--stage); }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 4px; }
+  .tiles div { border-radius: 10px; background: #1a36a6; box-shadow: inset 0 -3px 0 rgba(0,0,0,.25); padding: 9px 6px 8px; text-align: center; display: grid; gap: 2px; }
+  .tiles b { color: var(--gold); font-size: 20px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .tiles span { font-size: 8.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; opacity: .85; }
+  .vchip { align-self: flex-start; display: inline-flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 800; padding: 5px 11px 5px 8px; border-radius: 99px; background: rgba(0,0,0,.22); }
+  .vchip i { width: 9px; height: 9px; border-radius: 50%; background: var(--vc, var(--gold)); }
+  .bx .big { display: flex; align-items: center; gap: 14px; }
+  .bx .big svg { width: 74px; height: 74px; flex: none; } .bx .big .bt { font-size: 18px; }
+  .wr .bg { stroke: rgba(255,255,255,.22); } .wr .fg { stroke: #fff; } .wr .v { font-family: inherit; font-size: 15px; font-weight: 800; fill: #fff; } .wr .na { font-family: inherit; font-size: 15px; fill: rgba(255,255,255,.6); }
+  .bx .knob { position: absolute; right: 30px; top: 14px; width: 20px; height: 7px; border-radius: 3px; background: #fff; opacity: .9; }
+  .ttg { display: grid; grid-template-columns: repeat(3, 22px); gap: 5px; flex: none; }
+  .ttg span { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-size: 12px; font-weight: 800; background: rgba(255,255,255,.1); }
+  .ttg span.ok { background: rgba(255,255,255,.95); color: var(--ttt); } .ttg span.late { background: var(--gold); color: var(--stage); }
+  .ttg span.bad { background: rgba(0,0,0,.3); color: #fff; } .ttg span.pend { background: transparent; border: 2px dashed rgba(255,255,255,.35); }
+  .road { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 5px; border-radius: 10px; background: rgba(255,255,255,.12); margin-top: 4px; }
+  .road span { height: 20px; border-radius: 5px; background: rgba(255,255,255,.12); display: grid; place-items: center; }
+  .road span.done { background: rgba(255,255,255,.42); } .road span.car { background: var(--gold); }
+  .road span.car svg { width: 70%; height: 70%; fill: none; stroke: var(--stage); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .road span.flag { background-color: #fff; background-image: linear-gradient(45deg,#0b0f19 25%,transparent 25%,transparent 75%,#0b0f19 75%),linear-gradient(45deg,#0b0f19 25%,transparent 25%,transparent 75%,#0b0f19 75%); background-size: 8px 8px; background-position: 0 0, 4px 4px; }
+  .board2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; }
+  .lvt { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 6px; }
+  .lvt div { border-radius: 10px; background: rgba(255,255,255,.07); padding: 9px 4px 8px; text-align: center; display: grid; gap: 3px; }
+  .lvt b { font-size: 16px; font-weight: 800; color: #646b7b; } .lvt small { font-size: 7.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #646b7b; line-height: 1.2; }
+  .lvt .past { background: #1a36a6; } .lvt .past b, .lvt .past small { color: #c7d0ff; }
+  .lvt .now { background: var(--gold); box-shadow: 0 0 0 3px rgba(245,197,24,.3); } .lvt .now b, .lvt .now small { color: var(--stage); }
+  .cal-box { display: flex; gap: 6px; margin-top: 6px; }
+  .cal { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 11px); gap: 3px; }
+  .cal span { width: 11px; height: 11px; border-radius: 3px; background: rgba(255,255,255,.08); } .cal span.out { background: transparent; }
+  .cal span.l1 { background: #3a4f9e; } .cal span.l2 { background: #4c66d8; } .cal span.l3 { background: #8fa3ff; } .cal span.l4 { background: var(--gold); }
+  .cal-days { display: grid; grid-template-rows: repeat(7, 11px); gap: 3px; font-size: 7.5px; color: #8b95a9; line-height: 11px; font-weight: 700; }
+  .calrow { display: flex; gap: 16px; align-items: flex-end; justify-content: space-between; }
+  .calrow .bt small { display: block; font-size: 10px; font-weight: 700; opacity: .7; letter-spacing: 0; margin-top: 3px; }
+  .cal-leg { display: flex; align-items: center; gap: 3px; font-size: 8.5px; color: #8b95a9; margin-top: 6px; font-weight: 700; } .cal-leg span { width: 9px; height: 9px; border-radius: 2px; }
+  .hl3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .hl3 > div { border-radius: 18px; background: #f3f4f8; padding: 16px 16px 14px; display: grid; gap: 6px; align-content: start; background: color-mix(in srgb, var(--hc) 8%, #fff); }
+  .hl3 .eb { font-size: 9.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--hc); } .hl3 p { font-size: 11.5px; line-height: 1.5; color: #222; }
   .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 22px 60px 0; break-inside: avoid; }
   .sign > div { border-top: 1px solid var(--ink); padding-top: 8px; display: grid; gap: 3px; font-size: 11px; } .sign b { font-size: 12px; } .sign span { color: #777; font-size: 10px; letter-spacing: .5px; }
   .folio { font-variant-numeric: tabular-nums; }
+  .how { font-size: 9.5px; color: #8a8a8a; margin-top: -14px; }
+  /* detail sections: numbered colour badges like the game cards */
+  .sh { letter-spacing: .12em; }
+  .sh .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: var(--sc, var(--blue)); color: #fff; font-size: 10.5px; letter-spacing: 0; }
+  .msg { border-radius: 22px; background: var(--stage); } .msg .k { color: var(--gold); }
   .missing { padding: 60px; font-size: 15px; line-height: 1.6; }
   body.embed .bar { display: none; } body.embed .sheet { margin: 0 auto; box-shadow: none; }
   @media screen and (max-width: 840px) {
@@ -108,8 +135,8 @@
     header.big { padding: 30px 22px; flex-direction: column; } header.big .r { text-align: left; }
     main { padding: 24px 22px 10px; } .msg { margin: 6px 22px; } footer { padding: 16px 22px 22px; }
     .facts { grid-template-columns: 1fr 1fr; } .two { grid-template-columns: 1fr; gap: 26px; }
-    .verdict { grid-template-columns: 1fr; gap: 10px; } .rings { grid-template-columns: 1fr 1fr; gap: 18px 14px; } .ring svg { width: 64px; height: 64px; }
-    .path, .cal-wrap { grid-template-columns: 1fr; gap: 24px; } .lvl small { display: none; } .sign { margin: 22px 22px 0; gap: 20px; }
+    .board { grid-template-columns: 1fr 1fr; } .bx.jeo { grid-column: 1 / -1; grid-row: auto; } .board2, .hl3 { grid-template-columns: 1fr; }
+    .bx .big { gap: 10px; } .bx .big svg { width: 52px; height: 52px; } .bx .bt, .bx .big .bt { font-size: 15.5px; } .lvt { grid-template-columns: repeat(3, 1fr); } .lvt small { font-size: 7px; } .bx.jeo .bt { font-size: 28px; } .sign { margin: 22px 22px 0; gap: 20px; }
 
     .r-sk { grid-template-columns: 1fr auto; } .r-sk .m { grid-column: 1 / -1; order: 3; }
     .r-ls { grid-template-columns: 1fr auto; gap: 6px 14px; } .r-ls.head, .r-ls .tries { display: none; } .r-ls > span:first-child { order: 1; } .r-ls .num { order: 2; } .r-ls .mbar { order: 3; } .r-ls .st { order: 4; justify-self: end; }
@@ -142,6 +169,8 @@
 
   const X = {
     es: {
+      tC: "Clases", tD: "Días", tL: "Lecciones", tP: "Puntos", tW: "Palabras", tS: "Frases", qOk: "Aprobado", qLow: "Por reforzar", next: "Siguiente:", courseDone: "Todas sus lecciones están aprobadas.",
+      lvP: (l, n) => `Hoy está en <b>${l} · ${n}</b>. Cada nivel toma varios meses de clases y práctica.`,
       vT: "Evaluación del periodo", vL: ["Sobresaliente", "Buen avance", "En proceso", "Requiere atención", "Empezando"],
       vHow: "Promedio de asistencia, quizzes, tareas a tiempo y constancia.", rA: "Asistencia", rQ: "Quizzes", rH: "Tareas a tiempo", rC: "Constancia",
       rAs: (a, n) => n ? `${a} de ${n} clases` : "Sin clases en el periodo", rQs: n => n ? `Promedio de ${n} quiz${n === 1 ? "" : "zes"} final${n === 1 ? "" : "es"}` : "Sin quizzes en el periodo",
@@ -178,6 +207,8 @@
         return t + " Abajo está el detalle de cada parte.";
       } },
     en: {
+      tC: "Classes", tD: "Days", tL: "Lessons", tP: "Points", tW: "Words", tS: "Sentences", qOk: "Passing", qLow: "To reinforce", next: "Next:", courseDone: "All their lessons are passed.",
+      lvP: (l, n) => `They're at <b>${l} · ${n}</b> today. Each level takes a few months of classes and practice.`,
       vT: "Overall assessment", vL: ["Outstanding", "Good progress", "On the way", "Needs attention", "Getting started"],
       vHow: "Average of attendance, quizzes, homework on time and consistency.", rA: "Attendance", rQ: "Quizzes", rH: "Homework on time", rC: "Consistency",
       rAs: (a, n) => n ? `${a} of ${n} classes` : "No classes in this period", rQs: n => n ? `Average of ${n} final quiz${n === 1 ? "" : "zes"}` : "No quizzes in this period",
@@ -216,7 +247,9 @@
   };
 
   const MARK = s => `<svg width="${s}" height="${s}" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2346d0"/><path d="M8.5 9h15a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5H16l-4.5 4v-4h-3A2.5 2.5 0 0 1 6 19v-7.5A2.5 2.5 0 0 1 8.5 9z" fill="#fff"/><circle cx="20.5" cy="15.25" r="2.4" fill="#f5c518"/></svg>`;
-  const sh = (n, t) => `<div class="sh"><span class="n">${n}</span>· ${esc(t)}</div>`;
+  const SC = ["var(--jeo)", "var(--whl)", "var(--jam)", "var(--ttt)", "var(--race)"];
+  const sh = (n, t) => `<div class="sh" style="--sc:${SC[(n - 1) % SC.length]}"><span class="n">${n}</span>${esc(t)}</div>`;
+  const CAR = '<svg viewBox="0 0 56 56" aria-hidden="true"><path d="M8 34l4-11c1-3 3-5 7-5h18c4 0 6 2 7 5l4 11"/><rect x="6" y="34" width="44" height="9" rx="3"/><circle cx="16" cy="45" r="3"/><circle cx="40" cy="45" r="3"/></svg>';
 
   function scores(sc, x) {
     const narrow = window.matchMedia && matchMedia("screen and (max-width: 600px)").matches;
@@ -253,10 +286,10 @@
   }
 
   // ── Summary visuals ──
-  const ring = (pct, color) => { const r = 26, c = 2 * Math.PI * r, v = pct == null ? 0 : Math.max(0, Math.min(100, pct));
-    return `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${r}" fill="none" class="bg" stroke-width="5"/>
-      ${pct == null ? "" : `<circle cx="32" cy="32" r="${r}" fill="none" class="fg" stroke-width="5" stroke-linecap="butt" stroke-dasharray="${(c * v / 100).toFixed(2)} ${c.toFixed(2)}" transform="rotate(-90 32 32)" style="--rc:${color}"/>`}
-      <text x="32" y="36.5" text-anchor="middle" class="${pct == null ? "na" : "v"}">${pct == null ? "—" : Math.round(pct) + "%"}</text></svg>`; };
+  const ring = pct => { const r = 26, c = 2 * Math.PI * r, v = pct == null ? 0 : Math.max(0, Math.min(100, pct));
+    return `<svg class="wr" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${r}" fill="none" class="bg" stroke-width="6"/>
+      ${pct == null ? "" : `<circle cx="32" cy="32" r="${r}" fill="none" class="fg" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(c * v / 100).toFixed(2)} ${c.toFixed(2)}" transform="rotate(-90 32 32)"/>`}
+      <text x="32" y="37" text-anchor="middle" class="${pct == null ? "na" : "v"}">${pct == null ? "—" : Math.round(pct) + "%"}</text></svg>`; };
   const tone = p => p == null || p >= 60 ? "#2233e6" : p >= 40 ? "#c98a00" : "#b42318";
   function calendar(D, x) {
     const pts = Object.fromEntries((D.dy || []).map(d => [d[0], d[1]])), max = Math.max(1, ...Object.values(pts));
@@ -268,7 +301,7 @@
       const k = key(d), v = pts[k] || 0, out = d < start0 || d > end, lv = !v ? "" : v >= max * .75 ? "l4" : v >= max * .5 ? "l3" : v >= max * .25 ? "l2" : "l1";
       cells.push(`<span class="${out ? "out" : lv}" title="${k}${v ? " · " + v : ""}"></span>`); }
     return `<div class="cal-box"><div class="cal-days">${x.calL.map((l, i) => `<span>${i % 2 === 0 ? l : ""}</span>`).join("")}</div><div class="cal">${cells.join("")}</div></div>
-      <div class="cal-leg">${x.calLess}<span style="background:#f0f0f3"></span><span style="background:#c9cdf9"></span><span style="background:#8f98f2"></span><span style="background:#4c58ec"></span><span style="background:#2233e6"></span>${x.calMore}</div>`;
+      <div class="cal-leg">${x.calLess}<span style="background:rgba(255,255,255,.08)"></span><span style="background:#3a4f9e"></span><span style="background:#4c66d8"></span><span style="background:#8fa3ff"></span><span style="background:#f5c518"></span>${x.calMore}</div>`;
   }
 
   function draw() {
@@ -325,25 +358,35 @@
       <header class="big"><div><h1>${lang === "es" ? "CLASES DE INGLÉS" : "ENGLISH CLASSES"}</h1><p class="kick">${x.kick}</p></div>
         <div class="r"><span class="date">${fd(D.f)} – ${fd(D.t)}</span><span class="lbl">${esc(t.period[D.p] || "")}</span><span class="kick" style="margin-top:0">${x.student}: ${esc(name.toUpperCase())}</span><span class="lbl folio">${x.folio} ${esc(folio)}</span></div></header>
       <main>
-        <div class="verdict" style="--vc:${vcol}"><div class="w"><span class="lab">${x.vT}</span><b>${x.vL[vi]}</b><small>${x.vHow}</small></div><p>${x.intro(D, first)}</p></div>
-        <div class="rings">
-          <div class="ring">${ring(attP, tone(attP))}<span class="rt"><span class="lab">${x.rA}</span><span>${x.rAs(ca, ca + cm)}</span></span></div>
-          <div class="ring">${ring(k.avg, tone(k.avg))}<span class="rt"><span class="lab">${x.rQ}</span><span>${x.rQs((D.sc || []).length)}</span></span></div>
-          <div class="ring">${ring(hwP, tone(hwP))}<span class="rt"><span class="lab">${x.rH}</span><span>${D.hl ? x.rHs(hwOn, hws.length) : x.rHs(k.hw[0], k.hw[1])}</span></span></div>
-          <div class="ring">${ring(conP, tone(conP))}<span class="rt"><span class="lab">${x.rC}</span><span>${x.rCs(k.days, goal)}</span></span></div>
+        <div class="board">
+          <div class="bx jeo" style="--vc:${vcol}"><span class="eb">${x.vT}</span><span class="bt">${x.vL[vi]}</span>
+            <p>${x.intro(D, first)}</p>
+            <div class="tiles">
+              <div><span>${x.tC}</span><b>${k.cls[0]}</b></div><div><span>${x.tD}</span><b>${k.days}</b></div><div><span>${x.tL}</span><b>${k.done}/${k.lessons}</b></div>
+              <div><span>${x.tP}</span><b>${k.xp || 0}</b></div><div><span>${x.tW}</span><b>${k.words || 0}</b></div><div><span>${x.tS}</span><b>${k.spoken || 0}</b></div>
+            </div>
+            <div class="chips">${D.lv ? `<span>${x.level} ${esc(D.lv)}</span>` : ""}<span>${esc(t.period[D.p] || "")}</span></div></div>
+          <div class="bx whl"><span class="eb">${x.rQ}</span><div class="big">${ring(k.avg)}<span class="bt">${k.avg == null ? "—" : k.avg >= 80 ? x.qOk : x.qLow}</span></div><p>${x.rQs((D.sc || []).length)}</p></div>
+          <div class="bx jam"><span class="knob"></span><span class="eb">${x.rA}</span><div class="big">${ring(attP)}<span class="bt">${x.rAs(ca, ca + cm)}</span></div><p>${cm ? t.missedN(cm) : x.noneMissed}</p></div>
+          <div class="bx ttt"><span class="eb">${x.rH}</span><div class="big"><span class="ttg">${(() => { const items = (D.hl || []).slice(-9), cells = items.map(h => `<span class="${h[2] === "done" ? "ok" : h[2] === "late" ? "late" : h[2] === "overdue" ? "bad" : "pend"}">${h[2] === "done" || h[2] === "late" ? "✓" : h[2] === "overdue" ? "✕" : ""}</span>`); while (cells.length < 9) cells.push("<span></span>"); return cells.join(""); })()}</span>
+            <span class="bt">${hwP == null ? "—" : Math.round(hwP) + "%"}</span></div><p>${D.hl ? x.rHs(hwOn, hws.length) : x.rHs(k.hw[0], k.hw[1])}</p></div>
+          <div class="bx race"><span class="eb">${x.course}</span><span class="bt">${k.done} ${x.courseOf(k.lessons)}</span>
+            <div class="road">${(() => { const n = Math.max(2, Math.min(13, k.lessons || 0)), d = Math.min(k.done, n - 1), out = []; for (let i = 0; i < n; i++) out.push(i === n - 1 ? `<span class="flag"></span>` : i < d ? `<span class="done"></span>` : i === d ? `<span class="car">${CAR}</span>` : "<span></span>"); return out.join(""); })()}</div>
+            <p>${(D.nx || [])[0] ? x.next + " " + esc(D.nx[0][0] + " · " + D.nx[0][1]) : x.courseDone}</p></div>
         </div>
-        <div class="path">
-          <section class="sec"><span class="lab">${x.pathT}</span><div class="lvl">${LV.map((l, i) => `<div class="${i < li ? "past" : i === li ? "now" : ""}"><i></i><b>${l}</b><small>${i === li ? x.lvNow : x.lvN[i]}</small></div>`).join("")}</div>
-            ${li < 0 ? `<p class="note">${x.lvNone}</p>` : ""}</section>
-          <section class="sec"><span class="lab">${x.course}</span><div class="course"><span class="big">${k.done}<small>${x.courseOf(k.lessons)}</small></span>
-            <span class="trk"><i style="width:${k.lessons ? Math.min(100, k.done / k.lessons * 100) : 0}%"></i></span><p>${x.courseP(k.done, (D.nx || [])[0] ? esc(D.nx[0][0] + " · " + D.nx[0][1]) : "")}</p></div></section>
+        <p class="how">${x.vHow}</p>
+        <div class="board2">
+          <div class="bx dark"><span class="eb" style="color:var(--gold);opacity:1">${x.pathT}</span>
+            <div class="lvt">${LV.map((l, i) => `<div class="${i < li ? "past" : i === li ? "now" : ""}"><b>${l}</b><small>${i === li ? x.lvNow : x.lvN[i]}</small></div>`).join("")}</div>
+            <p style="margin-top:4px">${li < 0 ? x.lvNone : x.lvP(LV[li], x.lvN[li])}</p></div>
+          <div class="bx dark"><span class="eb" style="color:var(--gold);opacity:1">${x.calT}</span>
+            <div class="calrow"><div>${calendar(D, x)}</div><span class="bt" style="text-align:right">${Math.round(conP)}%<small>${x.rC}</small></span></div>
+            <p>${x.rCs(k.days, goal)}</p></div>
         </div>
-        <div class="cal-wrap">
-          <section class="sec"><span class="lab">${x.calT}</span>${calendar(D, x)}<p class="note">${x.calP(k.days, k.xp || 0)}</p></section>
-          <section class="sec"><span class="lab" style="margin-bottom:8px">${x.hT}</span><div class="hl3">
-            <div><span class="lab">${x.hBest}</span><p>${passedIn[0] ? x.hBestL(passedIn[0][1], passedIn[0][4]) : (D.st || [])[0] ? sItem(D.st[0]) : x.hNone}</p></div>
-            <div><span class="lab">${x.hFix}</span><p>${fixItem ? oItem(fixItem) : x.noOpp}</p></div>
-            <div><span class="lab">${x.hGoal}</span><p>${(D.nx || [])[0] ? x.hGoalL(D.nx[0][0], D.nx[0][1]) : x.hGoalH}</p></div></div></section>
+        <div class="hl3">
+          <div style="--hc:var(--jeo)"><span class="eb">${x.hBest}</span><p>${passedIn[0] ? x.hBestL(passedIn[0][1], passedIn[0][4]) : (D.st || [])[0] ? sItem(D.st[0]) : x.hNone}</p></div>
+          <div style="--hc:var(--race)"><span class="eb">${x.hFix}</span><p>${fixItem ? oItem(fixItem) : x.noOpp}</p></div>
+          <div style="--hc:var(--ttt)"><span class="eb">${x.hGoal}</span><p>${(D.nx || [])[0] ? x.hGoalL(D.nx[0][0], D.nx[0][1]) : x.hGoalH}</p></div>
         </div>
         <section class="sec">${sh(N(), x.s1)}${scores(D.sc || [], x)}<p class="note">${x.s1n}</p></section>
         <section class="sec">${sh(N(), x.s2)}${skills.map(s => `<div class="row r-sk"><b>${x.sk[s[0]]}</b><span class="m">${s[2]}</span><span class="t">${s[1]}</span></div>`).join("")}</section>
