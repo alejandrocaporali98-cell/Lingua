@@ -70,6 +70,37 @@
   .msg small { justify-self: end; font-size: 10px; color: #9a9a9a; letter-spacing: .5px; }
   footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 60px 26px; font-size: 9.5px; color: #9a9a9a; letter-spacing: .5px; }
   footer .brand { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+  /* Summary visuals: verdict, rings, level path, practice calendar, highlights, signature */
+  .verdict { display: grid; grid-template-columns: 210px 1fr; gap: 26px; align-items: center; border-left: 4px solid var(--vc, var(--blue)); padding: 4px 0 4px 20px; }
+  .verdict .w { display: grid; gap: 6px; } .verdict .w b { font-size: 25px; letter-spacing: -.5px; line-height: 1.05; color: var(--vc, var(--blue)); }
+  .verdict .w small { font-size: 10px; color: #8a8a8a; line-height: 1.45; }
+  .verdict p { font-size: 11.5px; color: #333; line-height: 1.65; }
+  .rings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--line); padding: 18px 0 16px; }
+  .ring { display: grid; gap: 10px; align-content: start; }
+  .ring svg { width: 76px; height: 76px; display: block; } .ring .bg { stroke: #ececf0; } .ring .fg { stroke: var(--rc, var(--blue)); }
+  .ring .v { font-size: 13.5px; font-weight: 800; fill: var(--ink); font-family: inherit; letter-spacing: -.3px; } .ring .na { font-size: 14px; fill: #b5b5b5; }
+  .ring .rt { display: grid; gap: 4px; } .ring .rt .lab { color: var(--ink); } .ring .rt span:last-child { font-size: 10.5px; color: #666; line-height: 1.4; }
+  .path { display: grid; grid-template-columns: 1.35fr 1fr; gap: 34px; align-items: start; }
+  .lvl { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-top: 6px; }
+  .lvl div { display: grid; gap: 6px; } .lvl i { height: 8px; background: #ececf0; } .lvl div:first-child i { border-radius: 4px 0 0 4px; } .lvl div:last-child i { border-radius: 0 4px 4px 0; }
+  .lvl .past i { background: #b9bff7; } .lvl .now i { background: var(--blue); }
+  .lvl b { font-size: 12px; } .lvl .now b { color: var(--blue); } .lvl small { font-size: 9px; color: #8a8a8a; line-height: 1.3; }
+  .lvl .now small { color: var(--blue); font-weight: 700; }
+  .course { display: grid; gap: 8px; margin-top: 6px; } .course .big { font-size: 22px; font-weight: 800; letter-spacing: -.3px; } .course .big small { font-size: 12px; font-weight: 400; color: #666; margin-left: 4px; }
+  .course .trk { height: 8px; background: #ececf0; border-radius: 4px; overflow: hidden; } .course .trk i { display: block; height: 100%; background: var(--blue); }
+  .course p { font-size: 10.5px; color: #666; line-height: 1.45; }
+  .cal-wrap { display: grid; grid-template-columns: auto 1fr; gap: 34px; align-items: start; }
+  .cal { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 13px); gap: 3px; margin-top: 6px; }
+  .cal span { width: 13px; height: 13px; border-radius: 2px; background: #f0f0f3; } .cal span.out { background: transparent; }
+  .cal span.l1 { background: #c9cdf9; } .cal span.l2 { background: #8f98f2; } .cal span.l3 { background: #4c58ec; } .cal span.l4 { background: var(--blue); }
+  .cal-days { display: grid; grid-template-rows: repeat(7, 13px); gap: 3px; margin-top: 6px; font-size: 8.5px; color: #9a9a9a; line-height: 13px; }
+  .cal-box { display: flex; gap: 6px; }
+  .cal-leg { display: flex; align-items: center; gap: 3px; font-size: 9px; color: #8a8a8a; margin-top: 8px; } .cal-leg span { width: 10px; height: 10px; border-radius: 2px; }
+  .hl3 { display: grid; gap: 14px; } .hl3 > div { border-top: 2px solid var(--ink); padding-top: 9px; display: grid; gap: 5px; }
+  .hl3 .lab { color: var(--blue); } .hl3 p { font-size: 11.5px; line-height: 1.5; color: #222; }
+  .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 22px 60px 0; break-inside: avoid; }
+  .sign > div { border-top: 1px solid var(--ink); padding-top: 8px; display: grid; gap: 3px; font-size: 11px; } .sign b { font-size: 12px; } .sign span { color: #777; font-size: 10px; letter-spacing: .5px; }
+  .folio { font-variant-numeric: tabular-nums; }
   .missing { padding: 60px; font-size: 15px; line-height: 1.6; }
   body.embed .bar { display: none; } body.embed .sheet { margin: 0 auto; box-shadow: none; }
   @media screen and (max-width: 840px) {
@@ -77,6 +108,9 @@
     header.big { padding: 30px 22px; flex-direction: column; } header.big .r { text-align: left; }
     main { padding: 24px 22px 10px; } .msg { margin: 6px 22px; } footer { padding: 16px 22px 22px; }
     .facts { grid-template-columns: 1fr 1fr; } .two { grid-template-columns: 1fr; gap: 26px; }
+    .verdict { grid-template-columns: 1fr; gap: 10px; } .rings { grid-template-columns: 1fr 1fr; gap: 18px 14px; } .ring svg { width: 64px; height: 64px; }
+    .path, .cal-wrap { grid-template-columns: 1fr; gap: 24px; } .lvl small { display: none; } .sign { margin: 22px 22px 0; gap: 20px; }
+
     .r-sk { grid-template-columns: 1fr auto; } .r-sk .m { grid-column: 1 / -1; order: 3; }
     .r-ls { grid-template-columns: 1fr auto; gap: 6px 14px; } .r-ls.head, .r-ls .tries { display: none; } .r-ls > span:first-child { order: 1; } .r-ls .num { order: 2; } .r-ls .mbar { order: 3; } .r-ls .st { order: 4; justify-self: end; }
     .r-hw { grid-template-columns: 1fr auto; gap: 4px 14px; } .r-hw.head { display: none; } .r-hw .due { order: 3; color: #8a8a8a; } .r-hw .gr { order: 4; text-align: right; }
@@ -107,7 +141,18 @@
   const D = decode(qp.get("d") || "");
 
   const X = {
-    es: { kick: "Reporte de avance", student: "Alumno", sumT: "Resumen del periodo", level: "Nivel", noLevel: "Sin examen de colocación", classes: "Clases tomadas", avg: "Promedio en quizzes",
+    es: {
+      vT: "Evaluación del periodo", vL: ["Sobresaliente", "Buen avance", "En proceso", "Requiere atención", "Empezando"],
+      vHow: "Promedio de asistencia, quizzes, tareas a tiempo y constancia.", rA: "Asistencia", rQ: "Quizzes", rH: "Tareas a tiempo", rC: "Constancia",
+      rAs: (a, n) => n ? `${a} de ${n} clases` : "Sin clases en el periodo", rQs: n => n ? `Promedio de ${n} quiz${n === 1 ? "" : "zes"} final${n === 1 ? "" : "es"}` : "Sin quizzes en el periodo",
+      rHs: (a, n) => n ? `${a} de ${n} entregadas a tiempo` : "Sin tareas con fecha", rCs: (d, g) => `${d} de ${g} días (meta: 2 por semana)`,
+      pathT: "Nivel y avance del curso", lvN: ["Principiante", "Básico", "Intermedio", "Intermedio alto", "Avanzado", "Dominio"], lvNow: "Nivel actual", lvNone: "Hará el examen de colocación para ubicar su nivel.",
+      course: "Lecciones aprobadas", courseOf: n => `de ${n}`, courseP: (a, b) => `${a} lecciones aprobadas con 80% o más${b ? ` · siguiente: ${b}` : ""}.`,
+      calT: "Calendario de práctica", calL: ["L", "M", "M", "J", "V", "S", "D"], calLess: "Menos", calMore: "Más", calP: (d, xp) => `${d} día${d === 1 ? "" : "s"} con práctica · ${xp} puntos en total`,
+      hT: "Lo más destacado", hBest: "Mejor logro", hFix: "A reforzar", hGoal: "Meta para el siguiente periodo",
+      hBestL: (t, p) => `Aprobó <b>${esc(t)}</b> con ${p}%.`, hGoalL: (id, t) => `Aprobar la lección <b>${esc(id)} · ${esc(t)}</b> con 80% o más.`, hGoalH: "Practicar al menos 2 días por semana.", hNone: "Todavía no hay suficientes datos.",
+      prep: "Preparado por", issued: "Fecha de emisión", folio: "Folio",
+      kick: "Reporte de avance", student: "Alumno", sumT: "Resumen del periodo", level: "Nivel", noLevel: "Sin examen de colocación", classes: "Clases tomadas", avg: "Promedio en quizzes",
       days: "Días de práctica", prevDays: n => `${n > 0 ? "+" : ""}${n} vs periodo anterior`, noneMissed: "Sin faltas", quizzes: n => `${n} quiz${n === 1 ? "" : "zes"} final${n === 1 ? "" : "es"}`,
       s1: "Calificaciones en el tiempo", s1n: "Cada punto es un quiz final. La línea punteada es la calificación aprobatoria (80%).",
       s2: "Práctica por habilidad", sk: { quiz: "Gramática y vocabulario", spoken: "Pronunciación", dict: "Comprensión auditiva", words: "Vocabulario nuevo", review: "Repaso", habit: "Constancia" },
@@ -132,7 +177,18 @@
         if (k.avg != null) t += ` Su promedio en los quizzes finales es de <b>${k.avg}%</b>${D.tr > 3 ? " y va subiendo" : D.tr < -3 ? ", un poco más bajo que al inicio del periodo" : ""}.`;
         return t + " Abajo está el detalle de cada parte.";
       } },
-    en: { kick: "Progress report", student: "Student", sumT: "Summary of the period", level: "Level", noLevel: "No placement test yet", classes: "Classes attended", avg: "Average quiz score",
+    en: {
+      vT: "Overall assessment", vL: ["Outstanding", "Good progress", "On the way", "Needs attention", "Getting started"],
+      vHow: "Average of attendance, quizzes, homework on time and consistency.", rA: "Attendance", rQ: "Quizzes", rH: "Homework on time", rC: "Consistency",
+      rAs: (a, n) => n ? `${a} of ${n} classes` : "No classes in this period", rQs: n => n ? `Average of ${n} final quiz${n === 1 ? "" : "zes"}` : "No quizzes in this period",
+      rHs: (a, n) => n ? `${a} of ${n} handed in on time` : "No homework with a due date", rCs: (d, g) => `${d} of ${g} days (goal: 2 a week)`,
+      pathT: "Level and course progress", lvN: ["Beginner", "Elementary", "Intermediate", "Upper intermediate", "Advanced", "Proficient"], lvNow: "Current level", lvNone: "The placement test will set their level.",
+      course: "Lessons passed", courseOf: n => `of ${n}`, courseP: (a, b) => `${a} lessons passed with 80% or more${b ? ` · next: ${b}` : ""}.`,
+      calT: "Practice calendar", calL: ["M", "T", "W", "T", "F", "S", "S"], calLess: "Less", calMore: "More", calP: (d, xp) => `${d} day${d === 1 ? "" : "s"} with practice · ${xp} points in total`,
+      hT: "Highlights", hBest: "Best achievement", hFix: "To work on", hGoal: "Goal for the next period",
+      hBestL: (t, p) => `Passed <b>${esc(t)}</b> with ${p}%.`, hGoalL: (id, t) => `Pass lesson <b>${esc(id)} · ${esc(t)}</b> with 80% or more.`, hGoalH: "Practice at least 2 days a week.", hNone: "Not enough data yet.",
+      prep: "Prepared by", issued: "Issued on", folio: "Report no.",
+      kick: "Progress report", student: "Student", sumT: "Summary of the period", level: "Level", noLevel: "No placement test yet", classes: "Classes attended", avg: "Average quiz score",
       days: "Practice days", prevDays: n => `${n > 0 ? "+" : ""}${n} vs previous period`, noneMissed: "None missed", quizzes: n => `${n} final quiz${n === 1 ? "" : "zes"}`,
       s1: "Quiz scores over time", s1n: "Each dot is a final quiz. The dashed line is the pass mark (80%).",
       s2: "Practice by skill", sk: { quiz: "Grammar and vocabulary", spoken: "Pronunciation", dict: "Listening", words: "New vocabulary", review: "Review", habit: "Consistency" },
@@ -196,6 +252,25 @@
       <div class="legend"><span><i style="background:#2233e6"></i>${x.attended}</span><span><i style="background:var(--amber)"></i>${x.missed}</span></div></div>`;
   }
 
+  // ── Summary visuals ──
+  const ring = (pct, color) => { const r = 26, c = 2 * Math.PI * r, v = pct == null ? 0 : Math.max(0, Math.min(100, pct));
+    return `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${r}" fill="none" class="bg" stroke-width="5"/>
+      ${pct == null ? "" : `<circle cx="32" cy="32" r="${r}" fill="none" class="fg" stroke-width="5" stroke-linecap="butt" stroke-dasharray="${(c * v / 100).toFixed(2)} ${c.toFixed(2)}" transform="rotate(-90 32 32)" style="--rc:${color}"/>`}
+      <text x="32" y="36.5" text-anchor="middle" class="${pct == null ? "na" : "v"}">${pct == null ? "—" : Math.round(pct) + "%"}</text></svg>`; };
+  const tone = p => p == null || p >= 60 ? "#2233e6" : p >= 40 ? "#c98a00" : "#b42318";
+  function calendar(D, x) {
+    const pts = Object.fromEntries((D.dy || []).map(d => [d[0], d[1]])), max = Math.max(1, ...Object.values(pts));
+    const end = new Date(D.t + "T12:00"), start0 = new Date(D.f + "T12:00"), mon = d => { const z = new Date(d); z.setDate(z.getDate() - ((z.getDay() + 6) % 7)); return z; };
+    let start = mon(start0); const last = mon(end); const weeks = Math.round((last - start) / (7 * 864e5)) + 1;
+    if (weeks > 13) { start = new Date(last); start.setDate(start.getDate() - 7 * 12); }
+    const key = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    const cells = []; for (let d = new Date(start); d <= new Date(last.getTime() + 6 * 864e5); d.setDate(d.getDate() + 1)) {
+      const k = key(d), v = pts[k] || 0, out = d < start0 || d > end, lv = !v ? "" : v >= max * .75 ? "l4" : v >= max * .5 ? "l3" : v >= max * .25 ? "l2" : "l1";
+      cells.push(`<span class="${out ? "out" : lv}" title="${k}${v ? " · " + v : ""}"></span>`); }
+    return `<div class="cal-box"><div class="cal-days">${x.calL.map((l, i) => `<span>${i % 2 === 0 ? l : ""}</span>`).join("")}</div><div class="cal">${cells.join("")}</div></div>
+      <div class="cal-leg">${x.calLess}<span style="background:#f0f0f3"></span><span style="background:#c9cdf9"></span><span style="background:#8f98f2"></span><span style="background:#4c58ec"></span><span style="background:#2233e6"></span>${x.calMore}</div>`;
+  }
+
   function draw() {
     document.documentElement.lang = lang;
     document.querySelectorAll("[data-l]").forEach(b => b.classList.toggle("on", b.dataset.l === lang));
@@ -212,6 +287,19 @@
     const lessons = D.ld || (D.tp || []).map(r => [...r, null, null]);
     const hb = D.hb || {};
     const dDays = k.days - k.pdays;
+
+    // scorecard
+    const ca = k.cls[0], cm = k.cls[1], attP = ca + cm ? ca / (ca + cm) * 100 : null;
+    const hws = (D.hl || []).filter(h => h[2] !== "pending"), hwOn = hws.filter(h => h[2] === "done").length;
+    const hwP = D.hl ? (hws.length ? hwOn / hws.length * 100 : null) : (k.hw && k.hw[1] ? k.hw[0] / k.hw[1] * 100 : null);
+    const wks = Math.max(1, Math.round((new Date(D.t + "T12:00") - new Date(D.f + "T12:00")) / (7 * 864e5))), goal = wks * 2, conP = Math.min(100, k.days / goal * 100);
+    const parts = [attP, k.avg, hwP, conP].filter(v => v != null), score = parts.length >= 2 ? parts.reduce((a, b) => a + b, 0) / parts.length : null;
+    const vi = score == null ? 4 : score >= 85 ? 0 : score >= 70 ? 1 : score >= 50 ? 2 : 3, vcol = ["#0f7a4a", "#2233e6", "#c98a00", "#b42318", "#2233e6"][vi];
+    const LV = ["A1", "A2", "B1", "B2", "C1", "C2"], li = D.lv ? LV.findIndex(l => String(D.lv).toUpperCase().startsWith(l)) : -1;
+    const passedIn = lessons.filter(r => r[5] && r[5] >= D.f && r[4] != null).sort((a, b) => b[4] - a[4]);
+    const fixItem = (D.op || []).find(o => o[0] !== "habit");
+    const initials = name.normalize("NFD").replace(/[^A-Za-z ]/g, "").split(/\s+/).filter(Boolean).map(w => w[0]).join("").slice(0, 3).toUpperCase() || "AL";
+    const folio = initials + "-" + String(D.t).slice(2).replace(/-/g, "");
 
     // next steps
     const steps = (D.nx || []).slice(0, 2).map(n => x.nx(n[0], n[1], n[2]));
@@ -235,14 +323,27 @@
 
     doc.innerHTML = `<div class="sheet">
       <header class="big"><div><h1>${lang === "es" ? "CLASES DE INGLÉS" : "ENGLISH CLASSES"}</h1><p class="kick">${x.kick}</p></div>
-        <div class="r"><span class="date">${fd(D.f)} – ${fd(D.t)}</span><span class="lbl">${esc(t.period[D.p] || "")}</span><span class="kick" style="margin-top:0">${x.student}: ${esc(name.toUpperCase())}</span></div></header>
+        <div class="r"><span class="date">${fd(D.f)} – ${fd(D.t)}</span><span class="lbl">${esc(t.period[D.p] || "")}</span><span class="kick" style="margin-top:0">${x.student}: ${esc(name.toUpperCase())}</span><span class="lbl folio">${x.folio} ${esc(folio)}</span></div></header>
       <main>
-        <div class="intro"><h2>${x.sumT}</h2><p>${x.intro(D, first)}</p></div>
-        <div class="facts">
-          <div><span class="lab">${x.level}</span><b class="lv">${D.lv ? esc(D.lv) : "—"}</b><span>${D.lv ? "" : x.noLevel}</span></div>
-          <div><span class="lab">${x.classes}</span><b>${k.cls[0]}</b><span>${k.cls[1] ? t.missedN(k.cls[1]) : x.noneMissed}</span></div>
-          <div><span class="lab">${x.avg}</span><b>${k.avg == null ? "—" : k.avg + "%"}</b><span>${x.quizzes((D.sc || []).length)}</span></div>
-          <div><span class="lab">${x.days}</span><b>${k.days}</b><span>${D.p !== "all" ? x.prevDays(dDays) : ""}</span></div>
+        <div class="verdict" style="--vc:${vcol}"><div class="w"><span class="lab">${x.vT}</span><b>${x.vL[vi]}</b><small>${x.vHow}</small></div><p>${x.intro(D, first)}</p></div>
+        <div class="rings">
+          <div class="ring">${ring(attP, tone(attP))}<span class="rt"><span class="lab">${x.rA}</span><span>${x.rAs(ca, ca + cm)}</span></span></div>
+          <div class="ring">${ring(k.avg, tone(k.avg))}<span class="rt"><span class="lab">${x.rQ}</span><span>${x.rQs((D.sc || []).length)}</span></span></div>
+          <div class="ring">${ring(hwP, tone(hwP))}<span class="rt"><span class="lab">${x.rH}</span><span>${D.hl ? x.rHs(hwOn, hws.length) : x.rHs(k.hw[0], k.hw[1])}</span></span></div>
+          <div class="ring">${ring(conP, tone(conP))}<span class="rt"><span class="lab">${x.rC}</span><span>${x.rCs(k.days, goal)}</span></span></div>
+        </div>
+        <div class="path">
+          <section class="sec"><span class="lab">${x.pathT}</span><div class="lvl">${LV.map((l, i) => `<div class="${i < li ? "past" : i === li ? "now" : ""}"><i></i><b>${l}</b><small>${i === li ? x.lvNow : x.lvN[i]}</small></div>`).join("")}</div>
+            ${li < 0 ? `<p class="note">${x.lvNone}</p>` : ""}</section>
+          <section class="sec"><span class="lab">${x.course}</span><div class="course"><span class="big">${k.done}<small>${x.courseOf(k.lessons)}</small></span>
+            <span class="trk"><i style="width:${k.lessons ? Math.min(100, k.done / k.lessons * 100) : 0}%"></i></span><p>${x.courseP(k.done, (D.nx || [])[0] ? esc(D.nx[0][0] + " · " + D.nx[0][1]) : "")}</p></div></section>
+        </div>
+        <div class="cal-wrap">
+          <section class="sec"><span class="lab">${x.calT}</span>${calendar(D, x)}<p class="note">${x.calP(k.days, k.xp || 0)}</p></section>
+          <section class="sec"><span class="lab" style="margin-bottom:8px">${x.hT}</span><div class="hl3">
+            <div><span class="lab">${x.hBest}</span><p>${passedIn[0] ? x.hBestL(passedIn[0][1], passedIn[0][4]) : (D.st || [])[0] ? sItem(D.st[0]) : x.hNone}</p></div>
+            <div><span class="lab">${x.hFix}</span><p>${fixItem ? oItem(fixItem) : x.noOpp}</p></div>
+            <div><span class="lab">${x.hGoal}</span><p>${(D.nx || [])[0] ? x.hGoalL(D.nx[0][0], D.nx[0][1]) : x.hGoalH}</p></div></div></section>
         </div>
         <section class="sec">${sh(N(), x.s1)}${scores(D.sc || [], x)}<p class="note">${x.s1n}</p></section>
         <section class="sec">${sh(N(), x.s2)}${skills.map(s => `<div class="row r-sk"><b>${x.sk[s[0]]}</b><span class="m">${s[2]}</span><span class="t">${s[1]}</span></div>`).join("")}</section>
@@ -270,6 +371,8 @@
         <section class="sec">${sh(N(), x.s11)}${steps.map(s => `<div class="dash"><span>${s}</span></div>`).join("")}</section>
       </main>
       ${D.c ? `<div class="msg"><span class="k">${x.msg}</span><p>${esc(D.c)}</p><small>— ${esc(D.te || G.maestroNombre || G.maestro || "")} · ${x.sign}</small></div>` : ""}
+      <div class="sign"><div><span>${x.prep}</span><b>${esc(D.te || G.maestroNombre || G.maestro || "")}</b><span>${x.sign} · Lingua</span></div>
+        <div><span>${x.issued}</span><b>${fd(String(D.g || "").slice(0, 10) || D.t)}</b><span>${x.folio} ${esc(folio)}</span></div></div>
       <footer><span class="brand">${MARK(20)}Lingua</span><span>${x.foot.toUpperCase()} · ${esc(name.toUpperCase())} · ${x.gen} ${fd(String(D.g || "").slice(0, 10) || D.t)}</span></footer>
     </div>`;
     try { parent !== window && parent.postMessage({ lingua: "informe-height", h: document.documentElement.scrollHeight }, location.origin); } catch (e) {}

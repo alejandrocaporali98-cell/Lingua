@@ -38,7 +38,7 @@ def test():
 
         F = env.device("F", 1100, 1000); F.goto(url); F.wait_for_timeout(900)
         txt = F.inner_text("#doc")
-        for part in ["CLASES DE INGLÉS", "Reporte de avance", "EMILIANO SÁNCHEZ", "Resumen del periodo", "Emiliano tomó 3 clases (faltó a 1)", "Práctica por habilidad", "24 frases",
+        for part in ["CLASES DE INGLÉS", "Reporte de avance", "EMILIANO SÁNCHEZ", "Evaluación del periodo", "Asistencia", "3 de 4 clases", "Tareas a tiempo", "Constancia", "Nivel actual", "Lecciones aprobadas", "Calendario de práctica", "Lo más destacado", "Mejor logro", "Meta para el siguiente periodo", "Folio ES-", "Preparado por", "Emiliano tomó 3 clases (faltó a 1)", "Práctica por habilidad", "24 frases",
                      "Lecciones", "65% → 85%", "Bitácora de clases", "Described his dream car", "Palabras nuevas: engine, tires, wheel", "Faltó", "Tareas", "Entregada", "Pendiente", "90",
                      "Para repasar", "My uncle ___ an Xbox.", "has", "Próximos pasos", "Continuar con la lección", "Comentario del instructor", "Ya se presenta solo", "Alejandro Caporali"]:
             check(part.lower() in txt.lower(), f"report shows “{part}”")

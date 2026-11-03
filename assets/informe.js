@@ -87,8 +87,10 @@
     // next lessons: the first ones in their list that aren't passed yet
     const nx = s.rows.filter(r => !(r.best && pct(r.best) >= 80)).slice(0, 3).map(r => [r.l.id, r.l.titulo, r.best ? pct(r.best) : null]);
     const hb = { words: (get("words", []) || []).length, learned: get("reviewLearned", 0) || 0, streak: (g && g.best) || 0 };
+    // practice calendar: points per day in the period (last 13 weeks at most)
+    const dy = Object.keys(days).filter(k => days[k] > 0 && inP(k + "T12:00")).sort().slice(-91).map(k => [k, days[k]]);
     return {
-      v: 2, cl, hl, ld, rx, nx, hb, n: s.p.display_name || "Student", g: new Date().toISOString(), p: period, f: dkey(from), t: dkey(to), lv: pl ? pl.nivel : null,
+      v: 2, cl, hl, ld, rx, nx, hb, dy, n: s.p.display_name || "Student", g: new Date().toISOString(), p: period, f: dkey(from), t: dkey(to), lv: pl ? pl.nivel : null,
       k: { cls: [cls.filter(c => c.status === "attended").length, cls.filter(c => c.status === "missed").length], days: practice.length, pdays: prevPractice.length,
         passed: passedIn.length, lessons: s.rows.length, done: s.rows.filter(r => r.best && pct(r.best) >= 80).length, avg: avg(inAtt), xp,
         hw: [hw.filter(h => h.done_at).length, hw.length], words, spoken: counters.spoken || 0, dict: counters.dictation || 0, rv: s.review.length },
