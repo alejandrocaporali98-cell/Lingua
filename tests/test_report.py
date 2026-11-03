@@ -58,6 +58,9 @@ def test():
             const b = new TextEncoder().encode(JSON.stringify(D)); let s = ""; b.forEach(c => s += String.fromCharCode(c)); return btoa(s).replace(/\\+/g,"-").replace(/\\//g,"_").replace(/=+$/,""); }"""), url)
         F.goto(old); F.wait_for_timeout(700)
         check("Life at the Stables" in F.inner_text("#doc"), "reports sent before this change still open")
+        # each student's style gives the report its own palette
+        F.goto(url); F.wait_for_timeout(500)
+        check(F.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--jeo').trim()") == "#c8102e", "Racing student gets the racing palette")
         check(not env.errs, "no page errors: " + "; ".join(env.errs[:3]))
 
 
