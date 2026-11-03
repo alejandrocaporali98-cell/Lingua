@@ -3,41 +3,281 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lingua · Reporte de avance</title>
+<title>Clases de Inglés · Reporte de avance</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="assets/lingua.css">
-<link rel="stylesheet" href="assets/informe.css">
 <style>
-  html, body { background: var(--bg); } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .page { max-width: 940px; margin: 24px auto 60px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 36px 40px; }
-  @media (max-width: 640px) { .page { margin: 0; border: 0; border-radius: 0; padding: 22px 16px 40px; } }
-  .tools { display: flex; gap: 8px; align-items: center; } .lang { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
-  .lang button { border: 0; background: var(--surface); padding: 6px 11px; font-weight: 700; font-size: .82em; color: var(--ink); } .lang button.on { background: var(--inverse); color: var(--on-inverse); }
-  @media print { html, body { background: #fff; } .page { margin: 0; border: 0; padding: 0; max-width: none; } @page { size: letter; margin: 14mm; } }
+  :root { --ink: #111; --mute: #6b6b6b; --line: #e3e3e3; --blue: #2233e6; --amber: #c98a00; --black: #0d0d0d; --good: #0f7a4a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #e9e9ec; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: var(--ink); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .bar { max-width: 816px; margin: 18px auto 0; display: flex; justify-content: flex-end; align-items: center; gap: 8px; padding: 0 12px; }
+  .bar button { font: inherit; font-size: 14px; font-weight: 700; padding: 9px 16px; border-radius: 8px; border: 1px solid #c9c9cf; background: #fff; cursor: pointer; min-height: 44px; color: var(--ink); }
+  .bar button.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .lang { display: inline-flex; border: 1px solid #c9c9cf; border-radius: 8px; overflow: hidden; margin-right: auto; }
+  .lang button { border: 0; border-radius: 0; min-height: 42px; padding: 8px 14px; }
+  .lang button.on { background: var(--black); color: #fff; }
+  .sheet { width: 816px; margin: 12px auto 30px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.12); }
+  header.big { background: var(--black); color: #fff; padding: 46px 60px 42px; display: flex; justify-content: space-between; gap: 24px; }
+  header.big h1 { font-size: 30px; font-weight: 800; letter-spacing: .5px; }
+  .kick { font-size: 10.5px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #8f9bff; margin-top: 12px; }
+  header.big .r { text-align: right; display: grid; gap: 8px; align-content: start; }
+  header.big .date { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .lbl { font-size: 9.5px; letter-spacing: 2.5px; text-transform: uppercase; color: #9a9a9a; }
+  main { padding: 30px 60px 10px; display: grid; gap: 26px; }
+  .intro h2 { font-size: 16px; font-weight: 700; } .intro p { font-size: 11.5px; color: #444; line-height: 1.65; margin-top: 6px; }
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--line); padding: 14px 0; }
+  .facts > div { display: grid; gap: 6px; align-content: start; } .facts b { font-size: 22px; letter-spacing: -.3px; font-variant-numeric: tabular-nums; } .facts b.lv { color: var(--blue); }
+  .facts span:last-child { font-size: 10.5px; color: #555; }
+  .lab { font-size: 9.5px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--mute); }
+  .sec { display: grid; gap: 2px; align-content: start; break-inside: avoid; }
+  .sh { display: flex; align-items: center; gap: 10px; font-size: 11.5px; font-weight: 800; letter-spacing: 3.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .sh .n { color: var(--blue); } .sh::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .row { display: grid; gap: 14px; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 11.5px; }
+  .row .m { color: #555; line-height: 1.5; }
+  .head { padding-top: 0; } .head .lab { font-size: 8.5px; }
+  .r-sk { grid-template-columns: 170px 1fr auto; }
+  .r-ls { grid-template-columns: minmax(0, 1fr) 120px 62px 90px 96px; align-items: center; }
+  .r-cl { grid-template-columns: 62px minmax(0, 1fr); }
+  .r-hw { grid-template-columns: minmax(0, 1fr) 70px 100px 44px; }
+  .r-rx { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+  .t { font-variant-numeric: tabular-nums; color: var(--blue); font-weight: 700; white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .tag { font-size: 8.5px; letter-spacing: 1.6px; color: #9a9a9a; text-transform: uppercase; white-space: nowrap; font-weight: 700; }
+  .tag.b { color: var(--blue); } .tag.g { color: var(--good); } .tag.a { color: var(--amber); }
+  .mbar { display: inline-flex; align-items: center; gap: 8px; font-variant-numeric: tabular-nums; color: #555; }
+  .mbar i { display: inline-block; width: 64px; height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; } .mbar i b { display: block; height: 100%; background: var(--blue); }
+  .up { color: var(--good); font-weight: 700; }
+  .cl-d { font-variant-numeric: tabular-nums; font-weight: 700; } .cl-d small { display: block; font-weight: 400; color: #9a9a9a; font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; margin-top: 3px; }
+  .cl-b b { font-size: 12px; } .cl-b .m { display: block; margin-top: 3px; } .cl-b .w { display: block; margin-top: 4px; font-size: 10.5px; color: var(--blue); }
+  .ans { font-weight: 700; color: var(--blue); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  .dash { display: grid; grid-template-columns: 20px 1fr; font-size: 11.5px; line-height: 1.55; padding: 4px 0; color: #333; } .dash::before { content: "—"; color: var(--blue); font-weight: 800; }
+  .dash.o::before { color: var(--amber); }
+  .empty { font-size: 11.5px; color: #8a8a8a; padding: 6px 0; }
+  .chart { width: 100%; height: auto; display: block; margin-top: 4px; }
+  .chart .grid { stroke: var(--line); } .chart .pass { stroke: #9a9a9a; stroke-dasharray: 3 4; }
+  .chart text { font-family: inherit; font-size: 10px; fill: #8a8a8a; } .chart .val { fill: var(--ink); font-weight: 700; }
+  .note { font-size: 10px; color: #8a8a8a; margin-top: 4px; }
+  .att { display: grid; gap: 8px; margin-top: 4px; }
+  .att .r { display: grid; grid-template-columns: 54px 1fr auto; gap: 10px; align-items: center; font-size: 11px; }
+  .att .r .m { color: #555; text-transform: capitalize; } .att .b { display: flex; height: 8px; background: #f3f3f3; border-radius: 4px; overflow: hidden; }
+  .att .v { font-variant-numeric: tabular-nums; color: #555; }
+  .legend { display: flex; gap: 14px; font-size: 10px; color: #777; margin-top: 4px; } .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .msg { margin: 6px 60px 6px; background: var(--black); color: #fff; border-radius: 10px; padding: 22px 24px 18px; display: grid; gap: 10px; break-inside: avoid; }
+  .msg .k { font-size: 9px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; }
+  .msg p { font-size: 11.5px; line-height: 1.65; color: #e6e6e6; max-width: 600px; white-space: pre-wrap; }
+  .msg small { justify-self: end; font-size: 10px; color: #9a9a9a; letter-spacing: .5px; }
+  footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 60px 26px; font-size: 9.5px; color: #9a9a9a; letter-spacing: .5px; }
+  footer .brand { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+  .missing { padding: 60px; font-size: 15px; line-height: 1.6; }
+  body.embed .bar { display: none; } body.embed .sheet { margin: 0 auto; box-shadow: none; }
+  @media screen and (max-width: 840px) {
+    .sheet { width: 100%; margin: 10px 0 20px; }
+    header.big { padding: 30px 22px; flex-direction: column; } header.big .r { text-align: left; }
+    main { padding: 24px 22px 10px; } .msg { margin: 6px 22px; } footer { padding: 16px 22px 22px; }
+    .facts { grid-template-columns: 1fr 1fr; } .two { grid-template-columns: 1fr; gap: 26px; }
+    .r-sk { grid-template-columns: 1fr auto; } .r-sk .m { grid-column: 1 / -1; order: 3; }
+    .r-ls { grid-template-columns: 1fr auto; gap: 6px 14px; } .r-ls.head, .r-ls .tries { display: none; } .r-ls > span:first-child { order: 1; } .r-ls .num { order: 2; } .r-ls .mbar { order: 3; } .r-ls .st { order: 4; justify-self: end; }
+    .r-hw { grid-template-columns: 1fr auto; gap: 4px 14px; } .r-hw.head { display: none; } .r-hw .due { order: 3; color: #8a8a8a; } .r-hw .gr { order: 4; text-align: right; }
+    .r-rx { grid-template-columns: 1fr; gap: 3px; } .r-rx.head { display: none; }
+  }
+  @media print {
+    html, body { background: #fff; } .bar { display: none; }
+    .sheet { width: auto; margin: 0; box-shadow: none; }
+    @page { size: letter; margin: 12mm 0; }
+    @page :first { margin-top: 0; }
+  }
 </style>
 </head>
 <body>
-<div class="page" id="app"></div>
+<div class="bar"><div class="lang" role="group" aria-label="Idioma / Language"><button type="button" data-l="es">ES</button><button type="button" data-l="en">EN</button></div>
+  <button type="button" class="primary" id="pr">Imprimir o guardar PDF</button></div>
+<div id="doc"><div class="sheet"><p class="missing">Cargando…</p></div></div>
+<script src="assets/config.js"></script>
 <script src="assets/placement-data.js"></script>
 <script src="assets/informe.js"></script>
 <script>
 (function () {
-  const qp = new URLSearchParams(location.search), app = document.getElementById("app");
+  const G = window.LINGUA || {}, R = window.LinguaReport, doc = document.getElementById("doc"), qp = new URLSearchParams(location.search);
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   let lang = qp.get("lang") === "en" ? "en" : "es";
+  if (qp.get("embed") === "1") document.body.classList.add("embed");
   function decode(s) { try { const b = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return null; } }
   const D = decode(qp.get("d") || "");
+
+  const X = {
+    es: { kick: "Reporte de avance", student: "Alumno", sumT: "Resumen del periodo", level: "Nivel", noLevel: "Sin examen de colocación", classes: "Clases tomadas", avg: "Promedio en quizzes",
+      days: "Días de práctica", prevDays: n => `${n > 0 ? "+" : ""}${n} vs periodo anterior`, noneMissed: "Sin faltas", quizzes: n => `${n} quiz${n === 1 ? "" : "zes"} final${n === 1 ? "" : "es"}`,
+      s1: "Calificaciones en el tiempo", s1n: "Cada punto es un quiz final. La línea punteada es la calificación aprobatoria (80%).",
+      s2: "Práctica por habilidad", sk: { quiz: "Gramática y vocabulario", spoken: "Pronunciación", dict: "Comprensión auditiva", words: "Vocabulario nuevo", review: "Repaso", habit: "Constancia" },
+      skm: { quiz: n => `Quizzes finales de cada lección (${n} en el periodo)`, spoken: "Frases dichas correctamente con el micrófono (en total)", dict: "Dictados escritos correctamente (en total)",
+        words: (c, l) => `${c} vistas en clase en este periodo · ${l} guardadas en su lista de palabras`, review: n => `${n} preguntas pendientes en su lista de repaso`, habit: xp => `${xp} puntos ganados practicando en la plataforma` },
+      skv: { spoken: n => `${n} frases`, dict: n => `${n} dictados`, words: n => `${n} palabras`, review: n => `${n} aprendidas`, habit: n => `${n} días` },
+      s3: "Fortalezas", s4: "Áreas de oportunidad", s5: "Lecciones", lh: ["Lección", "Avance", "Intentos", "Resultado", "Estado"],
+      passed: d => `Aprobada ${d}`, progress: "En curso", tries: n => `${n} intento${n === 1 ? "" : "s"}`, sections: (a, b) => `${a}/${b} secciones`,
+      s6: "Bitácora de clases", attended: "Asistió", missed: "Faltó", noNotes: "Sin notas de esta clase.", newWords: "Palabras nuevas: ",
+      s7: "Tareas", hh: ["Tarea", "Fecha", "Estado", "Calif."], hs: { done: "Entregada", late: "Entregada tarde", pending: "Pendiente", overdue: "Vencida" }, fb: "Comentario: ",
+      s8: "Para repasar", rh: ["Pregunta", "Respuesta correcta"], s9: "Práctica semanal", s9n: "Puntos ganados cada semana en la plataforma.", s10: "Asistencia por mes", s11: "Próximos pasos",
+      nx: (id, t, b) => `Continuar con la lección <b>${esc(id)} · ${esc(t)}</b>${b != null ? ` (mejor resultado ${b}%, repetir el quiz final)` : ""}.`,
+      nRev: n => `Repasar las <b>${n}</b> preguntas pendientes en la sección Review de la plataforma.`, nHabit: "Practicar al menos <b>2 días por semana</b>, unos 15 minutos cada vez.",
+      nHw: n => `Entregar ${n === 1 ? "la tarea pendiente" : `las <b>${n}</b> tareas pendientes`}.`, nKeep: "Mantener el ritmo de práctica y seguir con las clases programadas.",
+      msg: "Comentario del instructor", sign: "Profesor de inglés", none: "Todavía no hay datos en este periodo.", noClasses: "No hubo clases registradas en este periodo.", noHw: "No se dejaron tareas en este periodo.",
+      noStr: "Las fortalezas aparecerán conforme complete quizzes.", noOpp: "Por ahora no hay áreas que preocupen.", foot: "Reporte de avance", gen: "Generado el", print: "Imprimir o guardar PDF", locale: "es-MX",
+      intro: (D, first) => {
+        const k = D.k, c = k.cls[0], m = k.cls[1], passed = (D.ld || D.tp || []).filter(r => r[5] && r[5] >= D.f).map(r => r[1]);
+        let t = `${first} tomó ${c} clase${c === 1 ? "" : "s"}${m ? ` (faltó a ${m})` : ""} y practicó ${k.days} día${k.days === 1 ? "" : "s"} en la plataforma.`;
+        if (passed.length) t += ` Aprobó ${passed.length === 1 ? "la lección" : passed.length + " lecciones:"} <b>${passed.slice(0, 3).map(esc).join(", ")}</b>.`;
+        else if ((D.nx || [])[0]) t += ` Está trabajando en la lección <b>${esc(D.nx[0][1])}</b>.`;
+        if (k.avg != null) t += ` Su promedio en los quizzes finales es de <b>${k.avg}%</b>${D.tr > 3 ? " y va subiendo" : D.tr < -3 ? ", un poco más bajo que al inicio del periodo" : ""}.`;
+        return t + " Abajo está el detalle de cada parte.";
+      } },
+    en: { kick: "Progress report", student: "Student", sumT: "Summary of the period", level: "Level", noLevel: "No placement test yet", classes: "Classes attended", avg: "Average quiz score",
+      days: "Practice days", prevDays: n => `${n > 0 ? "+" : ""}${n} vs previous period`, noneMissed: "None missed", quizzes: n => `${n} final quiz${n === 1 ? "" : "zes"}`,
+      s1: "Quiz scores over time", s1n: "Each dot is a final quiz. The dashed line is the pass mark (80%).",
+      s2: "Practice by skill", sk: { quiz: "Grammar and vocabulary", spoken: "Pronunciation", dict: "Listening", words: "New vocabulary", review: "Review", habit: "Consistency" },
+      skm: { quiz: n => `Final quiz of each lesson (${n} in this period)`, spoken: "Sentences said correctly with the microphone (all time)", dict: "Dictations written correctly (all time)",
+        words: (c, l) => `${c} seen in class this period · ${l} saved in their word list`, review: n => `${n} questions still on their review list`, habit: xp => `${xp} points earned practicing on the platform` },
+      skv: { spoken: n => `${n} sentences`, dict: n => `${n} dictations`, words: n => `${n} words`, review: n => `${n} learned`, habit: n => `${n} days` },
+      s3: "Strengths", s4: "Areas of opportunity", s5: "Lessons", lh: ["Lesson", "Progress", "Tries", "Score", "Status"],
+      passed: d => `Passed ${d}`, progress: "In progress", tries: n => `${n} tr${n === 1 ? "y" : "ies"}`, sections: (a, b) => `${a}/${b} sections`,
+      s6: "Class log", attended: "Attended", missed: "Missed", noNotes: "No notes for this class.", newWords: "New words: ",
+      s7: "Homework", hh: ["Task", "Due", "Status", "Grade"], hs: { done: "Done", late: "Done late", pending: "Pending", overdue: "Overdue" }, fb: "Feedback: ",
+      s8: "To review", rh: ["Question", "Right answer"], s9: "Weekly practice", s9n: "Points earned each week on the platform.", s10: "Attendance by month", s11: "Next steps",
+      nx: (id, t, b) => `Continue with lesson <b>${esc(id)} · ${esc(t)}</b>${b != null ? ` (best score ${b}%, retake the final quiz)` : ""}.`,
+      nRev: n => `Go over the <b>${n}</b> questions waiting in Review on the platform.`, nHabit: "Practice at least <b>2 days a week</b>, about 15 minutes each time.",
+      nHw: n => `Hand in ${n === 1 ? "the pending homework" : `the <b>${n}</b> pending homework tasks`}.`, nKeep: "Keep the practice going and keep up with the scheduled classes.",
+      msg: "A note from the teacher", sign: "English teacher", none: "Nothing yet in this period.", noClasses: "No classes recorded in this period.", noHw: "No homework in this period.",
+      noStr: "Strengths will show up as quizzes are completed.", noOpp: "No areas of concern right now.", foot: "Progress report", gen: "Generated on", print: "Print or save as PDF", locale: "en-US",
+      intro: (D, first) => {
+        const k = D.k, c = k.cls[0], m = k.cls[1], passed = (D.ld || D.tp || []).filter(r => r[5] && r[5] >= D.f).map(r => r[1]);
+        let t = `${first} attended ${c} class${c === 1 ? "" : "es"}${m ? ` (missed ${m})` : ""} and practiced on ${k.days} day${k.days === 1 ? "" : "s"} on the platform.`;
+        if (passed.length) t += ` ${passed.length === 1 ? "They passed" : `They passed ${passed.length} lessons:`} <b>${passed.slice(0, 3).map(esc).join(", ")}</b>.`;
+        else if ((D.nx || [])[0]) t += ` They're working on <b>${esc(D.nx[0][1])}</b>.`;
+        if (k.avg != null) t += ` Their average on the final quizzes is <b>${k.avg}%</b>${D.tr > 3 ? " and going up" : D.tr < -3 ? ", a little lower than at the start of the period" : ""}.`;
+        return t + " The details are below.";
+      } }
+  };
+
+  const MARK = s => `<svg width="${s}" height="${s}" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2346d0"/><path d="M8.5 9h15a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5H16l-4.5 4v-4h-3A2.5 2.5 0 0 1 6 19v-7.5A2.5 2.5 0 0 1 8.5 9z" fill="#fff"/><circle cx="20.5" cy="15.25" r="2.4" fill="#f5c518"/></svg>`;
+  const sh = (n, t) => `<div class="sh"><span class="n">${n}</span>· ${esc(t)}</div>`;
+
+  function scores(sc, x) {
+    const narrow = window.matchMedia && matchMedia("screen and (max-width: 600px)").matches;
+    const W = narrow ? 380 : 680, H = narrow ? 170 : 200, L = 34, Rr = 12, Tp = 16, B = 24, n = sc.length;
+    if (!n) return `<p class="empty">${x.none}</p>`;
+    const px = i => n === 1 ? (L + W - Rr) / 2 : L + i * (W - L - Rr) / (n - 1), py = v => Tp + (100 - v) * (H - Tp - B) / 100;
+    const pts = sc.map((p, i) => [px(i), py(p[1])]), d = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+    const fm = s => new Date(s + "T12:00").toLocaleDateString(x.locale, { month: "short", day: "numeric" });
+    const ticks = n === 1 ? [0] : [0, Math.floor((n - 1) / 2), n - 1].filter((v, i, a) => a.indexOf(v) === i);
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(x.s1)}">
+      ${[0, 50, 100].map(v => `<line x1="${L}" x2="${W - Rr}" y1="${py(v)}" y2="${py(v)}" class="grid"/><text x="${L - 6}" y="${py(v) + 3.5}" text-anchor="end">${v}%</text>`).join("")}
+      <line x1="${L}" x2="${W - Rr}" y1="${py(80)}" y2="${py(80)}" class="pass"/>
+      ${n > 1 ? `<path d="${d}" fill="none" stroke="#2233e6" stroke-width="1.8" stroke-linejoin="round"/>` : ""}
+      ${pts.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#2233e6" stroke="#fff" stroke-width="1.5"><title>${fm(sc[i][0])} · ${esc(sc[i][2])} · ${sc[i][1]}%</title></circle>`).join("")}
+      ${ticks.map(i => `<text x="${px(i)}" y="${H - 6}" text-anchor="${n === 1 ? "middle" : i === 0 ? "start" : i === n - 1 ? "end" : "middle"}">${fm(sc[i][0])}</text>`).join("")}
+      <text x="${pts[n - 1][0]}" y="${pts[n - 1][1] - 10}" class="val" text-anchor="${n === 1 ? "middle" : "end"}">${sc[n - 1][1]}%</text></svg>`;
+  }
+  function bars(wk, x) {
+    const W = 330, H = 150, B = 20, Tp = 16, n = wk.length, max = Math.max(1, ...wk.map(w => w[1]));
+    if (!n || !wk.some(w => w[1])) return `<p class="empty">${x.none}</p>`;
+    const bw = W / n, mi = wk.reduce((b, w, i) => w[1] > wk[b][1] ? i : b, 0);
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(x.s9)}"><line x1="0" x2="${W}" y1="${H - B}" y2="${H - B}" class="grid"/>
+      ${wk.map((w, i) => { const h = w[1] ? Math.max(2, (H - B - Tp) * w[1] / max) : 0, bx = i * bw + bw * .18, ww = bw * .64;
+        return `<rect x="${bx}" y="${H - B - h}" width="${ww}" height="${h}" fill="#2233e6"><title>${w[0]} · ${w[1]}</title></rect>
+        ${i === mi || i === n - 1 ? `<text x="${bx + ww / 2}" y="${H - B - h - 4}" class="val" text-anchor="middle">${w[1]}</text>` : ""}
+        ${n <= 6 || i % 2 === (n - 1) % 2 ? `<text x="${bx + ww / 2}" y="${H - 5}" text-anchor="middle">${w[0].replace("-", "/")}</text>` : ""}`; }).join("")}</svg>`;
+  }
+  function attendance(att, x) {
+    if (!att || !att.length) return `<p class="empty">${x.none}</p>`;
+    const max = Math.max(1, ...att.map(a => a[1] + a[2]));
+    return `<div class="att">${att.map(a => `<div class="r"><span class="m">${new Date(a[0] + "-15").toLocaleDateString(x.locale, { month: "short", year: "2-digit" })}</span>
+      <span class="b"><i style="width:${a[1] / max * 100}%;background:#2233e6"></i><i style="width:${a[2] / max * 100}%;background:var(--amber)"></i></span><span class="v">${a[1]}${a[2] ? " · " + a[2] : ""}</span></div>`).join("")}
+      <div class="legend"><span><i style="background:#2233e6"></i>${x.attended}</span><span><i style="background:var(--amber)"></i>${x.missed}</span></div></div>`;
+  }
+
   function draw() {
     document.documentElement.lang = lang;
-    if (!D) { app.innerHTML = `<p>${lang === "es" ? "Este enlace no tiene los datos del reporte." : "This link has no report data."}</p>`; return; }
-    const t = LinguaReport.T[lang];
-    document.title = "Lingua · " + t.title + " · " + D.n;
-    app.innerHTML = LinguaReport.render(D, lang, { teacher: D.te, tools: `<div class="tools noprint"><div class="lang"><button data-l="es" class="${lang === "es" ? "on" : ""}">ES</button><button data-l="en" class="${lang === "en" ? "on" : ""}">EN</button></div><button class="btn sm" id="pr">${t.print}</button></div>` });
-    app.querySelectorAll("[data-l]").forEach(b => b.onclick = () => { lang = b.dataset.l; draw(); });
-    document.getElementById("pr").onclick = () => window.print();
+    document.querySelectorAll("[data-l]").forEach(b => b.classList.toggle("on", b.dataset.l === lang));
+    const x = X[lang], t = R.T[lang];
+    document.getElementById("pr").textContent = x.print;
+    if (!D || !D.k) { doc.innerHTML = `<div class="sheet"><p class="missing">${lang === "es" ? "Este enlace no tiene los datos del reporte. Pide que te lo vuelvan a mandar." : "This link has no report data. Ask for it to be sent again."}</p></div>`; return; }
+    const k = D.k, name = String(D.n || ""), first = esc(name.trim().split(/\s+/)[0] || name);
+    const fd = s => new Date(s + "T12:00").toLocaleDateString(x.locale, { day: "numeric", month: "short", year: "numeric" });
+    const fds = s => new Date(s + "T12:00").toLocaleDateString(x.locale, { day: "numeric", month: "short" });
+    document.title = (lang === "es" ? "Clases de Inglés · Reporte de avance · " : "English classes · Progress report · ") + name;
+    const areaName = kk => { const A = window.AREAS && window.AREAS[kk]; return A ? (lang === "es" ? A.es : A.en) : kk; };
+    const sItem = s => s[0] === "lesson" ? t.s_lesson(esc(s[1]), s[2]) : s[0] === "area" ? t.s_area(esc(areaName(s[1])), s[2]) : s[0] === "spoken" ? t.s_spoken(s[1]) : s[0] === "dict" ? t.s_dict(s[1]) : t.s_habit(s[1]);
+    const oItem = s => s[0] === "lesson" ? t.o_lesson(esc(s[1]), s[2]) : s[0] === "review" ? t.o_review(esc(s[1]), s[2], esc(s[3])) : s[0] === "area" ? t.o_area(esc(areaName(s[1])), s[2]) : s[0] === "habit" ? t.o_habit(s[1], s[2]) : t.o_hw(s[1]);
+    const lessons = D.ld || (D.tp || []).map(r => [...r, null, null]);
+    const hb = D.hb || {};
+    const dDays = k.days - k.pdays;
+
+    // next steps
+    const steps = (D.nx || []).slice(0, 2).map(n => x.nx(n[0], n[1], n[2]));
+    if (k.rv) steps.push(x.nRev(k.rv));
+    if ((D.op || []).some(o => o[0] === "habit")) steps.push(x.nHabit);
+    const od = (D.op || []).find(o => o[0] === "hw"); if (od) steps.push(x.nHw(od[1]));
+    if (!steps.length) steps.push(x.nKeep);
+
+    const skills = [
+      ["quiz", k.avg == null ? "—" : k.avg + "%", x.skm.quiz((D.sc || []).length)],
+      ["spoken", x.skv.spoken(k.spoken || 0), x.skm.spoken],
+      ["dict", x.skv.dict(k.dict || 0), x.skm.dict],
+      ["words", x.skv.words(k.words || 0), x.skm.words(k.words || 0, hb.words || 0)],
+      ["review", x.skv.review(hb.learned || 0), x.skm.review(k.rv || 0)],
+      ["habit", x.skv.habit(k.days), x.skm.habit(k.xp || 0)]
+    ];
+    const status = r => r[5] ? `<span class="tag g">${x.passed(fds(r[5]))}</span>` : `<span class="tag a">${x.progress}</span>`;
+    const result = r => r[4] == null ? "—" : r[7] != null && r[6] > 1 && r[4] > r[7] ? `${r[7]}% → <span class="up">${r[4]}%</span>` : r[4] + "%";
+    const hwSt = { done: "g", late: "b", pending: "", overdue: "a" };
+    let n = 0; const N = () => ++n;
+
+    doc.innerHTML = `<div class="sheet">
+      <header class="big"><div><h1>${lang === "es" ? "CLASES DE INGLÉS" : "ENGLISH CLASSES"}</h1><p class="kick">${x.kick}</p></div>
+        <div class="r"><span class="date">${fd(D.f)} – ${fd(D.t)}</span><span class="lbl">${esc(t.period[D.p] || "")}</span><span class="kick" style="margin-top:0">${x.student}: ${esc(name.toUpperCase())}</span></div></header>
+      <main>
+        <div class="intro"><h2>${x.sumT}</h2><p>${x.intro(D, first)}</p></div>
+        <div class="facts">
+          <div><span class="lab">${x.level}</span><b class="lv">${D.lv ? esc(D.lv) : "—"}</b><span>${D.lv ? "" : x.noLevel}</span></div>
+          <div><span class="lab">${x.classes}</span><b>${k.cls[0]}</b><span>${k.cls[1] ? t.missedN(k.cls[1]) : x.noneMissed}</span></div>
+          <div><span class="lab">${x.avg}</span><b>${k.avg == null ? "—" : k.avg + "%"}</b><span>${x.quizzes((D.sc || []).length)}</span></div>
+          <div><span class="lab">${x.days}</span><b>${k.days}</b><span>${D.p !== "all" ? x.prevDays(dDays) : ""}</span></div>
+        </div>
+        <section class="sec">${sh(N(), x.s1)}${scores(D.sc || [], x)}<p class="note">${x.s1n}</p></section>
+        <section class="sec">${sh(N(), x.s2)}${skills.map(s => `<div class="row r-sk"><b>${x.sk[s[0]]}</b><span class="m">${s[2]}</span><span class="t">${s[1]}</span></div>`).join("")}</section>
+        <div class="two">
+          <section class="sec">${sh(N(), x.s3)}${(D.st || []).length ? D.st.map(s => `<div class="dash"><span>${sItem(s)}</span></div>`).join("") : `<p class="empty">${x.noStr}</p>`}</section>
+          <section class="sec">${sh(N(), x.s4)}${(D.op || []).length ? D.op.map(s => `<div class="dash o"><span>${oItem(s)}</span></div>`).join("") : `<p class="empty">${x.noOpp}</p>`}</section>
+        </div>
+        <section class="sec">${sh(N(), x.s5)}${lessons.length ? `<div class="row r-ls head">${x.lh.map((h, i) => `<span class="lab${i >= 2 && i <= 3 ? " num" : ""}">${h}</span>`).join("")}</div>
+          ${lessons.map(r => `<div class="row r-ls"><span><b>${esc(r[0])}</b> · ${esc(r[1])}</span>
+            <span class="mbar"><i><b style="width:${Math.min(100, r[2] / (r[3] || 1) * 100)}%"></b></i>${Math.min(r[2], r[3])}/${r[3]}</span>
+            <span class="num tries">${r[6] ? x.tries(r[6]) : "—"}</span><span class="num">${result(r)}</span><span class="st">${status(r)}</span></div>`).join("")}` : `<p class="empty">${x.none}</p>`}</section>
+        <section class="sec">${sh(N(), x.s6)}${(D.cl || []).length ? D.cl.map(c => `<div class="row r-cl"><span class="cl-d">${fds(c[0])}<small>${c[1] ? x.attended : x.missed}</small></span>
+            <span class="cl-b">${c[3] || c[2] ? `<b>${c[2] ? esc(c[2]) + " · " : ""}${esc(c[3])}</b>` : ""}<span class="m">${c[1] ? (c[4] ? esc(c[4]) : x.noNotes) : ""}</span>${c[5] ? `<span class="w">${x.newWords}${esc(c[5])}</span>` : ""}</span></div>`).join("")
+          : (D.nt || []).length ? D.nt.map(c => `<div class="row r-cl"><span class="cl-d">${fds(c[0])}</span><span class="cl-b"><span class="m">${esc(c[1])}</span>${c[2] ? `<span class="w">${x.newWords}${esc(c[2])}</span>` : ""}</span></div>`).join("")
+          : `<p class="empty">${x.noClasses}</p>`}</section>
+        ${D.hl ? `<section class="sec">${sh(N(), x.s7)}${D.hl.length ? `<div class="row r-hw head">${x.hh.map((h, i) => `<span class="lab${i === 3 ? " num" : ""}">${h}</span>`).join("")}</div>
+          ${D.hl.map(h => `<div class="row r-hw"><span><b>${esc(h[0])}</b>${h[4] ? `<span class="m" style="display:block;margin-top:3px">${x.fb}${esc(h[4])}</span>` : ""}</span>
+            <span class="due">${h[1] ? fds(h[1]) : "—"}</span><span class="tag ${hwSt[h[2]]}">${x.hs[h[2]]}</span><span class="num gr">${h[3] == null ? "" : h[3]}</span></div>`).join("")}` : `<p class="empty">${x.noHw}</p>`}</section>` : ""}
+        ${(D.rx || []).length ? `<section class="sec">${sh(N(), x.s8)}<div class="row r-rx head"><span class="lab">${x.rh[0]}</span><span class="lab">${x.rh[1]}</span></div>
+          ${D.rx.map(q => `<div class="row r-rx"><span class="m">${esc(q[0])}</span><span class="ans">${esc(q[1])}</span></div>`).join("")}</section>` : ""}
+        <div class="two">
+          <section class="sec">${sh(N(), x.s9)}${bars(D.wk || [], x)}<p class="note">${x.s9n}</p></section>
+          <section class="sec">${sh(N(), x.s10)}${attendance(D.att, x)}</section>
+        </div>
+        <section class="sec">${sh(N(), x.s11)}${steps.map(s => `<div class="dash"><span>${s}</span></div>`).join("")}</section>
+      </main>
+      ${D.c ? `<div class="msg"><span class="k">${x.msg}</span><p>${esc(D.c)}</p><small>— ${esc(D.te || G.maestroNombre || G.maestro || "")} · ${x.sign}</small></div>` : ""}
+      <footer><span class="brand">${MARK(20)}Lingua</span><span>${x.foot.toUpperCase()} · ${esc(name.toUpperCase())} · ${x.gen} ${fd(String(D.g || "").slice(0, 10) || D.t)}</span></footer>
+    </div>`;
+    try { parent !== window && parent.postMessage({ lingua: "informe-height", h: document.documentElement.scrollHeight }, location.origin); } catch (e) {}
   }
+  document.querySelectorAll("[data-l]").forEach(b => b.onclick = () => { lang = b.dataset.l; draw(); });
+  document.getElementById("pr").onclick = () => window.print();
+  let wNarrow = innerWidth <= 600, rT = null;
+  addEventListener("resize", () => { clearTimeout(rT); rT = setTimeout(() => { if ((innerWidth <= 600) !== wNarrow) { wNarrow = !wNarrow; draw(); } }, 200); });
   draw();
 })();
 </script>

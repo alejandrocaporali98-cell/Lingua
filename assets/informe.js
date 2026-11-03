@@ -63,8 +63,32 @@
     if (overdue) op.push(["hw", overdue]);
     const nt = cls.filter(c => c.status === "attended" && (c.notes || c.words)).sort((a, b) => a.starts_at.localeCompare(b.starts_at)).slice(-8).map(c => [dkey(c.starts_at), (c.notes || "").slice(0, 220), (c.words || "").slice(0, 140)]);
     const words = cls.reduce((t, c) => t + (c.words ? c.words.split(",").filter(x => x.trim()).length : 0), 0);
+    // ── Detail for the family document (v2). Kept short: it travels inside the link. ──
+    const cut = (x, n) => { x = String(x || "").replace(/\s+/g, " ").trim(); return x.length > n ? x.slice(0, n - 1).trim() + "…" : x; };
+    const allLessons = (window.LINGUA && window.LINGUA.modulos || []).flatMap(m => m.lecciones || []);
+    const lessonTitle = id => { if (!id) return ""; const r = s.rows.find(x => x.l.id === id); const l = r ? r.l : allLessons.find(x => x.id === id); return l ? l.titulo : ""; };
+    // class log: every class in the period with its lesson and notes
+    const cl = cls.filter(c => c.status === "attended" || c.status === "missed").sort((a, b) => a.starts_at.localeCompare(b.starts_at)).slice(-12)
+      .map(c => [dkey(c.starts_at), c.status === "missed" ? 0 : 1, c.lesson_id || "", cut(c.title || lessonTitle(c.lesson_id), 50), cut(c.notes, 150), cut(c.words, 90)]);
+    // homework: what was asked, when it was due, how it went
+    const today = dkey(new Date());
+    const hl = hw.sort((a, b) => String(a.due || a.created_at).localeCompare(String(b.due || b.created_at))).slice(-10).map(h => {
+      const done = h.done_at || h.submitted_at, late = done && h.due && dkey(done) > h.due;
+      const st = done ? (late ? "late" : "done") : (h.due && h.due < today ? "overdue" : "pending");
+      return [cut(h.title, 70), h.due || "", st, h.grade == null ? null : h.grade, cut(h.feedback, 120)];
+    });
+    // lessons: tries, first and best score (shows improvement)
+    const ld = s.rows.filter(r => r.done || r.tries).map(r => {
+      const at = (get("attempts." + r.l.id, []) || []).filter(a => a && a.n), first = at.length ? pct(at[0]) : null, d = get("diploma." + r.l.id, null);
+      return [r.l.id, r.l.titulo, r.done, r.l.secs || 5, r.best ? pct(r.best) : null, d ? dkey(d.at) : null, at.length || r.tries || 0, first];
+    });
+    // examples of questions to review (prompt + right answer)
+    const rx = s.review.slice(-40).reverse().filter(q => q.p && q.a).slice(0, 6).map(q => [cut(String(q.p).replace(/___/, "___"), 100), cut(q.a, 50), String(q.l || "").split(".")[0]]);
+    // next lessons: the first ones in their list that aren't passed yet
+    const nx = s.rows.filter(r => !(r.best && pct(r.best) >= 80)).slice(0, 3).map(r => [r.l.id, r.l.titulo, r.best ? pct(r.best) : null]);
+    const hb = { words: (get("words", []) || []).length, learned: get("reviewLearned", 0) || 0, streak: (g && g.best) || 0 };
     return {
-      v: 1, n: s.p.display_name || "Student", g: new Date().toISOString(), p: period, f: dkey(from), t: dkey(to), lv: pl ? pl.nivel : null,
+      v: 2, cl, hl, ld, rx, nx, hb, n: s.p.display_name || "Student", g: new Date().toISOString(), p: period, f: dkey(from), t: dkey(to), lv: pl ? pl.nivel : null,
       k: { cls: [cls.filter(c => c.status === "attended").length, cls.filter(c => c.status === "missed").length], days: practice.length, pdays: prevPractice.length,
         passed: passedIn.length, lessons: s.rows.length, done: s.rows.filter(r => r.best && pct(r.best) >= 80).length, avg: avg(inAtt), xp,
         hw: [hw.filter(h => h.done_at).length, hw.length], words, spoken: counters.spoken || 0, dict: counters.dictation || 0, rv: s.review.length },

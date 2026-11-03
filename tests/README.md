@@ -16,6 +16,7 @@ python tests/test_lessons.py 302     # one lesson
 | `test_accounts.py` | Create, change password, archive (can't sign in, keeps history), restore, delete only archived |
 | `test_teacher.py` | Every teacher view, class link in WhatsApp, error log, backup file, new-version notice |
 | `test_billing.py` | Bank details, slips, payments with screenshots, receipts, phone layout |
+| `test_report.py` | Progress report for families: every section, Spanish / English, phone, PDF, old links still open |
 | `test_security.py` | Names, notes and answers with HTML never run as code on any page |
 
 GitHub runs all of them on every push (`.github/workflows/deploy.yml`) and only publishes the site when they pass.

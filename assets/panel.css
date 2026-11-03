@@ -413,3 +413,7 @@ a.li { color: inherit; text-decoration: none; } a.li:hover { background: var(--b
   #acc .hw-item .actions { flex-wrap: wrap; }
   #acc .hw-item .pw { flex: 1 1 140px; width: auto !important; }
 }
+/* Reports · live preview of the family document */
+.rp-docprev { padding: 0; overflow: hidden; }
+.rp-docprev .card-head { padding: 16px 20px 6px; }
+.rp-docprev iframe { display: block; width: 100%; height: 1400px; border: 0; background: #e9e9ec; }

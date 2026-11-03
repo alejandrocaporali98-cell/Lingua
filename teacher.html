@@ -637,11 +637,15 @@ function reportsView(id, period) {
         <div class="field"><label for="rpC">Your comment <span class="muted" style="font-weight:500">(optional)</span></label><textarea id="rpC" maxlength="800" style="min-height:64px">${esc(RPC)}</textarea></div>
       </div>
       <div class="actions"><button class="btn primary" id="rpOpen">Open report</button><button class="btn" id="rpCopy">Copy link for WhatsApp</button></div></div>
-    <div class="card" id="rpPrev">${LinguaReport.render({ ...D, c: RPC }, "en", { teacher: G.maestroNombre || G.maestro })}</div>`;
+    <div class="card rp-docprev"><div class="card-head"><h2>Preview</h2><span class="muted" style="font-size:.8em">Exactly what the family sees</span></div><iframe id="rpFrame" title="Report preview" loading="lazy"></iframe></div>`;
   wireTop(); wireRp(period);
-  const link = () => { RPC = document.getElementById("rpC").value.trim(); RPL = document.getElementById("rpL").value; return location.origin + location.pathname.replace(/teacher\.html$/, "") + "informe.html?d=" + b64({ ...D, c: RPC || undefined, te: G.maestroNombre || G.maestro }) + "&lang=" + RPL; };
-  document.getElementById("rpC").oninput = e => { RPC = e.target.value; };
-  document.getElementById("rpL").onchange = e => { RPL = e.target.value; };
+  const build = () => location.origin + location.pathname.replace(/teacher\.html$/, "") + "informe.html?d=" + b64({ ...D, c: RPC.trim() || undefined, te: G.maestroNombre || G.maestro }) + "&lang=" + RPL;
+  const link = () => { RPC = document.getElementById("rpC").value; RPL = document.getElementById("rpL").value; return build(); };
+  const fr = document.getElementById("rpFrame"), show = () => { fr.src = build() + "&embed=1"; };
+  window.onmessage = e => { if (e.origin === location.origin && e.data && e.data.lingua === "informe-height" && e.source === fr.contentWindow) fr.style.height = Math.min(6000, e.data.h + 8) + "px"; };
+  let rpT = null; show();
+  document.getElementById("rpC").oninput = e => { RPC = e.target.value; clearTimeout(rpT); rpT = setTimeout(show, 700); };
+  document.getElementById("rpL").onchange = e => { RPL = e.target.value; show(); };
   document.getElementById("rpOpen").onclick = () => window.open(link(), "_blank", "noopener");
   document.getElementById("rpCopy").onclick = () => { const url = link(); navigator.clipboard.writeText((RPL === "es" ? "Reporte de avance de inglés de " : "English progress report for ") + (s.p.display_name || "") + ": " + url).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url)); };
 }
