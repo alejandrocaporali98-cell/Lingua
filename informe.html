@@ -27,7 +27,7 @@
   header.big .r { text-align: right; display: grid; gap: 8px; align-content: start; }
   header.big .date { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .lbl { font-size: 9.5px; letter-spacing: 2.5px; text-transform: uppercase; color: #9a9a9a; }
-  main { padding: 30px 60px 10px; display: grid; gap: 26px; }
+  main { padding: 30px 60px 10px; display: grid; gap: 30px; }
   .intro h2 { font-size: 16px; font-weight: 700; } .intro p { font-size: 11.5px; color: #444; line-height: 1.65; margin-top: 6px; }
   .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--line); padding: 14px 0; }
   .facts > div { display: grid; gap: 6px; align-content: start; } .facts b { font-size: 22px; letter-spacing: -.3px; font-variant-numeric: tabular-nums; } .facts b.lv { color: var(--blue); }
@@ -128,6 +128,57 @@
   .sh { letter-spacing: .12em; }
   .sh .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: var(--sc, var(--blue)); color: #fff; font-size: 10.5px; letter-spacing: 0; }
   .msg { border-radius: 22px; background: var(--stage); } .msg .k { color: var(--gold); }
+  /* Detail blocks in the board style */
+  .blk { display: grid; gap: 12px; break-inside: avoid; }
+  .hd { display: grid; gap: 3px; } .hd .eb { font-size: 9.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+  .hd h3 { font-size: 19px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+  .card { border-radius: 20px; padding: 18px; display: grid; gap: 10px; align-content: start; break-inside: avoid; }
+  .card.soft { background: #f4f5f8; } .card.tint { background: color-mix(in srgb, var(--hc) 8%, #fff); }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+  .qrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+  .qt { border-radius: 14px; background: color-mix(in srgb, var(--whl) 10%, #fff); padding: 12px 12px 10px; display: grid; gap: 2px; }
+  .qt .qn { font-size: 9.5px; font-weight: 800; letter-spacing: .08em; color: var(--whl); } .qt b { font-size: 24px; font-weight: 800; letter-spacing: -.03em; color: #b45309; }
+  .qt.ok b { color: var(--ink); } .qt small { font-size: 10px; color: #777; font-weight: 600; }
+  .sk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .sk > div { border-radius: 16px; background: var(--jeo); color: #fff; padding: 14px 14px 12px; display: grid; gap: 2px; box-shadow: inset 0 -3px 0 rgba(0,0,0,.18); }
+  .sk b { font-size: 26px; font-weight: 800; letter-spacing: -.03em; color: var(--gold); line-height: 1.05; } .sk span { font-size: 12px; font-weight: 800; }
+  .sk small { font-size: 10px; opacity: .8; font-weight: 600; line-height: 1.35; }
+  .sk > div.zero { background: #f1f2f5; color: #8a8f9c; box-shadow: none; } .sk > div.zero b { color: #c3c6cf; }
+  .it { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 0; border-top: 1px solid color-mix(in srgb, var(--hc) 18%, #fff); }
+  .it:first-of-type { border-top: 0; }
+  .it span { display: grid; gap: 2px; min-width: 0; } .it b { font-size: 12px; font-weight: 800; } .it small { font-size: 10px; color: #666; font-weight: 600; overflow-wrap: anywhere; }
+  .it em { font-style: normal; font-size: 12px; font-weight: 800; color: #fff; background: var(--hc); border-radius: 99px; padding: 4px 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .lgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .lc { border-radius: 16px; background: #f4f5f8; padding: 12px; display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+  .lc .ln { width: 46px; height: 46px; border-radius: 12px; background: var(--tile); color: var(--gold); display: grid; place-items: center; font-weight: 800; font-size: 15px; box-shadow: inset 0 -3px 0 rgba(0,0,0,.25); }
+  .lc .lb { display: grid; gap: 5px; min-width: 0; } .lc .lb b { font-size: 12.5px; font-weight: 800; } .lc .lb small { font-size: 9.5px; color: #777; font-weight: 600; }
+  .lc .lr { display: grid; gap: 5px; justify-items: end; } .lc .lr b { font-size: 15px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .road.sm { background: #e6e8ee; padding: 3px; gap: 3px; border-radius: 7px; margin: 0; } .road.sm span { height: 8px; border-radius: 3px; background: #fff; } .road.sm span.done { background: var(--race); }
+  .chip { font-size: 9px; font-weight: 800; letter-spacing: .04em; padding: 4px 9px; border-radius: 99px; background: #e8e9ee; color: #555; white-space: nowrap; }
+  .chip.ok { background: color-mix(in srgb, var(--ttt) 14%, #fff); color: var(--ttt); } .chip.warn { background: #fdeee0; color: #9a4b00; }
+  .tl { display: grid; gap: 8px; }
+  .tli { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; align-items: start; }
+  .tli .dd { border-radius: 14px; background: var(--jeo); color: #fff; display: grid; justify-items: center; padding: 8px 0 7px; }
+  .tli .dd b { font-size: 20px; font-weight: 800; line-height: 1; } .tli .dd small { font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .85; }
+  .tli.miss .dd { background: #e8e9ee; color: #8a8f9c; }
+  .tlc { border-radius: 14px; background: #f4f5f8; padding: 11px 14px; display: grid; gap: 6px; } .tlc b { font-size: 12.5px; font-weight: 800; } .tlc p { font-size: 11.5px; color: #333; line-height: 1.5; }
+  .tli.miss .tlc { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .words { display: flex; flex-wrap: wrap; gap: 5px; } .words i { font-style: normal; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; background: color-mix(in srgb, var(--jeo) 12%, #fff); color: var(--jeo); }
+  .hwl { display: grid; gap: 6px; }
+  .hwi { display: grid; grid-template-columns: 110px minmax(0, 1fr) 54px 40px; gap: 12px; align-items: center; border-radius: 14px; background: #f4f5f8; padding: 10px 14px; }
+  .hwi .chip { justify-self: start; } .hwt { display: grid; gap: 2px; } .hwt b { font-size: 12px; font-weight: 800; } .hwt small { font-size: 10.5px; color: #666; font-style: italic; }
+  .hwd { font-size: 10.5px; color: #777; font-weight: 600; text-align: right; }
+  .grade { justify-self: end; width: 36px; height: 36px; border-radius: 10px; background: var(--ttt); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 13px; }
+  .rxg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .rx { border-radius: 14px; background: color-mix(in srgb, var(--jam) 7%, #fff); padding: 12px 14px; border-left: 4px solid var(--jam); }
+  .rx p { font-size: 12.5px; font-weight: 600; line-height: 1.45; } .rx u { text-decoration: none; font-weight: 800; color: var(--jam); border-bottom: 2px solid var(--jam); padding: 0 2px; }
+  .mt { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+  .mt > div { border-radius: 16px; background: var(--stage); color: #fff; padding: 12px 14px; display: grid; gap: 2px; }
+  .mt small { font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); } .mt b { font-size: 26px; font-weight: 800; line-height: 1.05; } .mt span { font-size: 10px; opacity: .75; font-weight: 600; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+  .steps > div { border-radius: 16px; background: #f4f5f8; padding: 14px; display: grid; gap: 8px; align-content: start; }
+  .steps .sn { width: 30px; height: 30px; border-radius: 9px; background: var(--tile); color: var(--gold); display: grid; place-items: center; font-weight: 800; font-size: 13px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.25); }
+  .steps p { font-size: 11.5px; line-height: 1.5; color: #222; }
   .missing { padding: 60px; font-size: 15px; line-height: 1.6; }
   body.embed .bar { display: none; } body.embed .sheet { margin: 0 auto; box-shadow: none; }
   @media screen and (max-width: 840px) {
@@ -135,6 +186,8 @@
     header.big { padding: 30px 22px; flex-direction: column; } header.big .r { text-align: left; }
     main { padding: 24px 22px 10px; } .msg { margin: 6px 22px; } footer { padding: 16px 22px 22px; }
     .facts { grid-template-columns: 1fr 1fr; } .two { grid-template-columns: 1fr; gap: 26px; }
+    .pair, .lgrid, .rxg { grid-template-columns: 1fr; } .sk { grid-template-columns: 1fr 1fr; }
+    .hwi { grid-template-columns: minmax(0, 1fr) auto; } .hwi .chip { grid-column: 1 / -1; } .hwd { text-align: left; }
     .board { grid-template-columns: 1fr 1fr; } .bx.jeo { grid-column: 1 / -1; grid-row: auto; } .board2, .hl3 { grid-template-columns: 1fr; }
     .bx .big { gap: 10px; } .bx .big svg { width: 52px; height: 52px; } .bx .bt, .bx .big .bt { font-size: 15.5px; } .lvt { grid-template-columns: repeat(3, 1fr); } .lvt small { font-size: 7px; } .bx.jeo .bt { font-size: 28px; } .sign { margin: 22px 22px 0; gap: 20px; }
 
@@ -169,6 +222,14 @@
 
   const X = {
     es: {
+      eQ: "Quizzes finales", tQ: "Cómo le fue en cada quiz", s1t: "Cada ficha es el quiz final de una lección. Se aprueba con 80%.",
+      eS: "En la plataforma", tSk: "Lo que practicó entre clases", notYet: "Aún sin practicar",
+      eStr: "Fortalezas", tStr: "Lo que ya domina", eOpp: "Áreas de oportunidad", tOpp: "Lo que vamos a reforzar",
+      subBest: "Mejor calificación", subPl: "Examen de colocación", subSpk: "Frases dichas bien", subDict: "Dictados correctos", subDays: "Días de práctica",
+      subRetry: "Último quiz · conviene repetirlo", subRev: ex => ex ? `Preguntas por repasar · “${ex}”` : "Preguntas por repasar", subHabit: "Días de práctica vs meta", subHw: "Tareas vencidas",
+      eL: "Lecciones", tL2: "Su avance lección por lección", eC: "Bitácora", tC2: "Lo que vimos en cada clase", eH: "Tareas", tH2: "Lo que se dejó de tarea",
+      eR: "Para repasar", tR2: "Frases que todavía se le complican", rxN: "Lo subrayado es la respuesta correcta.", eP: "Ritmo", tP2: "Práctica y asistencia",
+      attN: n => `clase${n === 1 ? "" : "s"} tomada${n === 1 ? "" : "s"}`, eN: "Próximos pasos", tN2: "Lo que sigue",
       tC: "Clases", tD: "Días", tL: "Lecciones", tP: "Puntos", tW: "Palabras", tS: "Frases", qOk: "Aprobado", qLow: "Por reforzar", next: "Siguiente:", courseDone: "Todas sus lecciones están aprobadas.",
       lvP: (l, n) => `Hoy está en <b>${l} · ${n}</b>. Cada nivel toma varios meses de clases y práctica.`,
       vT: "Evaluación del periodo", vL: ["Sobresaliente", "Buen avance", "En proceso", "Requiere atención", "Empezando"],
@@ -184,9 +245,9 @@
       kick: "Reporte de avance", student: "Alumno", sumT: "Resumen del periodo", level: "Nivel", noLevel: "Sin examen de colocación", classes: "Clases tomadas", avg: "Promedio en quizzes",
       days: "Días de práctica", prevDays: n => `${n > 0 ? "+" : ""}${n} vs periodo anterior`, noneMissed: "Sin faltas", quizzes: n => `${n} quiz${n === 1 ? "" : "zes"} final${n === 1 ? "" : "es"}`,
       s1: "Calificaciones en el tiempo", s1n: "Cada punto es un quiz final. La línea punteada es la calificación aprobatoria (80%).",
-      s2: "Práctica por habilidad", sk: { quiz: "Gramática y vocabulario", spoken: "Pronunciación", dict: "Comprensión auditiva", words: "Vocabulario nuevo", review: "Repaso", habit: "Constancia" },
-      skm: { quiz: n => `Quizzes finales de cada lección (${n} en el periodo)`, spoken: "Frases dichas correctamente con el micrófono (en total)", dict: "Dictados escritos correctamente (en total)",
-        words: (c, l) => `${c} vistas en clase en este periodo · ${l} guardadas en su lista de palabras`, review: n => `${n} preguntas pendientes en su lista de repaso`, habit: xp => `${xp} puntos ganados practicando en la plataforma` },
+      s2: "Práctica por habilidad", sk: { quiz: "Gramática", spoken: "Pronunciación", dict: "Comprensión auditiva", words: "Vocabulario", review: "Repaso", habit: "Constancia" },
+      skm: { quiz: n => `Promedio de ${n} quiz${n === 1 ? "" : "zes"} final${n === 1 ? "" : "es"}`, spoken: "Frases dichas bien con el micrófono", dict: "Dictados escritos sin errores",
+        words: (c, l) => `${c} vistas en clase · ${l} en su lista`, review: n => `Preguntas aprendidas · ${n} pendientes`, habit: xp => `Días con práctica · ${xp} puntos` },
       skv: { spoken: n => `${n} frases`, dict: n => `${n} dictados`, words: n => `${n} palabras`, review: n => `${n} aprendidas`, habit: n => `${n} días` },
       s3: "Fortalezas", s4: "Áreas de oportunidad", s5: "Lecciones", lh: ["Lección", "Avance", "Intentos", "Resultado", "Estado"],
       passed: d => `Aprobada ${d}`, progress: "En curso", tries: n => `${n} intento${n === 1 ? "" : "s"}`, sections: (a, b) => `${a}/${b} secciones`,
@@ -207,6 +268,14 @@
         return t + " Abajo está el detalle de cada parte.";
       } },
     en: {
+      eQ: "Final quizzes", tQ: "How each quiz went", s1t: "Each tile is a lesson's final quiz. 80% passes.",
+      eS: "On the platform", tSk: "What they practiced between classes", notYet: "Not practiced yet",
+      eStr: "Strengths", tStr: "What they've got down", eOpp: "Areas of opportunity", tOpp: "What we'll reinforce",
+      subBest: "Best score", subPl: "Placement test", subSpk: "Sentences said right", subDict: "Correct dictations", subDays: "Practice days",
+      subRetry: "Last quiz · worth retaking", subRev: ex => ex ? `Questions to review · “${ex}”` : "Questions to review", subHabit: "Practice days vs goal", subHw: "Overdue homework",
+      eL: "Lessons", tL2: "Progress lesson by lesson", eC: "Class log", tC2: "What we covered in each class", eH: "Homework", tH2: "What was assigned",
+      eR: "To review", tR2: "Sentences that still trip them up", rxN: "The underlined word is the right answer.", eP: "Rhythm", tP2: "Practice and attendance",
+      attN: n => `class${n === 1 ? "" : "es"} attended`, eN: "Next steps", tN2: "What comes next",
       tC: "Classes", tD: "Days", tL: "Lessons", tP: "Points", tW: "Words", tS: "Sentences", qOk: "Passing", qLow: "To reinforce", next: "Next:", courseDone: "All their lessons are passed.",
       lvP: (l, n) => `They're at <b>${l} · ${n}</b> today. Each level takes a few months of classes and practice.`,
       vT: "Overall assessment", vL: ["Outstanding", "Good progress", "On the way", "Needs attention", "Getting started"],
@@ -222,9 +291,9 @@
       kick: "Progress report", student: "Student", sumT: "Summary of the period", level: "Level", noLevel: "No placement test yet", classes: "Classes attended", avg: "Average quiz score",
       days: "Practice days", prevDays: n => `${n > 0 ? "+" : ""}${n} vs previous period`, noneMissed: "None missed", quizzes: n => `${n} final quiz${n === 1 ? "" : "zes"}`,
       s1: "Quiz scores over time", s1n: "Each dot is a final quiz. The dashed line is the pass mark (80%).",
-      s2: "Practice by skill", sk: { quiz: "Grammar and vocabulary", spoken: "Pronunciation", dict: "Listening", words: "New vocabulary", review: "Review", habit: "Consistency" },
-      skm: { quiz: n => `Final quiz of each lesson (${n} in this period)`, spoken: "Sentences said correctly with the microphone (all time)", dict: "Dictations written correctly (all time)",
-        words: (c, l) => `${c} seen in class this period · ${l} saved in their word list`, review: n => `${n} questions still on their review list`, habit: xp => `${xp} points earned practicing on the platform` },
+      s2: "Practice by skill", sk: { quiz: "Grammar", spoken: "Pronunciation", dict: "Listening", words: "Vocabulary", review: "Review", habit: "Consistency" },
+      skm: { quiz: n => `Average of ${n} final quiz${n === 1 ? "" : "zes"}`, spoken: "Sentences said right with the microphone", dict: "Dictations with no mistakes",
+        words: (c, l) => `${c} seen in class · ${l} in their list`, review: n => `Questions learned · ${n} pending`, habit: xp => `Days with practice · ${xp} points` },
       skv: { spoken: n => `${n} sentences`, dict: n => `${n} dictations`, words: n => `${n} words`, review: n => `${n} learned`, habit: n => `${n} days` },
       s3: "Strengths", s4: "Areas of opportunity", s5: "Lessons", lh: ["Lesson", "Progress", "Tries", "Score", "Status"],
       passed: d => `Passed ${d}`, progress: "In progress", tries: n => `${n} tr${n === 1 ? "y" : "ies"}`, sections: (a, b) => `${a}/${b} sections`,
@@ -339,6 +408,13 @@
     const hb = D.hb || {};
     const dDays = k.days - k.pdays;
 
+    const sRow = r => r[0] === "lesson" ? [esc(r[1]), r[2] + "%", x.subBest] : r[0] === "area" ? [esc(areaName(r[1])), r[2] + "%", x.subPl]
+      : r[0] === "spoken" ? [x.sk.spoken, r[1], x.subSpk] : r[0] === "dict" ? [x.sk.dict, r[1], x.subDict] : [x.sk.habit, r[1], x.subDays];
+    const oRow = r => r[0] === "lesson" ? [esc(r[1]), r[2] + "%", x.subRetry] : r[0] === "review" ? [esc(r[1]), r[2], x.subRev(esc(r[3] || ""))]
+      : r[0] === "area" ? [esc(areaName(r[1])), r[2] + "%", x.subPl] : r[0] === "habit" ? [x.sk.habit, r[1] + "/" + r[2] * 2, x.subHabit] : [x.s7, r[1], x.subHw];
+    const strengths = (D.st || []).slice(0, 5).map(sRow), opps = (D.op || []).slice(0, 5).map(oRow);
+    const hwSt2 = { done: "ok", late: "", pending: "", overdue: "warn" };
+    const hd = (eb, title, c) => `<div class="hd"><span class="eb" style="color:${c}">${eb}</span><h3>${title}</h3></div>`;
     // scorecard
     const ca = k.cls[0], cm = k.cls[1], attP = ca + cm ? ca / (ca + cm) * 100 : null;
     const hws = (D.hl || []).filter(h => h[2] !== "pending"), hwOn = hws.filter(h => h[2] === "done").length;
@@ -360,12 +436,12 @@
     if (!steps.length) steps.push(x.nKeep);
 
     const skills = [
-      ["quiz", k.avg == null ? "—" : k.avg + "%", x.skm.quiz((D.sc || []).length)],
-      ["spoken", x.skv.spoken(k.spoken || 0), x.skm.spoken],
-      ["dict", x.skv.dict(k.dict || 0), x.skm.dict],
-      ["words", x.skv.words(k.words || 0), x.skm.words(k.words || 0, hb.words || 0)],
-      ["review", x.skv.review(hb.learned || 0), x.skm.review(k.rv || 0)],
-      ["habit", x.skv.habit(k.days), x.skm.habit(k.xp || 0)]
+      ["quiz", k.avg == null ? "—" : k.avg + "%", x.skm.quiz((D.sc || []).length), k.avg != null],
+      ["spoken", k.spoken || 0, x.skm.spoken, !!k.spoken],
+      ["dict", k.dict || 0, x.skm.dict, !!k.dict],
+      ["words", (k.words || 0) + (hb.words || 0), x.skm.words(k.words || 0, hb.words || 0), !!((k.words || 0) + (hb.words || 0))],
+      ["review", hb.learned || 0, x.skm.review(k.rv || 0), !!(hb.learned || k.rv)],
+      ["habit", k.days, x.skm.habit(k.xp || 0), !!k.days]
     ];
     const status = r => r[5] ? `<span class="tag g">${x.passed(fds(r[5]))}</span>` : `<span class="tag a">${x.progress}</span>`;
     const result = r => r[4] == null ? "—" : r[7] != null && r[6] > 1 && r[4] > r[7] ? `${r[7]}% → <span class="up">${r[4]}%</span>` : r[4] + "%";
@@ -406,30 +482,36 @@
           <div style="--hc:var(--race)"><span class="eb">${x.hFix}</span><p>${fixItem ? oItem(fixItem) : x.noOpp}</p></div>
           <div style="--hc:var(--ttt)"><span class="eb">${x.hGoal}</span><p>${(D.nx || [])[0] ? x.hGoalL(D.nx[0][0], D.nx[0][1]) : x.hGoalH}</p></div>
         </div>
-        <section class="sec">${sh(N(), x.s1)}${scores(D.sc || [], x)}<p class="note">${x.s1n}</p></section>
-        <section class="sec">${sh(N(), x.s2)}${skills.map(s => `<div class="row r-sk"><b>${x.sk[s[0]]}</b><span class="m">${s[2]}</span><span class="t">${s[1]}</span></div>`).join("")}</section>
-        <div class="two">
-          <section class="sec">${sh(N(), x.s3)}${(D.st || []).length ? D.st.map(s => `<div class="dash"><span>${sItem(s)}</span></div>`).join("") : `<p class="empty">${x.noStr}</p>`}</section>
-          <section class="sec">${sh(N(), x.s4)}${(D.op || []).length ? D.op.map(s => `<div class="dash o"><span>${oItem(s)}</span></div>`).join("") : `<p class="empty">${x.noOpp}</p>`}</section>
+        ${(D.sc || []).length ? `<section class="blk">${hd(x.eQ, x.tQ, "var(--whl)")}
+          ${D.sc.length > 6 ? `<div class="card soft">${scores(D.sc, x)}<p class="note">${x.s1n}</p></div>`
+            : `<div class="qrow">${D.sc.map(q => `<div class="qt ${q[1] >= 80 ? "ok" : ""}"><span class="qn">${esc(q[2])}</span><b>${q[1]}%</b><small>${fds(q[0])}</small></div>`).join("")}</div><p class="note">${x.s1t}</p>`}</section>` : ""}
+        <section class="blk">${hd(x.eS, x.tSk, "var(--jeo)")}
+          <div class="sk">${skills.map(s => `<div class="${s[3] ? "" : "zero"}"><b>${s[3] ? s[1] : "—"}</b><span>${x.sk[s[0]]}</span><small>${s[3] ? s[2] : x.notYet}</small></div>`).join("")}</div></section>
+        <div class="pair">
+          <section class="card tint" style="--hc:var(--ttt)">${hd(x.eStr, x.tStr, "var(--ttt)")}
+            ${strengths.length ? strengths.map(r => `<div class="it"><span><b>${r[0]}</b><small>${r[2]}</small></span><em>${r[1]}</em></div>`).join("") : `<p class="empty">${x.noStr}</p>`}</section>
+          <section class="card tint" style="--hc:var(--race)">${hd(x.eOpp, x.tOpp, "var(--race)")}
+            ${opps.length ? opps.map(r => `<div class="it"><span><b>${r[0]}</b><small>${r[2]}</small></span><em>${r[1]}</em></div>`).join("") : `<p class="empty">${x.noOpp}</p>`}</section>
         </div>
-        <section class="sec">${sh(N(), x.s5)}${lessons.length ? `<div class="row r-ls head">${x.lh.map((h, i) => `<span class="lab${i >= 2 && i <= 3 ? " num" : ""}">${h}</span>`).join("")}</div>
-          ${lessons.map(r => `<div class="row r-ls"><span><b>${esc(r[0])}</b> · ${esc(r[1])}</span>
-            <span class="mbar"><i><b style="width:${Math.min(100, r[2] / (r[3] || 1) * 100)}%"></b></i>${Math.min(r[2], r[3])}/${r[3]}</span>
-            <span class="num tries">${r[6] ? x.tries(r[6]) : "—"}</span><span class="num">${result(r)}</span><span class="st">${status(r)}</span></div>`).join("")}` : `<p class="empty">${x.none}</p>`}</section>
-        <section class="sec">${sh(N(), x.s6)}${(D.cl || []).length ? D.cl.map(c => `<div class="row r-cl"><span class="cl-d">${fds(c[0])}<small>${c[1] ? x.attended : x.missed}</small></span>
-            <span class="cl-b">${c[3] || c[2] ? `<b>${c[2] ? esc(c[2]) + " · " : ""}${esc(c[3])}</b>` : ""}<span class="m">${c[1] ? (c[4] ? esc(c[4]) : x.noNotes) : ""}</span>${c[5] ? `<span class="w">${x.newWords}${esc(c[5])}</span>` : ""}</span></div>`).join("")
-          : (D.nt || []).length ? D.nt.map(c => `<div class="row r-cl"><span class="cl-d">${fds(c[0])}</span><span class="cl-b"><span class="m">${esc(c[1])}</span>${c[2] ? `<span class="w">${x.newWords}${esc(c[2])}</span>` : ""}</span></div>`).join("")
-          : `<p class="empty">${x.noClasses}</p>`}</section>
-        ${D.hl ? `<section class="sec">${sh(N(), x.s7)}${D.hl.length ? `<div class="row r-hw head">${x.hh.map((h, i) => `<span class="lab${i === 3 ? " num" : ""}">${h}</span>`).join("")}</div>
-          ${D.hl.map(h => `<div class="row r-hw"><span><b>${esc(h[0])}</b>${h[4] ? `<span class="m" style="display:block;margin-top:3px">${x.fb}${esc(h[4])}</span>` : ""}</span>
-            <span class="due">${h[1] ? fds(h[1]) : "—"}</span><span class="tag ${hwSt[h[2]]}">${x.hs[h[2]]}</span><span class="num gr">${h[3] == null ? "" : h[3]}</span></div>`).join("")}` : `<p class="empty">${x.noHw}</p>`}</section>` : ""}
-        ${(D.rx || []).length ? `<section class="sec">${sh(N(), x.s8)}<div class="row r-rx head"><span class="lab">${x.rh[0]}</span><span class="lab">${x.rh[1]}</span></div>
-          ${D.rx.map(q => `<div class="row r-rx"><span class="m">${esc(q[0])}</span><span class="ans">${esc(q[1])}</span></div>`).join("")}</section>` : ""}
-        <div class="two">
-          <section class="sec">${sh(N(), x.s9)}${bars(D.wk || [], x)}<p class="note">${x.s9n}</p></section>
-          <section class="sec">${sh(N(), x.s10)}${attendance(D.att, x)}</section>
-        </div>
-        <section class="sec">${sh(N(), x.s11)}${steps.map(s => `<div class="dash"><span>${s}</span></div>`).join("")}</section>
+        ${lessons.length ? `<section class="blk">${hd(x.eL, x.tL2, "var(--race)")}<div class="lgrid">${lessons.map(r => { const sec = Math.min(r[2], r[3]);
+          return `<div class="lc"><span class="ln">${esc(r[0])}</span><div class="lb"><b>${esc(r[1])}</b>
+            <span class="road sm">${Array.from({ length: Math.min(12, r[3] || 1) }, (_, i) => `<span class="${i < Math.round(sec / (r[3] || 1) * Math.min(12, r[3] || 1)) ? "done" : ""}"></span>`).join("")}</span>
+            <small>${x.sections(sec, r[3])}${r[6] ? " · " + x.tries(r[6]) : ""}</small></div>
+            <div class="lr"><b>${result(r)}</b>${r[5] ? `<span class="chip ok">${x.passed(fds(r[5]))}</span>` : `<span class="chip">${x.progress}</span>`}</div></div>`; }).join("")}</div></section>` : ""}
+        ${(D.cl || []).length || (D.nt || []).length ? `<section class="blk">${hd(x.eC, x.tC2, "var(--jeo)")}<div class="tl">
+          ${((D.cl || []).length ? D.cl : D.nt.map(c => [c[0], 1, "", "", c[1], c[2]])).map(c => { const d = new Date(c[0] + "T12:00");
+            return `<div class="tli ${c[1] ? "" : "miss"}"><span class="dd"><b>${d.getDate()}</b><small>${d.toLocaleDateString(x.locale, { month: "short" }).replace(".", "")}</small></span>
+            <div class="tlc">${c[3] || c[2] ? `<b>${c[2] ? esc(c[2]) + " · " : ""}${esc(c[3])}</b>` : ""}${c[1] ? "" : `<span class="chip warn">${x.missed}</span>`}
+              ${c[1] && c[4] ? `<p>${esc(c[4])}</p>` : ""}${c[5] ? `<span class="words">${c[5].split(",").map(w => w.trim()).filter(Boolean).slice(0, 8).map(w => `<i>${esc(w)}</i>`).join("")}</span>` : ""}</div></div>`; }).join("")}</div></section>` : ""}
+        ${(D.hl || []).length ? `<section class="blk">${hd(x.eH, x.tH2, "var(--ttt)")}<div class="hwl">${D.hl.map(h => `<div class="hwi">
+            <span class="chip ${hwSt2[h[2]]}">${x.hs[h[2]]}</span><span class="hwt"><b>${esc(h[0])}</b>${h[4] ? `<small>“${esc(h[4])}”</small>` : ""}</span>
+            <span class="hwd">${h[1] ? fds(h[1]) : ""}</span>${h[3] == null ? "<span></span>" : `<span class="grade">${h[3]}</span>`}</div>`).join("")}</div></section>` : ""}
+        ${(D.rx || []).length ? `<section class="blk">${hd(x.eR, x.tR2, "var(--jam)")}<div class="rxg">${D.rx.map(q => `<div class="rx"><p>${esc(q[0]).replace(/_{2,}/, `<u>${esc(q[1])}</u>`)}</p></div>`).join("")}</div><p class="note">${x.rxN}</p></section>` : ""}
+        ${(D.wk || []).filter(w => w[1]).length >= 2 || (D.att || []).length ? `<section class="blk">${hd(x.eP, x.tP2, "var(--whl)")}<div class="pair">
+          ${(D.wk || []).filter(w => w[1]).length >= 2 ? `<div class="card soft">${bars(D.wk, x)}<p class="note">${x.s9n}</p></div>` : ""}
+          ${(D.att || []).length ? `<div class="mt">${D.att.map(a => `<div><small>${new Date(a[0] + "-15").toLocaleDateString(x.locale, { month: "long" })}</small><b>${a[1]}</b><span>${x.attN(a[1])}${a[2] ? ` · ${t.missedN(a[2])}` : ""}</span></div>`).join("")}</div>` : ""}
+          </div></section>` : ""}
+        <section class="blk">${hd(x.eN, x.tN2, "var(--jeo)")}<div class="steps">${steps.map((st, i) => `<div><span class="sn">${i + 1}</span><p>${st}</p></div>`).join("")}</div></section>
       </main>
       ${D.c ? `<div class="msg"><span class="k">${x.msg}</span><p>${esc(D.c)}</p><small>— ${esc(D.te || G.maestroNombre || G.maestro || "")} · ${x.sign}</small></div>` : ""}
       <div class="sign"><div><span>${x.prep}</span><b>${esc(D.te || G.maestroNombre || G.maestro || "")}</b><span>${x.sign} · Lingua</span></div>

@@ -13,7 +13,7 @@ def seed(env, sid):
         "attempts.03": [{"ok": 12, "n": 20, "at": iso(0)}], "done.03": [0, 1, 2],
         "game": {"xp": 590, "days": {day(20): 120, day(18): 150, day(8): 90, day(1): 130, day(0): 100}, "best": 3},
         "counters": {"spoken": 24, "dictation": 9}, "words": ["engine", "tires", "fast", "garage"], "reviewLearned": 5,
-        "review": {"r1": {"id": "r1", "l": "02.final", "p": "My uncle ___ an Xbox.", "a": "has"}, "r2": {"id": "r2", "l": "03.gaps", "p": "She ___ up at 6 every day.", "a": "gets"}},
+        "review": {"r1": {"id": "r1", "l": "02.final", "p": "My uncle has an Xbox.", "a": "has"}, "r2": {"id": "r2", "l": "03.gaps", "p": "She ___ up at 6 every day.", "a": "gets"}},
         "placement": {"nivel": "A2", "fecha": day(25), "r": None},
     }
     env.DB["progress"][sid] = {"user_id": sid, "updated_at": iso(0), "data": {k: {"v": v, "t": 1} for k, v in prog.items()}}
@@ -38,9 +38,9 @@ def test():
 
         F = env.device("F", 1100, 1000); F.goto(url); F.wait_for_timeout(900)
         txt = F.inner_text("#doc")
-        for part in ["CLASES DE INGLÉS", "Reporte de avance", "EMILIANO SÁNCHEZ", "Evaluación del periodo", "Asistencia", "3 de 4 clases", "Tareas a tiempo", "Constancia", "Nivel actual", "Lecciones aprobadas", "Calendario de práctica", "Mejor logro", "Meta para el siguiente periodo", "Folio ES-", "Preparado por", "Emiliano tomó 3 clases (faltó a 1)", "Práctica por habilidad", "24 frases",
-                     "Lecciones", "65% → 85%", "Bitácora de clases", "Described his dream car", "Palabras nuevas: engine, tires, wheel", "Faltó", "Tareas", "Entregada", "Pendiente", "90",
-                     "Para repasar", "My uncle ___ an Xbox.", "has", "Próximos pasos", "Continuar con la lección", "Comentario del instructor", "Ya se presenta solo", "Alejandro Caporali"]:
+        for part in ["CLASES DE INGLÉS", "Reporte de avance", "EMILIANO SÁNCHEZ", "Evaluación del periodo", "Asistencia", "3 de 4 clases", "Tareas a tiempo", "Constancia", "Nivel actual", "Lecciones aprobadas", "Calendario de práctica", "Mejor logro", "Meta para el siguiente periodo", "Folio ES-", "Preparado por", "Emiliano tomó 3 clases (faltó a 1)", "Lo que practicó entre clases", "Frases dichas bien con el micrófono",
+                     "Lecciones", "65% → 85%", "Lo que vimos en cada clase", "Described his dream car", "wheel", "Faltó", "Tareas", "Entregada", "Pendiente", "90",
+                     "Para repasar", "My uncle has an Xbox.", "has", "Próximos pasos", "Continuar con la lección", "Comentario del instructor", "Ya se presenta solo", "Alejandro Caporali"]:
             check(part.lower() in txt.lower(), f"report shows “{part}”")
         F.screenshot(path=os.path.join(OUT, "report_es.png"), full_page=True)
         F.click('[data-l="en"]'); F.wait_for_timeout(300)
