@@ -149,7 +149,7 @@
     const { error } = await G.sb.auth.signInWithPassword({ email: G.toEmail(u), password: p });
     if (error) {
       btn.disabled = false; btn.textContent = "Sign in";
-      say("bad", /invalid/i.test(error.message) ? "That username or password isn’t right. Check them and try again." : "We couldn’t sign you in: " + error.message);
+      say("bad", /banned/i.test(error.message) ? "This account is paused. Ask your teacher to turn it back on." : /invalid/i.test(error.message) ? "That username or password isn’t right. Check them and try again." : "We couldn’t sign you in: " + error.message);
       return;
     }
     const next = new URLSearchParams(location.search).get("next") || "index.html";

@@ -1,5 +1,5 @@
 // Lingua · admin-users Edge Function
-// Lets a teacher create student accounts, change passwords and delete accounts from the teacher panel.
+// Lets a teacher create student accounts, change passwords, archive / restore and delete accounts from the teacher panel.
 // The secret key never leaves Supabase: it comes from the function's own environment.
 // Deploy: Supabase → Edge Functions → Deploy a new function → Via Editor → name "admin-users" → paste this file.
 // Then in the function's Details, turn OFF "Verify JWT" (this code checks the user itself).
@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     case "list": {
       const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
       if (error) return json({ error: error.message }, 400);
-      return json({ users: data.users.map((u) => ({ id: u.id, email: u.email, created_at: u.created_at, last_sign_in_at: u.last_sign_in_at })) });
+      return json({ users: data.users.map((u) => ({ id: u.id, email: u.email, created_at: u.created_at, last_sign_in_at: u.last_sign_in_at, banned_until: (u as { banned_until?: string }).banned_until ?? null })) });
     }
     case "create": {
       const username = String(body.username || "");
@@ -62,6 +62,21 @@ Deno.serve(async (req) => {
       if (error) return json({ error: error.message }, 400);
       return json({ ok: true });
     }
+    case "archive":
+    case "restore": {
+      // Archive = the student can't sign in and leaves the lists, but every record stays. Restore undoes it.
+      const id = String(body.user_id || "");
+      if (!/^[0-9a-f-]{36}$/i.test(id)) return json({ error: "Bad account id." }, 400);
+      if (id === who.user.id) return json({ error: "You can't archive your own account." }, 400);
+      const { data: isTeacher } = await admin.from("teachers").select("user_id").eq("user_id", id).maybeSingle();
+      if (isTeacher) return json({ error: "Teacher accounts can't be archived here." }, 400);
+      const archive = body.action === "archive";
+      const { error: dbErr } = await admin.from("student_admin").upsert({ student_id: id, archived_at: archive ? new Date().toISOString() : null, updated_at: new Date().toISOString() });
+      if (dbErr) return json({ error: /archived_at/.test(dbErr.message) ? "Run supabase/v9.sql in Supabase first." : dbErr.message }, 400);
+      const { error } = await admin.auth.admin.updateUserById(id, { ban_duration: archive ? "876000h" : "none" });
+      if (error) return json({ error: error.message }, 400);
+      return json({ ok: true });
+    }
     case "delete": {
       // Deletes the account and everything that belongs to it (progress, classes, payments, voice notes, screenshots)
       const id = String(body.user_id || "");
@@ -69,6 +84,10 @@ Deno.serve(async (req) => {
       if (id === who.user.id) return json({ error: "You can't delete your own account." }, 400);
       const { data: isTeacher } = await admin.from("teachers").select("user_id").eq("user_id", id).maybeSingle();
       if (isTeacher) return json({ error: "Teacher accounts can't be deleted here." }, 400);
+      // Deleting is for good, so only archived accounts can be deleted
+      const { data: adm, error: admErr } = await admin.from("student_admin").select("archived_at").eq("student_id", id).maybeSingle();
+      if (admErr) return json({ error: /archived_at/.test(admErr.message) ? "Run supabase/v9.sql in Supabase first." : admErr.message }, 400);
+      if (!adm || !adm.archived_at) return json({ error: "Archive the account first. Only archived accounts can be deleted." }, 400);
       // Files are not deleted with the account, so remove the student's folders first
       const listAll = async (bucket: string, prefix: string): Promise<string[]> => {
         const { data } = await admin.storage.from(bucket).list(prefix, { limit: 1000 });

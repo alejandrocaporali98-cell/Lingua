@@ -395,3 +395,21 @@ a.li { color: inherit; text-decoration: none; } a.li:hover { background: var(--b
 .btn.danger:disabled { opacity: .45; cursor: not-allowed; }
 .btn.ghost.danger { background: none; color: var(--bad-ink, #9f1239); border-color: transparent; }
 .btn.ghost.danger:hover { background: var(--bad-soft, #fdecec); }
+
+/* Accounts · archived, backup, error log */
+.acc-sub { margin: 22px 0 8px; font-size: .95rem; }
+.acc-sub .muted { font-weight: 500; font-size: .9em; }
+.hw-item.is-archived b { color: var(--mute); }
+.health { margin: 0 0 16px; }
+.bk-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.bk-meta { font-size: .85em; color: var(--mute); }
+.errl { display: grid; gap: 6px; margin-top: 10px; }
+.errl .er { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 9px 12px; border-radius: 8px; background: var(--bg); border-left: 3px solid var(--bad); font-size: .88em; }
+.errl .er b { overflow-wrap: anywhere; }
+.errl .er small { color: var(--mute); }
+.errl .er code { grid-column: 1 / -1; font-size: .85em; color: var(--mute); overflow-wrap: anywhere; white-space: pre-wrap; max-height: 4.5em; overflow: hidden; }
+@media (max-width: 640px) {
+  #acc .hw-item { grid-template-columns: minmax(0, 1fr); }
+  #acc .hw-item .actions { flex-wrap: wrap; }
+  #acc .hw-item .pw { flex: 1 1 140px; width: auto !important; }
+}

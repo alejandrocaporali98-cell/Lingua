@@ -71,6 +71,45 @@
 
   const sb = window.supabase.createClient(cfg.url, cfg.key, { auth: { persistSession: true, autoRefreshToken: true, storageKey: "lingua.__auth" } });
   L.sb = sb;
+
+  // ── Error log: when something breaks on a signed-in screen, save a short note the teacher sees in the panel ──
+  // Network hiccups and browser-extension noise are ignored; at most 5 notes per page, never the same one twice.
+  const NOISE = /ResizeObserver loop|^Script error\.?$|Failed to fetch|NetworkError|Load failed|network connection|AbortError|The user aborted|chrome-extension:|moz-extension:|safari-(web-)?extension:|Non-Error promise rejection/i;
+  const sentErr = new Set();
+  L.reportError = (message, detail) => {
+    try {
+      message = String(message || "").trim().replace(/^Uncaught\s+/, "").slice(0, 500); if (!message || NOISE.test(message) || NOISE.test(String(detail || ""))) return;
+      if (!uid || sentErr.has(message) || sentErr.size >= 5) return; sentErr.add(message);
+      const where = (root ? "clases/" : "") + page + (location.hash || "").slice(0, 40) + (L.actingAs ? " · class mode: " + (L.actingAs.name || "") : "");
+      sb.from("client_errors").insert({ user_id: uid, page: where.slice(0, 200), message, detail: String(detail || "").slice(0, 2000) || null, agent: (navigator.userAgent || "").slice(0, 300), build: String(L.build || "").slice(0, 40) })
+        .then(() => {}, () => {});
+    } catch (e) {}
+  };
+  window.addEventListener("error", e => { if (e && e.message) L.reportError(e.message, (e.error && e.error.stack) || (e.filename ? e.filename + ":" + e.lineno : "")); });
+  window.addEventListener("unhandledrejection", e => { const r = e && e.reason; L.reportError(r && r.message ? r.message : String(r), r && r.stack); });
+
+  // ── New version: the deploy writes version.json; if it no longer matches this page, offer a one-tap update ──
+  async function checkVersion() {
+    if (!L.build || L.build === "dev" || document.getElementById("newVersion")) return;
+    try {
+      const r = await fetch(root + "version.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) return;
+      const v = await r.json(); if (!v || !v.build || v.build === L.build) return;
+      const bar = document.createElement("div"); bar.id = "newVersion"; bar.setAttribute("role", "status");
+      bar.innerHTML = '<span><b>New version of Lingua</b> · update to see the latest changes.</span><button type="button">Update</button><button type="button" class="nv-x" aria-label="Later">×</button>';
+      bar.querySelector("button").onclick = async () => {
+        bar.querySelector("button").disabled = true;
+        try { if (timer) { clearTimeout(timer); await push(); } } catch (e) {}
+        try { if (window.caches) for (const k of await caches.keys()) await caches.delete(k); } catch (e) {}
+        try { const regs = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : []; await Promise.all(regs.map(x => x.update().catch(() => {}))); } catch (e) {}
+        const u = new URL(location.href); u.searchParams.set("v", v.build.slice(0, 7)); location.replace(u.toString());
+      };
+      bar.querySelector(".nv-x").onclick = () => bar.remove();
+      document.body.appendChild(bar);
+    } catch (e) {}
+  }
+  setTimeout(checkVersion, 4000);
+  setInterval(checkVersion, 10 * 60e3);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") checkVersion(); });
   setTimeout(show, 10000); // never leave a blank page if the network is very slow
 
   // uid = who is signed in; tid = whose progress we read and write (the student, in class mode)
@@ -227,16 +266,37 @@
   // Teacher panel: read every student (allowed only for accounts in the "teachers" table)
   L.teacher = {
     async load() {
-      const [p, g, h, c, st, ru, ad, pa, sf, ch, bi, nt] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
+      const [p, g, h, c, st, ru, ad, pa, sf, ch, bi, nt, er, me] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
         sb.from("classes").select("*").order("starts_at", { ascending: false }), sb.from("student_settings").select("*"),
         sb.from("class_rules").select("*"), sb.from("student_admin").select("*"), sb.from("payments").select("*").order("paid_on", { ascending: false }), sb.from("staff").select("*"),
-        sb.from("charges").select("*").order("created_at", { ascending: false }), sb.from("billing_info").select("*"), sb.from("student_notes").select("*")]);
+        sb.from("charges").select("*").order("created_at", { ascending: false }), sb.from("billing_info").select("*"), sb.from("student_notes").select("*"),
+        sb.from("client_errors").select("*").order("created_at", { ascending: false }).limit(200), sb.from("teacher_meta").select("*")]);
       const err = p.error || g.error || h.error; if (err) throw err;
       return { profiles: p.data || [], progress: g.data || [], homework: h.data || [], classes: c.error ? null : (c.data || []), settings: st.error ? null : (st.data || []),
         rules: ru.error ? null : (ru.data || []), admin: ad.error ? null : (ad.data || []), payments: pa.error ? null : (pa.data || []), staff: sf.error ? null : (sf.data || []),
-        charges: ch.error ? null : (ch.data || []), bank: bi.error ? null : ((bi.data || [])[0] || {}), notes: nt.error ? null : (nt.data || []) };
+        charges: ch.error ? null : (ch.data || []), bank: bi.error ? null : ((bi.data || [])[0] || {}), notes: nt.error ? null : (nt.data || []),
+        errors: er.error ? null : (er.data || []), meta: me.error ? null : Object.fromEntries((me.data || []).map(r => [r.key, r.value])) };
     },
     // Trial classes (clases muestra). null when supabase/v7.sql hasn't been run yet.
+    // Backup: every table the teacher can read, in one file. (Calendar links are left out: they're secret keys.)
+    async backup() {
+      const tables = ["profiles", "progress", "homework", "classes", "student_settings", "class_rules", "student_admin", "payments", "charges", "billing_info",
+        "student_notes", "staff", "teachers", "trials", "lessons", "recordings", "client_errors", "teacher_meta"];
+      const out = { app: "Lingua", kind: "backup", format: 1, created_at: new Date().toISOString(), project: cfg.url || "", build: L.build || "", tables: {}, counts: {}, missing: [] };
+      for (const t of tables) {
+        const rows = []; let from = 0, failed = null;
+        for (;;) {
+          const { data, error } = await sb.from(t).select("*").range(from, from + 999);
+          if (error) { failed = error; break; }
+          rows.push(...(data || [])); if (!data || data.length < 1000) break; from += 1000;
+        }
+        if (failed) { out.missing.push(t); continue; }
+        out.tables[t] = rows; out.counts[t] = rows.length;
+      }
+      return out;
+    },
+    async setMeta(key, value) { const { error } = await sb.from("teacher_meta").upsert({ key, value, updated_at: new Date().toISOString() }); if (error) throw error; },
+    async clearErrors() { const { error } = await sb.from("client_errors").delete().lt("created_at", new Date(Date.now() + 864e5).toISOString()); if (error) throw error; },
     async trials() { const { data, error } = await sb.from("trials").select("*").order("created_at", { ascending: false }); return error ? null : (data || []); },
     async trial(id) { const { data, error } = await sb.from("trials").select("*").eq("id", id).maybeSingle(); if (error) throw error; return data; },
     async addHomework(row) { const { data, error } = await sb.from("homework").insert(row).select(); if (error) throw error; return data; },
@@ -391,6 +451,7 @@
     } catch (e) {
       L.lastSync = { ok: false, error: e.message || String(e), at: Date.now() };
       console.warn("Lingua sync failed:", e);
+      L.reportError("Sync failed: " + (e.message || String(e)), e && e.stack);
     }
     try { const c1 = await syncLessons(), c2 = await syncSettings().catch(() => false); if ((c1 || c2) && !sessionStorage.getItem("lingua.reloadedL")) { sessionStorage.setItem("lingua.reloadedL", "1"); location.reload(); return null; } } catch (e) {}
     sessionStorage.removeItem("lingua.reloadedL");

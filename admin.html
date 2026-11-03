@@ -85,7 +85,8 @@ const months = (n, from) => Array.from({ length: n }, (_, k) => { const d = new 
 let DATA = null;
 const students = () => {
   const me = G.user && G.user.id, staff = new Set((DATA.staff || []).map(x => x.user_id)), tch = new Set((DATA.teachers || []).map(x => x.user_id));
-  return DATA.profiles.filter(p => p.id !== me && !staff.has(p.id) && !tch.has(p.id)).map(p => ({ p })).sort((a, b) => (a.p.display_name || "").localeCompare(b.p.display_name || ""));
+  const gone = new Set((DATA.admin || []).filter(a => a.archived_at).map(a => a.student_id));
+  return DATA.profiles.filter(p => p.id !== me && !staff.has(p.id) && !tch.has(p.id) && !gone.has(p.id)).map(p => ({ p })).sort((a, b) => (a.p.display_name || "").localeCompare(b.p.display_name || ""));
 };
 const byId = id => students().find(s => s.p.id === id);
 const PLAN = { per_class: "Por clase", weekly: "Por semana", monthly: "Mensualidad", free: "Sin costo" };

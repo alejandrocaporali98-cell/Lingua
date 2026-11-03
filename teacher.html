@@ -138,9 +138,10 @@ const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 const MONEY = (n, cur) => (cur || "MXN") + " " + Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 const monthKey = d => day(d).slice(0, 7);
 const monthName = m => new Date(m + "-15").toLocaleDateString("en-US", { month: "long", year: "numeric" });
+const isArchived = id => !!((DATA.admin || []).find(a => a.student_id === id) || {}).archived_at;
 function students() {
   const staff = new Set((DATA.staff || []).map(x => x.user_id));
-  return DATA.profiles.filter(p => p.id !== (G.user && G.user.id) && !staff.has(p.id)).map(studentOf).sort((a, b) => (a.p.display_name || "").localeCompare(b.p.display_name || ""));
+  return DATA.profiles.filter(p => p.id !== (G.user && G.user.id) && !staff.has(p.id) && !isArchived(p.id)).map(studentOf).sort((a, b) => (a.p.display_name || "").localeCompare(b.p.display_name || ""));
 }
 function nextClass(id) {
   const now = Date.now() - 3600e3;
@@ -168,7 +169,7 @@ async function startClass(s, c, opt) {
 async function fillFromRules() {
   if (!DATA.rules || !DATA.classes) return false;
   const want = [], now = new Date();
-  DATA.rules.filter(r => r.active).forEach(r => {
+  DATA.rules.filter(r => r.active && !isArchived(r.student_id)).forEach(r => {
     for (let k = 0; k < 14; k++) {
       const d = new Date(now); d.setDate(now.getDate() + k);
       if (d.getDay() !== r.weekday) continue;
@@ -214,7 +215,7 @@ function render() {
   if (v === "schedule") return scheduleView();
   if (v === "billing") return billingView(h[1], h[2], h[3], h[4]);
   if (v === "reports") return reportsView(h[1], h[2]);
-  if (v === "accounts") return accountsView();
+  if (v === "accounts") return accountsView(h[1]);
   if (v === "trials") return trialsView();
   return todayView();
 }
@@ -321,6 +322,7 @@ function todayView() {
 
   app.innerHTML = topBar("Today", new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })) + `
     ${DATA.rules === null ? setupNote("recurring classes, private notes and billing") : ""}
+    ${healthNotes()}
     <div class="kpis">${kpis}</div>
     <div class="dgrid">
       <div class="card"><div class="card-head"><h2>${today.length ? "Today’s classes" : "Next classes"}</h2><a class="btn sm" href="#schedule">Schedule</a></div>
@@ -1070,9 +1072,78 @@ function wireBilling(s) {
   };
 }
 
-function accountsView() {
-  app.innerHTML = topBar("Accounts", "Create students and change passwords.") + accounts();
-  wireTop(); wireAccounts();
+function accountsView(part) {
+  app.innerHTML = topBar("Accounts", "Student accounts, backups and problems on screens.") + accounts() + backupPanel() + errorsPanel();
+  wireTop(); wireAccounts(); wireBackup(); wireErrors();
+  const go = part && document.getElementById(part === "errors" ? "errLog" : part === "backup" ? "bkPanel" : "acc"); if (go) go.scrollIntoView({ block: "start" });
+}
+// ── Backup: one file with everything (students, classes, homework, payments, notes…) ──
+const v9Note = what => `<p class="muted" style="font-size:.9em"><b>One-time setup:</b> to use ${what}, run <b>supabase/v9.sql</b> in Supabase (SQL Editor → New query → paste → Run).</p>`;
+const lastBackup = () => DATA.meta && DATA.meta.last_backup && DATA.meta.last_backup.at ? DATA.meta.last_backup : null;
+function backupPanel() {
+  const lb = lastBackup(), days = lb ? Math.floor((Date.now() - new Date(lb.at)) / 864e5) : null;
+  return `<div class="panel" id="bkPanel">
+    <h2>Backup</h2>
+    <p class="muted" style="font-size:.9em">Downloads one file with all of Lingua’s information: students, progress, homework, classes and notes, payments, slips and bank details. Download one every few weeks and keep it somewhere safe (Drive or your computer). Audio files and transfer screenshots stay in Supabase.</p>
+    <div class="bk-row"><button class="btn primary" id="bkGo">Download backup</button>
+      <span class="bk-meta" id="bkMeta">${lb ? `Last backup ${days === 0 ? "today" : days === 1 ? "yesterday" : days + " days ago"} · ${fmt(lb.at)}` : DATA.meta === null ? "" : "No backup yet"}</span></div>
+    <p class="hint" style="margin-top:10px">The file has personal information and your bank details, so don’t share it. If something is ever lost, everything can be put back from this file.</p>
+    ${DATA.meta === null ? v9Note("the backup reminder") : ""}
+  </div>`;
+}
+function wireBackup() {
+  const b = document.getElementById("bkGo"); if (!b) return;
+  b.onclick = async () => {
+    b.disabled = true; b.textContent = "Preparing…";
+    try {
+      const data = await G.teacher.backup(), stamp = day(new Date());
+      const blob = new Blob([JSON.stringify(data, null, 1)], { type: "application/json" }), url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href = url; a.download = `lingua-backup-${stamp}.json`; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      const n = Object.values(data.counts).reduce((x, y) => x + y, 0);
+      try { await G.teacher.setMeta("last_backup", { at: data.created_at, rows: n }); DATA.meta = { ...(DATA.meta || {}), last_backup: { at: data.created_at, rows: n } }; } catch (e) {}
+      document.getElementById("bkMeta").textContent = `Last backup today · ${n} records`;
+      G.toast(`<b>Backup downloaded</b><span>${n} records · lingua-backup-${stamp}.json</span>`);
+    } catch (e) { G.toast("Couldn’t make the backup: " + esc(e.message || e)); }
+    b.disabled = false; b.textContent = "Download backup";
+  };
+}
+// ── Error log: what broke on someone's screen (saved by assets/cloud.js) ──
+const errWho = id => id === (G.user && G.user.id) ? "You" : ((DATA.profiles.find(p => p.id === id) || {}).display_name || "Someone");
+const errDevice = a => /iPhone|iPad/.test(a || "") ? "iPhone/iPad" : /Android/.test(a || "") ? "Android" : /Mac/.test(a || "") ? "Mac" : /Windows/.test(a || "") ? "Windows" : "";
+function errorsPanel() {
+  if (DATA.errors === null) return `<div class="panel" id="errLog"><h2>Problems on screens</h2>${v9Note("the error log")}</div>`;
+  const list = DATA.errors.slice(0, 60);
+  return `<div class="panel" id="errLog">
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap"><div><h2>Problems on screens</h2>
+      <p class="muted" style="font-size:.9em">When something breaks for a student (or for you), Lingua saves a short note here. Connection drops are left out.</p></div>
+      ${list.length ? `<button class="btn ghost sm" id="errClear">Clear all</button>` : ""}</div>
+    ${list.length ? `<div class="errl">${list.map(e => `<div class="er"><b>${esc(e.message)}</b><small>${esc(agoShort(e.created_at))} ago</small>
+      <small>${esc(errWho(e.user_id))} · ${esc(e.page || "")}${errDevice(e.agent) ? " · " + esc(errDevice(e.agent)) : ""}${e.build && e.build !== "dev" ? " · v" + esc(e.build.slice(0, 7)) : ""}</small>
+      ${e.detail ? `<code>${esc(e.detail)}</code>` : ""}</div>`).join("")}</div>` : `<p class="allgood">Nothing has broken lately.</p>`}
+  </div>`;
+}
+function wireErrors() {
+  const b = document.getElementById("errClear"); if (!b) return;
+  b.onclick = async () => {
+    b.disabled = true;
+    try { await G.teacher.clearErrors(); DATA.errors = []; document.getElementById("errLog").outerHTML = errorsPanel(); G.toast("Error log cleared"); }
+    catch (e) { b.disabled = false; G.toast("Couldn’t clear it: " + esc(e.message)); }
+  };
+}
+// Reminders on Today: new problems this week, and a backup that's due
+function healthNotes() {
+  const out = [];
+  const recent = (DATA.errors || []).filter(e => Date.now() - new Date(e.created_at) < 7 * 864e5);
+  if (recent.length) {
+    const who = [...new Set(recent.map(e => errWho(e.user_id).split(" ")[0]))].slice(0, 3).join(", ");
+    out.push(`<a class="al bad" href="#accounts/errors"><span><b>${recent.length} problem${recent.length === 1 ? "" : "s"} on screens this week</b> · ${esc(who)}</span><span class="go">›</span></a>`);
+  }
+  if (DATA.meta !== null) {
+    const lb = lastBackup(), days = lb ? Math.floor((Date.now() - new Date(lb.at)) / 864e5) : null;
+    if (days === null || days >= 30) out.push(`<a class="al warn" href="#accounts/backup"><span><b>${days === null ? "No backup yet" : `Last backup ${days} days ago`}</b> · download one to keep everything safe</span><span class="go">›</span></a>`);
+  }
+  return out.length ? `<div class="alerts health">${out.join("")}</div>` : "";
 }
 
 const TABS = [["overview", "Overview"], ["lessons", "Lessons & style"], ["classes", "Classes"], ["homework", "Homework"], ["voice", "Voice"], ["billing", "Billing"], ["reports", "Reports"]];
@@ -1367,7 +1438,7 @@ function accounts() {
   const dom = (G.cloud && G.cloud.usernameDomain) || "student.lingua.app";
   const setup = `<div class="alert info" style="display:grid;gap:6px"><b>One-time setup needed</b><span>To create accounts and change passwords from here, install the small “admin-users” helper in Supabase. The steps are in the README (Teacher panel setup → Accounts helper). Until then, you can keep using Supabase → Authentication → Users.</span></div>`;
   return `<div class="panel" id="acc">
-    <div style="display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap"><div><h2>Student accounts</h2><p class="muted" style="font-size:.9em">Create a student and change passwords. Students sign in with the username.</p></div>
+    <div style="display:flex;justify-content:space-between;align-items:end;gap:10px;flex-wrap:wrap"><div><h2>Student accounts</h2><p class="muted" style="font-size:.9em">Create a student, change passwords, or archive someone who stopped coming. Students sign in with the username.</p></div>
       ${ACC ? `<button class="btn ghost sm" id="accReload">Refresh list</button>` : ""}</div>
     ${ACCERR && ACCERR.missing ? setup : ACCERR ? `<div class="alert bad">${esc(ACCERR.message)}</div>` : ""}
     <form id="accForm" class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));align-items:end" novalidate>
@@ -1379,9 +1450,16 @@ function accounts() {
       <button class="btn primary" type="submit" id="aSave" style="grid-column:1/-1;justify-self:start">Create account</button>
     </form>
     <div id="aMsg" hidden></div>
-    ${ACC ? `<div class="hw">${ACC.filter(u => u.id !== (G.user && G.user.id)).map(u => `<div class="hw-item">
-      <div style="min-width:0"><b>${esc((u.email || "").replace("@" + dom, ""))}</b>${(DATA.staff || []).some(x => x.user_id === u.id) ? ` <span class="tag">Office</span>` : ""}<br><small>${u.last_sign_in_at ? "Last sign-in " + ago(u.last_sign_in_at) : "Never signed in"} · created ${fmt(u.created_at)}</small></div>
-      <div class="actions"><input class="pw" data-pwfor="${u.id}" type="text" placeholder="New password" aria-label="New password" style="font:inherit;padding:7px 10px;border:1px solid var(--line-2);border-radius:var(--r-s);width:150px;background:var(--surface);color:var(--ink)"><button class="btn sm" data-pw="${u.id}">Change password</button><button class="btn sm ghost danger" data-del="${u.id}">Delete</button></div></div>`).join("")}</div>` : ""}
+    ${ACC ? (() => {
+      const mine = ACC.filter(u => u.id !== (G.user && G.user.id)), gone = u => isArchived(u.id) || (u.banned_until && new Date(u.banned_until) > new Date());
+      const nameOf2 = u => ((DATA.profiles.find(p => p.id === u.id) || {}).display_name || "");
+      const who = u => `<div style="min-width:0"><b>${esc((u.email || "").replace("@" + dom, ""))}</b>${nameOf2(u) ? ` <span class="muted">· ${esc(nameOf2(u))}</span>` : ""}${(DATA.staff || []).some(x => x.user_id === u.id) ? ` <span class="tag">Office</span>` : ""}<br><small>${u.last_sign_in_at ? "Last sign-in " + ago(u.last_sign_in_at) : "Never signed in"} · created ${fmt(u.created_at)}</small></div>`;
+      const act = mine.filter(u => !gone(u)), arc = mine.filter(gone);
+      return `<div class="hw">${act.map(u => `<div class="hw-item">${who(u)}
+      <div class="actions"><input class="pw" data-pwfor="${u.id}" type="text" placeholder="New password" aria-label="New password" style="font:inherit;padding:7px 10px;border:1px solid var(--line-2);border-radius:var(--r-s);width:150px;background:var(--surface);color:var(--ink)"><button class="btn sm" data-pw="${u.id}">Change password</button><button class="btn sm ghost" data-arc="${u.id}">Archive</button></div></div>`).join("")}</div>
+      ${arc.length ? `<h3 class="acc-sub">Archived <span class="muted">· can’t sign in, history kept</span></h3><div class="hw">${arc.map(u => `<div class="hw-item is-archived">${who(u)}
+      <div class="actions"><button class="btn sm" data-res="${u.id}">Restore</button><button class="btn sm ghost danger" data-del="${u.id}">Delete for good</button></div></div>`).join("")}</div>` : ""}`;
+    })() : ""}
   </div>`;
 }
 async function loadAccounts() {
@@ -1421,16 +1499,57 @@ function wireAccounts() {
   });
   const r = document.getElementById("accReload"); if (r) r.onclick = async () => { await loadAccounts(); render(); };
   document.querySelectorAll("[data-del]").forEach(b => b.onclick = () => deleteAccountSheet(b.dataset.del));
+  document.querySelectorAll("[data-arc]").forEach(b => b.onclick = () => archiveAccountSheet(b.dataset.arc));
+  document.querySelectorAll("[data-res]").forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try {
+      await G.admin("restore", { user_id: b.dataset.res });
+      G.toast(`<b>${esc(accName(b.dataset.res))} is back</b><span>They can sign in again. Resume their weekly classes in Schedule if needed.</span>`);
+      await loadAccounts(); await load();
+    } catch (e) { b.disabled = false; G.toast(esc(helperMsg(e, "Couldn’t restore it: "))); }
+  });
+}
+const accName = id => { const dom = (G.cloud && G.cloud.usernameDomain) || "student.lingua.app", p = DATA.profiles.find(x => x.id === id), u = (ACC || []).find(x => x.id === id); return (p && p.display_name) || (u ? (u.email || "").replace("@" + dom, "") : "This account"); };
+const helperMsg = (e, pre) => /unknown action/i.test(e.message || "") ? "First update the admin-users helper in Supabase (Edge Functions → admin-users → paste the new code → Deploy), then try again." : pre + e.message;
+// Archive: the student can't sign in and leaves every list, but nothing is deleted. Restore brings it all back.
+function archiveAccountSheet(id) {
+  const dom = (G.cloud && G.cloud.usernameDomain) || "student.lingua.app";
+  const u = (ACC || []).find(x => x.id === id); if (!u) return;
+  const user = (u.email || "").replace("@" + dom, ""), name = accName(id), first = esc(name.split(" ")[0]);
+  const office = (DATA.staff || []).some(x => x.user_id === id);
+  const now = new Date(), upcoming = (DATA.classes || []).filter(c => c.student_id === id && c.status === "scheduled" && new Date(c.starts_at) > now);
+  const rules = (DATA.rules || []).filter(r => r.student_id === id && r.active);
+  const w = sheet("Archive " + name, office ? "Office account" : "Student account · " + user, `
+    <div class="alert info" style="display:grid;gap:6px"><b>Nothing is deleted.</b><span>${office ? "The office account stops working until you restore it." : `${first} won’t be able to sign in and leaves your lists. Progress, classes, notes and payments stay saved, and you can restore ${first} any time.`}</span></div>
+    ${!office && (rules.length || upcoming.length) ? `<p class="hint">${rules.length ? `${rules.length} weekly class${rules.length === 1 ? "" : "es"} will be paused` : ""}${rules.length && upcoming.length ? " and " : ""}${upcoming.length ? `${upcoming.length} upcoming class${upcoming.length === 1 ? "" : "es"} removed from the schedule` : ""}.</p>` : ""}
+    <div id="arMsg" hidden></div>
+    <div class="actions"><button class="btn primary" id="arGo">Archive</button><button class="btn ghost" data-close>Cancel</button></div>`);
+  const cl = w.querySelector("[data-close]"); if (cl) cl.onclick = closeSheet;
+  const go = w.querySelector("#arGo");
+  go.onclick = async () => {
+    go.disabled = true; go.textContent = "Archiving…";
+    try {
+      await G.admin("archive", { user_id: id });
+      for (const r of rules) { try { await G.teacher.update("class_rules", r.id, { active: false }); } catch (e) {} }
+      for (const c of upcoming) { try { await G.teacher.deleteClass(c.id); } catch (e) {} }
+      closeSheet();
+      G.toast(`<b>${esc(name)} was archived</b><span>Find them under Accounts → Archived.</span>`);
+      await loadAccounts(); await load();
+    } catch (e) {
+      const m = w.querySelector("#arMsg"); m.hidden = false; m.className = "alert bad"; m.textContent = helperMsg(e, "Couldn’t archive it: ");
+      go.disabled = false; go.textContent = "Archive";
+    }
+  };
 }
 // Delete a student (or office) account for good: their progress, classes, payments and files go with it
 function deleteAccountSheet(id) {
   const dom = (G.cloud && G.cloud.usernameDomain) || "student.lingua.app";
   const u = (ACC || []).find(x => x.id === id); if (!u) return;
-  const user = (u.email || "").replace("@" + dom, ""), st = students().find(x => x.p.id === id), name = (st && st.p.display_name) || user;
+  const user = (u.email || "").replace("@" + dom, ""), name = accName(id);
   const office = (DATA.staff || []).some(x => x.user_id === id);
   const w = sheet("Delete " + name, office ? "Office account" : "Student account · " + user, `
     <div class="alert bad" style="display:grid;gap:6px"><b>This can’t be undone.</b><span>${office ? "The office account will stop working right away." : `Everything of ${esc(name.split(" ")[0])}’s is deleted too: progress, homework, classes and notes, voice recordings, payments, slips and transfer screenshots.`}</span></div>
-    ${!office ? `<p class="hint">If you might need their payment history, download it from Billing first.</p>` : ""}
+    ${!office ? `<p class="hint">If you might need their history, download a backup first (Accounts → Backup). To keep everything instead, use Archive.</p>` : ""}
     <div class="field"><label for="dlC">Type <b>${esc(user)}</b> to confirm</label><input id="dlC" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
     <div id="dlMsg" hidden></div>
     <div class="actions"><button class="btn danger" id="dlGo" disabled>Delete for good</button><button class="btn ghost" data-close>Cancel</button></div>`);
@@ -1446,7 +1565,7 @@ function deleteAccountSheet(id) {
       await loadAccounts(); await load();
     } catch (e) {
       const m = w.querySelector("#dlMsg"); m.hidden = false; m.className = "alert bad";
-      m.textContent = /unknown action/i.test(e.message || "") ? "First update the admin-users helper in Supabase (Edge Functions → admin-users → paste the new code → Deploy), then try again." : "Couldn’t delete it: " + e.message;
+      m.textContent = helperMsg(e, "Couldn’t delete it: ");
       go.disabled = false; go.textContent = "Delete for good";
     }
   };

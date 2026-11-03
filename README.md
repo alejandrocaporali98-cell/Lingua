@@ -170,3 +170,18 @@ Run `supabase/v8.sql` once in Supabase → SQL Editor. It adds `meet_link` to `s
 Paste each student's Teams/Meet/Zoom link in their page → "WhatsApp and class link"; the WhatsApp class
 reminders then send the invitation: "Hola qué tal muy buenas tardes, / Te comparto el link de la clase del día de hoy! / link"
 (greeting and day adjust on their own).
+
+## v9 setup (safer platform)
+
+1. Run `supabase/v9.sql` once in Supabase → SQL Editor. It adds:
+   - `student_admin.archived_at` — **Archive** a student instead of deleting (can't sign in, leaves the lists, keeps all history; **Restore** any time). Delete is only possible for archived accounts.
+   - `client_errors` — when something breaks on someone's screen the page saves a short note; the teacher sees it on **Today** and in **Accounts → Problems on screens**.
+   - `teacher_meta` — remembers when the last **backup** was downloaded (Today reminds you after 30 days).
+   - `keepalive()` — tiny function that the scheduled GitHub job calls so the free project isn't paused.
+2. Update the `admin-users` Edge Function with the new `supabase/functions/admin-users/index.ts` (adds archive / restore).
+3. GitHub → repo **Settings → Pages → Build and deployment → Source: GitHub Actions**. From then on every push runs the tests
+   in `tests/` and publishes only if they pass (`.github/workflows/deploy.yml`), and open pages offer **New version · Update**
+   when a newer version is online.
+
+**Backups:** Accounts → Backup → *Download backup* saves one JSON file with every table (calendar links are left out).
+Keep it private: it has personal information and bank details.

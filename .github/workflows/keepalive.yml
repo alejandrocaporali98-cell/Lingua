@@ -1,0 +1,31 @@
+# Keeps the free Supabase project awake.
+# Free projects are paused after about a week without activity (holidays, for example).
+# Twice a week this calls the tiny "keepalive" function from supabase/v9.sql with the public key
+# that is already in assets/config.js. If it ever fails, GitHub emails you.
+name: Keep Supabase awake
+
+on:
+  schedule:
+    - cron: "23 15 * * 1,4"   # Mondays and Thursdays, 9:23 am Monterrey
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Call keepalive()
+        run: |
+          URL=$(grep -oE 'url: "https://[a-z0-9]+\.supabase\.co"' assets/config.js | head -1 | cut -d'"' -f2)
+          KEY=$(grep -oE 'key: "sb_publishable_[A-Za-z0-9_-]+"' assets/config.js | head -1 | cut -d'"' -f2)
+          test -n "$URL" && test -n "$KEY"
+          for i in 1 2 3; do
+            if curl -fsS -X POST "$URL/rest/v1/rpc/keepalive" -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}'; then echo; echo "Supabase is awake"; exit 0; fi
+            sleep 20
+          done
+          echo "::error::Supabase didn't answer. If it was paused, open supabase.com and press Restore project. If it says keepalive doesn't exist, run supabase/v9.sql."
+          exit 1

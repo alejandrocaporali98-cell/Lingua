@@ -271,3 +271,7 @@ document.documentElement.style.setProperty("--scale", window.LINGUA.store.get("t
   L.themeOf = key => L.THEMES[key] || L.THEMES.racing;
   L.style = L.themeOf(L.settings && L.settings.theme);
 })();
+
+// Version of the site. The deploy replaces "dev" with the commit it publishes, so open pages can tell
+// when a newer version is online and offer to update (see assets/cloud.js · "New version").
+window.LINGUA.build = "dev";

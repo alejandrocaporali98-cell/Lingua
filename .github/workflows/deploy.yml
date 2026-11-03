@@ -1,0 +1,67 @@
+# Test, then publish the site to GitHub Pages.
+# Every push to main runs the tests in tests/. The site is only published when they all pass,
+# so a change that breaks something never reaches students.
+# One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Test and publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install the test browser
+        run: |
+          pip install -r tests/requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Run the tests
+        run: python tests/run_all.py
+      - name: Keep the screenshots if something failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-screenshots
+          path: tests/out/
+          retention-days: 7
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stamp the version (open pages use it to offer "New version · Update")
+        run: |
+          mkdir _site
+          rsync -a --exclude '.git' --exclude '.github' --exclude 'tests' ./ _site/
+          sed -i "s/window.LINGUA.build = \"dev\";/window.LINGUA.build = \"${GITHUB_SHA}\";/" _site/assets/config.js
+          grep -q "window.LINGUA.build = \"${GITHUB_SHA}\";" _site/assets/config.js
+          echo "{\"build\": \"${GITHUB_SHA}\", \"at\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > _site/version.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
