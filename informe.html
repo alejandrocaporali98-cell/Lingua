@@ -21,13 +21,13 @@
   .lang button { border: 0; border-radius: 0; min-height: 42px; padding: 8px 14px; }
   .lang button.on { background: var(--black); color: #fff; }
   .sheet { width: 816px; margin: 12px auto 30px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,.12); }
-  header.big { background: var(--black); color: #fff; padding: 46px 60px 42px; display: flex; justify-content: space-between; gap: 24px; }
+  header.big { background: var(--black); color: #fff; padding: 36px 56px 32px; display: flex; justify-content: space-between; gap: 24px; }
   header.big h1 { font-size: 30px; font-weight: 800; letter-spacing: .5px; }
   .kick { font-size: 10.5px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-top: 12px; }
   header.big .r { text-align: right; display: grid; gap: 8px; align-content: start; }
   header.big .date { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .lbl { font-size: 9.5px; letter-spacing: 2.5px; text-transform: uppercase; color: #9a9a9a; }
-  main { padding: 30px 60px 10px; display: grid; gap: 30px; }
+  main { padding: 26px 56px 8px; display: grid; gap: 22px; }
   .intro h2 { font-size: 16px; font-weight: 700; } .intro p { font-size: 11.5px; color: #444; line-height: 1.65; margin-top: 6px; }
   .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--line); padding: 14px 0; }
   .facts > div { display: grid; gap: 6px; align-content: start; } .facts b { font-size: 22px; letter-spacing: -.3px; font-variant-numeric: tabular-nums; } .facts b.lv { color: var(--blue); }
@@ -129,12 +129,13 @@
   .sh .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; background: var(--sc, var(--blue)); color: #fff; font-size: 10.5px; letter-spacing: 0; }
   .msg { border-radius: 22px; background: var(--stage); } .msg .k { color: var(--gold); }
   /* Detail blocks in the board style */
-  .blk { display: grid; gap: 12px; break-inside: avoid; }
+  .blk { display: grid; gap: 10px; }
+  .hd { break-after: avoid; } .qrow, .sk, .pair > *, .lc, .tli, .hwi, .rx, .steps > div, .it, .mt > div { break-inside: avoid; }
   .hd { display: grid; gap: 3px; } .hd .eb { font-size: 9.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
   .hd h3 { font-size: 19px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
-  .card { border-radius: 20px; padding: 18px; display: grid; gap: 10px; align-content: start; break-inside: avoid; }
-  .card.soft { background: #f4f5f8; } .card.tint { background: color-mix(in srgb, var(--hc) 8%, #fff); }
-  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+  .card { border-radius: 20px; padding: 16px 18px; display: grid; gap: 8px; align-content: start; }
+  .card.soft { background: #f4f5f8; } .pair.rh .card.soft { align-content: center; } .card.tint { background: color-mix(in srgb, var(--hc) 8%, #fff); }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch; }
   .qrow { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
   .qt { border-radius: 14px; background: color-mix(in srgb, var(--whl) 10%, #fff); padding: 12px 12px 10px; display: grid; gap: 2px; }
   .qt .qn { font-size: 9.5px; font-weight: 800; letter-spacing: .08em; color: var(--whl); } .qt b { font-size: 24px; font-weight: 800; letter-spacing: -.03em; color: #b45309; }
@@ -148,12 +149,12 @@
   .it:first-of-type { border-top: 0; }
   .it span { display: grid; gap: 2px; min-width: 0; } .it b { font-size: 12px; font-weight: 800; } .it small { font-size: 10px; color: #666; font-weight: 600; overflow-wrap: anywhere; }
   .it em { font-style: normal; font-size: 12px; font-weight: 800; color: #fff; background: var(--hc); border-radius: 99px; padding: 4px 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .lgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .lgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .lgrid .lc:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .lc { border-radius: 16px; background: #f4f5f8; padding: 12px; display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; gap: 12px; align-items: center; }
   .lc .ln { width: 46px; height: 46px; border-radius: 12px; background: var(--tile); color: var(--gold); display: grid; place-items: center; font-weight: 800; font-size: 15px; box-shadow: inset 0 -3px 0 rgba(0,0,0,.25); }
   .lc .lb { display: grid; gap: 5px; min-width: 0; } .lc .lb b { font-size: 12.5px; font-weight: 800; } .lc .lb small { font-size: 9.5px; color: #777; font-weight: 600; }
   .lc .lr { display: grid; gap: 5px; justify-items: end; } .lc .lr b { font-size: 15px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-  .road.sm { background: #e6e8ee; padding: 3px; gap: 3px; border-radius: 7px; margin: 0; } .road.sm span { height: 8px; border-radius: 3px; background: #fff; } .road.sm span.done { background: var(--race); }
+  .road.sm { max-width: 300px; background: #e6e8ee; padding: 3px; gap: 3px; border-radius: 7px; margin: 0; } .road.sm span { height: 8px; border-radius: 3px; background: #fff; } .road.sm span.done { background: var(--race); }
   .chip { font-size: 9px; font-weight: 800; letter-spacing: .04em; padding: 4px 9px; border-radius: 99px; background: #e8e9ee; color: #555; white-space: nowrap; }
   .chip.ok { background: color-mix(in srgb, var(--ttt) 14%, #fff); color: var(--ttt); } .chip.warn { background: #fdeee0; color: #9a4b00; }
   .tl { display: grid; gap: 8px; }
@@ -172,8 +173,8 @@
   .rxg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .rx { border-radius: 14px; background: color-mix(in srgb, var(--jam) 7%, #fff); padding: 12px 14px; border-left: 4px solid var(--jam); }
   .rx p { font-size: 12.5px; font-weight: 600; line-height: 1.45; } .rx u { text-decoration: none; font-weight: 800; color: var(--jam); border-bottom: 2px solid var(--jam); padding: 0 2px; }
-  .mt { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
-  .mt > div { border-radius: 16px; background: var(--stage); color: #fff; padding: 12px 14px; display: grid; gap: 2px; }
+  .mt { display: grid; grid-auto-rows: 1fr; gap: 8px; } .pair.rh { grid-template-columns: 1.7fr 1fr; } .pair.rh.solo { grid-template-columns: 1fr; } .pair.rh.solo .mt { grid-auto-flow: column; grid-auto-columns: 1fr; }
+  .mt > div { border-radius: 16px; background: var(--stage); color: #fff; padding: 12px 14px; display: grid; gap: 2px; align-content: center; }
   .mt small { font-size: 9.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); } .mt b { font-size: 26px; font-weight: 800; line-height: 1.05; } .mt span { font-size: 10px; opacity: .75; font-weight: 600; }
   .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
   .steps > div { border-radius: 16px; background: #f4f5f8; padding: 14px; display: grid; gap: 8px; align-content: start; }
@@ -184,9 +185,9 @@
   @media screen and (max-width: 840px) {
     .sheet { width: 100%; margin: 10px 0 20px; }
     header.big { padding: 30px 22px; flex-direction: column; } header.big .r { text-align: left; }
-    main { padding: 24px 22px 10px; } .msg { margin: 6px 22px; } footer { padding: 16px 22px 22px; }
+    main { padding: 22px 18px 8px; } .msg { margin: 6px 22px; } footer { padding: 16px 22px 22px; }
     .facts { grid-template-columns: 1fr 1fr; } .two { grid-template-columns: 1fr; gap: 26px; }
-    .pair, .lgrid, .rxg { grid-template-columns: 1fr; } .sk { grid-template-columns: 1fr 1fr; }
+    .pair, .pair.rh, .lgrid, .rxg { grid-template-columns: 1fr; } .sk { grid-template-columns: 1fr 1fr; } .mt { grid-auto-flow: column; grid-auto-columns: 1fr; } .qrow { grid-template-columns: repeat(3, 1fr) !important; }
     .hwi { grid-template-columns: minmax(0, 1fr) auto; } .hwi .chip { grid-column: 1 / -1; } .hwd { text-align: left; }
     .board { grid-template-columns: 1fr 1fr; } .bx.jeo { grid-column: 1 / -1; grid-row: auto; } .board2, .hl3 { grid-template-columns: 1fr; }
     .bx .big { gap: 10px; } .bx .big svg { width: 52px; height: 52px; } .bx .bt, .bx .big .bt { font-size: 15.5px; } .lvt { grid-template-columns: repeat(3, 1fr); } .lvt small { font-size: 7px; } .bx.jeo .bt { font-size: 28px; } .sign { margin: 22px 22px 0; gap: 20px; }
@@ -199,7 +200,9 @@
   @media print {
     html, body { background: #fff; } .bar { display: none; }
     .sheet { width: auto; margin: 0; box-shadow: none; }
-    @page { size: letter; margin: 12mm 0; }
+    main { display: block; } main > * + * { margin-top: 22px; } .blk { display: block; } .blk > * + * { margin-top: 10px; }
+    .hd { break-after: avoid-page; page-break-after: avoid; } .keep { break-inside: avoid-page; page-break-inside: avoid; }
+    @page { size: letter; margin: 10mm 0; }
     @page :first { margin-top: 0; }
   }
 </style>
@@ -482,10 +485,10 @@
           <div style="--hc:var(--race)"><span class="eb">${x.hFix}</span><p>${fixItem ? oItem(fixItem) : x.noOpp}</p></div>
           <div style="--hc:var(--ttt)"><span class="eb">${x.hGoal}</span><p>${(D.nx || [])[0] ? x.hGoalL(D.nx[0][0], D.nx[0][1]) : x.hGoalH}</p></div>
         </div>
-        ${(D.sc || []).length ? `<section class="blk">${hd(x.eQ, x.tQ, "var(--whl)")}
+        ${(D.sc || []).length ? `<section class="blk keep">${hd(x.eQ, x.tQ, "var(--whl)")}
           ${D.sc.length > 6 ? `<div class="card soft">${scores(D.sc, x)}<p class="note">${x.s1n}</p></div>`
-            : `<div class="qrow">${D.sc.map(q => `<div class="qt ${q[1] >= 80 ? "ok" : ""}"><span class="qn">${esc(q[2])}</span><b>${q[1]}%</b><small>${fds(q[0])}</small></div>`).join("")}</div><p class="note">${x.s1t}</p>`}</section>` : ""}
-        <section class="blk">${hd(x.eS, x.tSk, "var(--jeo)")}
+            : `<div class="qrow" style="grid-template-columns:repeat(${Math.max(3, D.sc.length)}, 1fr)">${D.sc.map(q => `<div class="qt ${q[1] >= 80 ? "ok" : ""}"><span class="qn">${esc(q[2])}</span><b>${q[1]}%</b><small>${fds(q[0])}</small></div>`).join("")}</div><p class="note">${x.s1t}</p>`}</section>` : ""}
+        <section class="blk keep">${hd(x.eS, x.tSk, "var(--jeo)")}
           <div class="sk">${skills.map(s => `<div class="${s[3] ? "" : "zero"}"><b>${s[3] ? s[1] : "—"}</b><span>${x.sk[s[0]]}</span><small>${s[3] ? s[2] : x.notYet}</small></div>`).join("")}</div></section>
         <div class="pair">
           <section class="card tint" style="--hc:var(--ttt)">${hd(x.eStr, x.tStr, "var(--ttt)")}
@@ -506,12 +509,12 @@
         ${(D.hl || []).length ? `<section class="blk">${hd(x.eH, x.tH2, "var(--ttt)")}<div class="hwl">${D.hl.map(h => `<div class="hwi">
             <span class="chip ${hwSt2[h[2]]}">${x.hs[h[2]]}</span><span class="hwt"><b>${esc(h[0])}</b>${h[4] ? `<small>“${esc(h[4])}”</small>` : ""}</span>
             <span class="hwd">${h[1] ? fds(h[1]) : ""}</span>${h[3] == null ? "<span></span>" : `<span class="grade">${h[3]}</span>`}</div>`).join("")}</div></section>` : ""}
-        ${(D.rx || []).length ? `<section class="blk">${hd(x.eR, x.tR2, "var(--jam)")}<div class="rxg">${D.rx.map(q => `<div class="rx"><p>${esc(q[0]).replace(/_{2,}/, `<u>${esc(q[1])}</u>`)}</p></div>`).join("")}</div><p class="note">${x.rxN}</p></section>` : ""}
-        ${(D.wk || []).filter(w => w[1]).length >= 2 || (D.att || []).length ? `<section class="blk">${hd(x.eP, x.tP2, "var(--whl)")}<div class="pair">
+        ${(D.rx || []).length ? `<section class="blk keep">${hd(x.eR, x.tR2, "var(--jam)")}<div class="rxg">${D.rx.map(q => `<div class="rx"><p>${esc(q[0]).replace(/_{2,}/, `<u>${esc(q[1])}</u>`)}</p></div>`).join("")}</div><p class="note">${x.rxN}</p></section>` : ""}
+        ${(D.wk || []).filter(w => w[1]).length >= 2 || (D.att || []).length ? `<section class="blk keep">${hd(x.eP, x.tP2, "var(--whl)")}<div class="pair rh ${(D.wk || []).filter(w => w[1]).length >= 2 ? "" : "solo"}">
           ${(D.wk || []).filter(w => w[1]).length >= 2 ? `<div class="card soft">${bars(D.wk, x)}<p class="note">${x.s9n}</p></div>` : ""}
           ${(D.att || []).length ? `<div class="mt">${D.att.map(a => `<div><small>${new Date(a[0] + "-15").toLocaleDateString(x.locale, { month: "long" })}</small><b>${a[1]}</b><span>${x.attN(a[1])}${a[2] ? ` · ${t.missedN(a[2])}` : ""}</span></div>`).join("")}</div>` : ""}
           </div></section>` : ""}
-        <section class="blk">${hd(x.eN, x.tN2, "var(--jeo)")}<div class="steps">${steps.map((st, i) => `<div><span class="sn">${i + 1}</span><p>${st}</p></div>`).join("")}</div></section>
+        <section class="blk keep">${hd(x.eN, x.tN2, "var(--jeo)")}<div class="steps">${steps.map((st, i) => `<div><span class="sn">${i + 1}</span><p>${st}</p></div>`).join("")}</div></section>
       </main>
       ${D.c ? `<div class="msg"><span class="k">${x.msg}</span><p>${esc(D.c)}</p><small>— ${esc(D.te || G.maestroNombre || G.maestro || "")} · ${x.sign}</small></div>` : ""}
       <div class="sign"><div><span>${x.prep}</span><b>${esc(D.te || G.maestroNombre || G.maestro || "")}</b><span>${x.sign} · Lingua</span></div>
