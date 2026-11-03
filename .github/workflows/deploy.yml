@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # the test browser doesn't support newer Ubuntu yet
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
