@@ -11,7 +11,7 @@ window.LINGUA = {
     { titulo: "Module 1 · The basics", owner: "Emiliano", lecciones: [
       { id: "01", archivo: "clases/leccion-01.html", titulo: "Driver Profile", tema: "Introduce yourself: your name, age, where you’re from and what you like.", nivel: "A1–A2", min: 60, icono: "helmet", color: "#2346d0", estado: "lista", secs: 7 },
       { id: "02", archivo: "clases/leccion-02.html", titulo: "My Garage", tema: "Describe things with have / has, colors and big numbers.", nivel: "A1–A2", min: 60, icono: "car", color: "#0f766e", estado: "lista", secs: 8 },
-      { id: "03", archivo: "clases/leccion-03.html", titulo: "Race Day", tema: "Your daily routine and telling the time with the present simple.", nivel: "A2", min: 60, icono: "clock", color: "#b45309", estado: "lista", secs: 7 }
+      { id: "03", archivo: "clases/leccion-03.html", titulo: "Race Day", tema: "Your daily routine and telling the time with the present simple.", nivel: "A2", min: 60, icono: "clock", color: "#b45309", estado: "lista", secs: 8 }
     ]},
     { titulo: "Module 2 · Tell and compare", owner: "Emiliano", lecciones: [
       { id: "04", archivo: "clases/leccion-04.html", titulo: "Anime Night", tema: "Give your opinion: I love, I can't stand, because…", nivel: "A2", min: 60, icono: "chat", color: "#6d3fd6", estado: "lista", secs: 7 },
@@ -98,11 +98,13 @@ window.LINGUA = {
     // ── Derek and Erick (C1) ──
     { titulo: "C1 · Film", owner: "Derek", lecciones: [
       {"id": "301", "archivo": "clases/leccion-301.html", "titulo": "Talking Like a Filmmaker", "tema": "Directors don't say a scene was \"good\" — they talk about pacing, framing and what lands.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 10},
-      {"id": "302", "archivo": "clases/leccion-302.html", "titulo": "They Don't Make Them Like That", "tema": "Why classic films still hold up — and how to talk about the way they were made.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 11}
+      {"id": "302", "archivo": "clases/leccion-302.html", "titulo": "They Don't Make Them Like That", "tema": "Why classic films still hold up — and how to talk about the way they were made.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 11},
+      {"id": "303", "archivo": "clases/leccion-303.html", "titulo": "From Script to Screen", "tema": "Everyone has an idea for a film. The hard part is everything after that.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 11}
     ]},
     { titulo: "C1 · Music", owner: "Erick", lecciones: [
       {"id": "311", "archivo": "clases/leccion-311.html", "titulo": "Talking Shop: Sound, Gear & Playing", "tema": "Musicians don't say a song is \"nice\" — they talk about tone, groove and what makes it hit.", "nivel": "C1", "min": 90, "icono": "guitar", "color": "#0f766e", "estado": "lista", "secs": 10},
-      {"id": "312", "archivo": "clases/leccion-312.html", "titulo": "Breaking Down a Song", "tema": "Saying a song is \"fire\" is easy. Explaining why it works — the writing, the production, the feel — is the C1 skill.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 10}
+      {"id": "312", "archivo": "clases/leccion-312.html", "titulo": "Breaking Down a Song", "tema": "Saying a song is \"fire\" is easy. Explaining why it works — the writing, the production, the feel — is the C1 skill.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 10},
+      {"id": "313", "archivo": "clases/leccion-313.html", "titulo": "Inside the Music Industry", "tema": "Everyone wants to blow up. Not everyone wants to sign a record deal.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 11}
     ]}
   ],
 

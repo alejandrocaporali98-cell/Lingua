@@ -687,5 +687,64 @@ window.CLASE = {
    }
   ],
   "say": "Now describe the day of someone in your family with five verbs."
+ },
+ "warmup": {
+  "title": "Warm-up · My Garage review",
+  "text": "Quick review of lesson 02. Answer out loud — no notes.",
+  "questions": [
+   "What do you have in your garage? What color is it?",
+   "Does your dad have a car? What car does he have?",
+   "How much is a Ferrari? Say the number.",
+   "What's your dream car? What does it have?",
+   "Does your best friend have a bike?"
+  ],
+  "kit": [
+   "I have… / He has…",
+   "It's red / blue / black.",
+   "Does he have…? Yes, he does.",
+   "two hundred thousand dollars"
+  ]
+ },
+ "plan": {
+  "min": 60,
+  "steps": [
+   {
+    "sec": "warmup",
+    "min": 5,
+    "tip": "Lesson 02 review. Listen for \"he has\", not \"he have\"."
+   },
+   {
+    "sec": "flash",
+    "min": 10,
+    "tip": "He acts out each verb (wake up, get dressed) as he says it."
+   },
+   {
+    "sec": "read",
+    "min": 12,
+    "tip": "At the end he compares: \"Carla wakes up at 5:30. I wake up at…\""
+   },
+   {
+    "sec": "grammar",
+    "min": 10,
+    "tip": "Today's main point: he / she + verb-s."
+   },
+   {
+    "sec": "frases",
+    "min": 8,
+    "tip": "Telling the time: half past, quarter to."
+   },
+   {
+    "sec": "rp",
+    "min": 12,
+    "tip": "His real routine first, then his favourite driver's in the third person."
+   },
+   {
+    "label": "Wrap-up",
+    "sec": "_end",
+    "min": 3,
+    "tip": "Set homework. If there's time: Games → Race track."
+   }
+  ],
+  "homework": "Fill in the gaps and the Final quiz of this lesson."
  }
 };
