@@ -38,7 +38,8 @@ window.LINGUA = {
       {"id": "119", "archivo": "clases/leccion-119.html", "titulo": "Where I Am From", "tema": "Everyone you meet in English will ask where you are from, and the good answer is never just the name of a city.", "nivel": "B1", "min": 60, "icono": "plane", "color": "#7c3aed", "estado": "lista", "secs": 7},
       {"id": "120", "archivo": "clases/leccion-120.html", "titulo": "How Are You Really", "tema": "English has a whole layer of phrases between \"fine\" and \"terrible\", and most learners never reach it.", "nivel": "B1", "min": 60, "icono": "chat", "color": "#0e7490", "estado": "lista", "secs": 7},
       {"id": "121", "archivo": "clases/leccion-121.html", "titulo": "Aesthetics & What Is In", "tema": "Every aesthetic online has an English name and a set of words that go with it.", "nivel": "B1", "min": 60, "icono": "chat", "color": "#2346d0", "estado": "lista", "secs": 7},
-      {"id": "122", "archivo": "clases/leccion-122.html", "titulo": "Life at the Stables", "tema": "Riding has its own English — and most of it is about the horse, not the rider.", "nivel": "B1", "min": 60, "icono": "horse", "color": "#a16207", "estado": "lista", "secs": 10}
+      {"id": "122", "archivo": "clases/leccion-122.html", "titulo": "Life at the Stables", "tema": "Riding has its own English — and most of it is about the horse, not the rider.", "nivel": "B1", "min": 60, "icono": "horse", "color": "#a16207", "estado": "lista", "secs": 10},
+      {"id": "123", "archivo": "clases/leccion-123.html", "titulo": "Show Day", "tema": "Every rider remembers their first competition. Mostly the parts that went wrong.", "nivel": "B1", "min": 60, "icono": "horse", "color": "#a16207", "estado": "lista", "secs": 11}
     ]},
     { titulo: "Foundations", owner: "Ada", lecciones: [
       {"id": "103", "archivo": "clases/leccion-103.html", "titulo": "Grammar That Actually Matters", "tema": "Forget the endless rules.", "nivel": "B1", "min": 60, "icono": "book", "color": "#b45309", "estado": "lista", "secs": 7},
@@ -104,7 +105,8 @@ window.LINGUA = {
     { titulo: "C1 · Music", owner: "Erick", lecciones: [
       {"id": "311", "archivo": "clases/leccion-311.html", "titulo": "Talking Shop: Sound, Gear & Playing", "tema": "Musicians don't say a song is \"nice\" — they talk about tone, groove and what makes it hit.", "nivel": "C1", "min": 90, "icono": "guitar", "color": "#0f766e", "estado": "lista", "secs": 10},
       {"id": "312", "archivo": "clases/leccion-312.html", "titulo": "Breaking Down a Song", "tema": "Saying a song is \"fire\" is easy. Explaining why it works — the writing, the production, the feel — is the C1 skill.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 10},
-      {"id": "313", "archivo": "clases/leccion-313.html", "titulo": "Inside the Music Industry", "tema": "Everyone wants to blow up. Not everyone wants to sign a record deal.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 11}
+      {"id": "313", "archivo": "clases/leccion-313.html", "titulo": "Inside the Music Industry", "tema": "Everyone wants to blow up. Not everyone wants to sign a record deal.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 11},
+      {"id": "314", "archivo": "clases/leccion-314.html", "titulo": "Live and Loud", "tema": "A great gig is never just about the music.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 11}
     ]}
   ],
 
