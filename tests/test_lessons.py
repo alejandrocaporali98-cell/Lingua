@@ -44,6 +44,16 @@ def test():
         if not os.path.exists(os.path.join(ROOT, "clases", f"leccion-{lid}.html")): problems.append(f"{lid}: clases/leccion-{lid}.html is missing")
     check(not problems, f"content of {len(IDS)} lessons is consistent " + " | ".join(problems[:6]))
 
+    # Each student's lessons appear in number order, across all their modules
+    order, owner, messy = {}, None, []
+    for line in cfg[:cfg.index("// ── Cuentas")].splitlines():
+        m = re.search(r'owner: "([^"]+)"', line)
+        if m: owner = m.group(1); continue
+        m = re.search(r'"?id"?: "(\d+)"', line)
+        if m and owner: order.setdefault(owner, []).append(int(m.group(1)))
+    messy = [f"{o}: {ids}" for o, ids in order.items() if ids != sorted(ids)]
+    check(not messy, "every student's lessons are listed in number order " + " | ".join(messy))
+
     with Env(offline=True) as env:
         pg = env.device("L")
         broken = []
