@@ -12,112 +12,112 @@ window.CLASE = {
  ],
  "flash": [
   {
-   "img": "⏰",
+   "img": "",
    "en": "wake up",
    "def": "Open your eyes after sleeping.",
    "ex": "I wake up at 6:30 on school days.",
    "tag": "routine"
   },
   {
-   "img": "🛏️",
+   "img": "",
    "en": "get up",
    "def": "Get out of bed.",
    "ex": "I wake up at 6:30, but I get up at 6:45!",
    "tag": "routine"
   },
   {
-   "img": "🥣",
+   "img": "",
    "en": "have breakfast",
    "def": "Eat the first meal of the day.",
    "ex": "I have breakfast at seven. (Not: I take breakfast)",
    "tag": "routine"
   },
   {
-   "img": "🚿",
+   "img": "",
    "en": "take a shower",
    "def": "Wash your body with water.",
    "ex": "I take a shower before school.",
    "tag": "routine"
   },
   {
-   "img": "👕",
+   "img": "",
    "en": "get dressed",
    "def": "Put on your clothes.",
    "ex": "I get dressed in five minutes.",
    "tag": "routine"
   },
   {
-   "img": "📚",
+   "img": "",
    "en": "do homework",
    "def": "Do the work from school at home.",
    "ex": "I do my homework after lunch. (Not: make homework)",
    "tag": "routine"
   },
   {
-   "img": "🌙",
+   "img": "",
    "en": "go to bed",
    "def": "Lie down to sleep at night.",
    "ex": "I go to bed at 11 on weekends.",
    "tag": "routine"
   },
   {
-   "img": "🕖",
+   "img": "",
    "en": "o'clock",
    "def": "Exactly on the hour.",
    "ex": "It's seven o'clock. (7:00)",
    "tag": "time"
   },
   {
-   "img": "🕣",
+   "img": "",
    "en": "half past",
    "def": "30 minutes after the hour.",
    "ex": "It's half past eight. (8:30)",
    "tag": "time"
   },
   {
-   "img": "🕘",
+   "img": "",
    "en": "quarter past / quarter to",
    "def": "15 minutes after / 15 minutes before the hour.",
    "ex": "Quarter past nine (9:15). Quarter to ten (9:45).",
    "tag": "time"
   },
   {
-   "img": "✅",
+   "img": "",
    "en": "always",
    "def": "100% of the time.",
    "ex": "I always brush my teeth before bed.",
    "tag": "how often"
   },
   {
-   "img": "👍",
+   "img": "",
    "en": "usually",
    "def": "Most of the time.",
    "ex": "I usually take the bus to school.",
    "tag": "how often"
   },
   {
-   "img": "🤷",
+   "img": "",
    "en": "sometimes",
    "def": "Some days, not every day.",
    "ex": "I sometimes play video games after school.",
    "tag": "how often"
   },
   {
-   "img": "🚫",
+   "img": "",
    "en": "never",
    "def": "0% of the time.",
    "ex": "I never wake up before six on Sunday.",
    "tag": "how often"
   },
   {
-   "img": "🔁",
+   "img": "",
    "en": "practice",
    "def": "Do something many times to get better.",
    "ex": "F1 drivers practice on Friday, and the race is on Sunday.",
    "tag": "F1"
   },
   {
-   "img": "⏱️",
+   "img": "",
    "en": "qualifying",
    "def": "The session that decides who starts at the front.",
    "ex": "Qualifying is on Saturday.",

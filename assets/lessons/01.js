@@ -12,112 +12,112 @@ window.CLASE = {
  ],
  "flash": [
   {
-   "img": "🎂",
+   "img": "",
    "en": "I'm 15",
    "def": "Your age. We use “be”, not “have”.",
    "ex": "I'm 15 years old. (Not: I have 15.)",
    "tag": "basics"
   },
   {
-   "img": "🌎",
+   "img": "",
    "en": "I'm from…",
    "def": "The country or city where you were born.",
    "ex": "I'm from Monterrey, Mexico.",
    "tag": "basics"
   },
   {
-   "img": "🏠",
+   "img": "",
    "en": "I live in…",
    "def": "The place where your home is now.",
    "ex": "I live in Monterrey with my family.",
    "tag": "basics"
   },
   {
-   "img": "🏷️",
+   "img": "",
    "en": "nickname",
    "def": "A short or funny name your friends call you.",
    "ex": "My name is Diego, but my nickname is Dee.",
    "tag": "word"
   },
   {
-   "img": "⭐",
+   "img": "",
    "en": "favorite",
    "def": "The one you like the most.",
    "ex": "My favorite team is Ferrari.",
    "tag": "word"
   },
   {
-   "img": "🎯",
+   "img": "",
    "en": "hobby",
    "def": "Something you do for fun in your free time.",
    "ex": "My hobbies are gaming and football.",
    "tag": "word"
   },
   {
-   "img": "😍",
+   "img": "",
    "en": "be into",
    "def": "To like something a lot right now.",
    "ex": "I'm really into anime right now.",
    "tag": "phrase"
   },
   {
-   "img": "🙌",
+   "img": "",
    "en": "be a big fan of",
    "def": "To love a team, a show or an artist.",
    "ex": "I'm a big fan of Attack on Titan.",
    "tag": "phrase"
   },
   {
-   "img": "💪",
+   "img": "",
    "en": "be good at",
    "def": "To do something very well.",
    "ex": "I'm good at racing games.",
    "tag": "phrase"
   },
   {
-   "img": "😤",
+   "img": "",
    "en": "I can't stand…",
    "def": "I really don't like it. I hate it.",
    "ex": "I can't stand traffic.",
    "tag": "phrase"
   },
   {
-   "img": "🏎️",
+   "img": "",
    "en": "driver",
    "def": "A person who drives a race car.",
    "ex": "Checo Pérez is a Mexican driver. A pilot flies planes!",
    "tag": "F1"
   },
   {
-   "img": "🤝",
+   "img": "",
    "en": "teammate",
    "def": "A person on the same team as you.",
    "ex": "In F1, your teammate is your first rival.",
    "tag": "F1"
   },
   {
-   "img": "🚗",
+   "img": "",
    "en": "sports car",
    "def": "A small, fast car that is fun to drive.",
    "ex": "The Supra is a Japanese sports car.",
    "tag": "cars"
   },
   {
-   "img": "💭",
+   "img": "",
    "en": "dream car",
    "def": "The car you want to have one day.",
    "ex": "My dream car is a Nissan Skyline R34.",
    "tag": "cars"
   },
   {
-   "img": "📅",
+   "img": "",
    "en": "on weekends",
    "def": "On Saturdays and Sundays.",
    "ex": "On weekends, I play football with my friends.",
    "tag": "routine"
   },
   {
-   "img": "🏁",
+   "img": "",
    "en": "track",
    "def": "The road where a race happens.",
    "ex": "Suzuka is my favorite track.",

@@ -268,3 +268,45 @@ document.documentElement.style.setProperty("--scale", window.LINGUA.store.get("t
 // Version of the site. The deploy replaces "dev" with the commit it publishes, so open pages can tell
 // when a newer version is online and offer to update (see assets/cloud.js · "New version").
 window.LINGUA.build = "dev";
+
+// ── Line icons (instead of emojis): LINGUA.ico("trophy", 20) ──
+(function () {
+  const P = {
+    speaker: '<path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',
+    mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+    headphones: '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="5" height="7" rx="1.5"/><rect x="16" y="14" width="5" height="7" rx="1.5"/>',
+    timer: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9.5 2h5"/>',
+    lock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+    flame: '<path d="M12 22c4 0 7-2.7 7-6.6 0-3.3-2-5.6-3.6-7.3-.4 1.6-1.3 2.7-2.4 3.1.3-3.2-1.2-6.4-4-8.2.2 2.8-1.2 4.9-2.8 6.7C5 11.3 5 12.8 5 15.4 5 19.3 8 22 12 22z"/>',
+    trophy: '<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',
+    flag: '<path d="M5 21V4M5 4h13l-2 4 2 4H5"/>',
+    book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M19 19v2H6"/>',
+    note: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+    compass: '<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+    cap: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/>',
+    crown: '<path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/>',
+    target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
+    bolt: '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+    star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>',
+    guitar: '<path d="M14 10l6-6M18 2l4 4"/><path d="M11 13a3 3 0 1 0 0 .01M13 7c-2-1-5 0-6 2-.6 1.2-1.6 1.5-3 2-2 .8-2.5 4-.5 6s5.2 1.5 6-.5c.5-1.4.8-2.4 2-3 2-1 3-4 2-6z"/>',
+    sliders: '<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M2 14h4M10 8h4M18 16h4"/>',
+    film: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 8h4M3 16h4M17 8h4M17 16h4"/>',
+    clapper: '<path d="M3 10h18v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 10l1.5-5.5 16-0.5L21 10M8 4.5L10 10M14 4.3l2 5.7"/>',
+    scissors: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.1 8.1L20 20M8.1 15.9L20 4"/>',
+    horseshoe: '<path d="M6 21H4V12a8 8 0 0 1 16 0v9h-2v-8a6 6 0 0 0-12 0z"/>',
+    brush: '<path d="M9 14l7-7 2 2-7 7M14 5l2-2 5 5-2 2"/><path d="M9 14c-3 0-5 2-5 5v2h2c3 0 5-2 5-5"/>',
+    briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+    chart: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',
+    puzzle: '<path d="M10 3h4v3a2 2 0 1 0 4 0V3h3v7h-3a2 2 0 1 0 0 4h3v7h-7v-3a2 2 0 1 0-4 0v3H3v-7h3a2 2 0 1 0 0-4H3V3z"/>',
+    car: '<path d="M5 17h14M3 17v-4l2-5a2 2 0 0 1 1.9-1.4h10.2A2 2 0 0 1 19 8l2 5v4"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M4 12h16"/>',
+    check: '<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+    notebook: '<rect x="5" y="3" width="15" height="18" rx="2"/><path d="M5 7H3M5 12H3M5 17H3M9 8h7M9 12h7"/>'
+  };
+  window.LINGUA.ico = function (name, size, cls) {
+    const s = size || 18;
+    return `<svg class="ico ${cls || ""}" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[name] || ""}</svg>`;
+  };
+  window.LINGUA.ICONS = Object.keys(P);
+})();

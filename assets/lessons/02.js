@@ -12,112 +12,112 @@ window.CLASE = {
  ],
  "flash": [
   {
-   "img": "🔑",
+   "img": "",
    "en": "have / has",
    "def": "I, you, we, they → have. He, she, it → has.",
    "ex": "I have a bike. My dad has a pickup.",
    "tag": "grammar"
   },
   {
-   "img": "🎨",
+   "img": "",
    "en": "a red car",
    "def": "The color goes before the thing.",
    "ex": "I want a dark blue Supra. (Not: a Supra dark blue)",
    "tag": "grammar"
   },
   {
-   "img": "🅿️",
+   "img": "",
    "en": "garage",
    "def": "The place in a house where you keep the car.",
    "ex": "We have two cars in our garage.",
    "tag": "word"
   },
   {
-   "img": "⚙️",
+   "img": "",
    "en": "engine",
    "def": "The part that makes the car move.",
    "ex": "The R34 GT-R has a six-cylinder engine.",
    "tag": "cars"
   },
   {
-   "img": "🐎",
+   "img": "",
    "en": "horsepower",
    "def": "How strong an engine is. We write hp. No plural s.",
    "ex": "My dream car has 500 horsepower.",
    "tag": "cars"
   },
   {
-   "img": "⚡",
+   "img": "",
    "en": "top speed",
    "def": "The fastest a car can go.",
    "ex": "Its top speed is 250 km/h.",
    "tag": "cars"
   },
   {
-   "img": "💺",
+   "img": "",
    "en": "seat",
    "def": "The place where you sit in a car.",
    "ex": "A sports car usually has two or four seats.",
    "tag": "cars"
   },
   {
-   "img": "🛞",
+   "img": "",
    "en": "steering wheel",
    "def": "The round thing you hold to drive.",
    "ex": "In Japan, the steering wheel is on the right.",
    "tag": "cars"
   },
   {
-   "img": "🏎️",
+   "img": "",
    "en": "spoiler",
    "def": "The wing at the back of a car.",
    "ex": "The car has a big black spoiler.",
    "tag": "cars"
   },
   {
-   "img": "⏱️",
+   "img": "",
    "en": "tires",
    "def": "The black rubber parts on the wheels.",
    "ex": "In a pit stop, F1 teams change all four tires in about two seconds.",
    "tag": "F1"
   },
   {
-   "img": "♻️",
+   "img": "",
    "en": "used",
    "def": "Not new. Someone had it before.",
    "ex": "My uncle has a used Civic.",
    "tag": "word"
   },
   {
-   "img": "💸",
+   "img": "",
    "en": "expensive / cheap",
    "def": "Costs a lot of money / costs a little money.",
    "ex": "A Ferrari is expensive. A bike is cheap.",
    "tag": "word"
   },
   {
-   "img": "💯",
+   "img": "",
    "en": "hundred",
    "def": "100. After a number, no s.",
    "ex": "It has three hundred horsepower. (Not: three hundreds)",
    "tag": "numbers"
   },
   {
-   "img": "💵",
+   "img": "",
    "en": "thousand",
    "def": "1,000. After a number, no s.",
    "ex": "It costs twenty-five thousand dollars.",
    "tag": "numbers"
   },
   {
-   "img": "💰",
+   "img": "",
    "en": "million",
    "def": "1,000,000. After a number, no s.",
    "ex": "That car costs two million dollars.",
    "tag": "numbers"
   },
   {
-   "img": "🏷️",
+   "img": "",
    "en": "How much is it?",
    "def": "Ask the price of something.",
    "ex": "How much is it? — It's thirty thousand dollars.",

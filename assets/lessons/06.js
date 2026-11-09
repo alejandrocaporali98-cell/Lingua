@@ -12,112 +12,112 @@ window.CLASE = {
  ],
  "flash": [
   {
-   "img": "🚀",
+   "img": "",
    "en": "fast → faster → the fastest",
    "def": "Short adjectives add -er and -est.",
    "ex": "An F1 car is faster than a Supra.",
    "tag": "grammar"
   },
   {
-   "img": "↔️",
+   "img": "",
    "en": "than",
    "def": "Use it after a comparative.",
    "ex": "Gran Turismo is more realistic than Mario Kart.",
    "tag": "grammar"
   },
   {
-   "img": "➕",
+   "img": "",
    "en": "more … / the most …",
    "def": "Long adjectives use more and the most.",
    "ex": "This is the most expensive car in the game.",
    "tag": "grammar"
   },
   {
-   "img": "🥇",
+   "img": "",
    "en": "good → better → the best",
    "def": "Irregular. Never “gooder” or “more good”.",
    "ex": "Your lap time is better than mine.",
    "tag": "grammar"
   },
   {
-   "img": "👎",
+   "img": "",
    "en": "bad → worse → the worst",
    "def": "Irregular. Never “badder”.",
    "ex": "This is the worst level in the game!",
    "tag": "grammar"
   },
   {
-   "img": "🟢",
+   "img": "",
    "en": "easy → easier → the easiest",
    "def": "Adjectives that end in -y change to -ier and -iest.",
    "ex": "Mario Kart is easier than Gran Turismo.",
    "tag": "grammar"
   },
   {
-   "img": "🐘",
+   "img": "",
    "en": "big → bigger → the biggest",
    "def": "One vowel + one consonant at the end: double the last letter.",
    "ex": "The new map is bigger.",
    "tag": "grammar"
   },
   {
-   "img": "⚖️",
+   "img": "",
    "en": "as … as",
    "def": "The same.",
    "ex": "My console is as fast as yours.",
    "tag": "grammar"
   },
   {
-   "img": "🖼️",
+   "img": "",
    "en": "graphics",
    "def": "How the game looks.",
    "ex": "The graphics in this game are incredible.",
    "tag": "games"
   },
   {
-   "img": "🎮",
+   "img": "",
    "en": "gameplay",
    "def": "How the game feels when you play it.",
    "ex": "The graphics are OK, but the gameplay is great.",
    "tag": "games"
   },
   {
-   "img": "⬆️",
+   "img": "",
    "en": "level up",
    "def": "Go to the next level.",
    "ex": "I need 200 points to level up.",
    "tag": "games"
   },
   {
-   "img": "📸",
+   "img": "",
    "en": "realistic",
    "def": "Very similar to real life.",
    "ex": "Gran Turismo is a realistic racing game.",
    "tag": "games"
   },
   {
-   "img": "👥",
+   "img": "",
    "en": "co-op",
    "def": "Playing together on the same team.",
    "ex": "Co-op games are more fun than solo games.",
    "tag": "games"
   },
   {
-   "img": "⏱️",
+   "img": "",
    "en": "lap time",
    "def": "The time for one full lap of the track.",
    "ex": "My best lap time at Suzuka is 1:35.",
    "tag": "racing"
   },
   {
-   "img": "🪶",
+   "img": "",
    "en": "heavy / light",
    "def": "Weighs a lot / weighs a little.",
    "ex": "A lighter car is faster in the corners.",
    "tag": "cars"
   },
   {
-   "img": "🐢",
+   "img": "",
    "en": "the slowest / the fastest",
    "def": "Number one in speed: last place or first place.",
    "ex": "Monaco is the slowest track in F1, and Monza is one of the fastest.",

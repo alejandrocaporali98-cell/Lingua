@@ -352,11 +352,11 @@ html.auth-pending body::after {
 @keyframes rec { 50% { opacity: .3; } }
 .badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
 .bdg { display: grid; justify-items: center; text-align: center; gap: 4px; padding: 14px 10px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
-.bdg .e { font-size: 2em; line-height: 1.1; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--badge-soft); border: 2px solid var(--badge-line); }
+.bdg .e { color: var(--ink); line-height: 1; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--badge-soft); border: 2px solid var(--badge-line); }
 .bdg b { font-size: .9em; }
 .bdg small { color: var(--mute); font-size: .76em; line-height: 1.35; }
 .bdg.off { opacity: .55; }
-.bdg.off .e { filter: grayscale(1); background: var(--bg); border-color: var(--line); }
+.bdg.off .e { color: var(--mute); background: var(--bg); border-color: var(--line); }
 
 /* Class mode: the teacher is running a class on a student's account */
 .classbar { position: relative; z-index: 60; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 9px max(16px, env(safe-area-inset-left));
@@ -440,3 +440,6 @@ body.lsheet-open { overflow: hidden; }
 #newVersion button:disabled { opacity: .6; }
 #newVersion .nv-x { background: transparent; color: inherit; opacity: .7; padding: 4px 8px; font-size: 1.15rem; }
 @media print { #newVersion { display: none; } }
+
+/* Big line icon at the top of a result or empty state */
+.pr-ico { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--bg); border: 1px solid var(--line); color: var(--ink); justify-self: center; }

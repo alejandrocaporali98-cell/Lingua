@@ -51,6 +51,13 @@ def test():
         txt = re.sub(r"alejandrocaporali98-cell", "", open(f, encoding="utf-8", errors="ignore").read())
         if re.search(r"alejandro|caporali", txt, re.I): named.append(os.path.relpath(f, ROOT))
     check(not named, "no personal name on the site " + ", ".join(named[:5]))
+    emo = re.compile("[\U0001F000-\U0001FAFF\u2600-\u2604\u2607-\u26FF\u2B50\u23E9-\u23FA\u2700-\u2712\u2714\u2716\u2718-\u27BF]")  # \u2713 \u2717 \u2715 \u2605 \u2606 are fine
+    with_emoji = []
+    for f in glob.glob(os.path.join(ROOT, "**", "*.*"), recursive=True):
+        if "/tests/" in f or "/.git/" in f or not f.endswith((".html", ".js", ".css")): continue
+        src = open(f, encoding="utf-8", errors="ignore").read().replace("\\u{1F000}-\\u{1FAFF}☀-➿", "")
+        if emo.search(src): with_emoji.append(os.path.relpath(f, ROOT) + " " + emo.search(src).group(0))
+    check(not with_emoji, "no emojis on the site (line icons instead) " + ", ".join(with_emoji[:6]))
 
     # Each student's lessons appear in number order, across all their modules
     order, owner, messy = {}, None, []

@@ -80,7 +80,7 @@ function render(list) {
       <p class="muted">What we did in each class, new words and your next classes. ${attended ? `You’ve come to <b style="color:var(--ink)">${attended} class${attended === 1 ? "" : "es"}</b>.` : ""}</p></div>
     ${up.length ? `<span class="eyebrow">Next</span>${up.map(card).join("")}` : ""}
     ${past.length ? `<span class="eyebrow">Past classes</span>${past.map(card).join("")}` : ""}
-    ${!list.length ? `<div class="empty"><span style="font-size:2.4em">📒</span><h2>No classes yet</h2><p class="muted">After each class, your teacher’s notes show up here.</p></div>` : ""}`;
+    ${!list.length ? `<div class="empty"><span class="pr-ico">${G.ico("notebook", 40)}</span><h2>No classes yet</h2><p class="muted">After each class, your teacher’s notes show up here.</p></div>` : ""}`;
 }
 G.ready.then(async () => {
   if (!G.cloudEnabled) { app.innerHTML = `<div class="empty"><h2>Class notes</h2><p class="muted">Class notes need student accounts to be turned on.</p></div>`; return; }

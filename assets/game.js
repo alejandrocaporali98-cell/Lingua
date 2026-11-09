@@ -291,27 +291,27 @@
   // ── Badges ──
   const lessonsReady = () => L.modulos.flatMap(m => m.lecciones).filter(l => l.estado === "lista");
   const BADGES = [
-    { id: "first", e: "🏁", t: "First lap", d: "Finish your first lesson section.", ok: c => c.sections >= 1 },
-    { id: "placement", e: "🧭", t: "Know your level", d: "Finish a section of the placement test.", ok: c => !!c.placement },
-    { id: "diploma1", e: "🎓", t: "First diploma", d: "Pass a lesson with 80% or more.", ok: c => c.diplomas >= 1 },
-    { id: "podium", e: "🏆", t: "Podium", d: "Get 3 diplomas.", ok: c => c.diplomas >= 3 },
-    { id: "champion", e: "👑", t: "World champion", d: "Get a diploma in every lesson.", ok: c => c.diplomas >= c.ready && c.ready > 0 },
-    { id: "perfect", e: "💯", t: "Perfect lap", d: "Get 20 out of 20 in a final quiz.", ok: c => c.perfect },
-    { id: "streak3", e: "🔥", t: "On fire", d: "Practice 3 days in a row.", ok: c => c.g.best >= 3 },
-    { id: "streak7", e: "⚡", t: "Full week", d: "Practice 7 days in a row.", ok: c => c.g.best >= 7 },
-    { id: "streak14", e: "🌟", t: "Unstoppable", d: "Practice 14 days in a row.", ok: c => c.g.best >= 14 },
-    { id: "weekly", e: "📅", t: "Weekly goal", d: "Practice 4 days in one week.", ok: c => c.weekly },
-    { id: "mechanic", e: "🔧", t: "Mechanic", d: "Fix 10 questions in Review.", ok: c => c.learned >= 10 },
-    { id: "voice", e: "🎤", t: "Clear voice", d: "Say 20 sentences right with the microphone.", ok: c => (c.n.spoken || 0) >= 20 },
-    { id: "ears", e: "🎧", t: "Sharp ears", d: "Write 20 dictations right.", ok: c => (c.n.dictation || 0) >= 20 },
-    { id: "pole", e: "⏱️", t: "Pole position", d: "Finish a speed match in under 30 seconds.", ok: c => c.bestLap && c.bestLap < 30 },
-    { id: "homework", e: "📝", t: "On time", d: "Finish 5 homework tasks.", ok: c => (c.n.homework || 0) >= 5 },
-    { id: "level5", e: "🏎️", t: "Formula 2", d: "Reach level 5.", ok: c => c.g.level >= 5 }
+    { id: "first", e: "flag", t: "First lap", d: "Finish your first lesson section.", ok: c => c.sections >= 1 },
+    { id: "placement", e: "compass", t: "Know your level", d: "Finish a section of the placement test.", ok: c => !!c.placement },
+    { id: "diploma1", e: "cap", t: "First diploma", d: "Pass a lesson with 80% or more.", ok: c => c.diplomas >= 1 },
+    { id: "podium", e: "trophy", t: "Podium", d: "Get 3 diplomas.", ok: c => c.diplomas >= 3 },
+    { id: "champion", e: "crown", t: "World champion", d: "Get a diploma in every lesson.", ok: c => c.diplomas >= c.ready && c.ready > 0 },
+    { id: "perfect", e: "target", t: "Perfect lap", d: "Get 20 out of 20 in a final quiz.", ok: c => c.perfect },
+    { id: "streak3", e: "flame", t: "On fire", d: "Practice 3 days in a row.", ok: c => c.g.best >= 3 },
+    { id: "streak7", e: "bolt", t: "Full week", d: "Practice 7 days in a row.", ok: c => c.g.best >= 7 },
+    { id: "streak14", e: "star", t: "Unstoppable", d: "Practice 14 days in a row.", ok: c => c.g.best >= 14 },
+    { id: "weekly", e: "calendar", t: "Weekly goal", d: "Practice 4 days in one week.", ok: c => c.weekly },
+    { id: "mechanic", e: "wrench", t: "Mechanic", d: "Fix 10 questions in Review.", ok: c => c.learned >= 10 },
+    { id: "voice", e: "mic", t: "Clear voice", d: "Say 20 sentences right with the microphone.", ok: c => (c.n.spoken || 0) >= 20 },
+    { id: "ears", e: "headphones", t: "Sharp ears", d: "Write 20 dictations right.", ok: c => (c.n.dictation || 0) >= 20 },
+    { id: "pole", e: "timer", t: "Pole position", d: "Finish a speed match in under 30 seconds.", ok: c => c.bestLap && c.bestLap < 30 },
+    { id: "homework", e: "note", t: "On time", d: "Finish 5 homework tasks.", ok: c => (c.n.homework || 0) >= 5 },
+    { id: "level5", e: "car", t: "Formula 2", d: "Reach level 5.", ok: c => c.g.level >= 5 }
   ];
   // Names (and a couple of icons) follow the student's style
   (function () {
     const st = STYLE(), names = st.badges || {};
-    const EMO = { music: { first: "🎸", level5: "🎤", mechanic: "🎛️" }, cinema: { first: "🎬", level5: "🎞️", mechanic: "✂️" }, riding: { first: "🐴", level5: "🏇", mechanic: "🪮" }, career: { first: "💼", level5: "📈", mechanic: "🧩" } };
+    const EMO = { music: { first: "guitar", level5: "mic", mechanic: "sliders" }, cinema: { first: "clapper", level5: "film", mechanic: "scissors" }, riding: { first: "horseshoe", level5: "trophy", mechanic: "brush" }, career: { first: "briefcase", level5: "chart", mechanic: "puzzle" } };
     const key = Object.keys(L.THEMES || {}).find(k => L.THEMES[k] === st), emo = EMO[key] || {};
     BADGES.forEach(b => { b.t0 = b.t; if (names[b.id]) b.t = names[b.id]; if (emo[b.id]) b.e = emo[b.id]; });
   })();
@@ -337,7 +337,7 @@
         const have = S.get("badges", {}) || {}, c = context((k, d) => S.get(k, d)), fresh = BADGES.filter(b => !have[b.id] && b.ok(c));
         if (fresh.length) {
           fresh.forEach(b => have[b.id] = new Date().toISOString()); S.set("badges", have);
-          setTimeout(() => { L.confetti(70); L.sfx("win"); L.toast(`<b>${fresh[0].e} New badge: ${esc(fresh[0].t)}</b><span>${esc(fresh[0].d)}${fresh.length > 1 ? ` · +${fresh.length - 1} more` : ""}</span>`, "big"); }, 900);
+          setTimeout(() => { L.confetti(70); L.sfx("win"); L.toast(`<b>New badge: ${esc(fresh[0].t)}</b><span>${esc(fresh[0].d)}${fresh.length > 1 ? ` · +${fresh.length - 1} more` : ""}</span>`, "big"); }, 900);
         }
       } finally { L.badges._busy = false; }
     }

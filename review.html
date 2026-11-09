@@ -106,7 +106,7 @@ function list() {
         ${G.sayBtn(full(q))}
         <button class="x" data-rm="${q.id}" aria-label="Remove from review" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>`).join("")}</div></section>`).join("")}`
-    : `<div class="panel"><div class="empty"><span class="big">🏁</span><h2>Nothing to review</h2><p class="muted">When you miss a quiz question, or save one with ☆, it shows up here.</p><a class="btn" href="index.html">Go to my lessons</a></div></div>`}`;
+    : `<div class="panel"><div class="empty"><span class="big">${G.ico("check", 40)}</span><h2>Nothing to review</h2><p class="muted">When you miss a quiz question, or save one with ☆, it shows up here.</p><a class="btn" href="index.html">Go to my lessons</a></div></div>`}`;
   const go = document.getElementById("go"); if (go) go.onclick = () => practice(shuffle(items).slice(0, 10));
   app.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { G.review.remove(b.dataset.rm); list(); });
 }
@@ -142,7 +142,7 @@ function practice(qs) {
     if (right === qs.length) { G.confetti(80); G.sfx("win"); }
     const left = G.review.count();
     app.innerHTML = `<div class="panel" style="text-align:center;justify-items:center;padding:36px 20px">
-      <span style="font-size:2.6em">${right === qs.length ? "🏆" : right >= qs.length / 2 ? "💪" : "📚"}</span>
+      <span class="pr-ico">${G.ico(right === qs.length ? "trophy" : right >= qs.length / 2 ? "star" : "book", 40)}</span>
       <h1 style="font-size:1.6em">${right} of ${qs.length} right</h1>
       <p class="muted">${learned ? `You learned ${learned} question${learned === 1 ? "" : "s"}. ` : ""}${left ? left + " left to review." : "Your review list is empty!"}</p>
       <div class="actions" style="justify-content:center">${left ? `<button class="btn primary" id="again">Another round</button>` : ""}<button class="btn" id="back">Back to the list</button></div></div>`;

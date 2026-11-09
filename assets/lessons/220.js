@@ -406,7 +406,7 @@ window.CLASE = {
   "text": [
    "Last Friday, a delivery to an important client arrived two days late. Andrés had to tell two people: the client, and his colleague Mariana. He wrote both messages in ten minutes — and they look like they come from two different people.",
    "To the client: \"Dear Mr Hall, [[regarding]] your order from 3 March, I [[apologise]] for the delay in delivery. The shipment was held at customs. [[I'd like to]] offer a 10% discount on your next order. [[Please find attached]] the updated tracking information. Kind regards, Andrés Molina.\"",
-   "To Mariana on chat: \"Hey! So the Hall order showed up late — customs again. [[Sorry]], I know you told me to check it. [[Can you]] send me the discount code thing? I wanna sort it today. [[Here's]] the tracking 👇\"",
+   "To Mariana on chat: \"Hey! So the Hall order showed up late — customs again. [[Sorry]], I know you told me to check it. [[Can you]] send me the discount code thing? I wanna sort it today. [[Here's]] the tracking\"",
    "Both messages are good English. The difference is distance. Formal language creates space and shows respect. Casual language — [[contractions]], short sentences, \"hey\" — shows trust. The skill isn't knowing one style. It's knowing when to switch."
   ],
   "gloss": {

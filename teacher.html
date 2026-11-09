@@ -1238,7 +1238,7 @@ function overviewTab(s) {
     </div>
   <div class="card">
     <h2>Questions to review <span class="muted" style="font-weight:600;font-size:.8em">· mistakes and saved questions</span></h2>
-    ${s.review.length ? `<div class="miss">${s.review.slice(0, 30).map(q => `<div><span>L${esc(q.l.split(".")[0])}${q.src === "saved" ? " ★" : ""}</span><span>${esc(q.p).replace("___", `<b>${esc(q.a)}</b>`)}${/___/.test(q.p) ? "" : ` → <b>${esc(q.a)}</b>`}</span></div>`).join("")}</div>` : `<p class="empty">Nothing to review. 🎉</p>`}
+    ${s.review.length ? `<div class="miss">${s.review.slice(0, 30).map(q => `<div><span>L${esc(q.l.split(".")[0])}${q.src === "saved" ? " ★" : ""}</span><span>${esc(q.p).replace("___", `<b>${esc(q.a)}</b>`)}${/___/.test(q.p) ? "" : ` → <b>${esc(q.a)}</b>`}</span></div>`).join("")}</div>` : `<p class="empty">Nothing to review.</p>`}
   </div>`;
 }
 function homeworkTab(s) {

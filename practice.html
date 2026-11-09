@@ -113,7 +113,7 @@ function shell() {
     <div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Practice</span><h1>Practice games</h1>
       <p class="muted">Short games with the words and sentences from your lessons. Every right answer gives you XP.</p></div>
     <div class="modes" role="group" aria-label="Game">
-      ${[["dictation", "🎧", "Dictation", "Listen and write"], ["speak", "🎤", "Speaking", "Say it out loud"], ["match", "⏱️", "Speed match", "Beat your best time"]].map(([k, e, t, d]) =>
+      ${[["dictation", G.ico("headphones", 26), "Dictation", "Listen and write"], ["speak", G.ico("mic", 26), "Speaking", "Say it out loud"], ["match", G.ico("timer", 26), "Speed match", "Beat your best time"]].map(([k, e, t, d]) =>
         `<button type="button" class="mode" data-mode="${k}" aria-pressed="${mode === k}"><span class="em">${e}</span><span><b>${t}</b><small>${d}</small></span></button>`).join("")}
     </div>
     <div class="filters" role="group" aria-label="Lesson">
@@ -137,7 +137,7 @@ function dictation() {
     el.innerHTML = `<div class="panel">
       <div style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow">Sentence ${i + 1} of ${pool.length}</span><span class="steps">${pool.map((_, k) => `<span class="${k === i ? "cur" : k < i ? "ok" : ""}"></span>`).join("")}</span></div>
       <button class="big-play" id="play" aria-label="Play the sentence"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
-      <div class="actions" style="justify-content:center"><button class="btn ghost sm" id="slow">🐢 Slower</button></div>
+      <div class="actions" style="justify-content:center"><button class="btn ghost sm" id="slow">Slower</button></div>
       <input class="dict-in" id="in" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Write what you hear" aria-label="Write what you hear">
       <div id="out"></div>
       <div class="actions" style="justify-content:space-between"><button class="btn ghost" id="skip">Show me</button><button class="btn primary" id="chk">Check</button></div>
@@ -165,7 +165,7 @@ function dictation() {
   function end() {
     if (right) G.game.award(right * 3, { label: "Dictation · " + right + " right" });
     if (right === pool.length) G.confetti(80);
-    el.innerHTML = `<div class="panel center"><span style="font-size:2.4em">🎧</span><h2 style="font-size:1.5em">${right} of ${pool.length} right</h2>
+    el.innerHTML = `<div class="panel center"><span class="pr-ico">${G.ico("headphones", 40)}</span><h2 style="font-size:1.5em">${right} of ${pool.length} right</h2>
       <div class="actions"><button class="btn primary" id="again">Play again</button></div></div>`;
     document.getElementById("again").onclick = dictation;
   }
@@ -176,7 +176,7 @@ function dictation() {
 function speak() {
   const pool = shuffle(sentences(ids())).slice(0, 8), el = document.getElementById("game");
   el.innerHTML = `<div class="panel">
-    ${G.canListen ? `<p class="muted">Press <span style="color:var(--brand)">🔊</span> to listen, then <b style="color:#c0362c">🎤</b> and say the sentence. We show you which words were clear.</p>`
+    ${G.canListen ? `<p class="muted">Press <span style="color:var(--brand)">${G.ico("speaker", 16)}</span> to listen, then <b style="color:#c0362c">${G.ico("mic", 16)}</b> and say the sentence. We show you which words were clear.</p>`
       : `<div class="alert info">Speaking practice needs Chrome (computer or Android) or Safari (iPhone). You can still listen and repeat out loud.</div>`}
     <div class="say-list">${pool.map((t, i) => `<div class="say-row" data-i="${i}"><span class="t">${esc(t)}</span>${G.sayBtn(t)}${G.canListen ? `<button type="button" class="say mic" data-sp="${i}" aria-label="Say it" title="Say it">${G.micIcon}</button>` : ""}</div>`).join("")}</div>
     <div class="actions" style="justify-content:flex-end"><button class="btn" id="more">New sentences</button></div></div>`;
@@ -191,7 +191,7 @@ function match() {
   ids().forEach(id => (DATA[id] && DATA[id].flash || []).forEach(f => cards.push({ en: f.en, def: f.def })));
   cards = shuffle(cards).slice(0, 6);
   const best = G.store.get("lap." + key, null);
-  el.innerHTML = `<div class="panel center"><span style="font-size:2.4em">⏱️</span><h2 style="font-size:1.4em">Match the 6 words with their meaning</h2>
+  el.innerHTML = `<div class="panel center"><span class="pr-ico">${G.ico("timer", 40)}</span><h2 style="font-size:1.4em">Match the 6 words with their meaning</h2>
     <p class="muted">Tap a word, then its meaning. A wrong match adds 3 seconds.</p>
     <p><b>Best time:</b> ${best ? best.toFixed(1) + " s" : "—"}</p>
     <button class="btn primary" id="go">Start</button></div>`;
@@ -215,7 +215,7 @@ function match() {
       if (rec) G.store.set("lap." + key, t);
       G.game.award(10, { once: "match." + key + "." + G.game.today(), label: "Speed match" });
       G.count("match"); if (rec) { G.confetti(80); G.sfx("win"); }
-      el.innerHTML = `<div class="panel center"><span style="font-size:2.4em">${rec ? "🏆" : "🏁"}</span><h2 style="font-size:1.6em">${t.toFixed(1)} seconds</h2>
+      el.innerHTML = `<div class="panel center"><span class="pr-ico">${G.ico(rec ? "trophy" : "flag", 40)}</span><h2 style="font-size:1.6em">${t.toFixed(1)} seconds</h2>
         <p class="muted">${rec ? (prev ? "New record! Before: " + prev.toFixed(1) + " s" : G.style.lap.first) : "Best time: " + prev.toFixed(1) + " s"}</p>
         <div class="actions"><button class="btn primary" id="again">${G.style.lap.again}</button></div></div>`;
       document.getElementById("again").onclick = match;

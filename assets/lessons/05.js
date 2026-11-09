@@ -12,112 +12,112 @@ window.CLASE = {
  ],
  "flash": [
   {
-   "img": "⚽",
+   "img": "",
    "en": "score a goal",
    "def": "Put the ball in the net.",
    "ex": "He scored a goal in the last minute.",
    "tag": "football"
   },
   {
-   "img": "🏆",
+   "img": "",
    "en": "win → won",
    "def": "Get more goals than the other team.",
    "ex": "We won 2–1! (Not: we winned)",
    "tag": "past"
   },
   {
-   "img": "😞",
+   "img": "",
    "en": "lose → lost",
    "def": "The other team gets more goals.",
    "ex": "They lost the final.",
    "tag": "past"
   },
   {
-   "img": "🥊",
+   "img": "",
    "en": "beat → beat",
    "def": "Win against a team. The past is the same.",
    "ex": "We beat them 3–0.",
    "tag": "past"
   },
   {
-   "img": "🤝",
+   "img": "",
    "en": "draw",
    "def": "The same score for both teams. In the US: a tie.",
    "ex": "It was a draw: 1–1.",
    "tag": "football"
   },
   {
-   "img": "⏸️",
+   "img": "",
    "en": "half-time",
    "def": "The break in the middle of the match.",
    "ex": "At half-time, the score was 0–0.",
    "tag": "football"
   },
   {
-   "img": "🟨",
+   "img": "",
    "en": "referee",
    "def": "The person who controls the match.",
    "ex": "The referee gave a red card.",
    "tag": "football"
   },
   {
-   "img": "🎯",
+   "img": "",
    "en": "penalty",
    "def": "A free shot from the penalty spot.",
    "ex": "He missed the penalty!",
    "tag": "football"
   },
   {
-   "img": "🧤",
+   "img": "",
    "en": "goalkeeper",
    "def": "The player who stops the ball in the goal.",
    "ex": "The goalkeeper saved the penalty.",
    "tag": "football"
   },
   {
-   "img": "📣",
+   "img": "",
    "en": "fans",
    "def": "People who support a team.",
    "ex": "The fans sang for the whole match.",
    "tag": "football"
   },
   {
-   "img": "⏪",
+   "img": "",
    "en": "was / were",
    "def": "The past of am, is and are.",
    "ex": "I was tired. The fans were happy.",
    "tag": "past"
   },
   {
-   "img": "🚶",
+   "img": "",
    "en": "go → went",
    "def": "The past of go.",
    "ex": "We went to the stadium last Saturday.",
    "tag": "past"
   },
   {
-   "img": "👀",
+   "img": "",
    "en": "see → saw",
    "def": "The past of see.",
    "ex": "I saw the match on TV.",
    "tag": "past"
   },
   {
-   "img": "❌",
+   "img": "",
    "en": "didn't + verb",
    "def": "The negative in the past. Use the base verb.",
    "ex": "We didn't win. (Not: didn't won)",
    "tag": "past"
   },
   {
-   "img": "📅",
+   "img": "",
    "en": "last weekend",
    "def": "The weekend before this one.",
    "ex": "Last weekend, I played football with my cousins.",
    "tag": "time"
   },
   {
-   "img": "⏳",
+   "img": "",
    "en": "ago",
    "def": "Before now. Time + ago.",
    "ex": "The match started ten minutes ago.",

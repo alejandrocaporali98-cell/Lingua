@@ -1,4 +1,4 @@
-// Lingua side menu: a ☰ button beside the logo opens a drawer with every section.
+// Lingua side menu: a menu button beside the logo opens a drawer with every section.
 (function () {
   const L = window.LINGUA;
   const ICON = {

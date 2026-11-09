@@ -12,112 +12,112 @@ window.CLASE = {
  ],
  "flash": [
   {
-   "img": "❤️",
+   "img": "",
    "en": "I love…",
    "def": "I like it 100%.",
    "ex": "I love Attack on Titan. The story is incredible.",
    "tag": "opinion"
   },
   {
-   "img": "😐",
+   "img": "",
    "en": "I don't mind…",
    "def": "It's OK. I don't love it and I don't hate it.",
    "ex": "I don't mind dubbed anime, but I prefer subtitles.",
    "tag": "opinion"
   },
   {
-   "img": "😖",
+   "img": "",
    "en": "I can't stand…",
    "def": "I really hate it.",
    "ex": "I can't stand filler episodes.",
    "tag": "opinion"
   },
   {
-   "img": "💭",
+   "img": "",
    "en": "I think…",
    "def": "This is my opinion.",
    "ex": "I think the ending is perfect.",
    "tag": "opinion"
   },
   {
-   "img": "👉",
+   "img": "",
    "en": "because",
    "def": "It gives the reason.",
    "ex": "I like Levi because he's so calm.",
    "tag": "connector"
   },
   {
-   "img": "🤝",
+   "img": "",
    "en": "agree / disagree",
    "def": "Have the same opinion / a different opinion.",
    "ex": "I agree with you. / Sorry, I disagree.",
    "tag": "opinion"
   },
   {
-   "img": "📉",
+   "img": "",
    "en": "overrated",
    "def": "People say it's great, but you think it isn't.",
    "ex": "In my opinion, that show is overrated.",
    "tag": "opinion"
   },
   {
-   "img": "📣",
+   "img": "",
    "en": "recommend",
    "def": "Tell someone to try something good.",
    "ex": "I recommend One Piece. It's long, but it's amazing.",
    "tag": "phrase"
   },
   {
-   "img": "📺",
+   "img": "",
    "en": "episode",
    "def": "One part of a series.",
    "ex": "Each episode is about 24 minutes long.",
    "tag": "anime"
   },
   {
-   "img": "🗓️",
+   "img": "",
    "en": "season",
    "def": "A group of episodes.",
    "ex": "Attack on Titan has four seasons.",
    "tag": "anime"
   },
   {
-   "img": "🦸",
+   "img": "",
    "en": "main character",
    "def": "The most important person in the story.",
    "ex": "Eren Yeager is the main character of Attack on Titan.",
    "tag": "anime"
   },
   {
-   "img": "😈",
+   "img": "",
    "en": "villain",
    "def": "The bad character in a story.",
    "ex": "Every hero needs a good villain.",
    "tag": "anime"
   },
   {
-   "img": "📖",
+   "img": "",
    "en": "plot",
    "def": "What happens in the story.",
    "ex": "The plot has a lot of surprises.",
    "tag": "anime"
   },
   {
-   "img": "💬",
+   "img": "",
    "en": "subtitles",
    "def": "Words at the bottom of the screen.",
    "ex": "I watch anime in Japanese with English subtitles.",
    "tag": "anime"
   },
   {
-   "img": "🤩",
+   "img": "",
    "en": "exciting / excited",
    "def": "-ing = how the thing is. -ed = how you feel.",
    "ex": "The fight is exciting. I'm so excited!",
    "tag": "grammar"
   },
   {
-   "img": "🥱",
+   "img": "",
    "en": "boring / bored",
    "def": "-ing = how the thing is. -ed = how you feel.",
    "ex": "The episode is boring, so I'm bored.",
