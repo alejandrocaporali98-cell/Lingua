@@ -1,0 +1,10 @@
+# Only the public page is meant for search engines; the platform is private.
+User-agent: *
+Allow: /conoce.html
+Allow: /conoce
+Allow: /privacidad.html
+Allow: /privacidad
+Allow: /terminos.html
+Allow: /terminos
+Allow: /assets/landing/
+Disallow: /

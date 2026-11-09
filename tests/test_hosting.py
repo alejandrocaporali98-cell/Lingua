@@ -39,6 +39,16 @@ def test():
             P.fill("#user", "alejandro"); P.fill("#pass", "Teach1234"); P.click("#go"); P.wait_for_timeout(2500)
             check(P.title() == "Lingua · Teacher panel", "the teacher signs in and lands on the panel")
             check(P.evaluate("SITE()") == host + "/", "links for families (reports, receipts) use the site folder, not the page name")
+            # Security headers: every page works under the Content-Security-Policy in _headers
+            for pg in (S, P): pg.add_init_script("window.__csp = []; document.addEventListener('securitypolicyviolation', e => window.__csp.push(e.violatedDirective + ' ' + (e.blockedURI || '')))")
+            seen = []
+            for path in ["/index.html", "/perfil.html", "/practice.html", "/juegos.html?l=123", "/review.html", "/words.html", "/notes.html", "/grades.html", "/diplomas.html", "/clases/leccion-123.html", "/conoce.html", "/privacidad.html", "/terminos.html", "/missing-page"]:
+                S.goto(host + path); S.wait_for_timeout(700); seen += [path + ": " + v for v in S.evaluate("window.__csp || []")]
+            for h in ["#today", "#students", f"#s/{sid}/overview", "#schedule", "#reports", "#billing", "#plan", "#trials", "#accounts"]:
+                P.goto(host + "/teacher.html" + h); P.wait_for_timeout(800); seen += [h + ": " + v for v in P.evaluate("window.__csp || []")]
+            hdr = S.request.get(host + "/conoce.html").headers
+            check("content-security-policy" in hdr and hdr.get("x-frame-options") == "SAMEORIGIN" and "microphone=(self)" in hdr.get("permissions-policy", ""), "security headers are sent")
+            check(not seen, "no page breaks the security policy " + "; ".join(seen[:5]))
             check(not env.errs, "no page errors " + "; ".join(env.errs[:3]))
         finally:
             srv.terminate()

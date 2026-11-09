@@ -28,7 +28,17 @@
         if (r.error) return { error: { message: r.message || "Invalid login credentials" } };
         localStorage.setItem("mock.session", JSON.stringify({ user: r.user })); return { data: r, error: null };
       },
-      async signOut() { localStorage.removeItem("mock.session"); return {}; },
+      async signOut() { localStorage.removeItem("mock.session"); localStorage.removeItem("mock.aal"); return {}; },
+      async refreshSession() { return { data: {}, error: null }; },
+      // Two-step verification (TOTP): the right code is always 123456
+      mfa: {
+        _f() { return JSON.parse(localStorage.getItem("mock.mfa") || "null"); },
+        async listFactors() { const f = this._f(); return { data: { all: f ? [f] : [], totp: f ? [f] : [] }, error: null }; },
+        async enroll() { const f = { id: "f1", factor_type: "totp", status: "unverified" }; localStorage.setItem("mock.mfa", JSON.stringify(f)); return { data: { id: "f1", totp: { qr_code: "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'/%3E", secret: "JBSWY3DPEHPK3PXP" } }, error: null }; },
+        async challengeAndVerify({ code }) { if (code !== "123456") return { error: { message: "Invalid TOTP code entered" } }; const f = this._f(); f.status = "verified"; localStorage.setItem("mock.mfa", JSON.stringify(f)); localStorage.setItem("mock.aal", "aal2"); return { data: {}, error: null }; },
+        async unenroll() { localStorage.removeItem("mock.mfa"); return { error: null }; },
+        async getAuthenticatorAssuranceLevel() { const f = this._f(); return { data: { currentLevel: localStorage.getItem("mock.aal") || "aal1", nextLevel: f && f.status === "verified" ? "aal2" : "aal1" }, error: null }; }
+      },
       async updateUser() { return { error: null }; }
     },
     from: query,

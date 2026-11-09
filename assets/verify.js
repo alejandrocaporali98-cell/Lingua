@@ -36,6 +36,18 @@
       return { state: "ok", data };
     } catch (e) { return { state: "error" }; }
   };
+  // Pages opened from a private link (?t=CODE) get their document from the database before they draw
+  window.linguaShared = function (run) {
+    const qp = new URLSearchParams(location.search), t = qp.get("t");
+    if (!t || qp.get("d")) return run();
+    const fail = (es, en) => { document.body.innerHTML = `<div style="max-width:440px;margin:18vh auto;padding:0 20px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;text-align:center;display:grid;gap:10px;color:#1c1d1f"><b style="font-size:1.3em">${es}</b><span style="color:#6a6f73">${en}</span></div>`; };
+    if (!window.linguaUuid(t)) return fail("Este enlace no es válido", "This link isn't valid.");
+    window.linguaRpc("doc_get", { t }).then(r => {
+      if (r.state === "ok" && r.data && r.data.d) { window.__sharedD = r.data.d; return run(); }
+      if (r.state === "ok") return fail("Este enlace ya no está disponible", "This link has expired or was turned off. Ask your teacher for a new one.");
+      fail("No pudimos abrir el documento", "Check your internet connection and open the link again.");
+    });
+  };
   window.linguaUuid = s => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s || "");
   // "Derek y Erick Molina" · "Ana Pérez y Luis Gómez"
   window.linguaNames = function (list) {

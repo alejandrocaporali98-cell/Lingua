@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Lingua · Página no encontrada</title>
+<style>
+  :root { --ink: #1c1d1f; --mute: #6a6f73; --line: #d1d7dc; --band: #f7f9fa; --blue: #2346d0; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #eef0f3; --mute: #a3a9b1; --line: #2c323c; --band: #11151c; } body { background: #0b0e14; } }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: #fff; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+  main { max-width: 460px; display: grid; gap: 14px; text-align: center; justify-items: center; }
+  .code { font-size: .8em; font-weight: 800; letter-spacing: .12em; color: var(--mute); }
+  h1 { font-size: 1.7em; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+  p { color: var(--mute); line-height: 1.5; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+  a { display: inline-flex; padding: 11px 18px; font-weight: 800; text-decoration: none; border: 1px solid var(--ink); color: var(--ink); }
+  a.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+</style>
+</head>
+<body>
+<main>
+  <svg width="44" height="44" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2346d0"/><path d="M8.5 9h15a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5H16l-4.5 4v-4h-3A2.5 2.5 0 0 1 6 19v-7.5A2.5 2.5 0 0 1 8.5 9z" fill="#fff"/><circle cx="20.5" cy="15.25" r="2.4" fill="#f5c518"/></svg>
+  <span class="code">ERROR 404</span>
+  <h1>Esta página no existe</h1>
+  <p>Puede que el enlace esté incompleto o que la página haya cambiado de lugar.<br><span lang="en">This page doesn't exist. The link may be incomplete or the page has moved.</span></p>
+  <div class="row"><a class="primary" id="home" href="/">Ir a Lingua · Go to Lingua</a><a id="about" href="/conoce.html">Conoce Lingua</a></div>
+</main>
+<script>
+  // Works at the site root (Cloudflare) and inside /Lingua/ (GitHub Pages)
+  var base = /^\/Lingua(\/|$)/i.test(location.pathname) ? "/Lingua/" : "/";
+  document.getElementById("home").href = base + "index.html";
+  document.getElementById("about").href = base + "conoce.html";
+</script>
+</body>
+</html>

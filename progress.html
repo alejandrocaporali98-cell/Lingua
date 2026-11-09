@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
 <title>Lingua · Monthly progress report</title>
 <meta name="description" content="Monthly English progress report: classes, practice days, lessons passed and teacher notes.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Lingua">
 <meta property="og:title" content="Lingua · Monthly progress report">
 <meta property="og:description" content="Monthly English progress report: classes, practice days, lessons passed and teacher notes.">
-<meta property="og:image" content="https://lingua-english-class.netlify.app/assets/og.png">
+<meta property="og:image" content="https://lingua-clases.pages.dev/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -21,9 +22,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/fonts.css">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
 <script src="assets/config.js"></script>
@@ -31,6 +30,7 @@
 <script src="assets/avatar.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
+<script src="assets/verify.js"></script>
 <style>
   .wrap { max-width: 900px; margin: 0 auto; padding-block: 28px 64px; display: grid; gap: 18px; }
   .wrap > * { min-width: 0; }
@@ -80,6 +80,7 @@
 </header>
 <main class="gutter"><div class="wrap" id="app"></div></main>
 <script>
+window.linguaShared(function () {
 const G = window.LINGUA, app = document.getElementById("app"), esc = G.esc;
 document.getElementById("logo").innerHTML = G.logo;
 const qp = new URLSearchParams(location.search);
@@ -97,7 +98,7 @@ const T = {
     missing: "This link has no report data.", noLevel: "Not tested", notTested: "hasn’t taken the placement test yet", wk: ["M", "T", "W", "T", "F", "S", "S"], lvl: "Level", missedCls: "missed" }
 };
 function decode(s) { try { const b = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return null; } }
-const D = decode(qp.get("d") || "");
+const D = decode((window.__sharedD || qp.get("d")) || "");
 function render() {
   const t = T[lang], loc = lang === "es" ? "es-MX" : "en-US";
   document.documentElement.lang = lang;
@@ -135,6 +136,7 @@ function render() {
   document.getElementById("pr").onclick = () => window.print();
 }
 G.ready.then(render);
+});
 </script>
 </body>
 </html>

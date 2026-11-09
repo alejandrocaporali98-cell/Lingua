@@ -11,7 +11,7 @@
   const page = (location.pathname.split("/").pop() || "index.html").toLowerCase().replace(/^([^.]+)$/, "$1.html");
   const qs = new URLSearchParams(location.search);
   const isLogin = page === "login.html";
-  const isPublicReport = (page === "reporte.html" && qs.has("r")) || ((page === "progress.html" || page === "plan.html") && qs.has("d"));
+  const isPublicReport = (page === "reporte.html" && qs.has("r")) || ((page === "progress.html" || page === "plan.html") && (qs.has("d") || qs.has("t")));
 
   const show = () => document.documentElement.classList.remove("auth-pending");
   const lsGet = (k) => { try { return JSON.parse(localStorage.getItem("lingua." + k)); } catch (e) { return null; } };
@@ -266,6 +266,13 @@
   };
   // Teacher panel: read every student (allowed only for accounts in the "teachers" table)
   L.teacher = {
+    // Shared links: the document stays in the database; the link carries only a private code (supabase/v10.sql)
+    async share(page, studentId, d) {
+      const { data, error } = await sb.from("shared_docs").insert({ page, student_id: studentId || null, d }).select("id").single();
+      if (error) throw error; return data.id;
+    },
+    async shares(studentId) { let q = sb.from("shared_docs").select("id, page, created_at, expires_at, revoked_at").order("created_at", { ascending: false }).limit(50); if (studentId) q = q.eq("student_id", studentId); const { data, error } = await q; if (error) throw error; return data || []; },
+    async revokeShares(studentId) { const { error } = await sb.from("shared_docs").update({ revoked_at: new Date().toISOString() }).eq("student_id", studentId).is("revoked_at", null); if (error) throw error; },
     async load() {
       const [p, g, h, c, st, ru, ad, pa, sf, ch, bi, nt, er, me] = await Promise.all([sb.from("profiles").select("*"), sb.from("progress").select("*"), sb.from("homework").select("*").order("created_at", { ascending: false }),
         sb.from("classes").select("*").order("starts_at", { ascending: false }), sb.from("student_settings").select("*"),
@@ -424,6 +431,18 @@
     location.replace(root + "login.html");
   };
 
+  // Does this session still need the second step? (password done, code not yet)
+  L.needsCode = async function () {
+    const m = sb.auth && sb.auth.mfa; if (!m || !m.getAuthenticatorAssuranceLevel) return false;
+    try { const { data } = await m.getAuthenticatorAssuranceLevel(); return !!data && data.nextLevel === "aal2" && data.currentLevel !== "aal2"; } catch (e) { return false; }
+  };
+  L.verifyCode = async function (code) {
+    const m = sb.auth && sb.auth.mfa; const { data, error } = await m.listFactors(); if (error) throw error;
+    const f = (data.totp || []).find(x => x.status === "verified"); if (!f) return true;
+    const r = await m.challengeAndVerify({ factorId: f.id, code: String(code).replace(/\D/g, "") });
+    if (r.error) throw r.error; return true;
+  };
+
   L.ready = (async () => {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) {
@@ -431,7 +450,10 @@
       location.replace(root + "login.html?next=" + encodeURIComponent((root ? "clases/" : "") + page + location.search));
       return null;
     }
-    if (isLogin) { location.replace(root + (qs.get("next") || "index.html")); return null; }
+    // Two-step verification: a session with only the password goes back to sign-in for the code
+    const needCode = await L.needsCode();
+    if (isLogin) { if (needCode) { show(); return null; } location.replace(root + (qs.get("next") || "index.html")); return null; }
+    if (needCode) { location.replace(root + "login.html?code=1&next=" + encodeURIComponent((root ? "clases/" : "") + page + location.search + location.hash)); return null; }
     uid = session.user.id;
     L.user = session.user;
     try { const r = await sb.rpc("is_teacher"); L.isTeacher = !r.error && r.data === true; } catch (e) { L.isTeacher = !!lsGet("__teacher"); }

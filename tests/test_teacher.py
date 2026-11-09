@@ -28,6 +28,30 @@ def test():
         check(T.locator(".rm-card .rm-when").count() >= 1 and "For " in T.inner_text(".rm-card .rm-when"), "the next planned lesson shows the date of the next class")
         T.screenshot(path=os.path.join(OUT, "lesson_plan.png"), full_page=True)
 
+        # trial-class form: the privacy notice must be accepted, and the consent is recorded
+        env.DB["trials"]["tr1"] = {"id": "tr1", "token": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee", "created_at": now_iso()}
+        M = env.device("M", 420, 900); M.goto(env.url("muestra.html?t=aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")); M.wait_for_selector("#fName")
+        M.fill("#fName", "Sofía Ruiz"); M.click('[data-a="0"]'); M.locator(".chip-t").first.click(); M.locator(".opt-r").first.click(); M.click("#fGo"); M.wait_for_timeout(300)
+        check("aviso de privacidad" in M.inner_text("#fErr") and not env.DB["trials"]["tr1"].get("intake_at"), "the trial form asks to accept the privacy notice first")
+        M.check("#fOk"); M.click("#fGo"); M.wait_for_timeout(1200)
+        check(env.DB["trials"]["tr1"].get("intake_at") and env.DB["trials"]["tr1"].get("consent_at"), "with the notice accepted, the form is sent and the consent is saved")
+
+        # two-step verification: turn on with the app code, then signing in asks for it
+        env.fresh(T, "teacher.html#accounts", 1200); T.wait_for_selector("#mfaOn", timeout=5000)
+        T.click("#mfaOn"); T.wait_for_selector("#mfaCode")
+        check(T.locator(".mfa-qr").count() == 1 and "JBSWY3DPEHPK3PXP" in T.inner_text("#mfaBox"), "turning on two-step shows a QR code and a key")
+        T.fill("#mfaCode", "000000"); T.click("#mfaVerify"); T.wait_for_timeout(300)
+        check(T.locator("#mfaBad").is_visible(), "a wrong code is refused")
+        T.fill("#mfaCode", "123456"); T.click("#mfaVerify"); T.wait_for_selector("#mfaOff", timeout=5000)
+        check("is on" in T.inner_text("#mfaBox"), "the right code turns two-step verification on")
+        T.evaluate("localStorage.setItem('mock.aal', 'aal1')")   # a new sign-in with only the password
+        env.fresh(T, "teacher.html#today", 1500)
+        check("login" in T.url and T.locator("#code").count() == 1, "a session with only the password is sent back for the code")
+        T.fill("#code", "123456"); T.click("#codeGo"); T.wait_for_timeout(1500)
+        check("teacher" in T.url, "with the code the teacher gets back to the panel")
+        env.fresh(T, "teacher.html#accounts", 1200); T.wait_for_selector("#mfaOff"); T.click("#mfaOff"); T.wait_for_selector("#mfaOn", timeout=5000)
+        check(True, "two-step verification can be turned off")
+
         # class link → WhatsApp invitation
         env.fresh(T, f"teacher.html#s/{ada}"); T.wait_for_selector("#ctL")
         T.fill("#ctP", "81 1234 5678"); T.fill("#ctL", "teams.microsoft.com/l/x"); T.click("#ctForm button"); T.wait_for_timeout(500)
@@ -71,6 +95,15 @@ def test():
         check(env.DB["teacher_meta"].get("last_backup", {}).get("value", {}).get("at"), "backup date is remembered")
         env.fresh(T, "teacher.html#today", 1200)
         check("No backup yet" not in T.inner_text("#app"), "reminder goes away after a backup")
+
+        # privacy notice: a student who joined before it accepts it once on the home page
+        env.DB["profiles"][ada]["privacy_at"] = None
+        env.fresh(S, "index.html", 2000)
+        check(S.locator("#pvNote").count() == 1, "a student who hasn't accepted the privacy notice is asked on the home page")
+        S.check("#pvOk"); S.click("#pvSave"); S.wait_for_timeout(1000)
+        check(env.DB["profiles"][ada].get("privacy_at") and S.locator("#pvNote").count() == 0, "accepting saves it and the note goes away")
+        env.fresh(T, f"teacher.html#s/{ada}", 1500)
+        check("Privacy notice: accepted" in T.inner_text("body"), "the teacher sees that the notice was accepted")
 
         # new version notice
         open(os.path.join(env.site, "version.json"), "w").write('{"build": "def5678"}')

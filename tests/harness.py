@@ -21,13 +21,13 @@ DOMAIN = "student.lingua.app"
 KEY = {"profiles": "id", "progress": "user_id", "homework": "id", "classes": "id", "lessons": "id", "student_settings": "student_id",
        "class_rules": "id", "student_admin": "student_id", "payments": "id", "recordings": "id", "cal_tokens": "owner", "staff": "user_id",
        "teachers": "user_id", "charges": "id", "billing_info": "id", "student_notes": "student_id", "trials": "id",
-       "client_errors": "id", "teacher_meta": "key"}
+       "client_errors": "id", "teacher_meta": "key", "shared_docs": "id"}
 # column that says whose row it is (students can read their own rows)
 OWNER = {"recordings": "student_id", "cal_tokens": "owner", "student_settings": "student_id", "profiles": "id", "progress": "user_id",
          "homework": "student_id", "classes": "student_id"}
 ADMIN_READ = {"profiles", "student_settings", "classes", "class_rules", "student_admin", "payments", "staff", "teachers", "charges", "billing_info"}
 ADMIN_WRITE = {"classes", "class_rules", "student_admin", "payments", "charges", "billing_info"}
-TEACHER_ONLY = {"client_errors", "teacher_meta", "student_notes", "trials"}
+TEACHER_ONLY = {"client_errors", "teacher_meta", "student_notes", "trials", "shared_docs"}
 
 
 class Fail(AssertionError):
@@ -160,6 +160,12 @@ class Env:
                        "currency": "MXN", "names": self.fam_names(c["student_id"]),
                        "bank": {"bank": b.get("bank"), "holder": b.get("holder"), "clabe": b.get("clabe"), "account": b.get("account"), "card": b.get("card"),
                                 "to": b.get("send_to"), "ins": b.get("instructions")}}
+        elif fn == "doc_get":
+            r = DB["shared_docs"].get(t)
+            if r and not r.get("revoked_at"): out = {"page": r.get("page"), "d": r.get("d")}
+        elif fn == "trial_consent":
+            r = next((x for x in DB["trials"].values() if x.get("token") == t), None)
+            if r: r.setdefault("consent_at", now_iso()); out = True
         elif fn == "receipt_check":
             p_ = next((x for x in DB["payments"].values() if x.get("token") == t), None)
             if p_: out = {"amount": p_["amount"], "paid_on": p_["paid_on"], "month": p_["month"], "week": p_.get("week"), "method": p_.get("method"),
@@ -252,7 +258,7 @@ class Env:
                 if KEY[t] == "id": row["id"] = str(uuid.uuid4())
                 if t in ("payments", "charges", "trials"): row.setdefault("token", str(uuid.uuid4()))
                 DB[t][row[KEY[t]]] = row; out.append(row)
-            return json.dumps({"data": out, "error": None})
+            return json.dumps({"data": (out[0] if out else None) if p.get("single") else out, "error": None})
         if p["op"] == "update":
             if t == "profiles": hit = [r for r in visible if match(r) and (teacher or r["id"] == me)]
             elif not can_write: return err("RLS update " + t)

@@ -1,0 +1,9 @@
+# Security headers for Cloudflare Pages (GitHub Pages ignores this file).
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://vtvfltiadubdphkunshr.supabase.co; media-src 'self' data: blob: https://vtvfltiadubdphkunshr.supabase.co; font-src 'self' data:; connect-src 'self' https://vtvfltiadubdphkunshr.supabase.co wss://vtvfltiadubdphkunshr.supabase.co; frame-src 'self'; frame-ancestors 'self'; worker-src 'self'; manifest-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: no-referrer
+  Permissions-Policy: microphone=(self), camera=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin

@@ -7,9 +7,7 @@
 <meta name="robots" content="noindex">
 <meta name="description" content="Cuéntame tres cosas y armo tu clase muestra de inglés pensando en ti.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/fonts.css">
 <link rel="stylesheet" href="assets/lingua.css">
 <style>
   body { background: var(--bg); }
@@ -94,6 +92,7 @@
         <input class="in" id="fOther" maxlength="120" placeholder="+ Otro: escribe lo que quieras…" style="font-weight:500;border-style:dashed" value="${esc(S.other)}"></div>
       <div class="q"><b><span>3</span>¿Para qué quieres el inglés?</b>
         <div role="radiogroup" aria-label="Para qué quieres el inglés" style="display:grid;gap:8px">${M.GOALS.map(g => `<button type="button" role="radio" class="opt-r" data-g="${g.k}" aria-checked="${S.goal === g.k}"><i></i><span><b>${esc(g.es)}</b><small>${esc(g.sub)}</small></span></button>`).join("")}</div></div>
+      <label class="consent" style="display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;align-items:start;font-size:.92em;line-height:1.45;color:#3e4143;cursor:pointer"><input type="checkbox" id="fOk" style="width:20px;height:20px;margin-top:1px;accent-color:#2346d0"><span>Leí el <a href="privacidad.html" target="_blank" rel="noopener">aviso de privacidad</a> y estoy de acuerdo. Si tengo menos de 18 años, mi mamá, papá o tutor también lo leyó y está de acuerdo. Mis datos solo se usan para preparar y dar mis clases.</span></label>
       <p class="err" id="fErr" hidden></p>
       <button class="btn primary go" id="fGo">${T.starts_at ? "Listo, nos vemos el " + esc(new Date(T.starts_at).toLocaleDateString("es-MX", { weekday: "long" })) : "Listo"}</button>
       <p class="foot">No necesitas crear cuenta. Toma 1 minuto.</p>`;
@@ -109,10 +108,11 @@
       if (S.adult === null) return err("Dinos si tienes menos de 18 o 18 o más.");
       if (!S.interests.size && !S.other) return err("Escoge al menos un tema que te guste.");
       if (!S.goal) return err("Escoge para qué quieres el inglés.");
+      if (!document.getElementById("fOk").checked) return err("Para continuar, acepta el aviso de privacidad.");
       err("");
       const btn = document.getElementById("fGo"); btn.disabled = true; btn.textContent = "Enviando…";
       const res = await window.linguaRpc("trial_intake", { t: token, p_name: S.name, p_adult: S.adult, p_interests: [...S.interests], p_other: S.other, p_goal: S.goal });
-      if (res.state === "ok" && res.data === true) return thanks();
+      if (res.state === "ok" && res.data === true) { window.linguaRpc("trial_consent", { t: token }).catch(() => {}); return thanks(); }
       btn.disabled = false; btn.textContent = "Intentar de nuevo";
       err(res.state === "ok" ? "Este enlace ya no acepta cambios." : "No se pudo enviar. Revisa tu conexión e intenta de nuevo.");
     };

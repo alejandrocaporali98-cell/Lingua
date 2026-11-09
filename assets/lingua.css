@@ -443,3 +443,9 @@ body.lsheet-open { overflow: hidden; }
 
 /* Big line icon at the top of a result or empty state */
 .pr-ico { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--bg); border: 1px solid var(--line); color: var(--ink); justify-self: center; }
+
+/* Privacy notice acceptance (home page, profile) */
+.pv-note { display: grid; gap: 12px; padding: 18px 20px; margin-bottom: 18px; border-left: 4px solid var(--brand); }
+.pv-note p { font-size: .92em; margin-top: 4px; }
+.consent { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; font-size: .9em; cursor: pointer; }
+.consent input { width: 20px; height: 20px; margin-top: 1px; accent-color: var(--brand); }

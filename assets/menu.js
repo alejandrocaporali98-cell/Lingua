@@ -22,6 +22,7 @@
     game: '<path d="M7 10h4M9 8v4"/><circle cx="15.5" cy="10.5" r="1"/><circle cx="17.5" cy="12.5" r="1"/><path d="M6.5 6h11a4 4 0 0 1 4 4.4l-.6 5.2a2.5 2.5 0 0 1-4.3 1.4L14.5 15h-5l-2.1 2a2.5 2.5 0 0 1-4.3-1.4l-.6-5.2A4 4 0 0 1 6.5 6z"/>',
     notes: '<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>',
     car: '<path d="M3 15.5V13l2-4.5A2 2 0 0 1 6.8 7h8.6a2 2 0 0 1 1.7 1l2.4 4H21a1 1 0 0 1 1 1v2.5a1 1 0 0 1-1 1h-1.5M7.5 16.5h9M3 15.5a1 1 0 0 0 1 1h.5"/><circle cx="6" cy="16.5" r="2"/><circle cx="18" cy="16.5" r="2"/><path d="M5.5 12h14"/>',
+    shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
     badge: '<circle cx="12" cy="9" r="6"/><path d="M12 6l1 2 2 .3-1.5 1.4.4 2.1-1.9-1-1.9 1 .4-2.1L9 8.3l2-.3z"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/>',
     build: '<path d="M14 6l4 4M4 20l4-1 11-11-3-3L5 16z"/>'
   };
@@ -39,13 +40,13 @@
     const teacherHome = L.isTeacher && !L.actingAs;
     const items = teacherHome ? [
       ["Teacher", [["teacher", "Teacher panel", "teacher.html"], ["build", "Lesson builder", "builder.html"], ["home", "Preview lessons", "index.html?preview=1"]]],
-      ["Account", [["user", "Profile", "perfil.html"], ["gear", "Settings", "perfil.html#settings"]]]
+      ["Account", [["user", "Profile", "perfil.html"], ["gear", "Settings", "perfil.html#settings"], ["shield", "Privacy notice", "privacidad.html"]]]
     ] : [
       ["Learn", [["home", "My learning", "index.html"], ...(L.cloudEnabled ? [["hw", "Homework", "index.html#todo", "hw"], ["notes", "Class notes", "notes.html"]] : []), ["test", "Placement test", "examen.html"], ["report", "Placement report", "reporte.html"]]],
       ["Practice", [["review", "Review", "review.html", "rev"], ["game", "Practice games", "practice.html"], ["words", "My words", "words.html"], ["book", "Study resources", "resources.html"]]],
       ["Progress", [["grades", "Grades", "grades.html"], ["diploma", "Diplomas", "diplomas.html", "dip"], ...(L.style && L.style.reward === "garage" ? [[(L.settings && L.settings.theme || "racing") === "racing" ? "car" : "badge", { racing: "My garage", riding: "My stable", music: "My studio", cinema: "My poster wall" }[(L.settings && L.settings.theme) || "racing"] || "My collection", "perfil.html#garage"]] : []), ["badge", "Badges", "perfil.html#badges", "bdg"]]],
 
-      ["Account", [["user", "Profile & avatar", "perfil.html"], ["gear", "Settings", "perfil.html#settings"]]]
+      ["Account", [["user", "Profile & avatar", "perfil.html"], ["gear", "Settings", "perfil.html#settings"], ["shield", "Privacy notice", "privacidad.html"]]]
     ];
     const el = document.createElement("div");
     el.id = "lgMenu"; el.className = "lg-menu"; el.hidden = true;

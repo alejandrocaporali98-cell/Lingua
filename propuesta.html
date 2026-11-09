@@ -64,10 +64,13 @@
 <body>
 <div class="bar"><button type="button" class="primary" id="pr">Imprimir o guardar PDF</button></div>
 <div class="sheet" id="doc"></div>
+<script src="assets/config.js"></script>
+<script src="assets/verify.js"></script>
 <script>
+window.linguaShared(function () {
 function decode(s) { try { const b = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return null; } }
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-const D = decode(new URLSearchParams(location.search).get("d") || ""), doc = document.getElementById("doc");
+const D = decode((window.__sharedD || new URLSearchParams(location.search).get("d")) || ""), doc = document.getElementById("doc");
 const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 const money = n => "$" + Number(n).toLocaleString("en-US", { maximumFractionDigits: 2 });
 const hrs = h => (Number.isInteger(h) ? h : h.toFixed(1).replace(/\.0$/, "")) + (h === 1 ? " hora" : " horas");
@@ -107,6 +110,7 @@ else {
     <footer><span class="k">Condiciones</span><p>${esc(D.c || "Todas las clases se pagan por adelantado. Las clases canceladas con 24 horas de anticipación se reprograman sin costo.")}</p><small>${(D.cur || "MXN") === "USD" ? "Precios en dólares estadounidenses (USD)." : "Precios en pesos mexicanos (MXN)."}</small></footer>`;
 }
 document.getElementById("pr").onclick = () => window.print();
+});
 </script>
 </body>
 </html>

@@ -9,7 +9,7 @@
 <meta property="og:site_name" content="Lingua">
 <meta property="og:title" content="Lingua · Teacher panel">
 <meta property="og:description" content="English classes made for you: lessons about F1, JDM cars, anime, football and games, with pronunciation, quizzes and diplomas.">
-<meta property="og:image" content="https://lingua-english-class.netlify.app/assets/og.png">
+<meta property="og:image" content="https://lingua-clases.pages.dev/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -22,9 +22,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="robots" content="noindex">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/fonts.css">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
 <link rel="stylesheet" href="assets/informe.css">
@@ -38,6 +36,7 @@
 <script src="assets/muestra-data.js"></script>
 <script src="assets/informe.js"></script>
 <script src="assets/roadmap.js"></script>
+<script src="assets/mfa.js"></script>
 <link rel="stylesheet" href="assets/panel.css">
 </head>
 <body>
@@ -619,10 +618,8 @@ function reportsView(id, period) {
     app.querySelectorAll("tr[data-row]").forEach(tr => tr.onclick = e => { if (!e.target.closest("a, button")) location.hash = "#reports/" + tr.dataset.row + "/" + period; });
     app.querySelectorAll("[data-send]").forEach(b => b.onclick = () => {
       const r = rows.find(o => o.x.p.id === b.dataset.send);
-      const url = location.origin + location.pathname.replace(/[^/]*$/, "") + "informe.html?d=" + b64({ ...r.D, te: G.maestroNombre || G.maestro }) + "&lang=es";
-      const text = "Reporte de avance de inglés de " + (r.x.p.display_name || "") + ": " + url;
-      if (navigator.share) navigator.share({ title: "Reporte de avance", text: "Reporte de avance de inglés de " + (r.x.p.display_name || ""), url }).catch(() => {});
-      else window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
+      shareSheet("Progress report · " + (r.x.p.display_name || ""), "Reporte de avance de inglés de " + (r.x.p.display_name || "") + ": ",
+        () => location.origin + location.pathname.replace(/[^/]*$/, "") + "informe.html?d=" + b64({ ...r.D, te: G.maestroNombre || G.maestro }) + "&lang=es", r.x.p.id);
     });
     document.getElementById("rpCsv").onclick = () => {
       const head = ["Student", "Period", "From", "To", "Classes attended", "Classes missed", "Practice days", "Lessons passed", "Lessons passed (total)", "Lessons assigned", "Average quiz %", "Trend (pts)", "Points", "Homework done", "Homework assigned", "Questions to review"];
@@ -650,7 +647,7 @@ function reportsView(id, period) {
   document.getElementById("rpC").oninput = e => { RPC = e.target.value; clearTimeout(rpT); rpT = setTimeout(show, 700); };
   document.getElementById("rpL").onchange = e => { RPL = e.target.value; show(); };
   document.getElementById("rpOpen").onclick = () => window.open(link(), "_blank", "noopener");
-  document.getElementById("rpCopy").onclick = () => { const url = link(); navigator.clipboard.writeText((RPL === "es" ? "Reporte de avance de inglés de " : "English progress report for ") + (s.p.display_name || "") + ": " + url).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url)); };
+  document.getElementById("rpCopy").onclick = () => { link(); shareSheet("Progress report · " + (s.p.display_name || ""), (RPL === "es" ? "Reporte de avance de inglés de " : "English progress report for ") + (s.p.display_name || "") + ": ", build, s.p.id); };
 }
 function wireRp(period) {
   document.getElementById("rpS").onchange = e => location.hash = "#reports/" + e.target.value + "/" + document.getElementById("rpP").value;
@@ -717,6 +714,32 @@ const slipText = ch => { const a = adminOf(ch.student_id); return `Hola, le comp
 const receiptText = p => { const s = sById(p.student_id), a = adminOf(p.student_id); return `Hola, recibimos su pago de ${esMoney(p.amount, a.currency)} por las clases de inglés de ${famFirst(p.student_id, true)} (${periodEs(p)}). ¡Gracias! Aquí está su recibo: ${receiptLink(s, p)}`; };
 
 // A pop-up sheet (bottom sheet on phones, centered on computers)
+// ── Shared links: the data stays in Lingua; the link only carries a private code (expires, can be turned off) ──
+async function privateLink(url, sid) {
+  const u = new URL(url), d = u.searchParams.get("d"); if (!d) return url;
+  try {
+    const id = await G.teacher.share(u.pathname.split("/").pop().replace(/\.html$/, ""), sid, d);
+    u.searchParams.delete("d"); u.searchParams.set("t", id); return u.toString();
+  } catch (e) {
+    if (!window.__shareWarned) { window.__shareWarned = 1; G.toast("<b>One-time setup</b><span>Run supabase/v10.sql so shared links use a private code. Until then the link carries the data.</span>"); }
+    return url;
+  }
+}
+function shareSheet(title, prefix, makeUrl, sid) {
+  const w = sheet(esc(title), "The link has a private code. It expires in 6 months, or turn it off from the student’s page.",
+    `<p class="muted" id="shL">Creating the link…</p><div class="actions" id="shA" hidden style="flex-wrap:wrap"><a class="btn primary" id="shW" target="_blank" rel="noopener">Send by WhatsApp</a><button type="button" class="btn" id="shC">Copy link</button><a class="btn ghost" id="shO" target="_blank" rel="noopener">Open</a></div>`);
+  privateLink(makeUrl(), sid).then(url => {
+    if (!document.body.contains(w)) return;
+    const text = prefix + url;
+    w.querySelector("#shL").innerHTML = `<input class="in sh-url" readonly value="${esc(url)}" style="width:100%" aria-label="Link">`;
+    w.querySelector("#shW").href = "https://wa.me/?text=" + encodeURIComponent(text);
+    w.querySelector("#shO").href = url;
+    w.querySelector("#shC").onclick = () => navigator.clipboard.writeText(text).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => { const i = w.querySelector(".sh-url"); i.select(); });
+    w.querySelector("#shA").hidden = false;
+  });
+  return w;
+}
+
 function sheet(title, sub, body) {
   closeSheet();
   const w = document.createElement("div"); w.id = "sheet";
@@ -1017,7 +1040,7 @@ function wireProposal(s) {
   card.querySelectorAll("[data-prm]").forEach(b => b.onclick = () => { sync(); PROP.rows.splice(+b.dataset.prm, 1); const keep = proposalData(s); render(); restore(keep); });
   function restore(k) { const f = id => document.getElementById(id); f("ppR").value = k.r; f("ppD").value = k.disc; f("ppC").value = k.cur; f("ppV").value = k.v; f("ppW").checked = !!k.ow; f("ppM").checked = !!k.om; f("ppT").value = k.c; f("propCard").scrollIntoView({ block: "start" }); }
   document.getElementById("ppOpen").onclick = () => window.open(proposalLink(s), "_blank", "noopener");
-  document.getElementById("ppCopy").onclick = () => { const url = proposalLink(s); navigator.clipboard.writeText("Propuesta de clases de inglés para " + (s.p.display_name || "") + ": " + url).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url)); };
+  document.getElementById("ppCopy").onclick = () => shareSheet("Class proposal · " + (s.p.display_name || ""), "Propuesta de clases de inglés para " + (s.p.display_name || "") + ": ", () => proposalLink(s), s.p.id);
   document.getElementById("ppPlan").onclick = async () => {
     const d = proposalData(s), k = proposalNumbers(d);
     try { await G.teacher.upsert("student_admin", { ...adminOf(s.p.id), student_id: s.p.id, billing: "monthly", rate: k.monthPrice, currency: d.cur, updated_at: new Date().toISOString() }); G.toast(`<b>Plan saved</b><span>${MONEY(k.monthPrice, d.cur)} per month</span>`); await load(); }
@@ -1080,8 +1103,8 @@ function wireBilling(s) {
 }
 
 function accountsView(part) {
-  app.innerHTML = topBar("Accounts", "Student accounts, backups and problems on screens.") + accounts() + backupPanel() + errorsPanel();
-  wireTop(); wireAccounts(); wireBackup(); wireErrors();
+  app.innerHTML = topBar("Accounts", "Student accounts, your account security, backups and problems on screens.") + accounts() + `<div class="panel" id="mfaBox" hidden style="margin-top:16px"></div>` + backupPanel() + errorsPanel();
+  wireTop(); wireAccounts(); wireBackup(); wireErrors(); if (G.mfaPanel) G.mfaPanel(document.getElementById("mfaBox"), "en");
   const go = part && document.getElementById(part === "errors" ? "errLog" : part === "backup" ? "bkPanel" : "acc"); if (go) go.scrollIntoView({ block: "start" });
 }
 // ── Backup: one file with everything (students, classes, homework, payments, notes…) ──
@@ -1222,6 +1245,8 @@ function overviewTab(s) {
       <div class="card"><div class="card-head"><h2>Private notes</h2><span class="muted" style="font-size:.8em">Only you see these</span></div>
         ${DATA.admin === null ? setupNote("private notes") : `<textarea id="pnText" class="pnotes" maxlength="5000" placeholder="What’s hard for them, topics they enjoy, things to follow up…">${esc(pn.notes || "")}</textarea><div class="actions"><button class="btn sm primary" id="pnSave">Save notes</button>${pn.updated_at ? `<span class="muted" style="font-size:.8em">Saved ${ago(pn.updated_at)}</span>` : ""}</div>`}</div>
       ${DATA.admin === null ? "" : `<div class="card"><div class="card-head"><h2>WhatsApp and class link</h2><span class="muted" style="font-size:.8em">Only you see these</span></div>
+        ${"privacy_at" in s.p ? `<p class="muted" style="font-size:.85em;margin:-4px 0 4px">Privacy notice: ${s.p.privacy_at ? "<b style=\"color:var(--ink)\">accepted</b> on " + esc(new Date(s.p.privacy_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })) : "<b style=\"color:var(--ink)\">not accepted yet</b> · they’ll be asked on their home page"}</p>` : ""}
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px"><span class="muted" style="font-size:.85em">Shared reports and plans use private links.</span><button type="button" class="btn ghost sm" id="shOff">Turn off shared links</button></div>
         <form id="ctForm" class="grid2" style="align-items:end" novalidate>
           <div class="field"><label for="ctP">Student</label><input id="ctP" type="tel" inputmode="tel" autocomplete="off" placeholder="81 1234 5678" value="${esc(adm.phone || "")}"></div>
           <div class="field"><label for="ctPP">Parent or guardian</label><input id="ctPP" type="tel" inputmode="tel" autocomplete="off" placeholder="81 1234 5678" value="${esc(adm.parent_phone || "")}"></div>
@@ -1310,6 +1335,14 @@ async function voiceTab(s) {
 }
 // WhatsApp numbers for reminders
 function wireContact(s) {
+  const so = document.getElementById("shOff");
+  if (so) so.onclick = async () => {
+    if (!confirm("Turn off every report, plan and proposal link shared for " + (s.p.display_name || "this student") + "? You can always send new ones.")) return;
+    so.disabled = true;
+    try { await G.teacher.revokeShares(s.p.id); G.toast("<b>Links turned off</b><span>Old links now say they’re no longer available.</span>"); }
+    catch (e) { G.toast(/shared_docs|relation|schema/i.test(e.message || "") ? "<b>One-time setup</b><span>Run supabase/v10.sql first.</span>" : "Couldn’t turn them off: " + esc(e.message)); }
+    so.disabled = false;
+  };
   const f = document.getElementById("ctForm"); if (!f) return;
   f.onsubmit = async e => {
     e.preventDefault(); const b = f.querySelector("button"); b.disabled = true;
@@ -1604,10 +1637,7 @@ function wireDetail(s) {
   });
   document.querySelectorAll("#pD [data-day], #pTp [data-tp]").forEach(b => b.onclick = () => { const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", on); b.classList.toggle("on", on); });
   const po = document.getElementById("pOpen"); if (po) po.onclick = () => window.open(planLink(s), "_blank", "noopener");
-  const pc = document.getElementById("pCopy"); if (pc) pc.onclick = () => {
-    const url = planLink(s), msg = (document.getElementById("pL").value === "es" ? "Plan de aprendizaje de inglés de " : "English learning plan for ") + (s.p.display_name || "") + ": " + url;
-    navigator.clipboard.writeText(msg).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url));
-  };
+  const pc = document.getElementById("pCopy"); if (pc) pc.onclick = () => shareSheet("Learning plan · " + (s.p.display_name || ""), (document.getElementById("pL").value === "es" ? "Plan de aprendizaje de inglés de " : "English learning plan for ") + (s.p.display_name || "") + ": ", () => planLink(s), s.p.id);
   const lsE = document.getElementById("lsEdit"), lsBox = document.getElementById("lsEditBox");
   if (lsE) lsE.onclick = () => { lsBox.hidden = false; lsE.hidden = true; };
   const lsC = document.getElementById("lsCancel"); if (lsC) lsC.onclick = () => { lsBox.hidden = true; lsE.hidden = false; };
@@ -1626,10 +1656,7 @@ function wireDetail(s) {
     b.disabled = true; startClass(s, c);
   });
   const ro = document.getElementById("rOpen"); if (ro) ro.onclick = () => window.open(reportLink(s), "_blank", "noopener");
-  const rc = document.getElementById("rCopy"); if (rc) rc.onclick = () => {
-    const url = reportLink(s), msg = (document.getElementById("rL").value === "es" ? "Reporte de inglés de " : "English report for ") + (s.p.display_name || "") + ": " + url;
-    navigator.clipboard.writeText(msg).then(() => G.toast("<b>Link copied</b><span>Paste it in WhatsApp.</span>"), () => window.prompt("Copy this link:", url));
-  };
+  const rc = document.getElementById("rCopy"); if (rc) rc.onclick = () => shareSheet("Monthly report · " + (s.p.display_name || ""), (document.getElementById("rL").value === "es" ? "Reporte de inglés de " : "English report for ") + (s.p.display_name || "") + ": ", () => reportLink(s), s.p.id);
 
   const f = document.getElementById("hwForm");
   if (!f) return;

@@ -10,9 +10,7 @@
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Lingua">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/fonts.css">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/lingua.css">
 <script src="assets/config.js"></script>
@@ -20,6 +18,7 @@
 <script src="assets/game.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
+<script src="assets/mfa.js"></script>
 <link rel="stylesheet" href="assets/panel.css">
 </head>
 <body>
@@ -547,7 +546,9 @@ function banco() {
         <div id="bkMsg" hidden></div>
         <div class="actions"><button class="btn primary" type="submit">Guardar datos</button>${bk.updated_at ? `<span class="hint">Guardado el ${dShort(bk.updated_at)}</span>` : ""}</div></form></div>
       <div class="card"><h2>Así se ve en la ficha</h2><div class="bankprev" id="bkPrev"></div><p class="hint">Solo tú, el maestro y quien reciba una ficha ven estos datos.</p></div>
-    </div>`;
+    </div>
+    <div class="card" id="mfaBox" hidden style="margin-top:16px"></div>`;
+  if (G.mfaPanel) G.mfaPanel(document.getElementById("mfaBox"), "es");
   const digits = v => v.replace(/\D/g, ""), group = (v, n) => v.replace(new RegExp(`(.{${n}})`, "g"), "$1 ").trim();
   const prev = () => {
     const r = [["Banco", $("bkB").value.trim()], ["Titular", $("bkH").value.trim()], ["CLABE", group(digits($("bkC").value), 4)], ["Cuenta", digits($("bkA").value)], ["Tarjeta", group(digits($("bkK").value), 4)], ["Comprobante a", $("bkT").value.trim()]].filter(x => x[1]);

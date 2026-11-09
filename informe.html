@@ -6,8 +6,7 @@
 <title>Clases de Inglés · Reporte de avance</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="assets/fonts.css">
 <style>
   :root { --ink: #111; --mute: #6b6b6b; --line: #e3e3e3; --blue: #2346d0; --amber: #c98a00; --black: #0b0f19; --good: #0f7a4a;
     --jeo: #2346d0; --whl: #6d28d9; --jam: #be123c; --ttt: #0f766e; --race: #c2410c; --gold: #f5c518; --stage: #0b0f19; }
@@ -214,14 +213,16 @@
 <script src="assets/config.js"></script>
 <script src="assets/placement-data.js"></script>
 <script src="assets/informe.js"></script>
+<script src="assets/verify.js"></script>
 <script>
+window.linguaShared(function () {
 (function () {
   const G = window.LINGUA || {}, R = window.LinguaReport, doc = document.getElementById("doc"), qp = new URLSearchParams(location.search);
   const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   let lang = qp.get("lang") === "en" ? "en" : "es";
   if (qp.get("embed") === "1") document.body.classList.add("embed");
   function decode(s) { try { const b = atob(s.replace(/-/g, "+").replace(/_/g, "/")); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b, c => c.charCodeAt(0)))); } catch (e) { return null; } }
-  const D = decode(qp.get("d") || "");
+  const D = decode((window.__sharedD || qp.get("d")) || "");
 
   const X = {
     es: {
@@ -529,6 +530,7 @@
   addEventListener("resize", () => { clearTimeout(rT); rT = setTimeout(() => { if ((innerWidth <= 600) !== wNarrow) { wNarrow = !wNarrow; draw(); } }, 200); });
   draw();
 })();
+});
 </script>
 </body>
 </html>
