@@ -34,6 +34,8 @@
   })();
   const repKey = "repaso." + C.id;
   let quiz = null;
+  // Opening a lesson shows its overview page first (not inside trial classes or when presenting)
+  let over = !EMB && !QS.has("s") && QS.get("present") !== "1";
 
   document.body.innerHTML = `
   <header class="nav gutter">
@@ -64,6 +66,7 @@
         </div>
         <div class="planbox" id="planBox" hidden></div>
         <h3>Lesson content</h3>
+        <button type="button" class="ov-link" id="ovBtn">Lesson overview</button>
         <ul class="toc" id="toc"></ul>
         <div class="side-extra">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
@@ -106,6 +109,7 @@
       : `<p class="muted" style="font-size:.88em">Press <span class="kbd">M</span> on a question to save it here.</p>`;
   }
   function go(i) {
+    over = false; document.body.classList.remove("ov");
     st.sec = Math.max(0, Math.min(SECS.length - 1, i));
     G.store.set("sec." + C.id, st.sec);
     drawToc(); draw(); window.scrollTo({ top: 0 });
@@ -136,6 +140,69 @@
     quiz = null;
     ({ warmup: drawWarmup, flash: drawFlash, read: drawRead, grammar: drawGrammar, frases: drawFrases, gaps: drawGaps, errors: drawErrors, translate: drawTranslate, rp: drawRP, talk: drawTalk, final: drawFinal })[SECS[st.sec].id]();
     wirePager();
+  }
+
+  // ── Overview: the lesson's course page (what you'll learn, content, vocabulary, grammar) ──
+  function drawOverview() {
+    over = true; quiz = null; document.body.classList.add("ov");
+    const E = G.esc, mod = (G.modulos || []).find(m => m.lecciones.some(l => l.id === C.id));
+    const cfg = (G.modulos || []).flatMap(m => m.lecciones).find(l => l.id === C.id), n = st.done.size, pct = Math.round(n / SECS.length * 100);
+    const total = (PLAN && PLAN.min) || (cfg && cfg.min) || SECS.reduce((a, s) => a + s.min, 0), inPlan = id => PLAN && PLAN.steps.some(x => x.sec === id);
+    const minOf = s => !PLAN ? s.min + " min" : inPlan(s.id) ? planOf(s.id).min + " min" : "Homework", hw = PLAN ? SECS.filter(s => !inPlan(s.id)).length : 0;
+    const fl = C.flash || [], words = fl.map(f => f.en);
+    const bold = s => E(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/~~(.+?)~~/g, "<s>$1</s>");
+    const desc = {
+      warmup: () => C.warmup.title.replace(/^Warm-up\s*·\s*/i, "") + " · " + C.warmup.questions.length + " questions",
+      flash: () => fl.length + " cards: " + words.slice(0, 3).join(", ") + "…",
+      read: () => "“" + C.read.title + "” · " + (C.read.questions || []).length + " questions",
+      frases: () => (C.frases || []).length + " phrases that sound natural",
+      grammar: () => C.grammar.title, gaps: () => C.gaps.title || "Complete the text",
+      errors: () => C.errors.items.length + " sentences to fix", translate: () => C.translate.items.length + " situations to say out loud",
+      rp: () => C.roleplay.title, talk: () => C.talk.questions.length + " questions to talk about",
+      final: () => (C.final || []).length + " questions from the whole lesson"
+    };
+    const ico = { words: '<path d="M4 6h16M4 12h10M4 18h13"/>', read: '<path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6"/>', gram: '<path d="M12 5v14M5 12h14"/>',
+      rp: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 11h5M16 15h4"/>', talk: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>', quiz: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 12l3 3 5-6"/>', game: '<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3"/>' };
+    const svg = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${ico[k]}</svg>`;
+    const inc = [["words", fl.length + " words with audio"], C.read && C.read.text ? ["read", "1 reading with " + (C.read.questions || []).length + " questions"] : null,
+      C.grammar ? ["gram", "Grammar: " + C.grammar.title] : null, C.roleplay ? ["rp", "Role-play: " + C.roleplay.title] : null,
+      C.talk ? ["talk", C.talk.questions.length + " conversation questions"] : null, ["quiz", "Final quiz · " + (C.final || []).length + " questions"], ["game", "Class games"]].filter(Boolean);
+    const gr = C.grammar, ex = gr && gr.examples || [];
+    const status = !n ? `<span class="ov-new">New</span>` : n >= SECS.length ? `<span class="ov-done">Completed</span>` : `<span class="ov-prog">${pct}% complete</span>`;
+    const cta = !n ? "Start lesson" : n >= SECS.length ? "Review lesson" : "Continue: " + SECS[st.sec].t;
+    stage.innerHTML = `
+      <section class="ov-hero">
+        <nav class="ov-crumbs"><a href="../index.html">My learning</a><span>›</span>${mod ? `<span>${E(mod.titulo)}</span><span>›</span>` : ""}<span>Level ${E(C.nivel)}</span></nav>
+        <h1>${E(C.id)} · ${E(C.titulo)}</h1>
+        ${C.tema || (cfg && cfg.tema) ? `<p class="ov-tag">${E(C.tema || cfg.tema)}</p>` : ""}
+        <div class="ov-meta">${status}<span class="ov-lvl">Level ${E(C.nivel)}</span><span>${total} min</span><span>${SECS.length} sections</span></div>
+        <p class="ov-by">Created by <b>${E(G.maestroNombre || G.maestro)}</b> · English</p>
+      </section>
+      <div class="ov-body">
+        <div class="ov-main">
+          ${C.objetivos && C.objetivos.length ? `<section class="ov-learn"><h2>What you'll learn</h2><ul>${C.objetivos.map(o => `<li>${E(o)}</li>`).join("")}</ul></section>` : ""}
+          <section><h2>Lesson content</h2><p class="ov-sub">${SECS.length} sections · ${total} min in class${hw ? ` · ${hw} for homework` : ""}</p>
+            <ol class="ov-list">${SECS.map((s, i) => `<li><button type="button" data-ov="${i}"><span class="ov-chk ${st.done.has(i) ? "on" : ""}" aria-hidden="true"></span><span class="ov-t"><b>${E(s.t)}</b><small>${E((desc[s.id] || (() => ""))())}</small></span><span class="ov-m ${minOf(s) === "Homework" ? "hw" : ""}">${minOf(s)}</span></button></li>`).join("")}</ol></section>
+          ${gr ? `<section class="ov-gr"><h2>Grammar of the lesson</h2><p class="ov-gt">${E(gr.title)}</p>${ex[0] ? `<p class="ov-big">${bold(ex[0])}</p>` : ""}
+            <ul>${ex.slice(1, 3).map(x => `<li>${bold(x)}</li>`).join("")}${gr.wrong && gr.right ? `<li class="ov-watch">Watch out: ${bold(gr.wrong)} → ${bold(gr.right)}</li>` : ""}</ul></section>` : ""}
+          ${C.talk && C.talk.questions ? `<section><h2>Let's talk about</h2><ul class="ov-q">${C.talk.questions.slice(0, 4).map(q => `<li>${E(q)}</li>`).join("")}</ul></section>` : ""}
+        </div>
+        <aside class="ov-side">
+          <div class="ov-card">
+            <button type="button" class="ov-tile" style="--c:${C.color || "#2346d0"}" data-start aria-label="${E(cta)}"><b>${E(C.id)}</b><span class="ov-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></button>
+            <div class="ov-cin">
+              <p class="ov-sub"><b>${total} min · ${SECS.length} sections</b></p>
+              <button type="button" class="btn primary ov-go" data-start>${E(cta)}</button>
+              <div class="ov-inc"><b>This lesson includes:</b><ul>${inc.map(([k, txt]) => `<li>${svg(k)}<span>${E(txt)}</span></li>`).join("")}</ul></div>
+            </div>
+          </div>
+          ${words.length ? `<section><h3>Lesson vocabulary</h3><div class="ov-pills">${words.map(w => `<span>${E(w)}</span>`).join("")}</div></section>` : ""}
+          ${C.plan && C.plan.homework ? `<section><h3>Homework</h3><p class="ov-hw">${E(C.plan.homework)}</p></section>` : ""}
+        </aside>
+      </div>`;
+    stage.querySelectorAll("[data-start]").forEach(b => b.onclick = () => go(st.sec));
+    stage.querySelectorAll("[data-ov]").forEach(b => b.onclick = () => go(+b.dataset.ov));
+    window.scrollTo({ top: 0 });
   }
 
   // ── 1 Vocabulario ──
@@ -466,7 +533,7 @@
     pt(); window.scrollTo({ top: 0 });
   }
   document.getElementById("presentBtn").onclick = () => present(true);
-  pctl.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { if (b.dataset.p === "x") return present(false); markDone(st.sec); go(st.sec + +b.dataset.p); pt(); });
+  pctl.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { if (b.dataset.p === "x") return present(false); if (over) { go(st.sec); return; } markDone(st.sec); go(st.sec + +b.dataset.p); pt(); });
   document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.body.classList.contains("present")) present(false); });
   document.addEventListener("keydown", e => {
     if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT" || e.target.isContentEditable || e.metaKey || e.ctrlKey || e.altKey) return;
@@ -476,10 +543,12 @@
     if (k === "escape" && document.body.classList.contains("present")) { present(false); return; }
     if (quiz && quiz.key(k)) { e.preventDefault(); return; }
     const pres = document.body.classList.contains("present");
-    if ((e.shiftKey || pres) && k === "arrowright") { markDone(st.sec); go(st.sec + 1); pt(); }
+    if ((e.shiftKey || pres) && k === "arrowright") { if (over) { go(st.sec); return; } markDone(st.sec); go(st.sec + 1); pt(); }
     if ((e.shiftKey || pres) && k === "arrowleft") { go(st.sec - 1); pt(); }
   });
-  drawToc(); draw();
+  drawToc(); over ? drawOverview() : draw();
+  document.getElementById("ovBtn").hidden = EMB;
+  document.getElementById("ovBtn").onclick = () => { drawOverview(); document.querySelectorAll("#toc button").forEach(b => b.classList.remove("active")); };
   if (G.ready && G.ready.then) G.ready.then(() => drawToc()).catch(() => {});
   if (new URLSearchParams(location.search).get("present") === "1") setTimeout(() => present(true), 0);
   if (G.decorate) G.decorate();

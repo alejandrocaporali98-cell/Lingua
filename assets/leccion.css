@@ -224,3 +224,74 @@ html.embed .stage { padding-block: 22px 32px; }
 .plan-l .pm { font-variant-numeric: tabular-nums; font-weight: 800; color: var(--brand); font-size: .92em; }
 .plan-l small { display: block; color: var(--mute); line-height: 1.4; margin-top: 1px; }
 .plan-hw { margin: 0; font-size: .84em; color: var(--ink-2); line-height: 1.45; }
+
+/* ── Lesson overview (course page, Udemy-style) ── */
+.ov-link { display: block; width: calc(100% - 40px); margin: 0 20px 10px; text-align: left; border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 9px 12px; font-weight: 700; font-size: .88em; }
+.ov-link:hover { border-color: var(--ink); }
+body.ov .player { grid-template-columns: 1fr; }
+body.ov .side { display: none; }
+body.ov, body.ov .stage { background: var(--surface); }
+body.ov .stage { padding-top: 0; }
+body.ov .stage-in { max-width: 1080px; gap: 0; }
+.ov-hero { --band: #f3f4f6; background: var(--band); box-shadow: 0 0 0 100vmax var(--band); clip-path: inset(0 -100vmax); padding: 30px 0 26px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ov-hero { --band: #141922; } }
+:root[data-theme="dark"] .ov-hero { --band: #141922; }
+.ov-crumbs { display: flex; gap: 8px; flex-wrap: wrap; font-size: .86em; font-weight: 700; color: var(--brand); }
+.ov-crumbs a { color: inherit; text-decoration: none; }
+.ov-crumbs span:nth-child(even) { color: var(--mute); font-weight: 500; }
+.ov-hero h1 { font-size: clamp(1.7em, 3.4vw, 2.3em); font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.ov-tag { font-size: 1.1em; color: var(--ink-2, var(--ink)); max-width: 720px; }
+.ov-meta { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; font-size: .9em; color: var(--ink-2, var(--ink)); }
+.ov-new { background: #eceb98; color: #3d3c0a; font-weight: 800; font-size: .85em; padding: 3px 9px; border-radius: 3px; }
+.ov-prog { background: var(--brand-soft, #e8edff); color: var(--brand-dark, var(--brand)); font-weight: 800; font-size: .85em; padding: 3px 9px; border-radius: 3px; }
+.ov-done { background: #dff3e4; color: #14532d; font-weight: 800; font-size: .85em; padding: 3px 9px; border-radius: 3px; }
+.ov-lvl { color: #b4690e; font-weight: 800; }
+.ov-by { font-size: .88em; color: var(--mute); }
+.ov-by b { color: var(--brand); }
+.ov-body { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 32px; padding-top: 26px; align-items: start; }
+
+.ov-main { display: grid; gap: 28px; min-width: 0; }
+.ov-main h2 { font-size: 1.35em; font-weight: 800; letter-spacing: -.01em; margin-bottom: 4px; }
+.ov-sub { font-size: .88em; color: var(--mute); }
+.ov-learn { border: 1px solid var(--line-2, var(--line)); padding: 20px 22px; }
+.ov-learn ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 22px; }
+@media (max-width: 600px) { .ov-learn ul { grid-template-columns: 1fr; } }
+.ov-learn li { position: relative; padding-left: 24px; font-size: .94em; }
+.ov-learn li::before { content: ""; position: absolute; left: 2px; top: 4px; width: 11px; height: 6px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); }
+.ov-list { list-style: none; margin: 12px 0 0; padding: 0; border: 1px solid var(--line-2, var(--line)); }
+.ov-list li + li { border-top: 1px solid var(--line-2, var(--line)); }
+.ov-list button { width: 100%; display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 12px; align-items: center; text-align: left; padding: 12px 16px; background: #f7f8fa; border: 0; color: inherit; font: inherit; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ov-list button { background: #141922; } }
+:root[data-theme="dark"] .ov-list button { background: #141922; }
+.ov-list button:hover { background: var(--surface); }
+.ov-list b { display: block; font-weight: 800; font-size: .95em; }
+.ov-list small { display: block; color: var(--mute); font-size: .82em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ov-m { font-size: .86em; color: var(--ink-2, var(--ink)); white-space: nowrap; }
+.ov-chk { width: 16px; height: 16px; border: 1.6px solid var(--line-2, #c6cad2); border-radius: 3px; position: relative; }
+.ov-chk.on { background: var(--ink); border-color: var(--ink); }
+.ov-chk.on::after { content: ""; position: absolute; left: 4px; top: 1px; width: 4px; height: 8px; border: solid var(--surface); border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.ov-gr .ov-gt { color: var(--mute); font-weight: 700; font-size: .9em; }
+.ov-big { font-size: 1.25em; margin: 6px 0 8px; }
+.ov-big b { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.ov-gr ul, .ov-q { margin: 0; padding-left: 20px; display: grid; gap: 5px; font-size: .95em; }
+.ov-watch s { color: #c0392b; }
+.ov-side { display: grid; gap: 24px; position: sticky; top: 84px; }
+@media (max-width: 900px) { .ov-side { position: static; } }
+.ov-card { background: var(--surface); border: 1px solid var(--line); box-shadow: 0 2px 8px rgba(0,0,0,.08), 0 6px 24px rgba(0,0,0,.06); overflow: hidden; }
+.ov-tile { width: 100%; aspect-ratio: 16 / 7.5; border: 0; background: var(--c); position: relative; display: grid; place-items: center; color: #fff; cursor: pointer; }
+.ov-tile::before { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(0,0,0,.08), rgba(0,0,0,.28)); }
+.ov-tile b { position: relative; font-size: 3.2em; font-weight: 800; letter-spacing: -.02em; }
+.ov-play { position: absolute; right: 16px; bottom: 16px; width: 44px; height: 44px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+.ov-play svg { width: 18px; height: 18px; fill: #111; margin-left: 2px; }
+.ov-cin { padding: 16px 18px 18px; display: grid; gap: 12px; }
+.ov-go { width: 100%; justify-content: center; padding-block: 12px; }
+.ov-inc ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 7px; font-size: .88em; }
+.ov-inc li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: start; }
+.ov-inc svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; margin-top: 2px; }
+.ov-side h3 { font-size: 1.05em; font-weight: 800; margin-bottom: 8px; }
+.ov-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+.ov-pills span { border: 1px solid var(--ink); border-radius: 99px; padding: 4px 11px; font-size: .84em; font-weight: 700; }
+.ov-hw { font-size: .9em; color: var(--ink-2, var(--ink)); }
+body.present .ov-side { position: static; }
+.ov-m.hw { color: var(--mute); font-style: italic; }
+@media (max-width: 900px) { .ov-body { grid-template-columns: 1fr; gap: 26px; } .ov-body .ov-side { display: contents; } .ov-body .ov-card { order: -1; } .ov-body .ov-side > section { order: 2; } .ov-body .ov-tile { aspect-ratio: 16 / 6; } }

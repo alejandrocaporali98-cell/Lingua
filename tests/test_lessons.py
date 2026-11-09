@@ -91,6 +91,20 @@ def test():
             if len(env.errs) > before: broken.append(f"{lid}: {env.errs[before]}")
         check(not broken, f"all {len(IDS)} lessons open and can be completed " + " | ".join(broken[:6]))
 
+        # Overview: a lesson opens on its course page; Start goes to the first section and the overview can be reopened
+        lid = IDS[-1]
+        env.fresh(pg, f"clases/leccion-{lid}.html", 600)
+        ok = pg.locator(".ov-hero h1").count() == 1 and pg.locator(".ov-list button").count() == pg.locator(".toc button").count() and pg.locator(".ov-go").count() == 1
+        check(ok, f"lesson {lid} opens on its overview with every section listed")
+        pg.click(".ov-go"); pg.wait_for_timeout(250)
+        check(pg.locator(".sec-head").count() == 1 and pg.locator(".ov-hero").count() == 0, "Start lesson opens the first section")
+        pg.click("#ovBtn"); pg.wait_for_timeout(200)
+        check(pg.locator(".ov-hero").count() == 1, "the overview can be reopened from the side panel")
+        pg.locator(".ov-list button").nth(1).click(); pg.wait_for_timeout(200)
+        check(pg.locator(".toc button.active").get_attribute("data-i") == "1", "a row in Lesson content opens that section")
+        env.fresh(pg, f"clases/leccion-{lid}.html?s=1", 500)
+        check(pg.locator(".ov-hero").count() == 0, "with ?s= the lesson opens straight on a section")
+
         # Garage (racing style): one car per Emiliano lesson, unlocked by passing it
         env.fresh(pg, "perfil.html", 300)
         gx = pg.evaluate("window.LINGUA.garage ? Object.keys(LINGUA.garage.CARS) : []")
