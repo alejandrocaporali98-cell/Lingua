@@ -425,7 +425,12 @@
         const tries = G.store.get("attempts." + C.id, []); tries.push({ ok, n, at }); G.store.set("attempts." + C.id, tries.slice(-50));
         const d = G.store.get("diploma." + C.id, null);
         if (ok / n >= .8) G.game && G.game.award(50, { once: "pass." + C.id, silent: true });
-        if (ok / n >= .8 && !d) { G.store.set("diploma." + C.id, { ok, n, at }); setTimeout(() => { G.confetti(); G.sfx("win"); }, 650); return true; }
+        if (ok / n >= .8 && !d) {
+          G.store.set("diploma." + C.id, { ok, n, at }); setTimeout(() => { G.confetti(); G.sfx("win"); }, 650);
+          const car = G.garage && G.garage.on() && G.garage.car(C.id);
+          if (car) setTimeout(() => G.toast(`<b>New car in your garage: ${G.esc(car.name)}!</b><span><a href="${G.root || "../"}perfil.html#garage">Go to your garage</a></span>`, "big"), 1600);
+          return true;
+        }
         else if (d && ok > d.ok) G.store.set("diploma." + C.id, { ...d, ok, n });
         return false;
       }

@@ -229,9 +229,9 @@ document.documentElement.style.setProperty("--scale", window.LINGUA.store.get("t
 (function () {
   const L = window.LINGUA;
   L.THEMES = {
-    racing: { label: "Racing (F1)", avatar: "helmet", part: "helmet", number: "Racing number", visor: "Visor",
+    racing: { label: "Racing (F1)", avatar: "helmet", part: "helmet", number: "Racing number", visor: "Visor", reward: "garage",
       titles: ["Rookie", "Karting", "Formula 4", "Formula 3", "Formula 2", "F1 Driver", "Podium", "Race Winner", "World Champion", "Legend"],
-      editor: "Design your own racing helmet, or use your initial. Level up to unlock more designs.",
+      editor: "Design your own racing helmet, or use your initial. Every design is open. Your rewards are the cars in your garage.",
       season: { title: "Your season", aria: "the course as a race track", move: "Pass a lesson (80%+) to move your helmet forward.", done: "Season complete!", unit: "checkpoints" },
       lap: { first: "Your first lap time!", again: "Race again" },
       badges: { first: "First lap", perfect: "Perfect lap", podium: "Podium", champion: "World champion", pole: "Pole position", mechanic: "Mechanic", level5: "Formula 2" } },

@@ -255,7 +255,7 @@
       <span class="sub">${g.title}${g.ceil ? " · " + (g.ceil - g.xp) + " XP to Level " + (g.level + 1) : " · Max level"}</span>`;
     document.getElementById("bWeek").innerHTML = `<div class="row" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span class="eyebrow">This week</span><span class="chip ${g.weekDays >= g.goal ? "ok" : ""}">${g.weekDays >= g.goal ? "Goal done" : g.weekDays + " of " + g.goal + " days"}</span></div>
       <div class="week">${g.week.map((d, i) => `<span class="${d.xp ? "on" : ""} ${d.today ? "today" : ""} fx-in" style="--i:${i}"><i></i>${d.label}</span>`).join("")}</div>
-      <span class="sub">Practice ${g.goal} days for a +50 XP bonus. New levels unlock ${C.style.part} designs in your <a href="perfil.html">profile</a>.</span>`;
+      <span class="sub">Practice ${g.goal} days for a +50 XP bonus. ${C.style.reward === "garage" ? `Pass a lesson (80%+) to unlock a new car in your <a href="perfil.html#garage">garage</a>.` : `New levels unlock ${C.style.part} designs in your <a href="perfil.html">profile</a>.`}</span>`;
     C.fx.ticker(document.querySelector("[data-tk-s]"), g.streak, { from: p0.streak, dur: 700 });
     C.fx.ticker(document.querySelector("[data-tk-x]"), g.xp, { from: p0.xp, dur: 1100 });
     prevG = g;

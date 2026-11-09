@@ -157,12 +157,14 @@
     shell: { gold: 9 }, accent: { gold: 9 }
   };
   function unlockedAt(lv) {
+    if (STYLE().reward === "garage") return [];
     const out = [], names = { design: "design", visor: (STYLE().visor || "visor").toLowerCase(), shell: "color", accent: "accent" };
     Object.keys(UNLOCK).forEach(kind => Object.keys(UNLOCK[kind]).forEach(k => { if (UNLOCK[kind][k] === lv && kind !== "accent") out.push(cap(k) + " " + names[kind]); }));
     return out;
   }
   const cap = s => s[0].toUpperCase() + s.slice(1);
   function needs(kind, key) {
+    if (STYLE().reward === "garage") return 0; // racing style: rewards are cars, the helmet is all open
     const lv = (UNLOCK[kind] || {})[key] || 0;
     if (!lv) return 0;
     const av = S.get("avatar", null);

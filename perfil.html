@@ -29,6 +29,7 @@
 <script src="assets/config.js"></script>
 <script src="assets/game.js"></script>
 <script src="assets/avatar.js"></script>
+<script src="assets/garage.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
 <script src="assets/menu.js"></script>
@@ -95,6 +96,43 @@
   .sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; }
   .sync.off i { background: var(--line-2); }
   .sync.err i { background: var(--bad); }
+  /* Garage (racing style): cars unlocked by passing lessons */
+  .gx-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+  .gx-count { font-size: .82em; font-weight: 800; padding: 5px 11px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .gx-show { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; }
+  @media (max-width: 720px) { .gx-show { grid-template-columns: 1fr; } }
+  .gx-stage { position: relative; min-height: 230px; display: grid; align-items: end; padding: 48px 18px 20px; color: #9aa1ab;
+    background: radial-gradient(60% 55% at 50% 0%, rgba(255,255,255,.16), transparent 70%), linear-gradient(#2c3037 0 64%, #3a3f47 64% 65%, #24272d 65%); }
+  .gx-stage::after { content: ""; position: absolute; left: 0; right: 0; top: 64%; height: 1px; background: rgba(255,255,255,.06); }
+  .gx-stage .car-svg { width: 100%; height: auto; position: relative; z-index: 1; filter: drop-shadow(0 10px 14px rgba(0,0,0,.25)); }
+  .gx-stage.locked .car-svg { filter: none; opacity: .55; }
+  .gx-plate { position: absolute; top: 16px; left: 18px; display: flex; gap: 8px; align-items: center; color: #e7e9ec; font-size: .78em; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; z-index: 2; }
+  .gx-plate i { width: 8px; height: 8px; border-radius: 50%; background: #f5c518; }
+  .gx-stage.locked .gx-plate i { background: #6b717b; }
+  .gx-info { padding: 22px; display: grid; gap: 14px; align-content: start; background: var(--surface); }
+  .gx-info h3 { font-size: 1.45em; font-weight: 800; letter-spacing: -.01em; line-height: 1.1; }
+  .gx-info .kind { color: var(--mute); font-weight: 600; font-size: .9em; }
+  .gx-specs { display: grid; gap: 10px; }
+  .gx-spec { display: grid; grid-template-columns: 92px minmax(0, 1fr) 76px; gap: 10px; align-items: center; font-size: .85em; }
+  .gx-spec span:first-child { color: var(--mute); font-weight: 700; }
+  .gx-spec b { text-align: right; font-variant-numeric: tabular-nums; }
+  .gx-bar { height: 6px; border-radius: 99px; background: var(--bg); overflow: hidden; }
+  .gx-bar i { display: block; height: 100%; border-radius: inherit; background: var(--ink); }
+  .gx-about { border-top: 1px solid var(--line); padding-top: 14px; display: grid; gap: 8px; }
+  .gx-about p { font-size: .98em; line-height: 1.5; }
+  .gx-about .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .gx-learn { font-size: .8em; color: var(--mute); font-weight: 600; }
+  .gx-bays { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+  @media (max-width: 720px) { .gx-bays { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; } }
+  @media (max-width: 420px) { .gx-bays { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .gx-note { font-size: .85em; color: var(--mute); }
+  .gx-bay { position: relative; border: 1px solid var(--line); background: var(--bg); border-radius: var(--r-m, 12px); padding: 10px 10px 8px; display: grid; gap: 4px; text-align: left; color: #9aa1ab; }
+  .gx-bay .car-svg { width: 100%; height: auto; }
+  .gx-bay.locked .car-svg { opacity: .5; }
+  .gx-bay b { font-size: .8em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gx-bay small { font-size: .72em; color: var(--mute); font-weight: 700; }
+  .gx-bay[aria-pressed="true"] { border-color: var(--ink); background: var(--surface); box-shadow: 0 0 0 1px var(--ink); }
+  .gx-new { position: absolute; top: 7px; right: 7px; background: #f5c518; color: #1b1d22; font-size: .66em; font-weight: 800; padding: 2px 7px; border-radius: 99px; }
 </style>
 </head>
 <body>
@@ -123,6 +161,51 @@ function stats() {
   const avg = scores.length ? Math.round(scores.reduce((a, s) => a + s.ok / s.n, 0) / scores.length * 100) : null;
   const review = G.review.count();
   return { done: scores.length, total: ready.length, avg, review, place: G.store.get("placement", null), game: G.game.mine() };
+}
+
+// ── Garage: one car per lesson, unlocked by passing it (80%+) ──
+let gxSel = null;
+function drawGarage() {
+  const box = document.getElementById("garage"); if (!box) return;
+  const GX = G.garage, cars = GX.list(), seen = GX.seen(), got = cars.filter(c => c.unlocked);
+  if (!gxSel || !cars.some(c => c.lesson.id === gxSel)) {
+    const fresh = got.filter(c => !seen.includes(c.lesson.id));
+    gxSel = (fresh[fresh.length - 1] || got[got.length - 1] || cars.find(c => !c.unlocked) || cars[0]).lesson.id;
+  }
+  const c = cars.find(x => x.lesson.id === gxSel);
+  if (c.unlocked) GX.markSeen(c.lesson.id);
+  const fmt = n => n.toLocaleString("en-US");
+  const spec = (label, v, pct) => `<div class="gx-spec"><span>${label}</span><span class="gx-bar"><i style="width:${Math.max(6, Math.min(100, pct))}%"></i></span><b>${v}</b></div>`;
+  const nextUp = cars.find(x => !x.unlocked);
+  box.innerHTML = `
+    <div class="gx-head"><div><h2 id="gxT">Your garage</h2><p class="muted" style="font-size:.9em">Pass a lesson with 80% or more in the final quiz to unlock its car.</p></div>
+      <span class="gx-count">${got.length} / ${cars.length} cars</span></div>
+    <div class="gx-show">
+      <div class="gx-stage ${c.unlocked ? "" : "locked"}">
+        <span class="gx-plate"><i></i>${c.unlocked ? "Car " + esc(c.num) : "Locked"} · Lesson ${esc(c.lesson.id)}</span>
+        ${GX.svg(c, { locked: !c.unlocked })}
+      </div>
+      <div class="gx-info">${c.unlocked ? `
+        <div><h3>${esc(c.name)}</h3><span class="kind">${esc(c.kind)} · unlocked with Lesson ${esc(c.lesson.id)} · ${esc(c.lesson.titulo)}</span></div>
+        <div class="gx-specs">
+          ${spec("Power", fmt(c.hp) + " hp", c.hp / GX.MAX.hp * 100)}
+          ${spec("Top speed", c.top + " km/h", c.top / GX.MAX.top * 100)}
+          ${spec("0–100 km/h", c.zero.toFixed(1) + " s", (12 - c.zero) / 10 * 100)}
+        </div>
+        <div class="gx-about"><span class="eyebrow">About this car</span><p>${esc(c.about)}</p>
+          <div class="row">${G.canSpeak ? `<button type="button" class="btn sm" id="gxSay">🔊 Listen</button>` : ""}<span class="gx-learn">You learned: ${esc(c.learned)}</span></div></div>`
+      : `
+        <div><h3>Mystery car</h3><span class="kind">Lesson ${esc(c.lesson.id)} · ${esc(c.lesson.titulo)}</span></div>
+        <p class="muted">Pass this lesson with 80% or more in the final quiz, and this car goes into your garage.</p>
+        <div><a class="btn primary" href="${c.lesson.archivo}">${G.store.get("score." + c.lesson.id, null) ? "Try the lesson again" : "Go to the lesson"}</a></div>`}
+      </div>
+    </div>
+    <div class="gx-bays" role="group" aria-label="Cars">${cars.map(x => `<button type="button" class="gx-bay ${x.unlocked ? "" : "locked"}" data-car="${x.lesson.id}" aria-pressed="${x.lesson.id === gxSel}" aria-label="${x.unlocked ? esc(x.name) : "Locked car, lesson " + x.lesson.id}">
+      ${x.unlocked && !seen.includes(x.lesson.id) && x.lesson.id !== c.lesson.id ? `<span class="gx-new">New</span>` : ""}
+      ${GX.svg(x, { locked: !x.unlocked })}<b>${x.unlocked ? esc(x.name) : "🔒 Locked"}</b><small>Lesson ${esc(x.lesson.id)}</small></button>`).join("")}</div>
+    ${nextUp && got.length ? `<p class="gx-note">Next car: pass <b>Lesson ${esc(nextUp.lesson.id)} · ${esc(nextUp.lesson.titulo)}</b>.</p>` : ""}`;
+  box.querySelectorAll("[data-car]").forEach(b => b.onclick = () => { gxSel = b.dataset.car; drawGarage(); });
+  const sy = document.getElementById("gxSay"); if (sy) sy.onclick = () => G.say(c.about);
 }
 
 function render() {
@@ -154,6 +237,8 @@ function render() {
     <div class="card stat"><span class="v">${st.done}<span class="muted" style="font-size:.55em"> / ${st.total}</span></span><span class="l">Lessons completed</span></div>
     <div class="card stat"><span class="v">${st.avg == null ? "—" : st.avg + "%"}</span><span class="l">Average final quiz</span></div>
   </div>`}
+
+  ${setup || !G.garage || !G.garage.on() || !G.garage.list().length ? "" : `<section class="panel" id="garage" style="scroll-margin-top:80px" aria-labelledby="gxT"></section>`}
 
   ${setup ? "" : (() => { const bs = G.badges.earned(), got = bs.filter(b => b.at).length; return `<section class="panel" id="badges" style="scroll-margin-top:80px" aria-labelledby="bdT">
     <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap"><div><h2 id="bdT">Badges</h2><p class="muted" style="font-size:.9em">${got} of ${bs.length} earned. Keep practicing to unlock the rest.</p></div></div>
@@ -217,6 +302,7 @@ function render() {
 
   let chosenColor = color;
   drawBuilder();
+  drawGarage();
   document.querySelectorAll("#chips button").forEach(b => b.onclick = () => b.setAttribute("aria-pressed", b.getAttribute("aria-pressed") !== "true"));
   document.getElementById("dn").addEventListener("input", () => paintPreview());
 
