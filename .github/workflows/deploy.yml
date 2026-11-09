@@ -1,7 +1,9 @@
-# Test, then publish the site to GitHub Pages.
+# Test, then publish the site to GitHub Pages and (as a backup address) to Cloudflare Pages.
 # Every push to main runs the tests in tests/. The site is only published when they all pass,
 # so a change that breaks something never reaches students.
 # One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
+# Cloudflare (optional): add the repo secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID.
+# Until both exist, the Cloudflare step is skipped.
 name: Test and publish
 
 on:
@@ -47,6 +49,9 @@ jobs:
   publish:
     needs: test
     runs-on: ubuntu-latest
+    env:
+      CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -65,3 +70,11 @@ jobs:
           path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Also publish to Cloudflare Pages (backup address, lingua-clases.pages.dev)
+        if: env.CF_TOKEN != '' && env.CF_ACCOUNT != ''
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx --yes wrangler@4 pages project list | grep -q "lingua-clases" || npx --yes wrangler@4 pages project create lingua-clases --production-branch=main
+          npx --yes wrangler@4 pages deploy _site --project-name=lingua-clases --branch=main --commit-dirty=true
