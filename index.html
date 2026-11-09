@@ -148,7 +148,6 @@
       <span class="eyebrow" id="today"></span>
       <div style="display:flex;align-items:center;gap:14px;margin-top:8px"><a class="avatar hero-av" data-avatar="56" href="perfil.html" aria-label="Your profile" hidden></a><h1 data-greet>Welcome back</h1></div>
       <p class="lead">Pick up where you left off. Every lesson we do in class stays here so you can review it.</p>
-      <div class="instructor" style="margin-top:14px"><span class="in" id="inIni"></span><span style="font-size:.9em"><span class="muted">Instructor</span><br><b id="inName"></b></span></div>
     </div>
   </div>
 </section>
@@ -189,9 +188,7 @@
 <script>
   const C = window.LINGUA, P = C.store.get("placement", null);
   document.getElementById("logo").innerHTML = C.logo;
-  document.getElementById("teacher").textContent = "Instructor: " + (C.maestroNombre || C.maestro);
-  document.getElementById("inIni").textContent = C.maestro[0];
-  document.getElementById("inName").textContent = C.maestroNombre || C.maestro;
+  document.getElementById("teacher").textContent = "English classes made for you";
   document.getElementById("flogo").innerHTML = C.mark(22) + "<span>English classes made for you</span>";
   const td = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
   document.getElementById("today").textContent = td;
@@ -229,7 +226,7 @@
 
   // Modules
   if (!ready.length) document.getElementById("modules").innerHTML = `<div class="card" style="padding:28px;display:grid;gap:6px;justify-items:center;text-align:center">
-    <b style="font-size:1.1em">Your lessons are on the way</b><p class="muted" style="max-width:440px">${C.maestro} is preparing lessons made for you. They will show up here.</p></div>`;
+    <b style="font-size:1.1em">Your lessons are on the way</b><p class="muted" style="max-width:440px">Your teacher is preparing lessons made for you. They will show up here.</p></div>`;
   else document.getElementById("modules").innerHTML = C.modulos.map(m => `
     <section class="module"><h3>${m.titulo}</h3><div class="lessons">${m.lecciones.map(l => {
       const soon = l.estado !== "lista", sc = C.store.get("score." + l.id, null), p = pct(l);
@@ -269,11 +266,11 @@
     const body = C.sheet(`<div style="display:grid;gap:6px;padding-right:44px"><span class="hst ${st[1]}" style="justify-self:start">${st[0]}</span><h2 class="lsheet-t" style="padding:0">${C.esc(h.title)}</h2>
         ${h.details ? `<p style="color:var(--ink-2)">${C.esc(h.details)}</p>` : ""}
         <span class="muted" style="font-size:.85em">${h.due ? "Due " + new Date(h.due + "T12:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) : "No due date"}${lesson ? ` · <a href="${lesson.archivo}">Open lesson ${lesson.id}</a>` : ""}</span></div>
-      ${h.reviewed_at ? `<div class="hw-fb"><span class="eyebrow">Feedback from ${C.esc(C.maestro)}</span>${h.grade != null ? `<b class="hw-grade">${h.grade}<small>/100</small></b>` : ""}${h.feedback ? `<p>${C.esc(h.feedback)}</p>` : ""}</div>` : ""}
+      ${h.reviewed_at ? `<div class="hw-fb"><span class="eyebrow">Feedback from your teacher</span>${h.grade != null ? `<b class="hw-grade">${h.grade}<small>/100</small></b>` : ""}${h.feedback ? `<p>${C.esc(h.feedback)}</p>` : ""}</div>` : ""}
       ${h.submitted_at ? `<div class="hw-mine"><span class="eyebrow">Your answer · sent ${new Date(h.submitted_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>${h.answer ? `<p>${C.esc(h.answer)}</p>` : ""}${h.audio_path ? `<div data-aud="${C.esc(h.audio_path)}"><span class="muted" style="font-size:.85em">Loading your voice note…</span></div>` : ""}</div>` : ""}
       ${canEdit ? `<div class="field"><label for="hwA">${h.submitted_at ? "Change your answer" : "Your answer"} <span class="muted" style="font-weight:500">(optional)</span></label><textarea id="hwA" maxlength="4000" rows="4" placeholder="Write your answer in English">${C.esc(h.answer || "")}</textarea></div>
         <div class="voice-box"><span style="font-weight:700;font-size:.9em">Voice note <span class="muted" style="font-weight:500">(optional, up to 3 minutes)</span></span><div id="hwRec"></div></div>
-        <div class="lsheet-acts"><button type="button" class="btn primary" id="hwSend">${h.submitted_at ? "Send again" : "Send to " + C.esc(C.maestro)}</button>${!h.done_at ? `<button type="button" class="btn ghost" id="hwDoneOnly">Mark as done without an answer</button>` : ""}</div>
+        <div class="lsheet-acts"><button type="button" class="btn primary" id="hwSend">${h.submitted_at ? "Send again" : "Send to your teacher"}</button>${!h.done_at ? `<button type="button" class="btn ghost" id="hwDoneOnly">Mark as done without an answer</button>` : ""}</div>
         <p id="hwMsg" class="muted" style="font-size:.88em" role="status"></p>` : ""}`, { label: "Homework" });
     body.querySelectorAll("[data-aud]").forEach(async el => { try { el.innerHTML = `<audio controls preload="metadata" src="${await C.voice.url(el.dataset.aud)}"></audio>`; } catch (e) { el.innerHTML = `<span class="muted" style="font-size:.85em">Couldn’t load the voice note.</span>`; } });
     if (!canEdit) return;
@@ -287,7 +284,7 @@
         const fields = { answer: answer || null };
         if (blob) fields.audio_path = await C.voice.upload(blob, "homework");
         await C.homework.submit(h.id, fields);
-        C.sheet.close(); C.toast(`<b>Sent to ${C.esc(C.maestro)}</b><span>You’ll see the feedback here.</span>`); hwDone(h.id); todo();
+        C.sheet.close(); C.toast(`<b>Sent to your teacher</b><span>You’ll see the feedback here.</span>`); hwDone(h.id); todo();
       } catch (err) {
         e.currentTarget.disabled = false;
         msg(/column|schema|bucket|not found/i.test(err.message || "") ? "Your teacher needs to finish a quick setup before you can send answers. You can mark it as done for now." : "We couldn’t send it. Check your internet and try again.");
@@ -311,7 +308,7 @@
     const classCard = C.cloudEnabled ? `<div class="card"><h3 class="ihead"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Next class</h3>
       ${upcoming ? `<div class="next-class"><span class="cal"><span>${dt(upcoming.starts_at).toLocaleDateString("en-US", { month: "short" }).toUpperCase()}</span><b>${dt(upcoming.starts_at).getDate()}</b></span>
         <span style="min-width:0"><b>${dt(upcoming.starts_at).toLocaleDateString("en-US", { weekday: "long" })} · ${dt(upcoming.starts_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</b>${when(upcoming.starts_at) ? ` <span class="chip new">${when(upcoming.starts_at)}</span>` : ""}
-        <br><span class="muted" style="font-size:.9em">${upcoming.lesson_id ? "Lesson " + C.esc(upcoming.lesson_id) + " · " : ""}${C.esc(upcoming.title || "Class with " + C.maestro)}</span></span></div>`
+        <br><span class="muted" style="font-size:.9em">${upcoming.lesson_id ? "Lesson " + C.esc(upcoming.lesson_id) + " · " : ""}${C.esc(upcoming.title || "Class with your teacher")}</span></span></div>`
         : `<p class="muted" style="font-size:.92em">Your teacher hasn’t scheduled the next class yet.</p>`}
       ${C.calendar ? `<button type="button" class="btn ghost sm" id="calBtn" style="justify-self:start;padding-left:0">Add my classes to my calendar</button>` : ""}
       ${lastNote ? `<div style="border-top:1px solid var(--line);padding-top:10px;display:grid;gap:4px"><span class="eyebrow">From your last class · ${dt(lastNote.starts_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>

@@ -260,7 +260,7 @@
       nx: (id, t, b) => `Continuar con la lección <b>${esc(id)} · ${esc(t)}</b>${b != null ? ` (mejor resultado ${b}%, repetir el quiz final)` : ""}.`,
       nRev: n => `Repasar las <b>${n}</b> preguntas pendientes en la sección Review de la plataforma.`, nHabit: "Practicar al menos <b>2 días por semana</b>, unos 15 minutos cada vez.",
       nHw: n => `Entregar ${n === 1 ? "la tarea pendiente" : `las <b>${n}</b> tareas pendientes`}.`, nKeep: "Mantener el ritmo de práctica y seguir con las clases programadas.",
-      msg: "Comentario del instructor", sign: "Profesor de inglés", none: "Todavía no hay datos en este periodo.", noClasses: "No hubo clases registradas en este periodo.", noHw: "No se dejaron tareas en este periodo.",
+      msg: "Comentario del instructor", sign: "Clases de inglés", none: "Todavía no hay datos en este periodo.", noClasses: "No hubo clases registradas en este periodo.", noHw: "No se dejaron tareas en este periodo.",
       noStr: "Las fortalezas aparecerán conforme complete quizzes.", noOpp: "Por ahora no hay áreas que preocupen.", foot: "Reporte de avance", gen: "Generado el", print: "Imprimir o guardar PDF", locale: "es-MX",
       intro: (D, first) => {
         const k = D.k, c = k.cls[0], m = k.cls[1], passed = (D.ld || D.tp || []).filter(r => r[5] && r[5] >= D.f).map(r => r[1]);
@@ -306,7 +306,7 @@
       nx: (id, t, b) => `Continue with lesson <b>${esc(id)} · ${esc(t)}</b>${b != null ? ` (best score ${b}%, retake the final quiz)` : ""}.`,
       nRev: n => `Go over the <b>${n}</b> questions waiting in Review on the platform.`, nHabit: "Practice at least <b>2 days a week</b>, about 15 minutes each time.",
       nHw: n => `Hand in ${n === 1 ? "the pending homework" : `the <b>${n}</b> pending homework tasks`}.`, nKeep: "Keep the practice going and keep up with the scheduled classes.",
-      msg: "A note from the teacher", sign: "English teacher", none: "Nothing yet in this period.", noClasses: "No classes recorded in this period.", noHw: "No homework in this period.",
+      msg: "A note from the teacher", sign: "English classes", none: "Nothing yet in this period.", noClasses: "No classes recorded in this period.", noHw: "No homework in this period.",
       noStr: "Strengths will show up as quizzes are completed.", noOpp: "No areas of concern right now.", foot: "Progress report", gen: "Generated on", print: "Print or save as PDF", locale: "en-US",
       intro: (D, first) => {
         const k = D.k, c = k.cls[0], m = k.cls[1], passed = (D.ld || D.tp || []).filter(r => r[5] && r[5] >= D.f).map(r => r[1]);
@@ -516,8 +516,8 @@
           </div></section>` : ""}
         <section class="blk keep">${hd(x.eN, x.tN2, "var(--jeo)")}<div class="steps">${steps.map((st, i) => `<div><span class="sn">${i + 1}</span><p>${st}</p></div>`).join("")}</div></section>
       </main>
-      ${D.c ? `<div class="msg"><span class="k">${x.msg}</span><p>${esc(D.c)}</p><small>— ${esc(D.te || G.maestroNombre || G.maestro || "")} · ${x.sign}</small></div>` : ""}
-      <div class="sign"><div><span>${x.prep}</span><b>${esc(D.te || G.maestroNombre || G.maestro || "")}</b><span>${x.sign} · Lingua</span></div>
+      ${D.c ? `<div class="msg"><span class="k">${x.msg}</span><p>${esc(D.c)}</p><small>— ${esc(G.maestroNombre || "Lingua")} · ${x.sign}</small></div>` : ""}
+      <div class="sign"><div><span>${x.prep}</span><b>${esc(G.maestroNombre || "Lingua")}</b><span>${x.sign}</span></div>
         <div><span>${x.issued}</span><b>${fd(String(D.g || "").slice(0, 10) || D.t)}</b><span>${x.folio} ${esc(folio)}</span></div></div>
       <footer><span class="brand">${MARK(20)}Lingua</span><span>${x.foot.toUpperCase()} · ${esc(name.toUpperCase())} · ${x.gen} ${fd(String(D.g || "").slice(0, 10) || D.t)}</span></footer>
     </div>`;

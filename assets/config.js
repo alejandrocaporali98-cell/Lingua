@@ -3,8 +3,9 @@
 // ─────────────────────────────────────────────
 window.LINGUA = {
   curso: "English with the things you love",
-  maestro: "Alejandro",
-  maestroNombre: "Alejandro Caporali",   // nombre que firma los diplomas
+  // Sin nombre personal: los textos dicen "your teacher" y los documentos firman como Lingua
+  maestro: "Teacher",
+  maestroNombre: "Lingua",   // nombre que firma diplomas, reportes y recibos
 
   // Cada lección nueva se agrega aquí. estado: "lista" o "pronto"
   modulos: [

@@ -62,7 +62,6 @@
         <div class="side-cover">
           ${G.thumb({ id: C.id, titulo: C.titulo, nivel: C.nivel, color: C.color || "#2346d0", icono: C.icono || "helmet" }, "LESSON")}
           ${C.objetivos ? `<div style="display:grid;gap:8px"><span class="eyebrow">What you’ll learn</span><ul class="obj">${C.objetivos.map(o => `<li>${o}</li>`).join("")}</ul></div>` : ""}
-          <div class="instructor"><span class="in">${G.maestro[0]}</span><span style="font-size:.88em"><span class="muted">Instructor</span><br><b>${G.maestroNombre || G.maestro}</b></span></div>
         </div>
         <div class="planbox" id="planBox" hidden></div>
         <h3>Lesson content</h3>
@@ -176,7 +175,7 @@
         <h1>${E(C.id)} · ${E(C.titulo)}</h1>
         ${C.tema || (cfg && cfg.tema) ? `<p class="ov-tag">${E(C.tema || cfg.tema)}</p>` : ""}
         <div class="ov-meta">${status}<span class="ov-lvl">Level ${E(C.nivel)}</span><span>${total} min</span><span>${SECS.length} sections</span></div>
-        <p class="ov-by">Created by <b>${E(G.maestroNombre || G.maestro)}</b> · English</p>
+        <p class="ov-by">A <b>Lingua</b> lesson · English</p>
       </section>
       <div class="ov-body">
         <div class="ov-main">

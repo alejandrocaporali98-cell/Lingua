@@ -68,7 +68,7 @@
             ${L.cloudEnabled ? `<button type="button" class="lg-row" id="lgOut">${ico("out")}<span>Sign out</span></button>` : ""}
           </div>
         </nav>
-        <div class="lg-foot muted">Lingua · Instructor: ${L.maestroNombre || L.maestro}</div>
+        <div class="lg-foot muted">Lingua · English classes made for you</div>
       </aside>`;
     document.body.appendChild(el);
     el.querySelectorAll("[data-close]").forEach(x => x.onclick = close);

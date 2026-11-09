@@ -180,7 +180,7 @@
       ${ints.length ? `<div class="chipsr">${ints.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}
       <div style="display:grid;gap:12px"><b style="font-size:15px">Today’s plan · 45 minutes</b>
         <div class="plan">${[["1", "Three phrases", "you can’t say yet"], ["2", "Mini test", "15 quick questions"], ["3", "Read & grammar", esc(lessonOf(R.lesson).titulo)], ["4", "A game", "with what you learned"], ["5", "Now you can say", "the three phrases"]].map(([n, a, b]) => `<div><small>${n}</small><b>${a}</b><span class="muted" style="font-size:13px">${b}</span></div>`).join("")}</div></div>
-      <div class="foot"><span class="who"><i>${esc((G.maestroNombre || G.maestro)[0])}</i>${esc(G.maestroNombre || G.maestro)} · your teacher today</span><button class="btn primary" id="st">Let’s start →</button></div></main>`;
+      <div class="foot"><span class="who"><i>L</i>Lingua · your trial class</span><button class="btn primary" id="st">Let’s start →</button></div></main>`;
     document.getElementById("st").onclick = () => go(1);
   }
   // ── 2 Three locked phrases ──
@@ -190,7 +190,7 @@
         <h1 class="big">By the end of today, you'll be able<br>to say <span class="hl">these three things.</span></h1>
         <p class="lead">Right now they're in Spanish. Don't answer yet — just read them. We'll come back to them at the end of the class.</p></div>
       <div class="cards3">${phrases().map((p, i) => `<div class="lock"><span class="n">PHRASE ${i + 1}</span><b class="es">“${esc(p[0])}”</b><div class="en"><span class="pad">${LOCK}</span>In English…<i></i></div></div>`).join("")}</div>
-      <div class="foot"><span class="who"><i>${esc((G.maestroNombre || G.maestro)[0])}</i>${esc(G.maestroNombre || G.maestro)} · your teacher today</span><button class="btn primary" id="nx">Next: mini test →</button></div></main>`;
+      <div class="foot"><span class="who"><i>L</i>Lingua · your trial class</span><button class="btn primary" id="nx">Next: mini test →</button></div></main>`;
     document.getElementById("nx").onclick = () => go(2);
   }
   // ── 3 Mini test ──

@@ -130,7 +130,7 @@
   document.getElementById("logo").innerHTML = G.logo;
   document.getElementById("flogo").innerHTML = G.logo;
   G.fx && G.fx.morph(document.getElementById("mw"), ["English journey", "next lesson", "day streak", "next diploma"], 2600);
-  document.getElementById("fcopy").textContent = "© " + new Date().getFullYear() + " Lingua · Instructor: " + (G.maestroNombre || G.maestro);
+  document.getElementById("fcopy").textContent = "© " + new Date().getFullYear() + " Lingua · English classes made for you";
   const say = (cls, html) => { msg.className = "alert " + cls; msg.innerHTML = html; msg.hidden = false; };
   document.getElementById("eye").onclick = (e) => {
     const p = document.getElementById("pass"), on = p.type === "password";

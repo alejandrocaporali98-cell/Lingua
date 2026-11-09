@@ -109,7 +109,7 @@ function render() {
   app.innerHTML = `
     <div class="panel hero">
       <div style="display:grid;gap:6px"><span class="eyebrow">${t.title}</span><h1>${esc(D.n)}</h1>
-        <span class="muted">${esc(monthName)} · ${t.teacher}: ${esc(G.maestroNombre || G.maestro)}</span></div>
+        <span class="muted">${esc(monthName)}</span></div>
       <div class="noprint" style="display:grid;gap:8px;justify-items:end"><div class="lang"><button data-lang="es" class="${lang === "es" ? "on" : ""}">ES</button><button data-lang="en" class="${lang === "en" ? "on" : ""}">EN</button></div>
         <button class="btn sm" id="pr">${t.print}</button></div>
     </div>
@@ -129,7 +129,7 @@ function render() {
     <div class="panel"><h2>${t.lessonsT}</h2><div class="tbl"><table><thead><tr><th>${t.lesson}</th><th>${t.sections}</th><th class="r">${t.tries}</th><th class="r">${t.best}</th><th>${t.status}</th></tr></thead>
       <tbody>${D.ls.map(r => `<tr><td><b>${esc(r[0])}</b> · ${esc(r[1])}</td><td>${r[2]}/${r[6] || 5}</td><td class="r">${r[4]}</td><td class="r"><b>${r[3] == null ? "—" : r[3] + "%"}</b></td><td>${st(r)}</td></tr>`).join("")}</tbody></table></div></div>
     <div class="panel"><h2>${t.notesT}</h2>${(D.nt || []).length ? D.nt.map(n => `<div class="note"><b>${new Date(n[0] + "T12:00").toLocaleDateString(loc, { month: "short", day: "numeric" })}</b><div>${n[1] ? `<p>${esc(n[1])}</p>` : ""}${n[2] ? `<p class="muted" style="font-size:.88em;margin-top:4px">📝 ${esc(n[2])}</p>` : ""}</div></div>`).join("") : `<p class="muted">${t.noNotes}</p>`}</div>
-    ${D.c ? `<div class="panel"><h2>${t.commentT}</h2><div class="comment">${esc(D.c)}</div><span class="muted" style="font-size:.88em">— ${esc(G.maestroNombre || G.maestro)}</span></div>` : ""}
+    ${D.c ? `<div class="panel"><h2>${t.commentT}</h2><div class="comment">${esc(D.c)}</div><span class="muted" style="font-size:.88em">— Lingua</span></div>` : ""}
     <p class="foot">${t.gen} ${new Date(D.g).toLocaleDateString(loc, { year: "numeric", month: "long", day: "numeric" })}. ${t.made}</p>`;
   app.querySelectorAll("[data-lang]").forEach(b => b.onclick = () => { lang = b.dataset.lang; render(); });
   document.getElementById("pr").onclick = () => window.print();

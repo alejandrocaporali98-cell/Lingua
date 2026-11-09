@@ -359,7 +359,7 @@ function certHead(L0, A) {
   const scale = ["A1", "A2", "B1", "B2", "C1", "C2"], idx = scale.indexOf(L0.lvl.replace("+", ""));
   return `<div class="panel cert">
     <div class="cert-top"><span style="display:flex;align-items:center;gap:10px">${G.mark(28)}<span><b>${t("title")}</b><br><span class="muted" style="font-size:.85em">${t("subtitle")}</span></span></span>
-      <span class="muted" style="font-size:.88em;text-align:right">${t("date")}: ${fmtDate(D)}<br>${t("instructor")}: ${G.maestro}</span></div>
+      <span class="muted" style="font-size:.88em;text-align:right">${t("date")}: ${fmtDate(D)}</span></div>
     <div class="hero"><div class="lvl">${L0.lvl}</div>
       <div style="display:grid;gap:6px"><span class="eyebrow">${lang === "es" ? L0.es : L0.name}</span>
         <h1>${A ? t("summary")(A.acc, L0.lvl, lang === "es" ? L0.es : L0.name) : (lang === "es" ? L0.es : L0.name)}</h1></div></div>

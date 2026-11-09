@@ -163,7 +163,7 @@ function wireClassActs() {
   });
   app.querySelectorAll("[data-mv]").forEach(b => b.onclick = () => moveSheet((DATA.classes || []).find(c => c.id === b.dataset.mv)));
 }
-const setupNote = () => `<div class="alert info">Falta un paso de instalación: Alejandro tiene que correr <b>supabase/v4.sql</b> en Supabase.</div>`;
+const setupNote = () => `<div class="alert info">Falta un paso de instalación: hay que correr <b>supabase/v4.sql</b> en Supabase.</div>`;
 
 // ── Sheets (pop-ups) ──
 function closeSheet() { const w = $("sheet"); if (w) w.remove(); document.body.classList.remove("sheet-open"); if (window.__shKey) { document.removeEventListener("keydown", window.__shKey); window.__shKey = null; } }
@@ -546,7 +546,7 @@ function banco() {
         <div class="field"><label for="bkI">Instrucciones <span class="muted" style="font-weight:500">(opcional)</span></label><textarea id="bkI" maxlength="600">${esc(bk.instructions || "Escribe el folio de la ficha en el concepto de la transferencia.")}</textarea></div>
         <div id="bkMsg" hidden></div>
         <div class="actions"><button class="btn primary" type="submit">Guardar datos</button>${bk.updated_at ? `<span class="hint">Guardado el ${dShort(bk.updated_at)}</span>` : ""}</div></form></div>
-      <div class="card"><h2>Así se ve en la ficha</h2><div class="bankprev" id="bkPrev"></div><p class="hint">Solo tú, Alejandro y quien reciba una ficha ven estos datos.</p></div>
+      <div class="card"><h2>Así se ve en la ficha</h2><div class="bankprev" id="bkPrev"></div><p class="hint">Solo tú, el maestro y quien reciba una ficha ven estos datos.</p></div>
     </div>`;
   const digits = v => v.replace(/\D/g, ""), group = (v, n) => v.replace(new RegExp(`(.{${n}})`, "g"), "$1 ").trim();
   const prev = () => {

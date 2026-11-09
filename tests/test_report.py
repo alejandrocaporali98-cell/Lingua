@@ -40,7 +40,7 @@ def test():
         txt = F.inner_text("#doc")
         for part in ["CLASES DE INGLÉS", "Reporte de avance", "EMILIANO SÁNCHEZ", "Evaluación del periodo", "Asistencia", "3 de 4 clases", "Tareas a tiempo", "Constancia", "Nivel actual", "Lecciones aprobadas", "Calendario de práctica", "Mejor logro", "Meta para el siguiente periodo", "Folio ES-", "Preparado por", "Emiliano tomó 3 clases (faltó a 1)", "Lo que practicó entre clases", "Frases dichas bien con el micrófono",
                      "Lecciones", "65% → 85%", "Lo que vimos en cada clase", "Described his dream car", "wheel", "Faltó", "Tareas", "Entregada", "Pendiente", "90",
-                     "Para repasar", "My uncle has an Xbox.", "has", "Próximos pasos", "Continuar con la lección", "Comentario del instructor", "Ya se presenta solo", "Alejandro Caporali"]:
+                     "Para repasar", "My uncle has an Xbox.", "has", "Próximos pasos", "Continuar con la lección", "Comentario del instructor", "Ya se presenta solo", "Clases de inglés"]:
             check(part.lower() in txt.lower(), f"report shows “{part}”")
         F.screenshot(path=os.path.join(OUT, "report_es.png"), full_page=True)
         F.click('[data-l="en"]'); F.wait_for_timeout(300)

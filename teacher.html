@@ -417,24 +417,24 @@ function listView() {
 const WA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.5-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 8.6c.2 2.6 2.2 5 5 5.8l1-1.2 1.7.8-.2 1.3c-.2.5-.8.8-1.4.7-3.6-.6-6.5-3.5-7-7.1 0-.6.2-1.1.7-1.3l1.3-.3.8 1.7z"/></svg>';
 function waLink(phone, text) { let d = String(phone || "").replace(/\D/g, ""); if (d.length === 10) d = "52" + d; return "https://wa.me/" + d + "?text=" + encodeURIComponent(text); }
 function reminder(s, kind, who, item) {
-  const first = (s.p.display_name || "").split(" ")[0], me = G.maestro || "Alejandro", site = location.origin + location.pathname.replace(/teacher\.html$/, "");
+  const first = (s.p.display_name || "").split(" ")[0], site = location.origin + location.pathname.replace(/teacher\.html$/, "");
   if (kind === "class") {
     const d = new Date(item.starts_at), dd = Math.round((new Date(d.toDateString()) - new Date(new Date().toDateString())) / 864e5);
     const en = dd === 0 ? "today" : dd === 1 ? "tomorrow" : "on " + d.toLocaleDateString("en-US", { weekday: "long" });
     const es = dd === 0 ? "hoy" : dd === 1 ? "mañana" : "el " + d.toLocaleDateString("es-MX", { weekday: "long" });
     const link = adminOf(s.p.id).meet_link || "";
-    // With a class link: Alejandro's own invitation message (greeting and day adjust on their own)
+    // With a class link: the teacher's own invitation message (greeting and day adjust on their own)
     if (link) {
       const h = new Date().getHours(), greet = h < 12 ? "buenos días" : h < 19 ? "buenas tardes" : "buenas noches";
       const day = dd === 0 ? "del día de hoy" : dd === 1 ? "de mañana" : "del " + d.toLocaleDateString("es-MX", { weekday: "long" });
       return `Hola qué tal muy ${greet},\nTe comparto el link de la clase ${day}!\n${link}`;
     }
-    return who === "parent" ? `Hola, le recuerdo que ${first} tiene clase de inglés ${es} a las ${d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" })}. ¡Saludos! – ${me}`
-      : `Hi ${first}! Just a reminder: we have English class ${en} at ${hhmm(item.starts_at)}. See you there! – ${me}`;
+    return who === "parent" ? `Hola, le recuerdo que ${first} tiene clase de inglés ${es} a las ${d.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" })}. ¡Saludos!`
+      : `Hi ${first}! Just a reminder: we have English class ${en} at ${hhmm(item.starts_at)}. See you there!`;
   }
   const due = item.due ? new Date(item.due + "T12:00") : null;
-  return who === "parent" ? `Hola, le comparto que ${first} tiene pendiente la tarea de inglés “${item.title}”${due ? ` para el ${due.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })}` : ""}. La puede entregar en Lingua: ${site} ¡Gracias! – ${me}`
-    : `Hi ${first}! Don’t forget your homework: “${item.title}”${due ? `, due ${due.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}` : ""}. You can send your answer in Lingua: ${site} – ${me}`;
+  return who === "parent" ? `Hola, le comparto que ${first} tiene pendiente la tarea de inglés “${item.title}”${due ? ` para el ${due.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" })}` : ""}. La puede entregar en Lingua: ${site} ¡Gracias!`
+    : `Hi ${first}! Don’t forget your homework: “${item.title}”${due ? `, due ${due.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}` : ""}. You can send your answer in Lingua: ${site}`;
 }
 function remindRow(s, kind, item, label) {
   const a = adminOf(s.p.id);

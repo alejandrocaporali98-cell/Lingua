@@ -72,7 +72,7 @@ function render(list) {
   const attended = past.filter(c => c.status === "attended").length;
   const card = c => { const d = new Date(c.starts_at), st = ST[c.status] || ST.scheduled, words = (c.words || "").split(/[,\n]/).map(w => w.trim()).filter(Boolean);
     return `<article class="cls ${c.status}"><span class="cal"><span>${d.toLocaleDateString("en-US", { month: "short" }).toUpperCase()}</span><b>${d.getDate()}</b></span>
-      <div style="min-width:0"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap"><h2>${esc(c.title || (c.lesson_id ? "Lesson " + c.lesson_id : "Class with " + G.maestro))}</h2><span class="chip ${st[1]}">${st[0]}</span></div>
+      <div style="min-width:0"><div style="display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap"><h2>${esc(c.title || (c.lesson_id ? "Lesson " + c.lesson_id : "Class with your teacher"))}</h2><span class="chip ${st[1]}">${st[0]}</span></div>
       <div class="meta">${d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} · ${d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}${c.lesson_id ? " · Lesson " + esc(c.lesson_id) : ""}</div>
       ${c.notes ? `<p class="txt">${esc(c.notes)}</p>` : ""}
       ${words.length ? `<div class="wl" aria-label="New words">${words.map(w => `<span>${esc(w)}${G.sayBtn(w)}</span>`).join("")}</div>` : ""}</div></article>`; };

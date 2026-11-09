@@ -145,7 +145,7 @@
           <span class="lbl" style="margin-top:6px">${(p.cur || "MXN") === "USD" ? "Precios en dólares (USD)" : "Precios en pesos mexicanos (MXN)"}</span></section>
         <section>${sh(9, "Para practicar entre clases")}${(D.home || []).map(t => `<div class="dash"><span>${esc(t)}</span></div>`).join("")}</section></div>
     </main>
-    ${D.msg ? `<div class="msg"><span class="k">${A ? "Mensaje para ti" : "Mensaje para los papás"}</span><p>${esc(D.msg)}</p><small>— ${esc(D.teacher || G.maestroNombre || G.maestro)} · Profesor de inglés</small></div>` : ""}
+    ${D.msg ? `<div class="msg"><span class="k">${A ? "Mensaje para ti" : "Mensaje para los papás"}</span><p>${esc(D.msg)}</p><small>— ${esc(G.maestroNombre || "Lingua")} · Profesor de inglés</small></div>` : ""}
     ${foot(2)}</div>`;
   doc.innerHTML = pg1 + pg2;
 })();

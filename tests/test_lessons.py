@@ -44,6 +44,14 @@ def test():
         if not os.path.exists(os.path.join(ROOT, "clases", f"leccion-{lid}.html")): problems.append(f"{lid}: clases/leccion-{lid}.html is missing")
     check(not problems, f"content of {len(IDS)} lessons is consistent " + " | ".join(problems[:6]))
 
+    # No personal name anywhere on the site (pages sign as Lingua); the repo address is the only exception
+    named = []
+    for f in glob.glob(os.path.join(ROOT, "**", "*.*"), recursive=True):
+        if "/tests/" in f or "/.git/" in f or not f.endswith((".html", ".js", ".css", ".json", ".webmanifest")): continue
+        txt = re.sub(r"alejandrocaporali98-cell", "", open(f, encoding="utf-8", errors="ignore").read())
+        if re.search(r"alejandro|caporali", txt, re.I): named.append(os.path.relpath(f, ROOT))
+    check(not named, "no personal name on the site " + ", ".join(named[:5]))
+
     # Each student's lessons appear in number order, across all their modules
     order, owner, messy = {}, None, []
     for line in cfg[:cfg.index("// ── Cuentas")].splitlines():

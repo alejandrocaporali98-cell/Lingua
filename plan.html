@@ -229,7 +229,7 @@ function render() {
     <div class="body">
       <div class="title">
         <div><span class="kick">${t.eyebrow}</span><h1>${esc(name)}</h1>
-          <p class="who">${t.teacher}: ${teacher}${sched ? ` · ${t.sched}: ${esc(sched)}` : ""}</p></div>
+          ${sched ? `<p class="who">${t.sched}: ${esc(sched)}</p>` : ""}</div>
         <div class="helmet">${helmet}</div>
       </div>
       <div class="facts">

@@ -270,7 +270,7 @@ function result() {
   app.innerHTML = `
   ${left.length && sug >= 0 ? `<div class="alert info" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span><b>Level so far.</b> ${left.length} section${left.length === 1 ? "" : "s"} left. Your result can go up when you do ${left.length === 1 ? "it" : "them"}.</span><button class="btn sm primary" id="cont2">Continue: ${SEGMENTS[sug].lvl}</button></div>` : ""}
   <div class="panel cert" style="display:grid;gap:22px">
-    <div class="cert-top"><span style="display:flex;align-items:center;gap:10px">${G.mark(26)}<span><b>Level certificate</b><br><span class="muted" style="font-size:.85em">Lingua · Placement test</span></span></span><span class="muted num" style="font-size:.88em;text-align:right">${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}<br>Instructor: ${G.maestro}</span></div>
+    <div class="cert-top"><span style="display:flex;align-items:center;gap:10px">${G.mark(26)}<span><b>Level certificate</b><br><span class="muted" style="font-size:.85em">Lingua · Placement test</span></span></span><span class="muted num" style="font-size:.88em;text-align:right">${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span></div>
     <div class="res-top">
       <div class="res-lvl">${L0.lvl}</div>
       <div style="display:grid;gap:6px"><span class="eyebrow">Result · ${L0.name}</span><h2 style="font-size:1.4em;font-weight:800">${L0.txt}</h2><p class="muted">We start with: <b style="color:var(--ink)">${L0.start}</b></p></div>
