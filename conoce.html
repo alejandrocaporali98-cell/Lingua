@@ -7,7 +7,7 @@
 <meta name="description" content="Clases de inglés en línea hechas a la medida: lecciones con lo que te gusta, una plataforma para practicar entre clases y reportes de avance para la familia.">
 <meta property="og:title" content="Lingua · Clases de inglés personalizadas">
 <meta property="og:description" content="Inglés que se aprende con lo que te gusta. Clases en vivo, práctica entre clases y reportes de avance. Agenda una clase muestra.">
-<meta property="og:image" content="https://alejandrocaporali98-cell.github.io/Lingua/assets/landing/og.jpg">
+<meta property="og:image" content="assets/landing/og.jpg">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
@@ -129,7 +129,7 @@
   .two.wide { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); align-items: center; margin-top: 26px; }
   @media (max-width: 640px) { .two.wide { grid-template-columns: 1fr; } }
   .about { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; margin-top: 14px; }
-  .about .av { width: 64px; height: 64px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.6em; }
+  .about .av { width: 64px; height: 64px; border-radius: 16px; background: var(--blue); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.6em; }
   .about p + p { margin-top: 10px; }
   .about p { color: var(--ink-2); }
   .faq { border: 1px solid var(--line); margin-top: 14px; }
@@ -178,7 +178,7 @@
       <h1>Inglés que se aprende con lo que te gusta.</h1>
       <p class="lead">Clases en vivo, una plataforma propia para practicar entre clases y reportes de avance claros. Cada lección se escribe para el alumno: sus intereses, su nivel y sus metas.</p>
       <div class="meta"><span class="tag">Clase muestra</span><span class="lvl">A1 → C2</span><span>100% en inglés</span><span>En línea, desde cualquier lugar</span></div>
-      <p class="by">Creado e impartido por <b>Alejandro Caporali</b> · Español e inglés</p>
+      <p class="by">Clases individuales en vivo · Atención en español e inglés</p>
       <div class="hero-ctas"><a class="btn primary" href="#agenda">Agenda una clase muestra</a><a class="btn" href="#como-funciona">Cómo funciona</a></div>
     </div>
     <aside class="card" aria-label="Clase muestra">
@@ -293,10 +293,10 @@
         </div>
       </section>
 
-      <section><h2>Sobre el instructor</h2>
-        <div class="about"><span class="av" aria-hidden="true">A</span><div>
-          <p><b style="color:var(--ink)">Alejandro Caporali</b> es bilingüe y trabaja todos los días 100% en inglés como ingeniero en una empresa multinacional. Sabe qué inglés se necesita en la vida real: el de las juntas, los viajes, las series y las conversaciones con amigos.</p>
-          <p>Diseña cada lección a mano para cada alumno, y construyó Lingua para que sus alumnos tengan lo que a él le hubiera gustado tener: clases que se disfrutan, práctica que engancha y un avance que se nota.</p>
+      <section><h2>Quién da las clases</h2>
+        <div class="about"><span class="av" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 32 32"><path d="M8.5 9h15a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5H16l-4.5 4v-4h-3A2.5 2.5 0 0 1 6 19v-7.5A2.5 2.5 0 0 1 8.5 9z" fill="#fff"/><circle cx="20.5" cy="15.25" r="2.4" fill="#f5c518"/></svg></span><div>
+          <p>Un maestro bilingüe que trabaja todos los días 100% en inglés como ingeniero en una empresa multinacional. Sabe qué inglés se necesita en la vida real: el de las juntas, los viajes, las series y las conversaciones con amigos.</p>
+          <p>Cada lección se diseña a mano para cada alumno, y Lingua se construyó para que los alumnos tengan lo que a cualquiera le hubiera gustado tener: clases que se disfrutan, práctica que engancha y un avance que se nota.</p>
         </div></div>
       </section>
 
@@ -331,14 +331,14 @@
   </div>
 </section>
 
-<footer><div class="wrap"><span>Lingua · Clases de inglés personalizadas · Alejandro Caporali</span><a href="login.html">Iniciar sesión</a></div></footer>
+<footer><div class="wrap"><span>Lingua · Clases de inglés personalizadas</span><a href="login.html">Iniciar sesión</a></div></footer>
 <div class="mob-cta"><a class="btn primary" href="#agenda">Agenda una clase muestra</a></div>
 
 <script>
   (function () {
     var n = String((window.LINGUA_CONTACT || {}).whatsapp || "").replace(/\D/g, "");
     if (!n) return;
-    var msg = "Hola Alejandro, me interesa agendar una clase muestra de inglés.";
+    var msg = "Hola, me interesa agendar una clase muestra de inglés.";
     document.querySelectorAll("[data-wa]").forEach(function (a) { a.href = "https://wa.me/" + n + "?text=" + encodeURIComponent(msg); a.hidden = false; });
   })();
 </script>
