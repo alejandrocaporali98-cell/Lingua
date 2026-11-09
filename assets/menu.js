@@ -27,7 +27,7 @@
   };
   const ico = (n, s) => `<svg width="${s || 20}" height="${s || 20}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[n]}</svg>`;
   const LV = { A1: "Beginner", A2: "Elementary", B1: "Intermediate", B2: "Upper intermediate", "B2+": "Upper intermediate +" };
-  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase().replace(/^([^.]+)$/, "$1.html");
 
   function diplomasCount() {
     return L.modulos.flatMap(m => m.lecciones).filter(l => L.store.get("diploma." + l.id, null)).length;

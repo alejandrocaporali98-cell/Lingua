@@ -74,7 +74,7 @@ const DAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "
 const METHOD = { transfer: "Transferencia", cash: "Efectivo", deposit: "Depósito", card: "Tarjeta", other: "Otro" };
 const STATUS = { scheduled: ["Programada", ""], attended: ["Tomada", "good"], missed: ["Faltó", "bad"], cancelled: ["Cancelada", "warn"] };
 const b64 = obj => { const bytes = new TextEncoder().encode(JSON.stringify(obj)); let bin = ""; bytes.forEach(c => bin += String.fromCharCode(c)); return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
-const site = () => location.origin + location.pathname.replace(/admin\.html$/, "");
+const site = () => location.origin + location.pathname.replace(/[^/]*$/, "");
 const waLink = (phone, text) => { let d = String(phone || "").replace(/\D/g, ""); if (d.length === 10) d = "52" + d; return "https://wa.me/" + d + "?text=" + encodeURIComponent(text); };
 const COLORS = ["#2346d0", "#0f766e", "#be123c", "#7c3aed", "#c2410c", "#0369a1", "#15803d"];
 const ini = s => { const n = (s.p.display_name || "?").trim().split(/\s+/); const k = [...(s.p.id || "")].reduce((t, c) => t + c.charCodeAt(0), 0); return `<span class="ini" style="background:${COLORS[k % COLORS.length]}">${esc((n[0][0] || "?") + (n[1] ? n[1][0] : "")).toUpperCase()}</span>`; };

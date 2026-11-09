@@ -315,7 +315,7 @@
   function reportForm() {
     const F = R.form || defaults();
     const lines = a => (a || []).join("\n"), unl = t => t.split("\n").map(x => x.trim()).filter(Boolean);
-    const link = location.origin + location.pathname.replace(/clase-muestra\.html$/, "") + "reporte-muestra.html?t=" + T.token;
+    const link = location.origin + location.pathname.replace(/[^/]*$/, "") + "reporte-muestra.html?t=" + T.token;
     const waText = `Hola${T.adult ? " " + first : ""}, gracias por la clase muestra de inglés${T.adult ? "" : " de " + first}. Aquí está el reporte con su nivel, lo que vimos y el plan de clases: ${link}`;
     const phone = String(T.contact || "").replace(/\D/g, ""), wa = "https://wa.me/" + (phone.length === 10 ? "52" + phone : phone) + "?text=" + encodeURIComponent(waText);
     view.innerHTML = `<main class="main"><div class="rf">

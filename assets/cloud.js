@@ -7,7 +7,8 @@
   const L = window.LINGUA, cfg = L.cloud || {};
   const LOCAL_ONLY = ["textSize", "modoClase", "reportLang", "theme", "sounds", "voice", "voiceRate"];
   const root = /\/clases\//.test(location.pathname) ? "../" : "";
-  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  // Hosts that hide ".html" (e.g. Cloudflare Pages: /login instead of /login.html) still give the same page name
+  const page = (location.pathname.split("/").pop() || "index.html").toLowerCase().replace(/^([^.]+)$/, "$1.html");
   const qs = new URLSearchParams(location.search);
   const isLogin = page === "login.html";
   const isPublicReport = (page === "reporte.html" && qs.has("r")) || ((page === "progress.html" || page === "plan.html") && qs.has("d"));

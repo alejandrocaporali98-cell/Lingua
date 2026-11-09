@@ -417,7 +417,7 @@ function listView() {
 const WA = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.5-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 8.6c.2 2.6 2.2 5 5 5.8l1-1.2 1.7.8-.2 1.3c-.2.5-.8.8-1.4.7-3.6-.6-6.5-3.5-7-7.1 0-.6.2-1.1.7-1.3l1.3-.3.8 1.7z"/></svg>';
 function waLink(phone, text) { let d = String(phone || "").replace(/\D/g, ""); if (d.length === 10) d = "52" + d; return "https://wa.me/" + d + "?text=" + encodeURIComponent(text); }
 function reminder(s, kind, who, item) {
-  const first = (s.p.display_name || "").split(" ")[0], site = location.origin + location.pathname.replace(/teacher\.html$/, "");
+  const first = (s.p.display_name || "").split(" ")[0], site = location.origin + location.pathname.replace(/[^/]*$/, "");
   if (kind === "class") {
     const d = new Date(item.starts_at), dd = Math.round((new Date(d.toDateString()) - new Date(new Date().toDateString())) / 864e5);
     const en = dd === 0 ? "today" : dd === 1 ? "tomorrow" : "on " + d.toLocaleDateString("en-US", { weekday: "long" });
@@ -619,7 +619,7 @@ function reportsView(id, period) {
     app.querySelectorAll("tr[data-row]").forEach(tr => tr.onclick = e => { if (!e.target.closest("a, button")) location.hash = "#reports/" + tr.dataset.row + "/" + period; });
     app.querySelectorAll("[data-send]").forEach(b => b.onclick = () => {
       const r = rows.find(o => o.x.p.id === b.dataset.send);
-      const url = location.origin + location.pathname.replace(/teacher\.html$/, "") + "informe.html?d=" + b64({ ...r.D, te: G.maestroNombre || G.maestro }) + "&lang=es";
+      const url = location.origin + location.pathname.replace(/[^/]*$/, "") + "informe.html?d=" + b64({ ...r.D, te: G.maestroNombre || G.maestro }) + "&lang=es";
       const text = "Reporte de avance de inglés de " + (r.x.p.display_name || "") + ": " + url;
       if (navigator.share) navigator.share({ title: "Reporte de avance", text: "Reporte de avance de inglés de " + (r.x.p.display_name || ""), url }).catch(() => {});
       else window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
@@ -642,7 +642,7 @@ function reportsView(id, period) {
       <div class="actions"><button class="btn primary" id="rpOpen">Open report</button><button class="btn" id="rpCopy">Copy link for WhatsApp</button></div></div>
     <div class="card rp-docprev"><div class="card-head"><h2>Preview</h2><span class="muted" style="font-size:.8em">Exactly what the family sees</span></div><iframe id="rpFrame" title="Report preview" loading="lazy"></iframe></div>`;
   wireTop(); wireRp(period);
-  const build = () => location.origin + location.pathname.replace(/teacher\.html$/, "") + "informe.html?d=" + b64({ ...D, c: RPC.trim() || undefined, te: G.maestroNombre || G.maestro }) + "&lang=" + RPL;
+  const build = () => location.origin + location.pathname.replace(/[^/]*$/, "") + "informe.html?d=" + b64({ ...D, c: RPC.trim() || undefined, te: G.maestroNombre || G.maestro }) + "&lang=" + RPL;
   const link = () => { RPC = document.getElementById("rpC").value; RPL = document.getElementById("rpL").value; return build(); };
   const fr = document.getElementById("rpFrame"), show = () => { fr.src = build() + "&embed=1"; };
   window.onmessage = e => { if (e.origin === location.origin && e.data && e.data.lingua === "informe-height" && e.source === fr.contentWindow) fr.style.height = Math.min(6000, e.data.h + 8) + "px"; };
@@ -665,7 +665,7 @@ function billOf(s, m) { const b = G.billing.bill(DATA, s.p.id, m); b.status = TS
 const METHOD = { transfer: "Transfer", cash: "Cash", deposit: "Deposit", card: "Card", other: "Other" };
 const PLAN_EN = { per_class: "Per class", weekly: "Weekly", monthly: "Monthly fee", free: "Free" };
 const DAY_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const SITE = () => location.origin + location.pathname.replace(/teacher\.html$/, "");
+const SITE = () => location.origin + location.pathname.replace(/[^/]*$/, "");
 const sById = id => students().find(s => s.p.id === id);
 // Families (siblings who pay together): one plan, one payment, one receipt
 const famIds = id => { const ids = G.billing.members(DATA, id).filter(i => sById(i)); return ids.length ? ids : [id]; };
@@ -1008,7 +1008,7 @@ function proposalNumbers(d) {
   const mins = d.s.reduce((t, r) => { const [a1, a2] = r[1].split(":").map(Number), [b1, b2] = r[2].split(":").map(Number); return t + Math.max(0, b1 * 60 + b2 - a1 * 60 - a2); }, 0);
   const weekly = d.r * mins / 60, month = weekly * 4; return { weekly, month, monthPrice: month - d.disc, classes: d.s.length * 4 };
 }
-const proposalLink = s => location.origin + location.pathname.replace(/teacher\.html$/, "") + "propuesta.html?d=" + b64(proposalData(s));
+const proposalLink = s => location.origin + location.pathname.replace(/[^/]*$/, "") + "propuesta.html?d=" + b64(proposalData(s));
 function wireProposal(s) {
   const card = document.getElementById("propCard"); if (!card) return;
   const sync = () => { PROP.rows = proposalData(s).s; const d = proposalData(s), k = proposalNumbers(d); document.getElementById("ppSum").innerHTML = `Weekly <b>${MONEY(k.weekly, d.cur)}</b> · Month (${k.classes} classes) <b>${MONEY(k.month, d.cur)}</b>${d.disc ? ` · With discount <b>${MONEY(k.monthPrice, d.cur)}</b>` : ""}`; };
@@ -1056,7 +1056,7 @@ function receiptLink(s, p) {
     m: wk ? "semana del " + wkEs(sid, p.week, true) : new Date(p.month + "-15T12:00").toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
     d: p.paid_on, a: Number(p.amount), cur: a.currency || "MXN", pl: wk ? "weekly" : a.billing, k: wk ? wk.attended || wk.k : b.attended, r: Number(a.rate) || 0, by: wk && famIds(sid).length > 1 ? byLine(sid, wk, true) : "",
     nt: p.note || "", ow: G.maestroNombre || G.maestro, du: wk ? wk.rate : b.due, pt: wk ? wk.paid : b.paid, mt: p.method || "", rf: p.reference || "" };
-  return location.origin + location.pathname.replace(/teacher\.html$/, "") + "recibo.html?d=" + b64(D);
+  return location.origin + location.pathname.replace(/[^/]*$/, "") + "recibo.html?d=" + b64(D);
 }
 function wireBilling(s) {
   wirePays(); wireSlips();
@@ -1419,7 +1419,7 @@ function planLink(s) {
     dy, tm: dy.length ? v("pT") : "", ls: s.rows.map(r => [r.l.id, r.l.titulo, r.best && r.best.ok / r.best.n >= .8 ? 1 : 0]),
     c: v("pC").trim() || undefined
   };
-  return location.origin + location.pathname.replace(/teacher\.html$/, "") + "plan.html?d=" + b64(data) + "&lang=" + v("pL");
+  return location.origin + location.pathname.replace(/[^/]*$/, "") + "plan.html?d=" + b64(data) + "&lang=" + v("pL");
 }
 function reportLink(s) {
   const m = document.getElementById("rM").value, lang = document.getElementById("rL").value, c = document.getElementById("rC").value.trim();
@@ -1438,7 +1438,7 @@ function reportLink(s) {
     ls: s.rows.map(r => [r.l.id, r.l.titulo, r.done, r.best ? Math.round(r.best.ok / r.best.n * 100) : null, r.tries, r.best && r.best.ok / r.best.n >= .8 ? 1 : 0, r.l.secs || 5]),
     c: c || undefined
   };
-  return location.origin + location.pathname.replace(/teacher\.html$/, "") + "progress.html?d=" + b64(data) + "&lang=" + lang;
+  return location.origin + location.pathname.replace(/[^/]*$/, "") + "progress.html?d=" + b64(data) + "&lang=" + lang;
 }
 
 function accounts() {
@@ -1654,8 +1654,8 @@ function wireDetail(s) {
 
 
 // ── Trial classes (clases muestra): the form link, the class and the report ──
-const trialLink = t => location.origin + location.pathname.replace(/teacher\.html$/, "") + "muestra.html?t=" + t.token;
-const trialReport = t => location.origin + location.pathname.replace(/teacher\.html$/, "") + "reporte-muestra.html?t=" + t.token;
+const trialLink = t => location.origin + location.pathname.replace(/[^/]*$/, "") + "muestra.html?t=" + t.token;
+const trialReport = t => location.origin + location.pathname.replace(/[^/]*$/, "") + "reporte-muestra.html?t=" + t.token;
 const whenEs = d => { const x = new Date(d); return x.toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" }) + " a las " + x.toLocaleTimeString("es-MX", { hour: "numeric", minute: "2-digit" }).replace(/\s?a\.\s?m\./, " am").replace(/\s?p\.\s?m\./, " pm"); };
 const trialInvite = t => `Hola${t.name ? " " + t.name.split(" ")[0] : ""}, te comparto el link de tu clase muestra de inglés${t.starts_at ? " del " + whenEs(t.starts_at) : ""}. Contesta 3 preguntas rápidas para que la prepare con lo que te gusta: ${trialLink(t)}`;
 function trialState(t) {
