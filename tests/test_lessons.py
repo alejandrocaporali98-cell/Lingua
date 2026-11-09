@@ -131,6 +131,17 @@ def test():
             check(ok and f"Lesson {ids[1]}" in pg.inner_text("#garage .gx-info"), f"{theme}: one lesson passed unlocks the first item ({title})")
         check(not [e for e in env.errs if "perfil" in e or "collection" in e], "no errors on the collection pages")
 
+        # Public page (Spanish): loads, fits a phone, WhatsApp buttons appear only once a number is set
+        ph = env.device("P", 390, 844); env.fresh(ph, "conoce.html", 700)
+        check(ph.evaluate("document.documentElement.scrollWidth") <= 392 and ph.locator("h1").count() == 1, "the public page fits a phone")
+        check(ph.locator("[data-wa]:visible").count() == 0, "without a number the WhatsApp buttons stay hidden")
+        ph.route("**/conoce.html", lambda r: r.fulfill(body=open(os.path.join(env.site, "conoce.html")).read().replace('whatsapp: ""', 'whatsapp: "5218100000000"'), content_type="text/html"))
+        env.fresh(ph, "conoce.html", 500)
+        hrefs = ph.eval_on_selector_all("[data-wa]", "e => e.map(x => x.href)")
+        check(hrefs and all(h.startswith("https://wa.me/5218100000000?text=") for h in hrefs), "with a number the buttons open a WhatsApp chat")
+        env.fresh(ph, "login.html", 500)
+        check(ph.locator('a[href="conoce.html"]').count() >= 1, "the sign-in page links to the public page")
+
 
 if __name__ == "__main__":
     run(test)

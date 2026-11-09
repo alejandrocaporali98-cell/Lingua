@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lingua · Clases de inglés personalizadas</title>
+<meta name="description" content="Clases de inglés en línea hechas a la medida: lecciones con lo que te gusta, una plataforma para practicar entre clases y reportes de avance para la familia.">
+<meta property="og:title" content="Lingua · Clases de inglés personalizadas">
+<meta property="og:description" content="Inglés que se aprende con lo que te gusta. Clases en vivo, práctica entre clases y reportes de avance. Agenda una clase muestra.">
+<meta property="og:image" content="https://alejandrocaporali98-cell.github.io/Lingua/assets/landing/og.jpg">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<script>
+  // Contacto: número de WhatsApp con lada (solo dígitos, ej. 5218112345678). Vacío = el botón de WhatsApp no se muestra.
+  window.LINGUA_CONTACT = { whatsapp: "" };
+</script>
+<style>
+  :root { --ink: #1c1d1f; --ink-2: #3e4143; --mute: #6a6f73; --line: #d1d7dc; --band: #f7f9fa; --blue: #2346d0; --blue-d: #1a36a6; --yellow: #eceb98; --amber: #b4690e; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: #fff; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; height: auto; }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+  @media (max-width: 560px) { .wrap { padding: 0 16px; } }
+
+  /* top bar */
+  .top { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 2px 4px rgba(0,0,0,.04); }
+  .top .wrap { display: flex; align-items: center; gap: 16px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; font-weight: 800; font-size: 1.3em; letter-spacing: -.02em; }
+  .top nav { display: flex; gap: 22px; margin-left: 18px; font-size: .92em; font-weight: 600; }
+  .top nav a { text-decoration: none; color: var(--ink-2); }
+  .top nav a:hover { color: var(--blue); }
+  .top .sp { flex: 1; }
+  @media (max-width: 860px) { .top nav { display: none; } }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 800; font-size: .95em; padding: 11px 18px; border: 1px solid var(--ink); background: #fff; color: var(--ink); text-decoration: none; cursor: pointer; white-space: nowrap; }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn.primary:hover { background: var(--blue-d); }
+  .btn.wa { background: #1f8f4e; border-color: #1f8f4e; color: #fff; }
+  .btn.sm { padding: 8px 14px; font-size: .88em; }
+  @media (max-width: 560px) { .top .btn.ghost-sm { display: none; } }
+
+  /* hero */
+  .hero { background: var(--band); border-bottom: 1px solid var(--line); }
+  .hero .wrap { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; padding-top: 34px; padding-bottom: 34px; align-items: start; }
+  @media (max-width: 960px) { .hero .wrap { grid-template-columns: 1fr; } }
+  .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: .86em; font-weight: 700; color: var(--blue); margin-bottom: 12px; }
+  .crumbs span:nth-child(even) { color: var(--mute); font-weight: 500; }
+  h1 { font-size: clamp(2em, 4.4vw, 2.9em); font-weight: 800; letter-spacing: -.03em; line-height: 1.08; max-width: 640px; }
+  .lead { font-size: 1.14em; color: var(--ink-2); margin-top: 14px; max-width: 640px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 16px; font-size: .92em; color: var(--ink-2); }
+  .tag { background: var(--yellow); color: #3d3c0a; font-weight: 800; font-size: .85em; padding: 3px 9px; }
+  .lvl { color: var(--amber); font-weight: 800; }
+  .by { margin-top: 10px; font-size: .9em; color: var(--mute); }
+  .by b { color: var(--blue); }
+  .hero-ctas { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+  .card { background: #fff; border: 1px solid var(--line); box-shadow: 0 2px 4px rgba(0,0,0,.08), 0 8px 28px rgba(0,0,0,.08); }
+  .hero .card { position: sticky; top: 84px; }
+  @media (max-width: 960px) { .hero .card { position: static; max-width: 520px; } }
+  .shot { position: relative; border-bottom: 1px solid var(--line); background: #eef0f3; }
+  .shot img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; }
+  .card .in { padding: 18px 20px 20px; display: grid; gap: 14px; }
+  .price { font-size: 1.5em; font-weight: 800; letter-spacing: -.02em; }
+  .price small { display: block; font-size: .5em; font-weight: 600; color: var(--mute); letter-spacing: 0; }
+  .card .btn { width: 100%; padding-block: 13px; }
+  .inc b { font-size: .95em; }
+  .inc ul { list-style: none; margin-top: 8px; display: grid; gap: 7px; font-size: .88em; }
+  .inc li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; }
+  .inc svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; margin-top: 2px; }
+
+  /* body */
+  main .wrap { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; }
+  @media (max-width: 960px) { main .wrap { grid-template-columns: 1fr; } }
+  .col { display: grid; gap: 44px; padding: 36px 0 60px; min-width: 0; }
+  h2 { font-size: 1.6em; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+  .sub { color: var(--mute); font-size: .92em; margin-top: 4px; }
+  .learn { border: 1px solid var(--line); padding: 22px 24px; }
+  .learn ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 26px; margin-top: 12px; }
+  @media (max-width: 640px) { .learn ul { grid-template-columns: 1fr; } }
+  .learn li, .checks li { position: relative; padding-left: 26px; font-size: .95em; }
+  .learn li::before, .checks li::before { content: ""; position: absolute; left: 2px; top: 5px; width: 11px; height: 6px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); }
+  .checks { list-style: none; display: grid; gap: 8px; margin-top: 12px; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); }
+  .stats div { padding: 18px 16px; display: grid; gap: 2px; }
+  .stats div + div { border-left: 1px solid var(--line); }
+  .stats b { font-size: 1.6em; font-weight: 800; letter-spacing: -.02em; }
+  .stats span { font-size: .84em; color: var(--mute); }
+  @media (max-width: 640px) { .stats { grid-template-columns: 1fr 1fr; } .stats div:nth-child(3) { border-left: 0; } .stats div:nth-child(n+3) { border-top: 1px solid var(--line); } }
+  .why { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 16px; }
+  @media (max-width: 760px) { .why { grid-template-columns: 1fr; } }
+  .why div { border-top: 3px solid var(--ink); padding-top: 12px; display: grid; gap: 4px; }
+  .why small { font-weight: 800; color: var(--mute); letter-spacing: .06em; }
+  .why b { font-size: 1.05em; }
+  .why p { font-size: .92em; color: var(--ink-2); }
+  .content { list-style: none; border: 1px solid var(--line); margin-top: 14px; }
+  .content li { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 14px 18px; background: var(--band); }
+  .content li + li { border-top: 1px solid var(--line); }
+  .content .n { width: 26px; height: 26px; border: 1.5px solid var(--ink); border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: .8em; }
+  .content b { display: block; }
+  .content p { font-size: .9em; color: var(--ink-2); }
+  .content .t { font-size: .85em; color: var(--mute); white-space: nowrap; padding-top: 3px; }
+  .lessons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 16px; }
+  @media (max-width: 760px) { .lessons { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 460px) { .lessons { grid-template-columns: 1fr; } }
+  .les { border: 1px solid var(--line); display: grid; align-content: start; }
+  .les .tile { aspect-ratio: 16 / 8; background: var(--c); color: #fff; display: grid; place-items: center; font-size: 2.2em; font-weight: 800; position: relative; }
+  .les .tile::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(0,0,0,.05), rgba(0,0,0,.26)); }
+  .les .tile span { position: relative; z-index: 1; }
+  .les .in { padding: 12px 14px 14px; display: grid; gap: 4px; }
+  .les b { font-size: 1em; line-height: 1.25; }
+  .les p { font-size: .86em; color: var(--ink-2); }
+  .les small { font-size: .8em; color: var(--mute); margin-top: 4px; }
+  .les small i { font-style: normal; color: var(--amber); font-weight: 800; }
+  .gallery { display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px; margin-top: 16px; align-items: start; }
+  .gallery figure { border: 1px solid var(--line); background: var(--band); }
+  .gallery figure img { width: 100%; }
+  .gallery figcaption { font-size: .84em; color: var(--mute); padding: 9px 12px; border-top: 1px solid var(--line); background: #fff; }
+  .gallery .tall img { aspect-ratio: auto; }
+  .gallery .stack { display: grid; gap: 14px; }
+  @media (max-width: 760px) { .gallery { grid-template-columns: 1fr; } }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .pills span { border: 1px solid var(--ink); border-radius: 99px; padding: 5px 13px; font-size: .86em; font-weight: 700; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 22px; align-items: start; margin-top: 14px; }
+  @media (max-width: 640px) { .two { grid-template-columns: 1fr; } }
+  .two figure { border: 1px solid var(--line); }
+  .two.wide { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); align-items: center; margin-top: 26px; }
+  @media (max-width: 640px) { .two.wide { grid-template-columns: 1fr; } }
+  .about { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; margin-top: 14px; }
+  .about .av { width: 64px; height: 64px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 1.6em; }
+  .about p + p { margin-top: 10px; }
+  .about p { color: var(--ink-2); }
+  .faq { border: 1px solid var(--line); margin-top: 14px; }
+  .faq details + details { border-top: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; padding: 15px 18px; font-weight: 800; background: var(--band); display: flex; justify-content: space-between; gap: 12px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; font-weight: 600; font-size: 1.2em; line-height: 1; }
+  .faq details[open] summary::after { content: "–"; }
+  .faq p { padding: 4px 18px 16px; color: var(--ink-2); font-size: .95em; background: var(--band); }
+  .side { padding: 36px 0 60px; display: grid; gap: 22px; align-content: start; }
+  @media (max-width: 960px) { .side { display: none; } }
+  .side .box { border: 1px solid var(--line); padding: 18px 20px; display: grid; gap: 10px; }
+  .side h3 { font-size: 1.05em; font-weight: 800; }
+  .cta { background: var(--ink); color: #fff; }
+  .cta .wrap { padding-top: 48px; padding-bottom: 52px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 26px; align-items: center; }
+  @media (max-width: 760px) { .cta .wrap { grid-template-columns: 1fr; } }
+  .cta small { color: #f5c518; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; font-size: .78em; }
+  .cta h2 { color: #fff; font-size: 2em; margin-top: 6px; }
+  .cta ol { margin: 14px 0 0 20px; display: grid; gap: 6px; color: #d7dbe0; }
+  .cta .btns { display: grid; gap: 10px; min-width: 260px; }
+  .cta .btn { border-color: #fff; }
+  .cta .btn.light { background: #fff; color: var(--ink); }
+  footer { border-top: 1px solid var(--line); }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 22px; padding-bottom: 28px; font-size: .86em; color: var(--mute); }
+  footer a { color: var(--ink-2); font-weight: 700; text-decoration: none; }
+  .mob-cta { display: none; }
+  @media (max-width: 960px) { .mob-cta { display: flex; position: sticky; bottom: 0; z-index: 9; background: #fff; border-top: 1px solid var(--line); padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); gap: 10px; } .mob-cta .btn { flex: 1; } }
+  [data-wa][hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="conoce.html"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#2346d0"/><path d="M8.5 9h15a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5H16l-4.5 4v-4h-3A2.5 2.5 0 0 1 6 19v-7.5A2.5 2.5 0 0 1 8.5 9z" fill="#fff"/><circle cx="20.5" cy="15.25" r="2.4" fill="#f5c518"/></svg>Lingua</a>
+    <nav aria-label="Secciones"><a href="#como-funciona">Cómo funciona</a><a href="#lecciones">Lecciones</a><a href="#plataforma">La plataforma</a><a href="#familia">Para la familia</a><a href="#preguntas">Preguntas</a></nav>
+    <span class="sp"></span>
+    <a class="btn sm ghost-sm" href="login.html">Iniciar sesión</a>
+    <a class="btn sm primary" href="#agenda">Clase muestra</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="crumbs"><span>Clases de inglés en línea</span><span>›</span><span>Niños, jóvenes y adultos</span><span>›</span><span>Niveles A1 a C2</span></div>
+      <h1>Inglés que se aprende con lo que te gusta.</h1>
+      <p class="lead">Clases en vivo, una plataforma propia para practicar entre clases y reportes de avance claros. Cada lección se escribe para el alumno: sus intereses, su nivel y sus metas.</p>
+      <div class="meta"><span class="tag">Clase muestra</span><span class="lvl">A1 → C2</span><span>100% en inglés</span><span>En línea, desde cualquier lugar</span></div>
+      <p class="by">Creado e impartido por <b>Alejandro Caporali</b> · Español e inglés</p>
+      <div class="hero-ctas"><a class="btn primary" href="#agenda">Agenda una clase muestra</a><a class="btn" href="#como-funciona">Cómo funciona</a></div>
+    </div>
+    <aside class="card" aria-label="Clase muestra">
+      <div class="shot"><img src="assets/landing/lesson.jpg" alt="Una lección de Lingua: lo que se aprende, el contenido de la clase y el vocabulario" width="900" height="566"></div>
+      <div class="in">
+        <div class="price">Clase muestra<small>Una clase real, un mini examen de nivel y un reporte con su plan.</small></div>
+        <a class="btn primary" href="#agenda">Quiero agendarla</a>
+        <a class="btn wa" data-wa hidden target="_blank" rel="noopener">Escríbeme por WhatsApp</a>
+        <div class="inc"><b>Incluye:</b><ul>
+          <li><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8"/></svg><span>Clases en vivo por videollamada</span></li>
+          <li><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6"/></svg><span>Lecciones escritas para el alumno</span></li>
+          <li><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3"/></svg><span>Juegos y práctica entre clases</span></li>
+          <li><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg><span>Su cuenta en el celular o la compu</span></li>
+          <li><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><span>Reporte de avance cada mes</span></li>
+          <li><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span>Recordatorio por WhatsApp antes de cada clase</span></li>
+        </ul></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<main>
+  <div class="wrap">
+    <div class="col">
+      <section class="learn"><h2>Lo que vas a obtener</h2><ul>
+        <li>Lecciones hechas a la medida: si al alumno le gustan los autos, aprende con carreras; si le gusta el cine, con cine.</li>
+        <li>Una plataforma propia con su cuenta, sus lecciones, sus juegos y su progreso.</li>
+        <li>Práctica entre clases que no aburre: juegos, dictados, pronunciación y repaso de errores.</li>
+        <li>Avance que se puede medir: quizzes, asistencia, tareas y un reporte para la familia.</li>
+        <li>Todo en inglés desde el primer día, a un ritmo que el alumno sí puede seguir.</li>
+        <li>Recompensas que motivan: cada lección aprobada desbloquea algo de su colección.</li>
+      </ul></section>
+
+      <div class="stats" role="list">
+        <div role="listitem"><b>A1 → C2</b><span>Del primer “Hello” a hablar con fluidez</span></div>
+        <div role="listitem"><b>65+</b><span>Lecciones escritas a mano, y contando</span></div>
+        <div role="listitem"><b>60–120</b><span>Minutos por clase en vivo, según el plan</span></div>
+        <div role="listitem"><b>24/7</b><span>La plataforma abierta para practicar</span></div>
+      </div>
+
+      <section><h2>Por qué tantos alumnos dejan el inglés</h2>
+        <p class="sub">Casi siempre por lo mismo. Lingua está pensado para resolver esas tres cosas.</p>
+        <div class="why">
+          <div><small>01</small><b>Interés</b><p>El libro habla de temas que no les importan. Aquí las lecciones usan sus temas: autos, caballos, música, cine, su carrera.</p></div>
+          <div><small>02</small><b>Práctica</b><p>Una hora a la semana no alcanza. Entre clases hay juegos, dictados y repaso: diez minutos al día hacen la diferencia.</p></div>
+          <div><small>03</small><b>Claridad</b><p>Nadie sabe si están avanzando. Aquí cada quiz, tarea y clase queda registrada, y la familia recibe un reporte.</p></div>
+        </div>
+      </section>
+
+      <section id="como-funciona" style="scroll-margin-top:80px"><h2>Cómo funciona</h2><p class="sub">De la primera llamada a la primera clase en una semana</p>
+        <ol class="content">
+          <li><span class="n">1</span><div><b>Clase muestra</b><p>Una clase real para conocernos: un mini examen de nivel, actividades según sus intereses y, al final, un reporte con su nivel, sus fortalezas y un plan.</p></div><span class="t">1 clase</span></li>
+          <li><span class="n">2</span><div><b>Plan a la medida</b><p>Con base en el reporte armamos su ruta: nivel, objetivos, temas y cuántas clases por semana le convienen.</p></div><span class="t">1–2 días</span></li>
+          <li><span class="n">3</span><div><b>Su cuenta en Lingua</b><p>Recibe su usuario y contraseña, con un estilo visual según lo que le gusta. Ahí están sus lecciones, juegos y progreso.</p></div><span class="t">Mismo día</span></li>
+          <li><span class="n">4</span><div><b>Clases en vivo</b><p>Por videollamada, con la lección en pantalla. Antes de cada clase llega un recordatorio por WhatsApp con el link.</p></div><span class="t">Cada semana</span></li>
+          <li><span class="n">5</span><div><b>Práctica y reporte</b><p>Entre clases practica en la plataforma. Cada mes la familia recibe su reporte de avance.</p></div><span class="t">Cada mes</span></li>
+        </ol>
+      </section>
+
+      <section id="lecciones" style="scroll-margin-top:80px"><h2>Lecciones que se escriben para cada alumno</h2><p class="sub">Algunos ejemplos reales de la plataforma</p>
+        <div class="lessons">
+          <article class="les"><div class="tile" style="--c:#0f766e"><span>02</span></div><div class="in"><b>My Garage</b><p>Describir su auto soñado con have / has, colores y números grandes.</p><small><i>A1–A2</i> · 60 min · Autos</small></div></article>
+          <article class="les"><div class="tile" style="--c:#b45309"><span>03</span></div><div class="in"><b>Race Day</b><p>Su rutina diaria y decir la hora, con el día de carrera de una piloto.</p><small><i>A2</i> · 60 min · F1</small></div></article>
+          <article class="les"><div class="tile" style="--c:#a16207"><span>123</span></div><div class="in"><b>Show Day</b><p>Contar su primera competencia de salto con was / were + -ing.</p><small><i>B1</i> · 60 min · Caballos</small></div></article>
+          <article class="les"><div class="tile" style="--c:#6b1e24"><span>302</span></div><div class="in"><b>They Don't Make Them Like That</b><p>Por qué el cine clásico sigue funcionando, y cómo hablar de él.</p><small><i>C1</i> · 90 min · Cine</small></div></article>
+          <article class="les"><div class="tile" style="--c:#6d28d9"><span>314</span></div><div class="in"><b>Live and Loud</b><p>Conciertos, festivales y participle clauses, con un debate final.</p><small><i>C1</i> · 120 min · Música</small></div></article>
+          <article class="les"><div class="tile" style="--c:#2346d0"><span>201</span></div><div class="in"><b>Everyday Conversation</b><p>Las frases pequeñas que separan el inglés de libro del inglés real.</p><small><i>B1</i> · 60 min · Adultos</small></div></article>
+        </div>
+      </section>
+
+      <section><h2>Así es una clase por dentro</h2><p class="sub">Una estructura probada que va de entender a usar</p>
+        <ol class="content">
+          <li><span class="n">1</span><div><b>Warm-up</b><p>Un repaso rápido de la clase anterior, para que nada se olvide.</p></div><span class="t">5 min</span></li>
+          <li><span class="n">2</span><div><b>Vocabulario con audio</b><p>Tarjetas con la pronunciación y un ejemplo real de cada palabra.</p></div><span class="t">8–15 min</span></li>
+          <li><span class="n">3</span><div><b>Lectura</b><p>Un texto corto del tema, con palabras explicadas al tocarlas y preguntas de comprensión.</p></div><span class="t">10–20 min</span></li>
+          <li><span class="n">4</span><div><b>Gramática</b><p>Una sola regla clara, con ejemplos, el error típico y ejercicios.</p></div><span class="t">7–15 min</span></li>
+          <li><span class="n">5</span><div><b>Role-play y conversación</b><p>Una situación real para practicar en voz alta y preguntas para opinar, con frases de apoyo.</p></div><span class="t">20–45 min</span></li>
+          <li><span class="n">6</span><div><b>Quiz final</b><p>Se aprueba con 80% y se gana un diploma de la lección.</p></div><span class="t">Tarea</span></li>
+        </ol>
+      </section>
+
+      <section id="plataforma" style="scroll-margin-top:80px"><h2>La práctica entre clases es la que hace la diferencia</h2>
+        <p class="sub">Juegos, puntos, rachas y retos con el vocabulario de sus propias lecciones</p>
+        <div class="gallery">
+          <figure><img src="assets/landing/home.jpg" alt="Inicio del alumno: su lección, su nivel, su racha y sus puntos" loading="lazy" width="1100" height="739"><figcaption>Su inicio: la lección en curso, su nivel, su racha y sus puntos.</figcaption></figure>
+          <div class="stack">
+            <figure><img src="assets/landing/vocab.jpg" alt="Tarjetas de vocabulario con audio" loading="lazy" width="1100" height="739"><figcaption>Vocabulario con audio.</figcaption></figure>
+            <figure><img src="assets/landing/games.jpg" alt="Juegos de clase" loading="lazy" width="1100" height="739"><figcaption>Juegos para cerrar la clase.</figcaption></figure>
+          </div>
+        </div>
+        <div class="pills"><span>Jeopardy</span><span>La ruleta</span><span>Un minuto</span><span>Gato</span><span>Dictado</span><span>Pronunciación</span><span>Repaso inteligente</span><span>Mis palabras</span></div>
+        <div class="two wide">
+          <div><h2 style="font-size:1.25em">Cada lección aprobada desbloquea algo nuevo</h2>
+            <p class="sub" style="font-size:.95em">Según lo que le gusta, el alumno arma su garage de autos, su caballeriza, su estudio de música o su pared de pósters de cine. Una razón más para terminar cada lección.</p></div>
+          <figure><img src="assets/landing/stable.jpg" alt="La caballeriza de una alumna con los caballos que ha desbloqueado" loading="lazy" width="860" height="798"></figure>
+        </div>
+      </section>
+
+      <section id="familia" style="scroll-margin-top:80px"><h2>Para la familia: saber exactamente cómo va</h2>
+        <p class="sub">Pagar clases y no saber si sirven es frustrante. Aquí el avance se ve con datos.</p>
+        <div class="two">
+          <ul class="checks">
+            <li>Una evaluación del periodo con su explicación.</li>
+            <li>Asistencia, promedio en quizzes, tareas a tiempo y constancia.</li>
+            <li>Su nivel y cuántas lecciones lleva del curso.</li>
+            <li>Un calendario con los días que practicó.</li>
+            <li>Lo que ya domina, lo que hay que reforzar y la meta del siguiente mes.</li>
+            <li>La bitácora de cada clase y un comentario personal del maestro.</li>
+            <li>Fichas de pago y recibos digitales con folio.</li>
+          </ul>
+          <figure><img src="assets/landing/report.jpg" alt="Reporte de avance para la familia" loading="lazy" width="816" height="1100"></figure>
+        </div>
+      </section>
+
+      <section><h2>Sobre el instructor</h2>
+        <div class="about"><span class="av" aria-hidden="true">A</span><div>
+          <p><b style="color:var(--ink)">Alejandro Caporali</b> es bilingüe y trabaja todos los días 100% en inglés como ingeniero en una empresa multinacional. Sabe qué inglés se necesita en la vida real: el de las juntas, los viajes, las series y las conversaciones con amigos.</p>
+          <p>Diseña cada lección a mano para cada alumno, y construyó Lingua para que sus alumnos tengan lo que a él le hubiera gustado tener: clases que se disfrutan, práctica que engancha y un avance que se nota.</p>
+        </div></div>
+      </section>
+
+      <section id="preguntas" style="scroll-margin-top:80px"><h2>Preguntas frecuentes</h2>
+        <div class="faq">
+          <details><summary>¿Las clases son en línea?</summary><p>Sí, por videollamada (Teams, Meet o Zoom), con la lección en pantalla. Solo se necesita internet.</p></details>
+          <details><summary>¿Hay que instalar algo?</summary><p>No. Lingua funciona en el navegador del celular, la tablet o la computadora, y se puede agregar a la pantalla de inicio como app.</p></details>
+          <details><summary>¿Es para niños o para adultos?</summary><p>Para los dos. Hay rutas para jóvenes y para adultos, de principiante a avanzado.</p></details>
+          <details><summary>¿Qué pasa si no sé mi nivel?</summary><p>La clase muestra incluye un mini examen y un reporte que lo deja claro.</p></details>
+          <details><summary>¿Cuántas clases a la semana?</summary><p>Lo definimos juntos según la meta. Lo más común son dos clases por semana.</p></details>
+          <details><summary>¿Cómo sé si está avanzando?</summary><p>Con el reporte de avance mensual y, si quieres, viendo su progreso en la plataforma.</p></details>
+        </div>
+      </section>
+    </div>
+
+    <aside class="side" aria-label="Resumen">
+      <div class="box"><h3>Temas que ya tenemos</h3><div class="pills" style="margin-top:0"><span>F1 y autos</span><span>Anime</span><span>Videojuegos</span><span>Fútbol</span><span>Equitación</span><span>Música</span><span>Cine clásico</span><span>Viajes</span><span>Trabajo y entrevistas</span><span>Redes sociales</span></div></div>
+      <div class="box"><h3>Niveles</h3><p class="sub" style="margin:0">De A1 (principiante) a C2 (dominio). La clase muestra incluye un mini examen para saber dónde empezar.</p></div>
+      <div class="box"><h3>Ya soy alumno</h3><p class="sub" style="margin:0">Entra con tu usuario y contraseña.</p><a class="btn" href="login.html">Iniciar sesión</a></div>
+    </aside>
+  </div>
+</main>
+
+<section class="cta" id="agenda" style="scroll-margin-top:64px">
+  <div class="wrap">
+    <div><small>Primer paso</small><h2>Agenda una clase muestra</h2>
+      <ol><li>Escríbeme para elegir día y hora.</li><li>Me cuentas sus intereses y su meta con el inglés.</li><li>Tomamos la clase y recibes su reporte con el plan.</li></ol></div>
+    <div class="btns">
+      <a class="btn wa" data-wa hidden target="_blank" rel="noopener">Escríbeme por WhatsApp</a>
+      <a class="btn light" href="login.html">Ya soy alumno · Iniciar sesión</a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>Lingua · Clases de inglés personalizadas · Alejandro Caporali</span><a href="login.html">Iniciar sesión</a></div></footer>
+<div class="mob-cta"><a class="btn primary" href="#agenda">Agenda una clase muestra</a></div>
+
+<script>
+  (function () {
+    var n = String((window.LINGUA_CONTACT || {}).whatsapp || "").replace(/\D/g, "");
+    if (!n) return;
+    var msg = "Hola Alejandro, me interesa agendar una clase muestra de inglés.";
+    document.querySelectorAll("[data-wa]").forEach(function (a) { a.href = "https://wa.me/" + n + "?text=" + encodeURIComponent(msg); a.hidden = false; });
+  })();
+</script>
+</body>
+</html>
