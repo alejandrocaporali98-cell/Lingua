@@ -43,7 +43,7 @@
     ] : [
       ["Learn", [["home", "My learning", "index.html"], ...(L.cloudEnabled ? [["hw", "Homework", "index.html#todo", "hw"], ["notes", "Class notes", "notes.html"]] : []), ["test", "Placement test", "examen.html"], ["report", "Placement report", "reporte.html"]]],
       ["Practice", [["review", "Review", "review.html", "rev"], ["game", "Practice games", "practice.html"], ["words", "My words", "words.html"], ["book", "Study resources", "resources.html"]]],
-      ["Progress", [["grades", "Grades", "grades.html"], ["diploma", "Diplomas", "diplomas.html", "dip"], ...(L.style && L.style.reward === "garage" ? [["car", "My garage", "perfil.html#garage"]] : []), ["badge", "Badges", "perfil.html#badges", "bdg"]]],
+      ["Progress", [["grades", "Grades", "grades.html"], ["diploma", "Diplomas", "diplomas.html", "dip"], ...(L.style && L.style.reward === "garage" ? [[(L.settings && L.settings.theme || "racing") === "racing" ? "car" : "badge", { racing: "My garage", riding: "My stable", music: "My studio", cinema: "My poster wall" }[(L.settings && L.settings.theme) || "racing"] || "My collection", "perfil.html#garage"]] : []), ["badge", "Badges", "perfil.html#badges", "bdg"]]],
 
       ["Account", [["user", "Profile & avatar", "perfil.html"], ["gear", "Settings", "perfil.html#settings"]]]
     ];

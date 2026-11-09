@@ -108,9 +108,14 @@ def test():
         pg.evaluate("LINGUA.menu.open()"); pg.wait_for_timeout(150)
         check(pg.locator("#lgMenu a[href$='perfil.html#garage']").count() == 1, "the menu has a garage link")
         pg.evaluate("LINGUA.menu.close()")
-        pg.evaluate("localStorage.setItem('lingua.__settings', JSON.stringify({ lessons: ['101'], theme: 'riding' }))")
-        env.fresh(pg, "perfil.html", 600)
-        check(pg.locator("#garage").count() == 0, "other styles don't show a garage")
+        # Other styles collect horses, instruments and posters: the Nth lesson passed unlocks the Nth item
+        for theme, ids, title, first in [("riding", ["101", "102", "103"], "Your stable", "Biscuit"), ("music", ["311", "312", "313"], "Your studio", "Parlor Acoustic"), ("cinema", ["301", "302", "303"], "Your poster wall", "Night Falls on Harbor Street")]:
+            pg.evaluate("""([th, ids]) => { localStorage.clear(); const s = (k, v) => localStorage.setItem('lingua.' + k, JSON.stringify(v));
+              s('__settings', { lessons: ids, theme: th }); s('diploma.' + ids[1], { ok: 15, n: 15, at: '2026-11-02T12:00:00Z' }); }""", [theme, ids])
+            env.fresh(pg, "perfil.html", 600)
+            ok = pg.locator("#garage").count() == 1 and title in pg.inner_text("#garage h2") and first in pg.inner_text("#garage .gx-info") and pg.locator("#garage .gx-bay:not(.locked)").count() == 1
+            check(ok and f"Lesson {ids[1]}" in pg.inner_text("#garage .gx-info"), f"{theme}: one lesson passed unlocks the first item ({title})")
+        check(not [e for e in env.errs if "perfil" in e or "collection" in e], "no errors on the collection pages")
 
 
 if __name__ == "__main__":

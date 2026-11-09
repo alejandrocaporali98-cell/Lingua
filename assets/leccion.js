@@ -427,8 +427,8 @@
         if (ok / n >= .8) G.game && G.game.award(50, { once: "pass." + C.id, silent: true });
         if (ok / n >= .8 && !d) {
           G.store.set("diploma." + C.id, { ok, n, at }); setTimeout(() => { G.confetti(); G.sfx("win"); }, 650);
-          const car = G.garage && G.garage.on() && G.garage.car(C.id);
-          if (car) setTimeout(() => G.toast(`<b>New car in your garage: ${G.esc(car.name)}!</b><span><a href="${G.root || "../"}perfil.html#garage">Go to your garage</a></span>`, "big"), 1600);
+          const CX = G.collection && G.style.reward === "garage" && G.collection.current(), got = CX && CX.byLesson(C.id);
+          if (got) setTimeout(() => G.toast(`<b>New ${G.esc(CX.noun)} in your ${G.esc(CX.title.replace("Your ", ""))}: ${G.esc(got.name)}!</b><span><a href="${G.root || "../"}perfil.html#garage">Go to ${G.esc(CX.title.toLowerCase())}</a></span>`, "big"), 1600);
           return true;
         }
         else if (d && ok > d.ok) G.store.set("diploma." + C.id, { ...d, ok, n });

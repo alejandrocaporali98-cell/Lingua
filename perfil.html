@@ -30,6 +30,7 @@
 <script src="assets/game.js"></script>
 <script src="assets/avatar.js"></script>
 <script src="assets/garage.js"></script>
+<script src="assets/collections.js"></script>
 <script src="assets/vendor/supabase.js"></script>
 <script src="assets/cloud.js"></script>
 <script src="assets/menu.js"></script>
@@ -132,6 +133,18 @@
   .gx-bay b { font-size: .8em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .gx-bay small { font-size: .72em; color: var(--mute); font-weight: 700; }
   .gx-bay[aria-pressed="true"] { border-color: var(--ink); background: var(--surface); box-shadow: 0 0 0 1px var(--ink); }
+  .gx-spec.nobar { grid-template-columns: 92px minmax(0, 1fr); }
+  .gx-art { display: grid; place-items: center; height: 58px; }
+  .gx-art svg { width: 100%; height: 100%; }
+  .gx-stage .col-svg { width: 100%; height: auto; max-height: 210px; position: relative; z-index: 1; filter: drop-shadow(0 10px 14px rgba(0,0,0,.25)); }
+  .gx-stage.locked .col-svg { filter: none; opacity: .55; }
+  .gx-stage .col-svg.poster { height: 200px; width: auto; margin: 0 auto; display: block; filter: drop-shadow(0 12px 18px rgba(0,0,0,.35)); }
+  .gx-stage.st-stable { color: #8b7a66; background: radial-gradient(60% 55% at 50% 0%, rgba(255,236,200,.22), transparent 70%), repeating-linear-gradient(90deg, #4a3526 0 38px, #432f21 38px 40px) top / 100% 64% no-repeat, linear-gradient(#5a4a33, #4a3c29) bottom / 100% 36% no-repeat; }
+  .gx-stage.st-studio { color: #7d838c; background: radial-gradient(60% 55% at 50% 0%, rgba(255,214,170,.14), transparent 70%), repeating-linear-gradient(45deg, #24272c 0 10px, #2a2d33 10px 20px) top / 100% 66% no-repeat, linear-gradient(#5b4330, #4a3627) bottom / 100% 34% no-repeat; }
+  .gx-stage.st-posters { color: #b9b2a5; align-items: center; background: radial-gradient(70% 60% at 50% 0%, rgba(255,255,255,.5), transparent 70%), #d9d2c4; }
+  .gx-stage.st-posters .gx-plate { color: #3a342b; }
+  .gx-stage.st-posters::after { display: none; }
+  .bays-posters .gx-art { height: 84px; }
   .gx-new { position: absolute; top: 7px; right: 7px; background: #f5c518; color: #1b1d22; font-size: .66em; font-weight: 800; padding: 2px 7px; border-radius: 99px; }
 </style>
 </head>
@@ -163,49 +176,49 @@ function stats() {
   return { done: scores.length, total: ready.length, avg, review, place: G.store.get("placement", null), game: G.game.mine() };
 }
 
-// ── Garage: one car per lesson, unlocked by passing it (80%+) ──
+// ── Collection (garage, stable, studio or poster wall): one item per lesson passed (80%+) ──
 let gxSel = null;
 function drawGarage() {
   const box = document.getElementById("garage"); if (!box) return;
-  const GX = G.garage, cars = GX.list(), seen = GX.seen(), got = cars.filter(c => c.unlocked);
-  if (!gxSel || !cars.some(c => c.lesson.id === gxSel)) {
-    const fresh = got.filter(c => !seen.includes(c.lesson.id));
-    gxSel = (fresh[fresh.length - 1] || got[got.length - 1] || cars.find(c => !c.unlocked) || cars[0]).lesson.id;
+  const CX = G.collection.current(); if (!CX) return;
+  const items = CX.list(), seen = G.collection.seen(), got = items.filter(c => c.unlocked);
+  if (!gxSel || !items.some(c => c.key === gxSel)) {
+    const fresh = got.filter(c => !seen.includes(c.key));
+    gxSel = (fresh[fresh.length - 1] || got[got.length - 1] || items.find(c => !c.unlocked) || items[0]).key;
   }
-  const c = cars.find(x => x.lesson.id === gxSel);
-  if (c.unlocked) GX.markSeen(c.lesson.id);
-  const fmt = n => n.toLocaleString("en-US");
-  const spec = (label, v, pct) => `<div class="gx-spec"><span>${label}</span><span class="gx-bar"><i style="width:${Math.max(6, Math.min(100, pct))}%"></i></span><b>${v}</b></div>`;
-  const nextUp = cars.find(x => !x.unlocked);
+  const c = items.find(x => x.key === gxSel);
+  if (c.unlocked) G.collection.markSeen(c.key);
+  const spec = ([label, v, pct]) => `<div class="gx-spec ${pct == null ? "nobar" : ""}"><span>${esc(label)}</span>${pct == null ? "" : `<span class="gx-bar"><i style="width:${Math.max(6, Math.min(100, pct * 100))}%"></i></span>`}<b>${esc(v)}</b></div>`;
+  const nextUp = items.find(x => !x.unlocked), isCar = CX.key === "garage";
+  const lockText = x => isCar || x.need <= 1 ? (x.lesson ? `Pass Lesson ${esc(x.lesson.id)} · ${esc(x.lesson.titulo)} with 80% or more in the final quiz to unlock it.` : `Pass your next lesson with 80% or more to unlock it.`)
+    : `Pass ${x.need} more lessons with 80% or more to unlock it.`;
   box.innerHTML = `
-    <div class="gx-head"><div><h2 id="gxT">Your garage</h2><p class="muted" style="font-size:.9em">Pass a lesson with 80% or more in the final quiz to unlock its car.</p></div>
-      <span class="gx-count">${got.length} / ${cars.length} cars</span></div>
+    <div class="gx-head"><div><h2 id="gxT">${esc(CX.title)}</h2><p class="muted" style="font-size:.9em">Pass a lesson with 80% or more in the final quiz to unlock ${isCar ? "its car" : "a new " + esc(CX.noun)}.</p></div>
+      <span class="gx-count">${got.length} / ${items.length} ${esc(CX.nouns)}</span></div>
     <div class="gx-show">
-      <div class="gx-stage ${c.unlocked ? "" : "locked"}">
-        <span class="gx-plate"><i></i>${c.unlocked ? "Car " + esc(c.num) : "Locked"} · Lesson ${esc(c.lesson.id)}</span>
-        ${GX.svg(c, { locked: !c.unlocked })}
+      <div class="gx-stage st-${CX.stage} ${c.unlocked ? "" : "locked"}">
+        <span class="gx-plate"><i></i>${c.unlocked ? esc(cap(CX.noun)) + " " + esc(c.num) : "Locked"}${c.lesson ? " · Lesson " + esc(c.lesson.id) : ""}</span>
+        ${c.art(!c.unlocked)}
       </div>
       <div class="gx-info">${c.unlocked ? `
         <div><h3>${esc(c.name)}</h3><span class="kind">${esc(c.kind)} · unlocked with Lesson ${esc(c.lesson.id)} · ${esc(c.lesson.titulo)}</span></div>
-        <div class="gx-specs">
-          ${spec("Power", fmt(c.hp) + " hp", c.hp / GX.MAX.hp * 100)}
-          ${spec("Top speed", c.top + " km/h", c.top / GX.MAX.top * 100)}
-          ${spec("0–100 km/h", c.zero.toFixed(1) + " s", (12 - c.zero) / 10 * 100)}
-        </div>
-        <div class="gx-about"><span class="eyebrow">About this car</span><p>${esc(c.about)}</p>
-          <div class="row">${G.canSpeak ? `<button type="button" class="btn sm" id="gxSay">🔊 Listen</button>` : ""}<span class="gx-learn">You learned: ${esc(c.learned)}</span></div></div>`
+        <div class="gx-specs">${c.specs.map(spec).join("")}</div>
+        <div class="gx-about"><span class="eyebrow">About this ${esc(CX.noun)}</span><p>${esc(c.about)}</p>
+          <div class="row">${G.canSpeak ? `<button type="button" class="btn sm" id="gxSay">🔊 Listen</button>` : ""}${c.learned ? `<span class="gx-learn">You learned: ${esc(c.learned)}</span>` : ""}</div></div>`
       : `
-        <div><h3>Mystery car</h3><span class="kind">Lesson ${esc(c.lesson.id)} · ${esc(c.lesson.titulo)}</span></div>
-        <p class="muted">Pass this lesson with 80% or more in the final quiz, and this car goes into your garage.</p>
-        <div><a class="btn primary" href="${c.lesson.archivo}">${G.store.get("score." + c.lesson.id, null) ? "Try the lesson again" : "Go to the lesson"}</a></div>`}
+        <div><h3>${esc(CX.mystery)}</h3>${c.lesson && (isCar || c.need <= 1) ? `<span class="kind">Lesson ${esc(c.lesson.id)} · ${esc(c.lesson.titulo)}</span>` : ""}</div>
+        <p class="muted">${lockText(c)}</p>
+        ${c.lesson && (isCar || c.need <= 1) ? `<div><a class="btn primary" href="${c.lesson.archivo}">${G.store.get("score." + c.lesson.id, null) ? "Try the lesson again" : "Go to the lesson"}</a></div>` : ""}`}
       </div>
     </div>
-    <div class="gx-bays" role="group" aria-label="Cars">${cars.map(x => `<button type="button" class="gx-bay ${x.unlocked ? "" : "locked"}" data-car="${x.lesson.id}" aria-pressed="${x.lesson.id === gxSel}" aria-label="${x.unlocked ? esc(x.name) : "Locked car, lesson " + x.lesson.id}">
-      ${x.unlocked && !seen.includes(x.lesson.id) && x.lesson.id !== c.lesson.id ? `<span class="gx-new">New</span>` : ""}
-      ${GX.svg(x, { locked: !x.unlocked })}<b>${x.unlocked ? esc(x.name) : "🔒 Locked"}</b><small>Lesson ${esc(x.lesson.id)}</small></button>`).join("")}</div>
-    ${nextUp && got.length ? `<p class="gx-note">Next car: pass <b>Lesson ${esc(nextUp.lesson.id)} · ${esc(nextUp.lesson.titulo)}</b>.</p>` : ""}`;
+    <div class="gx-bays bays-${CX.stage}" role="group" aria-label="${esc(cap(CX.nouns))}">${items.map(x => `<button type="button" class="gx-bay ${x.unlocked ? "" : "locked"}" data-car="${esc(x.key)}" aria-pressed="${x.key === gxSel}" aria-label="${x.unlocked ? esc(x.name) : "Locked " + esc(CX.noun)}">
+      ${x.unlocked && !seen.includes(x.key) && x.key !== c.key ? `<span class="gx-new">New</span>` : ""}
+      <span class="gx-art">${x.art(!x.unlocked)}</span><b>${x.unlocked ? esc(x.name) : "🔒 Locked"}</b><small>${x.unlocked || isCar ? (x.lesson ? "Lesson " + esc(x.lesson.id) : "") : esc(cap(CX.noun)) + " " + esc(x.num)}</small></button>`).join("")}</div>
+    ${nextUp && got.length ? `<p class="gx-note">Next ${esc(CX.noun)}: pass ${nextUp.lesson ? `<b>Lesson ${esc(nextUp.lesson.id)} · ${esc(nextUp.lesson.titulo)}</b>` : "your next lesson"}.</p>` : ""}
+    ${!nextUp ? `<p class="gx-note">You've collected every ${esc(CX.noun)}. New ones are on the way!</p>` : ""}`;
   box.querySelectorAll("[data-car]").forEach(b => b.onclick = () => { gxSel = b.dataset.car; drawGarage(); });
   const sy = document.getElementById("gxSay"); if (sy) sy.onclick = () => G.say(c.about);
+  function cap(x) { return x[0].toUpperCase() + x.slice(1); }
 }
 
 function render() {
@@ -238,7 +251,7 @@ function render() {
     <div class="card stat"><span class="v">${st.avg == null ? "—" : st.avg + "%"}</span><span class="l">Average final quiz</span></div>
   </div>`}
 
-  ${setup || !G.garage || !G.garage.on() || !G.garage.list().length ? "" : `<section class="panel" id="garage" style="scroll-margin-top:80px" aria-labelledby="gxT"></section>`}
+  ${setup || !G.collection || !G.collection.current() || !G.collection.current().list().length ? "" : `<section class="panel" id="garage" style="scroll-margin-top:80px" aria-labelledby="gxT"></section>`}
 
   ${setup ? "" : (() => { const bs = G.badges.earned(), got = bs.filter(b => b.at).length; return `<section class="panel" id="badges" style="scroll-margin-top:80px" aria-labelledby="bdT">
     <div style="display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap"><div><h2 id="bdT">Badges</h2><p class="muted" style="font-size:.9em">${got} of ${bs.length} earned. Keep practicing to unlock the rest.</p></div></div>
