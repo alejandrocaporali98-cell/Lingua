@@ -76,6 +76,7 @@
   if (!D) return bad("Este enlace de ficha no es válido", "No hagas ninguna transferencia con él. Pide una ficha nueva a tu maestro.");
   doc.innerHTML = `<p class="missing">Verificando la ficha…</p>`;
   // The folio, names, amount and bank details come from the database, never from the link
+  if (typeof window.linguaVerify !== "function") return bad("No pudimos verificar la ficha", "Tu navegador bloqueó una parte de la página. Ábrela en una pestaña normal (no privada) o en otro navegador.", true);
   window.linguaVerify("slip", D.t).then(v => {
     if (v.state === "error") return bad("No pudimos verificar la ficha", "Revisa tu conexión a internet y vuelve a abrir el enlace. No transfieras hasta que la ficha se vea completa.", true);
     const S = v.data;

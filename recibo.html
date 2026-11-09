@@ -63,6 +63,7 @@
   if (!D) return bad("Este enlace de recibo no es válido", "Pide el recibo de nuevo a tu maestro.");
   doc.innerHTML = `<p class="missing">Verificando el recibo…</p>`;
   // Amount, date, names and payment details come from the database, never from the link
+  if (typeof window.linguaVerify !== "function") return bad("No pudimos verificar el recibo", "Tu navegador bloqueó una parte de la página. Ábrela en una pestaña normal (no privada) o en otro navegador.", true);
   window.linguaVerify("receipt", D.t).then(v => {
     if (v.state === "error") return bad("No pudimos verificar el recibo", "Revisa tu conexión a internet y vuelve a abrir el enlace.", true);
     const S = v.data;

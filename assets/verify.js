@@ -3,16 +3,23 @@
 // bank details, so a link someone edits (or makes up) shows a warning instead of a fake slip.
 (function () {
   const cfg = () => (window.LINGUA && window.LINGUA.cloud) || {};
+  // POST with a time limit (a stuck connection or a privacy blocker never leaves the page waiting forever)
+  // and one automatic retry for network hiccups.
+  async function post(url, key, body, tries) {
+    for (let i = 0; i < (tries || 2); i++) {
+      const ctl = typeof AbortController === "function" ? new AbortController() : null, timer = ctl && setTimeout(() => ctl.abort(), 12000);
+      try {
+        const r = await fetch(url, { method: "POST", cache: "no-store", headers: { apikey: key, "Content-Type": "application/json" }, body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined });
+        clearTimeout(timer); return r;
+      } catch (e) { clearTimeout(timer); if (i === (tries || 2) - 1) throw e; await new Promise(res => setTimeout(res, 1200)); }
+    }
+  }
   window.linguaVerify = async function (kind, token) {
     const c = cfg();
     if (!c.url || !c.key) return { state: "off" }; // site running without accounts (only on a test copy)
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token || "")) return { state: "invalid" };
     try {
-      const r = await fetch(c.url + "/rest/v1/rpc/" + (kind === "slip" ? "slip_check" : "receipt_check"), {
-        method: "POST", cache: "no-store",
-        headers: { apikey: c.key, "Content-Type": "application/json" },
-        body: JSON.stringify({ t: token })
-      });
+      const r = await post(c.url + "/rest/v1/rpc/" + (kind === "slip" ? "slip_check" : "receipt_check"), c.key, { t: token });
       if (!r.ok) return { state: "error" };
       const data = await r.json();
       return data && typeof data === "object" ? { state: "ok", data } : { state: "invalid" };
@@ -23,11 +30,7 @@
     const c = cfg();
     if (!c.url || !c.key) return { state: "off" };
     try {
-      const r = await fetch(c.url + "/rest/v1/rpc/" + name, {
-        method: "POST", cache: "no-store",
-        headers: { apikey: c.key, "Content-Type": "application/json" },
-        body: JSON.stringify(args || {})
-      });
+      const r = await post(c.url + "/rest/v1/rpc/" + name, c.key, args || {});
       if (!r.ok) return { state: "error", status: r.status };
       const data = await r.json();
       return { state: "ok", data };
