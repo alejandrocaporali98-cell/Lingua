@@ -70,10 +70,10 @@ jobs:
           path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
-      - name: Cloudflare secrets present? (names only, never values)
+      - name: Check the Cloudflare secrets
         run: |
-          [ -n "$CF_TOKEN" ] && echo "CLOUDFLARE_API_TOKEN: set" || echo "CLOUDFLARE_API_TOKEN: missing"
-          [ -n "$CF_ACCOUNT" ] && echo "CLOUDFLARE_ACCOUNT_ID: set" || echo "CLOUDFLARE_ACCOUNT_ID: missing"
+          if [ -n "$CF_TOKEN" ]; then echo "token set"; else echo "token missing"; fi
+          if [ -n "$CF_ACCOUNT" ]; then echo "account set"; else echo "account missing"; fi
       - name: Also publish to Cloudflare Pages (backup address, lingua-clases.pages.dev)
         if: env.CF_TOKEN != '' && env.CF_ACCOUNT != ''
         env:
