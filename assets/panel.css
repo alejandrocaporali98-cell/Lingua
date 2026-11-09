@@ -417,3 +417,28 @@ a.li { color: inherit; text-decoration: none; } a.li:hover { background: var(--b
 .rp-docprev { padding: 0; overflow: hidden; }
 .rp-docprev .card-head { padding: 16px 20px 6px; }
 .rp-docprev iframe { display: block; width: 100%; height: 1400px; border: 0; background: #e9e9ec; }
+
+/* Lesson plan (teacher) */
+.rm { gap: 16px; margin-bottom: 16px; }
+.rm-h { display: flex; justify-content: space-between; gap: 12px; align-items: start; flex-wrap: wrap; }
+.rm-h h2 { font-size: 1.15em; font-weight: 800; }
+.rm-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1180px) { .rm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .rm-grid { grid-template-columns: 1fr; } }
+.rm-card { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; align-content: start; background: var(--surface); }
+.rm-top { background: #f2f3f5; border-bottom: 3px solid var(--c); padding: 12px 14px; display: grid; gap: 2px; }
+.rm-top span { font-size: .7em; font-weight: 800; letter-spacing: .08em; color: var(--mute); }
+.rm-top b { font-size: 1.05em; font-weight: 800; color: #111; }
+.rm-body { padding: 12px 14px 14px; display: grid; gap: 10px; font-size: .9em; }
+.rm-tags { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.chip.rm-new { background: #fdf3c4; color: #6b4e00; border-color: #f3dd7a; }
+.rm-when { font-size: .85em; font-weight: 600; }
+.rm-gr { display: grid; gap: 2px; padding: 8px 10px; border-radius: 8px; background: var(--bg); }
+.rm-gr i { font-style: normal; color: var(--mute); font-size: .92em; }
+.rm-words { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.rm-words span { border: 1px solid var(--line); border-radius: 99px; padding: 2px 9px; font-size: .86em; font-weight: 600; }
+.rm-body details summary { cursor: pointer; font-weight: 700; }
+.rm-body ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .rm-top { background: #1b2130; } :root:not([data-theme="light"]) .rm-top b { color: #f1f3f7; } }
+:root[data-theme="dark"] .rm-top { background: #1b2130; }
+:root[data-theme="dark"] .rm-top b { color: #f1f3f7; }

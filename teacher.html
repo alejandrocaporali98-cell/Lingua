@@ -37,6 +37,7 @@
 <script src="assets/placement-data.js"></script>
 <script src="assets/muestra-data.js"></script>
 <script src="assets/informe.js"></script>
+<script src="assets/roadmap.js"></script>
 <link rel="stylesheet" href="assets/panel.css">
 </head>
 <body>
@@ -54,6 +55,7 @@
       <a href="#schedule" data-v="schedule"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Schedule</a>
       <a href="#reports" data-v="reports"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Reports</a>
       <a href="#billing" data-v="billing"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>Billing</a>
+      <a href="#plan" data-v="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h7M9 11h5"/></svg>Lesson plan</a>
       <a href="#trials" data-v="trials"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.4 5.6 6.1.5-4.6 4 1.4 6-5.3-3.2-5.3 3.2 1.4-6-4.6-4 6.1-.5z"/></svg>Trial classes</a>
       <a href="#accounts" data-v="accounts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Accounts</a>
       <span class="adm-sep"></span>
@@ -200,15 +202,15 @@ function skeleton(view) {
   else body = card(rows(4), "30%") + card(rows(3), "40%");
   return `<div class="skl" aria-busy="true" aria-label="Loading">${head}${body}</div>`;
 }
-function viewOfHash() { const h = (location.hash || "#today").slice(1).split("/")[0]; return h === "s" ? "student" : (["today", "students", "schedule", "reports", "billing", "trials", "accounts"].includes(h) ? h : "today"); }
+function viewOfHash() { const h = (location.hash || "#today").slice(1).split("/")[0]; return h === "s" ? "student" : (["today", "students", "schedule", "reports", "billing", "plan", "trials", "accounts"].includes(h) ? h : "today"); }
 { const v = viewOfHash(); app.innerHTML = skeleton(v); document.getElementById("mtitle").textContent = v[0].toUpperCase() + v.slice(1);
   document.querySelectorAll("#admNav [data-v]").forEach(a => a.classList.toggle("on", a.dataset.v === v)); }
 
 function render() {
   const h = (location.hash || "#today").slice(1).split("/");
-  const v = h[0] === "s" ? "students" : (["today", "students", "schedule", "reports", "billing", "trials", "accounts"].includes(h[0]) ? h[0] : "today");
+  const v = h[0] === "s" ? "students" : (["today", "students", "schedule", "reports", "billing", "plan", "trials", "accounts"].includes(h[0]) ? h[0] : "today");
   document.querySelectorAll("#admNav [data-v]").forEach(a => a.classList.toggle("on", a.dataset.v === v));
-  document.getElementById("mtitle").textContent = h[0] === "s" ? "Student" : v === "trials" ? "Trial classes" : v[0].toUpperCase() + v.slice(1);
+  document.getElementById("mtitle").textContent = h[0] === "s" ? "Student" : v === "trials" ? "Trial classes" : v === "plan" ? "Lesson plan" : v[0].toUpperCase() + v.slice(1);
   const me = G.profile || {}; document.getElementById("me").innerHTML = `<b>${esc(me.display_name || G.maestroNombre || "Teacher")}</b><small>Teacher</small>`;
   if (h[0] === "s" && h[1]) { const s = students().find(x => x.p.id === h[1]); if (s) { SEL = s.p.id; return studentView(s, h[2] || "overview"); } }
   if (v === "students") return listView();
@@ -217,6 +219,7 @@ function render() {
   if (v === "reports") return reportsView(h[1], h[2]);
   if (v === "accounts") return accountsView(h[1]);
   if (v === "trials") return trialsView();
+  if (v === "plan") return planView();
   return todayView();
 }
 function topBar(title, sub, actions) {
@@ -1661,6 +1664,31 @@ function trialState(t) {
   if (t.intake_at) return ["Form answered", "good"];
   return ["Waiting for the form", ""];
 }
+// ── Lesson plan: the next lessons for each student (assets/roadmap.js), ready before class day ──
+function planView() {
+  const RM = window.LINGUA_ROADMAP || [], built = new Set(lessons.map(l => l.id));
+  const all = RM.flatMap(r => r.lessons), ready = all.filter(l => built.has(l.id)).length;
+  const stu = name => students().find(s => (s.p.display_name || "").toLowerCase().split(" ")[0] === name.toLowerCase());
+  const upcoming = s => !s || !DATA.classes ? [] : DATA.classes.filter(c => c.student_id === s.p.id && c.status === "scheduled" && new Date(c.starts_at) > new Date()).sort((a, b) => a.starts_at.localeCompare(b.starts_at));
+  const when = c => new Date(c.starts_at).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  app.innerHTML = topBar("Lesson plan", `${all.length} lessons planned · ${ready} ready · ${all.length - ready} to build`) + `
+    <p class="muted" style="max-width:720px">The next four lessons for each student. Tell Claude which ones to build (or what to change), and they turn <b>Ready</b> here as soon as they're on the platform.</p>
+    ${RM.map(r => { const s = stu(r.student), up = upcoming(s); let k = 0; return `<section class="panel rm">
+      <div class="rm-h"><div><h2>${esc(r.student)} <span class="muted" style="font-weight:600">· ${esc(r.level)} · ${r.min} min</span></h2><p class="muted">${esc(r.why)}</p></div>
+        ${s ? `<a class="btn sm" href="#s/${s.p.id}/lessons">Lessons for ${esc(r.student)}</a>` : ""}</div>
+      <div class="rm-grid">${r.lessons.map(l => { const ok = built.has(l.id), date = !ok && up[k] ? up[k++] : null; return `<article class="rm-card" data-plan="${esc(l.id)}">
+        <div class="rm-top" style="--c:${l.color}"><span>LESSON ${esc(l.id)}</span><b>${esc(l.titulo)}</b></div>
+        <div class="rm-body">
+          <div class="rm-tags"><span class="chip ${ok ? "ok" : "rm-new"}">${ok ? "Ready" : "Planned"}</span>${date ? `<span class="muted rm-when">For ${esc(when(date))}</span>` : ""}</div>
+          <p class="rm-tema">${esc(l.tema)}</p>
+          <div class="rm-gr"><span class="eyebrow">Grammar</span><b>${esc(l.grammar[0])}</b><i>${esc(l.grammar[1])}</i></div>
+          <div><span class="eyebrow">Vocabulary</span><div class="rm-words">${l.words.map(w => `<span>${esc(w)}</span>`).join("")}</div></div>
+          <details><summary>Talk questions</summary><ul>${l.talk.map(q => `<li>${esc(q)}</li>`).join("")}</ul></details>
+        </div></article>`; }).join("")}</div>
+    </section>`; }).join("")}`;
+  wireTop();
+}
+
 function trialsView() {
   const list = DATA.trials || [];
   app.innerHTML = topBar("Trial classes", "A free first class: the person fills a short form, you give the class here, and they get a report in Spanish.", `<button class="btn primary sm" id="newTrial" ${DATA.trials === null ? "disabled" : ""}>+ New trial class</button>`) + `

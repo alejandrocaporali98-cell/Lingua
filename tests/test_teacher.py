@@ -16,10 +16,17 @@ def test():
         env.DB["classes"]["c1"] = {"id": "c1", "student_id": ada, "starts_at": now_iso(dt.timedelta(hours=2)), "status": "scheduled", "minutes": 60}
 
         # every view opens without errors
-        for v in ["#today", "#students", "#schedule", "#reports", "#billing", "#billing/payments/all", "#billing/bank", "#trials", "#accounts"] + \
+        for v in ["#today", "#students", "#schedule", "#reports", "#billing", "#billing/payments/all", "#billing/bank", "#plan", "#trials", "#accounts"] + \
                  [f"#s/{ada}/{t}" for t in ["overview", "lessons", "classes", "homework", "voice", "billing", "reports"]]:
             env.fresh(T, "teacher.html" + v, 900)
         check(not env.errs, "all teacher views open without errors " + "; ".join(env.errs[:3]))
+
+        # lesson plan: the next lessons per student, Ready once built, next class date on the first planned one
+        env.fresh(T, "teacher.html#plan", 900)
+        cards = T.locator(".rm-card").count(); planned = T.locator(".rm-card .chip.rm-new").count()
+        check(cards >= 16 and planned >= 1, f"lesson plan shows {cards} lessons, {planned} still to build")
+        check(T.locator(".rm-card .rm-when").count() >= 1 and "For " in T.inner_text(".rm-card .rm-when"), "the next planned lesson shows the date of the next class")
+        T.screenshot(path=os.path.join(OUT, "lesson_plan.png"), full_page=True)
 
         # class link → WhatsApp invitation
         env.fresh(T, f"teacher.html#s/{ada}"); T.wait_for_selector("#ctL")
