@@ -105,6 +105,55 @@ def test():
         env.fresh(T, f"teacher.html#s/{ada}", 1500)
         check("Privacy notice: accepted" in T.inner_text("body"), "the teacher sees that the notice was accepted")
 
+        # class dictionary: next to Notes in class mode; look up, translate, add to today's notes
+        env.DB["classes"]["cnow"] = {"id": "cnow", "student_id": ada, "starts_at": now_iso(), "status": "scheduled", "minutes": 60, "notes": "Good warm-up"}
+        DICT = [{"word": "overtake", "phonetic": "/ˌəʊvəˈteɪk/", "meanings": [{"partOfSpeech": "verb", "synonyms": ["pass"], "definitions": [
+            {"definition": "To pass a more slowly moving vehicle.", "example": "He overtook the red car on the straight."}, {"definition": "To become greater than something.", "example": ""}]}]}]
+        TRS = {("overtake", "en|es"): ["adelantar", [("adelantar", "80"), ("rebasar", "74")]], ("rebasar", "es|en"): ["overtake", [("overtake", "70")]]}
+        hits = []
+        def fake_dict(route):
+            hits.append(route.request.url); w = up.unquote(route.request.url.rsplit("/", 1)[1])
+            route.fulfill(status=200 if w == "overtake" else 404, headers={"Access-Control-Allow-Origin": "*"}, content_type="application/json",
+                          body=json.dumps(DICT if w == "overtake" else {"title": "No Definitions Found"}))
+        def fake_tr(route):
+            qs = up.parse_qs(up.urlparse(route.request.url).query); key = (qs["q"][0], qs["langpair"][0]); hits.append(route.request.url)
+            main, alts = TRS.get(key, [qs["q"][0], []])
+            route.fulfill(status=200, headers={"Access-Control-Allow-Origin": "*"}, content_type="application/json",
+                          body=json.dumps({"responseData": {"translatedText": main, "match": 1}, "responseStatus": 200,
+                                           "matches": [{"segment": key[0], "translation": t, "quality": q} for t, q in alts]}))
+        T.context.route("https://api.dictionaryapi.dev/**", fake_dict); T.context.route("https://api.mymemory.translated.net/**", fake_tr)
+        env.fresh(T, "teacher.html#today", 800)
+        T.evaluate(f"LINGUA.actAs({{ id: '{ada}', name: 'Ada Canavati' }}, 'clases/leccion-07.html')"); T.wait_for_selector("#classBar #dictBtn", timeout=8000)
+        btns = T.locator("#classBar .btn").all_inner_texts()
+        check([b.split()[0] for b in btns][:3] == ["Dictionary", "Notes", "End"], f"class mode shows Dictionary right next to Notes ({btns})")
+        T.click("#dictBtn"); T.wait_for_selector("#cdict #dxQ")
+        T.fill("#dxQ", "overtake"); T.press("#dxQ", "Enter"); T.wait_for_selector("#cdict .dx-def", timeout=5000)
+        txt = T.inner_text("#cdict")
+        check("To pass a more slowly moving vehicle." in txt and "adelantar" in txt and "rebasar" in txt and "/ˌəʊvəˈteɪk/" in txt, "a word shows its meaning, pronunciation and translations")
+        check(T.input_value("#dxLine") == "overtake (verb) · adelantar — To pass a more slowly moving vehicle.", "the note line is ready to add")
+        T.click(".dx-chip:has-text('rebasar')")
+        check("rebasar" in T.input_value("#dxLine"), "choosing another translation changes the note line")
+        T.click("#dxAdd"); T.wait_for_timeout(800)
+        check(env.DB["classes"]["cnow"].get("notes") == "Good warm-up\novertake (verb) · rebasar — To pass a more slowly moving vehicle." and "Added" in T.inner_text("#dxOut"),
+              "Add to notes adds the word to today's class notes, after what was there")
+        T.screenshot(path=os.path.join(OUT, "dictionary.png"))
+        T.fill("#dxQ", "rebasar"); T.press("#dxQ", "Enter"); T.wait_for_timeout(800)
+        check(T.locator("[data-dir='es'].on").count() == 1 and T.inner_text("#cdict .dx-w") == "overtake" and "rebasar" in T.inner_text("#cdict .dx-from"),
+              "Spanish → English finds the English word and its meaning")
+        T.fill("#dxQ", "xqzt"); T.click("[data-dir='en']"); T.wait_for_timeout(800)
+        check("No results" in T.inner_text("#dxRes"), "a word that doesn't exist says so")
+        T.click("#notesBtn"); T.wait_for_selector("#cnText")
+        check(T.locator("#cdict").is_hidden() and "rebasar" in T.input_value("#cnText"), "Notes opens in its place and shows the added word")
+        T.keyboard.press("Escape"); T.locator("h1").first.click(); T.keyboard.press("d"); T.wait_for_timeout(300)
+        check(T.locator("#cdict").is_visible(), "the D key opens the dictionary")
+        T.set_viewport_size({"width": 390, "height": 844}); T.fill("#dxQ", "overtake"); T.press("#dxQ", "Enter"); T.wait_for_timeout(600)
+        T.screenshot(path=os.path.join(OUT, "dictionary_phone.png"))
+        check(T.evaluate("document.querySelector('#cdict').getBoundingClientRect().width") <= 390, "the dictionary fits a phone")
+        T.set_viewport_size({"width": 1366, "height": 900}); T.wait_for_timeout(200)
+        check(all("api." in h for h in hits) and not any("ada" in h.lower() for h in hits), "only the searched words are sent, never the student's name")
+        T.evaluate("LINGUA.actAs(null)"); T.wait_for_url("**/teacher.html**"); T.wait_for_timeout(800)
+        del env.DB["classes"]["cnow"]
+
         # new version notice
         open(os.path.join(env.site, "version.json"), "w").write('{"build": "def5678"}')
         env.fresh(T, "teacher.html#today", 5200)
