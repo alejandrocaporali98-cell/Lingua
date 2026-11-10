@@ -19,6 +19,9 @@ window.LINGUA = {
       { id: "05", archivo: "clases/leccion-05.html", titulo: "Matchday", tema: "Tell the story of a match with the past simple.", nivel: "A2", min: 60, icono: "ball", color: "#15803d", estado: "lista", secs: 7 },
       { id: "06", archivo: "clases/leccion-06.html", titulo: "Level Up", tema: "Compare games and cars: faster, better, the best.", nivel: "A2–B1", min: 60, icono: "pad", color: "#be123c", estado: "lista", secs: 7 }
     ]},
+    { titulo: "Module 3 · Race weekend", owner: "Emiliano", lecciones: [
+      { id: "07", archivo: "clases/leccion-07.html", titulo: "Pit Stop", tema: "Say what you can and can't do: pit crews, race radio and the safety car.", nivel: "A2", min: 60, icono: "helmet", color: "#c2410c", estado: "lista", secs: 9 }
+    ]},
     // ── Ada (in lesson order; new lessons go at the end of the last module) ──
     { titulo: "Module 1 · Getting started", owner: "Ada", lecciones: [
       {"id": "101", "archivo": "clases/leccion-101.html", "titulo": "Talking About Music", "tema": "Talking about music is one of the easiest ways to get fluent — you already have opinions.", "nivel": "B1", "min": 60, "icono": "music", "color": "#2346d0", "estado": "lista", "secs": 7},
@@ -89,7 +92,8 @@ window.LINGUA = {
     { titulo: "C1 · Film", owner: "Derek", lecciones: [
       {"id": "301", "archivo": "clases/leccion-301.html", "titulo": "Talking Like a Filmmaker", "tema": "Directors don't say a scene was \"good\" — they talk about pacing, framing and what lands.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 10},
       {"id": "302", "archivo": "clases/leccion-302.html", "titulo": "They Don't Make Them Like That", "tema": "Why classic films still hold up — and how to talk about the way they were made.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 11},
-      {"id": "303", "archivo": "clases/leccion-303.html", "titulo": "From Script to Screen", "tema": "Everyone has an idea for a film. The hard part is everything after that.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 11}
+      {"id": "303", "archivo": "clases/leccion-303.html", "titulo": "From Script to Screen", "tema": "Everyone has an idea for a film. The hard part is everything after that.", "nivel": "C1", "min": 90, "icono": "film", "color": "#be123c", "estado": "lista", "secs": 11},
+      {"id": "304", "archivo": "clases/leccion-304.html", "titulo": "On Set", "tema": "Rolling, speed, action. A film set is fifty people doing fifty jobs at once.", "nivel": "C1", "min": 90, "icono": "film", "color": "#1f2937", "estado": "lista", "secs": 11}
     ]},
     { titulo: "C1 · Music", owner: "Erick", lecciones: [
       {"id": "311", "archivo": "clases/leccion-311.html", "titulo": "Talking Shop: Sound, Gear & Playing", "tema": "Musicians don't say a song is \"nice\" — they talk about tone, groove and what makes it hit.", "nivel": "C1", "min": 90, "icono": "guitar", "color": "#0f766e", "estado": "lista", "secs": 10},

@@ -83,7 +83,10 @@
       learned: "The past simple" },
     "06": { name: "Hypercar", kind: "Hypercar", shape: "hyper", body: "#e8590c", accent: "#17191d", num: "06",
       hp: 1000, top: 350, zero: 2.4, about: "It's faster than the rally car and lighter than the classic racer. It's the fastest car in my garage!",
-      learned: "Comparing: faster, the fastest" }
+      learned: "Comparing: faster, the fastest" },
+    "07": { name: "GT Racer", kind: "GT race car", shape: "coupe", body: "#c2410c", accent: "#f5f5f2", num: "07",
+      hp: 550, top: 290, zero: 3.2, about: "It can go 290 km/h, and its crew can change four tyres in seconds. But it can't go fast in the pit lane!",
+      learned: "can / can't" }
   };
   const MAX = { hp: 1000, top: 350 };
 

@@ -123,13 +123,13 @@ def test():
         # Garage (racing style): one car per Emiliano lesson, unlocked by passing it
         env.fresh(pg, "perfil.html", 300)
         gx = pg.evaluate("window.LINGUA.garage ? Object.keys(LINGUA.garage.CARS) : []")
-        racing = [l for l in ["01", "02", "03", "04", "05", "06"] if l in gx and '"../assets/garage.js"' in open(os.path.join(ROOT, "clases", f"leccion-{l}.html")).read()]
-        check(len(racing) == 6, f"each racing lesson has a car and loads the garage ({len(racing)}/6)")
+        racing = [l for l in ["01", "02", "03", "04", "05", "06", "07"] if l in gx and '"../assets/garage.js"' in open(os.path.join(ROOT, "clases", f"leccion-{l}.html")).read()]
+        check(len(racing) == 7, f"each racing lesson has a car and loads the garage ({len(racing)}/7)")
         pg.evaluate("""() => { const s = (k, v) => localStorage.setItem('lingua.' + k, JSON.stringify(v));
           s('__settings', { lessons: ['01','02','03','04','05','06'], theme: 'racing' });
           ['01','02'].forEach(id => s('diploma.' + id, { ok: 15, n: 15, at: '2026-11-01T12:00:00Z' })); }""")
         env.fresh(pg, "perfil.html", 700)
-        check(pg.locator("#garage").count() == 1 and "2 / 6 cars" in pg.inner_text("#garage .gx-count"), "the profile shows the garage with 2 of 6 cars")
+        check(pg.locator("#garage").count() == 1 and "2 / 6 cars" in pg.inner_text("#garage .gx-count"), "the profile shows the garage with 2 of 6 cars (only assigned lessons)")
         check("Turbo Coupe" in pg.inner_text("#garage .gx-info"), "the newest car is shown first")
         pg.locator('[data-car="05"]').click(); pg.wait_for_timeout(150)
         check("Mystery car" in pg.inner_text("#garage .gx-info") and pg.locator("#garage .gx-info a[href*='leccion-05']").count() == 1, "a locked car links to its lesson")
