@@ -52,7 +52,12 @@
   .item small { display: block; color: var(--mute); font-size: .82em; font-weight: 500; margin-top: 2px; }
   .tag { font-size: .7em; font-weight: 800; padding: 2px 7px; border-radius: 999px; margin-right: 6px; vertical-align: 1px; }
   .tag.saved { background: var(--badge-soft); color: var(--dev); border: 1px solid var(--badge-line); }
-  .tag.mistake { background: var(--bad-soft); color: var(--bad-ink); }
+  .tag.mistake, .tag.fix { background: var(--bad-soft); color: var(--bad-ink); }
+  .tag.word { background: var(--brand-soft); color: var(--brand); }
+  .item.fix { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .item.fix s { display: block; color: var(--bad-ink); font-size: .92em; text-decoration-thickness: 1.5px; }
+  .item.fix .p { color: var(--ok-ink); }
+  .item small .ok { color: var(--ok-ink); font-weight: 800; }
   .lhead { display: flex; align-items: center; gap: 10px; }
   .lhead i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
   .x { width: 32px; height: 32px; border-radius: 50%; border: 0; background: transparent; color: var(--mute); display: grid; place-items: center; }
@@ -80,44 +85,59 @@ document.getElementById("logo").innerHTML = G.logo;
 const lessons = G.modulos.flatMap(m => m.lecciones), byId = Object.fromEntries(lessons.map(l => [l.id, l]));
 const full = q => /___/.test(q.p) ? q.p.replace("___", q.a) : q.a;
 const show = q => /___/.test(q.p) ? esc(q.p).replace("___", `<b>${esc(q.a)}</b>`) : `${esc(q.p)} → <b>${esc(q.a)}</b>`;
+// Questions that came from class (the teacher's dictionary and corrections) have their own groups
+const FROM = { words: "Words from your classes", fixes: "Corrections from your classes" };
+const title = l => FROM[l] || "Lesson " + l + (byId[l] ? " · " + byId[l].titulo : "");
+const tag = q => q.l === "words" ? ["word", "New word"] : q.l === "fixes" ? ["fix", "Correction"] : q.src === "saved" ? ["saved", "★ Saved"] : ["mistake", "Mistake"];
 const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 function list() {
   const items = G.review.list(), learned = G.store.get("reviewLearned", 0);
-  const mistakes = items.filter(q => q.src !== "saved").length, saved = items.length - mistakes;
+  const mistakes = items.filter(q => tag(q)[0] === "mistake" || tag(q)[0] === "fix").length, saved = items.length - mistakes;
+  const fixes = G.fixes ? G.fixes.list() : [];
   const groups = {}; items.forEach(q => (groups[q.l] = groups[q.l] || []).push(q));
   app.innerHTML = `
     <div class="page-head" style="display:grid;gap:4px"><span class="eyebrow">Practice</span><h1>Review</h1>
-      <p class="muted">Questions you missed in a quiz and the ones you saved with ☆. Get one right two times in a row and it leaves the list.</p></div>
+      <p class="muted">Questions you missed in a quiz, the ones you saved with ☆, and new words and corrections from your classes. Get one right two times in a row and it leaves the list.</p></div>
     <div class="kpis">
       <div class="card kpi"><span class="v">${items.length}</span><span class="l">To review</span></div>
-      <div class="card kpi"><span class="v">${mistakes}<span class="muted" style="font-size:.5em"> · ${saved} saved</span></span><span class="l">Mistakes</span></div>
+      <div class="card kpi"><span class="v">${mistakes}<span class="muted" style="font-size:.5em"> · ${saved} other</span></span><span class="l">Mistakes</span></div>
       <div class="card kpi"><span class="v">${learned}</span><span class="l">Learned so far</span></div>
     </div>
     ${items.length ? `
     <div class="panel start"><div><h2>Ready for a quick round?</h2><p class="muted">${Math.min(10, items.length)} questions · about ${Math.max(2, Math.round(Math.min(10, items.length) * .4))} minutes · +3 XP for each right answer</p></div>
       <button class="btn primary" id="go">Practice now</button></div>
     ${Object.keys(groups).sort().map(l => `<section class="panel">
-      <div class="lhead"><i style="background:${(byId[l] || {}).color || "var(--brand)"}"></i><h2>Lesson ${esc(l)}${byId[l] ? " · " + byId[l].titulo : ""}</h2><span class="muted" style="font-size:.85em">${groups[l].length}</span></div>
+      <div class="lhead"><i style="background:${(byId[l] || {}).color || "var(--brand)"}"></i><h2>${esc(title(l))}</h2><span class="muted" style="font-size:.85em">${groups[l].length}</span></div>
       <div>${groups[l].map(q => `<div class="item">
-        <div style="min-width:0"><span class="tag ${q.src === "saved" ? "saved" : "mistake"}">${q.src === "saved" ? "★ Saved" : "Mistake"}</span><span class="p">${show(q)}</span><small>${esc(q.why || "")}</small>
+        <div style="min-width:0"><span class="tag ${tag(q)[0]}">${tag(q)[1]}</span><span class="p">${show(q)}</span><small>${esc(q.why || "")}</small>
           <span class="dots" title="Right answers in a row" style="margin-top:6px"><i class="${q.right >= 1 ? "on" : ""}"></i><i></i></span></div>
         ${G.sayBtn(full(q))}
         <button class="x" data-rm="${q.id}" aria-label="Remove from review" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>`).join("")}</div></section>`).join("")}`
     : `<div class="panel"><div class="empty"><span class="big">${G.ico("check", 40)}</span><h2>Nothing to review</h2><p class="muted">When you miss a quiz question, or save one with ☆, it shows up here.</p><a class="btn" href="index.html">Go to my lessons</a></div></div>`}`;
+  if (fixes.length) app.insertAdjacentHTML("beforeend", `<section class="panel" id="myFixes">
+      <div class="lhead"><i style="background:var(--bad)"></i><h2>My mistakes</h2><span class="muted" style="font-size:.85em">${fixes.length}</span></div>
+      <p class="muted" style="margin-top:-8px">Things you said in class and the better way to say them. Practise them until they feel natural.</p>
+      <div>${fixes.map(f => `<div class="item fix">
+        <div style="min-width:0"><s>${esc(f.wrong)}</s><span class="p">${esc(f.right)}</span>${f.why ? `<small>${esc(f.why)}</small>` : ""}
+          <small>${new Date(f.at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}${G.fixes.learned(f.id) ? ' · <b class="ok">Learned ✓</b>' : ""}</small></div>
+        ${G.sayBtn(f.right)}${G.micBtn ? G.micBtn(f.right, "Say it") : ""}</div>`).join("")}</div></section>`);
   const go = document.getElementById("go"); if (go) go.onclick = () => practice(shuffle(items).slice(0, 10));
   app.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { G.review.remove(b.dataset.rm); list(); });
 }
 
 function practice(qs) {
+  // Words from class may have few wrong options: top them up with other words the student knows
+  const pool = G.review.list().filter(q => q.l === "words").map(q => q.a).concat(G.classWords ? G.classWords.list().map(w => w.en) : []);
+  qs = qs.map(q => q.l === "words" && (q.w || []).length < 3 ? { ...q, w: [...new Set([...(q.w || []), ...shuffle(pool)].filter(x => x.toLowerCase() !== q.a.toLowerCase()))].slice(0, 3) } : q);
   qs = qs.map(q => { const opts = shuffle([q.a, ...(q.w || [])]); return { ...q, opts, correct: opts.indexOf(q.a) }; });
   let i = 0, sel = null, right = 0, learned = 0;
   function paint() {
     const q = qs[i], shown = sel != null, ok = sel === q.correct;
     app.innerHTML = `<div class="page-head" style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div style="display:grid;gap:4px"><span class="eyebrow">Review round</span><h1 style="font-size:1.5em">Question ${i + 1} of ${qs.length}</h1></div><button class="btn ghost" id="quit">End round</button></div>
       <div class="panel q">
-        <div class="q-head"><span class="eyebrow">Lesson ${esc(q.l)}${byId[q.l] ? " · " + byId[q.l].titulo : ""}</span><div class="steps">${qs.map((_, k) => `<span class="${k === i ? "cur" : k < i ? "ok" : ""}"></span>`).join("")}</div></div>
+        <div class="q-head"><span class="eyebrow">${esc(title(q.l))}</span><div class="steps">${qs.map((_, k) => `<span class="${k === i ? "cur" : k < i ? "ok" : ""}"></span>`).join("")}</div></div>
         <div class="q-title" style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start"><span>${esc(q.p).replace("___", shown ? `<span class="gap" style="min-width:0;padding:0 .2em;border-color:var(--ok)">${esc(q.a)}</span>` : '<span class="gap">&nbsp;</span>')}</span>${G.sayBtn(shown ? full(q) : q.p)}</div>
         <div class="opts">${q.opts.map((t, k) => `<button class="opt ${shown ? (k === q.correct ? "ok" : k === sel ? "bad" : "") : ""}" data-k="${k}" ${shown ? "disabled" : ""}><span class="radio"></span><span>${esc(t)}</span><span class="letter">${k + 1}</span></button>`).join("")}</div>
         ${shown ? `<div class="feedback ${ok ? "ok" : "bad"}"><div><b>${ok ? "Correct!" : "Not quite."}</b>${esc(q.why || "")}</div></div>

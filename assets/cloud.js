@@ -369,12 +369,13 @@
     const first = (L.actingAs.name || "your student").split(/\s+/)[0];
     const bar = document.createElement("div");
     bar.id = "classBar"; bar.className = "classbar";
-    bar.innerHTML = `<span class="dot" aria-hidden="true"></span><span><b>Class mode</b> · You’re teaching ${L.esc ? L.esc(first) : first}. Everything saves to ${L.esc ? L.esc(first) : first}’s account.</span><button type="button" class="btn sm" id="dictBtn" aria-expanded="false" title="Dictionary and translator (D)">Dictionary <span class="kbd">D</span></button><button type="button" class="btn sm" id="notesBtn" aria-expanded="false" title="Class notes (N)">Notes <span class="kbd">N</span></button><button type="button" class="btn sm" id="endClass">End class</button>`;
+    bar.innerHTML = `<span class="dot" aria-hidden="true"></span><span><b>Class mode</b> · You’re teaching ${L.esc ? L.esc(first) : first}. Everything saves to ${L.esc ? L.esc(first) : first}’s account.</span><button type="button" class="btn sm" id="fixBtn" aria-expanded="false" title="Save a correction (F)">Correction <span class="kbd">F</span></button><button type="button" class="btn sm" id="dictBtn" aria-expanded="false" title="Dictionary and translator (D)">Dictionary <span class="kbd">D</span></button><button type="button" class="btn sm" id="notesBtn" aria-expanded="false" title="Class notes (N)">Notes <span class="kbd">N</span></button><button type="button" class="btn sm" id="endClass">End class</button>`;
     bar.querySelector("#endClass").onclick = () => L.actAs(null);
     bar.querySelector("#notesBtn").onclick = () => classNotes();
     const db = bar.querySelector("#dictBtn"); let pick = "";
     db.addEventListener("pointerdown", () => { pick = selected(); });
     db.onclick = () => { openDict(pick || selected()); pick = ""; };
+    bar.querySelector("#fixBtn").onclick = () => tools(() => L.fix.toggle());
     const put = () => { if (!bar.isConnected || document.body.firstElementChild !== bar) document.body.prepend(bar); };
     put();
     new MutationObserver(put).observe(document.body, { childList: true });
@@ -404,13 +405,15 @@
   L.classNotesOpen = () => !!(cn && !cn.hidden);
   // Dictionary drawer: loaded the first time it's opened (assets/dict.js)
   const selected = () => { const t = String((window.getSelection && window.getSelection()) || "").replace(/\s+/g, " ").trim(); return t.length <= 80 ? t : ""; };
-  function openDict(q) {
-    if (L.dict) return L.dict.toggle(q);
+  // Dictionary and Correction live in assets/dict.js, loaded the first time either one is opened
+  function tools(run) {
+    if (L.dict) return run();
     if (document.getElementById("dictJs")) return;
     const sc = document.createElement("script"); sc.id = "dictJs"; sc.src = root + "assets/dict.js";
-    sc.onload = () => L.dict && L.dict.toggle(q);
+    sc.onload = () => L.dict && run();
     document.head.appendChild(sc);
   }
+  const openDict = q => tools(() => L.dict.toggle(q));
   L.openDict = openDict;
   async function classNotes(force) {
     if (!L.actingAs) return;
@@ -423,8 +426,8 @@
       cn.querySelector(".cn-x").onclick = () => classNotes(false);
     }
     const open = force === undefined ? cn.hidden : force;
-    if (open && L.dict) L.dict.close();
-    cn.hidden = !open; document.body.classList.toggle("cn-open", open || !!(L.dict && L.dict.isOpen()));
+    if (open) { if (L.dict) L.dict.close(true); if (L.fix) L.fix.close(true); }
+    cn.hidden = !open; document.body.classList.toggle("cn-open", open || !!(L.dict && L.dict.isOpen()) || !!(L.fix && L.fix.isOpen()));
     const b = document.getElementById("notesBtn"); if (b) b.setAttribute("aria-expanded", open);
     try { sessionStorage.setItem("lingua.cnOpen", open ? "1" : ""); } catch (e) {}
     if (!open || cn.dataset.ready) { if (open) { const t = cn.querySelector("textarea"); t && t.focus(); } return; }
@@ -453,10 +456,12 @@
   document.addEventListener("keydown", e => {
     if (!L.actingAs || e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key === "Escape" && L.dict && L.dict.isOpen()) { L.dict.close(); return; }
+    if (e.key === "Escape" && L.fix && L.fix.isOpen()) { L.fix.close(); return; }
     if (e.key === "Escape" && cn && !cn.hidden) { classNotes(false); return; }
     const tg = e.target; if (tg && (tg.tagName === "INPUT" || tg.tagName === "TEXTAREA" || tg.tagName === "SELECT" || tg.isContentEditable)) return;
     if (e.key === "n" || e.key === "N") { e.preventDefault(); classNotes(); }
     if (e.key === "d" || e.key === "D") { e.preventDefault(); openDict(selected()); }
+    if (e.key === "f" || e.key === "F") { e.preventDefault(); tools(() => L.fix.toggle()); }
   });
   L.signOut = async () => {
     if (timer) { clearTimeout(timer); await push(); }

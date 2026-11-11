@@ -10,6 +10,10 @@
   const LANG = { en: "English", es: "Spanish" };
   const cache = {};
   let el, dir = "en", manual = false, cur = null, seq = 0;
+  const first = () => ((L.actingAs && L.actingAs.name) || "the student").split(/\s+/)[0];
+  const anyOpen = () => (L.dict && L.dict.isOpen()) || (L.fix && L.fix.isOpen()) || (L.classNotesOpen && L.classNotesOpen());
+  // Only one class-mode drawer at a time: Dictionary, Correction or Notes
+  function others(me) { if (me !== "dict" && L.dict) L.dict.close(true); if (me !== "fix" && L.fix) L.fix.close(true); if (L.classNotesOpen && L.classNotesOpen() && L.classNotes) L.classNotes(false); }
 
   async function get(url) {
     const k = url; if (cache[k]) return cache[k];
@@ -72,6 +76,7 @@
         <div class="dx-foot" id="dxFoot" hidden>
           <label class="dx-lab" for="dxLine">Adds this line to today’s notes (you can edit it)</label>
           <textarea id="dxLine" rows="2" maxlength="400"></textarea>
+          <label class="dx-chk"><input type="checkbox" id="dxWords" checked> Also add it to ${esc(first())}’s words and review</label>
           <div class="dx-acts"><button type="button" class="btn primary sm" id="dxAdd">Add to notes</button><span class="cn-hint" id="dxOut"></span></div>
         </div>
       </div>`;
@@ -143,31 +148,107 @@
     const b = el.querySelector("#dxAdd"), out = el.querySelector("#dxOut"), v = el.querySelector("#dxLine").value.replace(/\s+/g, " ").trim();
     if (!v) return;
     b.disabled = true; out.textContent = "Saving…";
+    let words = false;
+    if (cur && L.classWords && el.querySelector("#dxWords").checked) {
+      const d = cur.flat[cur.def], tr = cur.trs ? (dir === "en" ? cur.trs[cur.tr] : cur.q) : "";
+      words = !!L.classWords.add({ en: cur.head, tr, def: d ? d.d : "", ex: d ? d.ex : "", pos: d ? d.pos : "", pool: ((window.CLASE && window.CLASE.flash) || []).map(f => f.en) });
+    }
     const r = L.classNotesAdd ? await L.classNotesAdd(v) : { ok: false, msg: "Notes aren’t available here." };
     b.disabled = false;
-    if (r.ok) { out.innerHTML = `Added ✓ <button type="button" class="dx-link" id="dxSee">See notes</button>`; el.querySelector("#dxSee").onclick = () => L.classNotes && L.classNotes(true); }
-    else out.textContent = r.noClass ? "There’s no class on the schedule today. Open Notes to add one, then try again." : r.msg;
+    if (r.ok) { out.innerHTML = `Added to the notes${words ? " and to " + esc(first()) + "’s words" : ""} ✓ <button type="button" class="dx-link" id="dxSee">See notes</button>`; el.querySelector("#dxSee").onclick = () => L.classNotes && L.classNotes(true); }
+    else out.textContent = (words ? `Added to ${first()}’s words and review. ` : "") + (r.noClass ? "There’s no class on the schedule today, so it isn’t in the notes. Open Notes to add one." : r.msg);
   }
 
   const api = {
     isOpen: () => !!(el && !el.hidden),
     open(q) {
       if (!el) build();
-      if (L.classNotesOpen && L.classNotesOpen() && L.classNotes) L.classNotes(false);
+      others("dict");
       el.hidden = false; document.body.classList.add("cn-open");
       const b = document.getElementById("dictBtn"); if (b) b.setAttribute("aria-expanded", "true");
       const inp = el.querySelector("#dxQ");
       if (q) { manual = false; setDir(/[áéíóúñü¿¡]/i.test(q) ? "es" : "en"); inp.value = q; look(q); }
       inp.focus(); if (!q) inp.select();
     },
-    close() {
+    close(quiet) {
       if (!el || el.hidden) return;
       el.hidden = true;
-      if (!(L.classNotesOpen && L.classNotesOpen())) document.body.classList.remove("cn-open");
-      const b = document.getElementById("dictBtn"); if (b) { b.setAttribute("aria-expanded", "false"); b.focus(); }
+      if (!anyOpen()) document.body.classList.remove("cn-open");
+      const b = document.getElementById("dictBtn"); if (b) { b.setAttribute("aria-expanded", "false"); if (!quiet) b.focus(); }
     },
     toggle(q) { if (q) return api.open(q); api.isOpen() ? api.close() : api.open(); },
     look: q => { api.open(); el.querySelector("#dxQ").value = q; return look(q); }
   };
   L.dict = api;
+
+  // ── Correction: what the student said → the better way. Goes to today's notes and to their review ──
+  let fx;
+  const sameDay = at => new Date(at).toDateString() === new Date().toDateString();
+  function buildFix() {
+    fx = document.createElement("aside"); fx.id = "cfix"; fx.className = "cnotes cdict"; fx.setAttribute("aria-label", "Correction"); fx.hidden = true;
+    fx.innerHTML = `<div class="cn-head"><div><b>Correction</b><small>Saved in today’s notes and in ${esc(first())}’s review</small></div><button type="button" class="cn-x" aria-label="Close correction">×</button></div>
+      <div class="fx-wrap">
+        <form class="fx-form" id="fxForm" autocomplete="off">
+          <label for="fxWrong">What ${esc(first())} said</label>
+          <input id="fxWrong" maxlength="200" placeholder="I can drives very fast." spellcheck="false" enterkeyhint="next">
+          <label for="fxRight">Better</label>
+          <input id="fxRight" maxlength="200" placeholder="I can drive very fast." spellcheck="false" enterkeyhint="next">
+          <label for="fxWhy">Why <span>optional</span></label>
+          <input id="fxWhy" maxlength="120" placeholder="can + verb, no -s" enterkeyhint="done">
+          <div class="dx-acts"><button class="btn primary sm" id="fxSave">Save correction</button><span class="cn-hint" id="fxOut"></span></div>
+          <p class="cn-hint fx-tip">Tip: press Enter to jump to the next box. “Better” starts as a copy, so you only change the wrong part.</p>
+        </form>
+        <div class="fx-list" id="fxList"></div>
+      </div>`;
+    document.body.appendChild(fx);
+    fx.querySelector(".cn-x").onclick = () => fix.close();
+    const w = fx.querySelector("#fxWrong"), r = fx.querySelector("#fxRight"), y = fx.querySelector("#fxWhy");
+    r.addEventListener("focus", () => { if (!r.value.trim() && w.value.trim()) { r.value = w.value.trim(); r.setSelectionRange(r.value.length, r.value.length); } });
+    w.addEventListener("keydown", e => { if (e.key === "Enter" && !(e.metaKey || e.ctrlKey)) { e.preventDefault(); r.focus(); } });
+    r.addEventListener("keydown", e => { if (e.key === "Enter" && !(e.metaKey || e.ctrlKey)) { e.preventDefault(); y.focus(); } });
+    fx.querySelector("#fxForm").onsubmit = e => { e.preventDefault(); saveFix(); };
+    fx.querySelector("#fxList").addEventListener("click", e => {
+      const b = e.target.closest("[data-rm]"); if (!b) return;
+      L.fixes.remove(b.dataset.rm); drawFixes();
+      fx.querySelector("#fxOut").textContent = "Removed from the review. It’s still in Notes if you want to delete it there.";
+    });
+    drawFixes();
+  }
+  function drawFixes() {
+    const list = L.fixes ? L.fixes.list().filter(f => sameDay(f.at)) : [];
+    fx.querySelector("#fxList").innerHTML = list.length ? `<span class="eyebrow">Today · ${list.length}</span>` + list.map(f => `<div class="fx-item">
+        <div><s>${esc(f.wrong)}</s><b>${esc(f.right)}</b>${f.why ? `<small>${esc(f.why)}</small>` : ""}</div>
+        <button type="button" class="cn-x" data-rm="${esc(f.id)}" aria-label="Remove this correction" title="Remove">×</button></div>`).join("") : "";
+  }
+  async function saveFix() {
+    const w = fx.querySelector("#fxWrong"), r = fx.querySelector("#fxRight"), y = fx.querySelector("#fxWhy"), out = fx.querySelector("#fxOut"), b = fx.querySelector("#fxSave");
+    const wrong = w.value.replace(/\s+/g, " ").trim(), right = r.value.replace(/\s+/g, " ").trim(), why = y.value.replace(/\s+/g, " ").trim();
+    if (!wrong || !right) { out.textContent = "Write what they said and the better way."; (wrong ? r : w).focus(); return; }
+    if (wrong.toLowerCase() === right.toLowerCase()) { out.textContent = "“Better” is the same as what they said. Change the wrong part."; r.focus(); return; }
+    b.disabled = true; out.textContent = "Saving…";
+    const f = L.fixes && L.fixes.add({ wrong, right, why });
+    const n = L.classNotesAdd ? await L.classNotesAdd(`Correction: “${wrong}” → “${right}”${why ? " (" + why + ")" : ""}`) : { ok: false, msg: "" };
+    b.disabled = false;
+    if (!f) { out.textContent = "Couldn’t save it. Try again."; return; }
+    out.textContent = n.ok ? "Saved ✓" : "Saved in the review. " + (n.noClass ? "There’s no class on the schedule today, so it isn’t in the notes." : n.msg);
+    w.value = r.value = y.value = ""; w.focus(); drawFixes();
+  }
+  const fix = {
+    isOpen: () => !!(fx && !fx.hidden),
+    open() {
+      if (!fx) buildFix();
+      others("fix");
+      fx.hidden = false; document.body.classList.add("cn-open"); drawFixes();
+      const b = document.getElementById("fixBtn"); if (b) b.setAttribute("aria-expanded", "true");
+      fx.querySelector("#fxWrong").focus();
+    },
+    close(quiet) {
+      if (!fx || fx.hidden) return;
+      fx.hidden = true;
+      if (!anyOpen()) document.body.classList.remove("cn-open");
+      const b = document.getElementById("fixBtn"); if (b) { b.setAttribute("aria-expanded", "false"); if (!quiet) b.focus(); }
+    },
+    toggle() { fix.isOpen() ? fix.close() : fix.open(); }
+  };
+  L.fix = fix;
 })();

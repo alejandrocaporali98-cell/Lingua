@@ -182,7 +182,7 @@
     count: () => Object.keys(L.review.all()).length,
     id: qid,
     add(q, lesson, src) {
-      const all = L.review.all(), id = qid(lesson, q.p);
+      const all = L.review.all(), id = qid(lesson, q.key || q.p);
       const prev = all[id];
       all[id] = { id, l: lesson, p: q.p, a: q.a, w: q.w, why: q.why, src: prev && prev.src === "saved" ? "saved" : src, right: 0, at: (prev && prev.at) || new Date().toISOString() };
       S.set("review", all); return id;
@@ -196,6 +196,54 @@
       else it.right = 0;
       S.set("review", all); return false;
     }
+  };
+
+  // ── From class: words the teacher looked up with the dictionary, and corrections ──
+  // Saved on the student's account (class mode saves there) and added to Review as questions.
+  const clean = x => String(x == null ? "" : x).replace(/\s+/g, " ").trim();
+  const mix = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const FALLBACK = ["to improve", "to borrow", "to explain", "to suggest", "to complain", "to remember", "a deadline", "a shortcut", "a reward", "quickly", "although", "to avoid"];
+  function others(pool, not, n) {
+    const seen = new Set([not.toLowerCase()]), out = [];
+    for (const x of [...mix(pool), ...mix(FALLBACK)]) { const k = clean(x).toLowerCase(); if (k && !seen.has(k)) { seen.add(k); out.push(clean(x)); } if (out.length >= n) break; }
+    return out;
+  }
+  L.classWords = {
+    all: () => S.get("classWords", {}) || {},
+    list: () => Object.values(L.classWords.all()).sort((a, b) => (b.at || "").localeCompare(a.at || "")),
+    add(w) {
+      const en = clean(w.en); if (!en) return null;
+      const all = L.classWords.all(), id = en.toLowerCase(), it = { id, en, tr: clean(w.tr), def: clean(w.def), ex: clean(w.ex), pos: clean(w.pos), at: (all[id] && all[id].at) || new Date().toISOString() };
+      all[id] = it; S.set("classWords", all);
+      const p = it.def ? `Which word or phrase means “${it.def.replace(/\.$/, "")}”?` : it.tr ? `How do you say “${it.tr}” in English?` : "";
+      if (p) L.review.add({ key: "w:" + id, p, a: en, w: others(Object.values(all).map(x => x.en).concat(w.pool || []), en, 3), why: it.ex ? "Example: " + it.ex : it.tr ? `${en} = ${it.tr}` : "" }, "words", "class");
+      return it;
+    },
+    remove(id) { const all = L.classWords.all(); delete all[id]; S.set("classWords", all); L.review.remove(qid("words", "w:" + id)); }
+  };
+  // A correction becomes a gap question when only a few words changed ("I can ___ fast."), otherwise "choose the correct sentence"
+  function fixQ(wrong, right) {
+    const a = wrong.split(" "), b = right.split(" "), lc = x => x.toLowerCase();
+    let i = 0; while (i < a.length && i < b.length && lc(a[i]) === lc(b[i])) i++;
+    let j = 0; while (j < a.length - i && j < b.length - i && lc(a[a.length - 1 - j]) === lc(b[b.length - 1 - j])) j++;
+    const wm = a.slice(i, a.length - j).join(" "), rm = b.slice(i, b.length - j).join(" ");
+    if (wm && rm && (i || j) && wm.split(" ").length <= 4 && rm.split(" ").length <= 4) return { p: [...b.slice(0, i), "___", ...b.slice(b.length - j)].join(" "), a: rm, w: [wm] };
+    return { p: "Choose the correct sentence.", a: right, w: [wrong] };
+  }
+  L.fixes = {
+    all: () => S.get("fixes", {}) || {},
+    list: () => Object.values(L.fixes.all()).sort((a, b) => (b.at || "").localeCompare(a.at || "")),
+    question: fixQ,
+    add(f) {
+      const wrong = clean(f.wrong), right = clean(f.right), why = clean(f.why);
+      if (!wrong || !right || wrong.toLowerCase() === right.toLowerCase()) return null;
+      const all = L.fixes.all(), id = qid("fix", wrong.toLowerCase() + "|" + right.toLowerCase());
+      all[id] = { id, wrong, right, why, at: (all[id] && all[id].at) || new Date().toISOString() }; S.set("fixes", all);
+      L.review.add({ key: "f:" + id, ...fixQ(wrong, right), why: (why ? why.replace(/\.?$/, ". ") : "") + `You said: “${wrong}”` }, "fixes", "class");
+      return all[id];
+    },
+    learned: id => !L.review.all()[qid("fixes", "f:" + id)],
+    remove(id) { const all = L.fixes.all(); delete all[id]; S.set("fixes", all); L.review.remove(qid("fixes", "f:" + id)); }
   };
 
   // ── Counters (for badges) ──

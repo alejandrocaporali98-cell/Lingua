@@ -366,6 +366,12 @@ html.auth-pending body::after {
 @keyframes rec { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { .classbar .dot { animation: none; } }
 .classbar .btn { background: var(--surface); }
+@media (max-width: 640px) {
+  .classbar { gap: 8px; }
+  .classbar > span:nth-child(2) { min-width: calc(100% - 30px); }
+  .classbar .btn { flex: 1 1 0; justify-content: center; padding-inline: 6px; min-width: 0; }
+  .classbar .btn .kbd { display: none; }
+}
 @media print { .classbar { display: none !important; } }
 
 /* ── Effects ── */
@@ -461,6 +467,23 @@ body.lsheet-open { overflow: hidden; }
 .dx-acts { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .dx-link { font: inherit; border: 0; background: none; color: var(--brand); font-weight: 700; cursor: pointer; padding: 0; text-decoration: underline; }
 .dx-bad { color: var(--ink-2); }
+.dx-chk { display: flex; align-items: center; gap: 8px; font-size: .86em; font-weight: 600; color: var(--ink-2); cursor: pointer; }
+.dx-chk input { width: 16px; height: 16px; accent-color: var(--brand); margin: 0; }
+.fx-wrap { overflow-y: auto; min-height: 0; display: grid; align-content: start; }
+.fx-form { display: grid; gap: 6px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.fx-form label { font-size: .82em; font-weight: 800; color: var(--ink-2); margin-top: 6px; }
+.fx-form label span { font-weight: 600; color: var(--mute); }
+.fx-form input { font: inherit; color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.fx-form input:focus { outline: 2px solid var(--brand); outline-offset: 1px; border-color: var(--brand); }
+.fx-form .dx-acts { margin-top: 8px; }
+.fx-tip { margin: 2px 0 0; font-size: .8em; }
+.fx-list { padding: 14px 18px 20px; display: grid; gap: 8px; }
+.fx-list:empty { display: none; }
+.fx-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--surface); }
+.fx-item div { display: grid; gap: 2px; font-size: .92em; }
+.fx-item s { color: var(--bad-ink); text-decoration-thickness: 1.5px; }
+.fx-item b { color: var(--ok-ink); }
+.fx-item small { color: var(--mute); }
 
 /* New version notice (assets/cloud.js · checkVersion) */
 #newVersion { position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 9999;

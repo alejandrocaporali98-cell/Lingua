@@ -125,7 +125,7 @@ def test():
         env.fresh(T, "teacher.html#today", 800)
         T.evaluate(f"LINGUA.actAs({{ id: '{ada}', name: 'Ada Canavati' }}, 'clases/leccion-07.html')"); T.wait_for_selector("#classBar #dictBtn", timeout=8000)
         btns = T.locator("#classBar .btn").all_inner_texts()
-        check([b.split()[0] for b in btns][:3] == ["Dictionary", "Notes", "End"], f"class mode shows Dictionary right next to Notes ({btns})")
+        check([b.split()[0] for b in btns][:4] == ["Correction", "Dictionary", "Notes", "End"], f"class mode shows Correction and Dictionary right next to Notes ({btns})")
         T.click("#dictBtn"); T.wait_for_selector("#cdict #dxQ")
         T.fill("#dxQ", "overtake"); T.press("#dxQ", "Enter"); T.wait_for_selector("#cdict .dx-def", timeout=5000)
         txt = T.inner_text("#cdict")
@@ -133,7 +133,12 @@ def test():
         check(T.input_value("#dxLine") == "overtake (verb) · adelantar — To pass a more slowly moving vehicle.", "the note line is ready to add")
         T.click(".dx-chip:has-text('rebasar')")
         check("rebasar" in T.input_value("#dxLine"), "choosing another translation changes the note line")
+        check(T.is_checked("#dxWords") and "Ada’s words" in T.inner_text("#dxFoot"), "adding to the student's words is on by default")
         T.click("#dxAdd"); T.wait_for_timeout(800)
+        cw = T.evaluate("LINGUA.store.get('classWords', {})"); rv = [q for q in T.evaluate("LINGUA.review.list()") if q["l"] == "words"]
+        check(cw.get("overtake", {}).get("tr") == "rebasar" and cw["overtake"]["def"] == "To pass a more slowly moving vehicle.", "the word is saved to the student's words with its translation and meaning")
+        check(len(rv) == 1 and rv[0]["a"] == "overtake" and "To pass a more slowly moving vehicle" in rv[0]["p"] and len(rv[0]["w"]) == 3 and "overtake" not in rv[0]["w"],
+              f"and becomes a Review question with 3 wrong options ({rv[:1]})")
         check(env.DB["classes"]["cnow"].get("notes") == "Good warm-up\novertake (verb) · rebasar — To pass a more slowly moving vehicle." and "Added" in T.inner_text("#dxOut"),
               "Add to notes adds the word to today's class notes, after what was there")
         T.screenshot(path=os.path.join(OUT, "dictionary.png"))
@@ -144,6 +149,30 @@ def test():
         check("No results" in T.inner_text("#dxRes"), "a word that doesn't exist says so")
         T.click("#notesBtn"); T.wait_for_selector("#cnText")
         check(T.locator("#cdict").is_hidden() and "rebasar" in T.input_value("#cnText"), "Notes opens in its place and shows the added word")
+        # correction: what they said → the better way
+        T.click("#fixBtn"); T.wait_for_selector("#cfix #fxWrong")
+        check(T.locator("#cnotes").is_hidden() and T.locator("#cdict").is_hidden(), "only one drawer is open at a time")
+        T.fill("#fxWrong", "I can drives very fast."); T.press("#fxWrong", "Enter")
+        check(T.input_value("#fxRight") == "I can drives very fast.", "Better starts as a copy of what they said")
+        T.fill("#fxRight", "I can drive very fast."); T.press("#fxRight", "Enter"); T.fill("#fxWhy", "can + verb, no -s"); T.press("#fxWhy", "Enter"); T.wait_for_timeout(800)
+        notes = env.DB["classes"]["cnow"]["notes"]
+        check(notes.endswith("Correction: “I can drives very fast.” → “I can drive very fast.” (can + verb, no -s)") and "Saved" in T.inner_text("#fxOut"), "the correction goes to today's notes")
+        fq = [q for q in T.evaluate("LINGUA.review.list()") if q["l"] == "fixes"]
+        check(len(fq) == 1 and fq[0]["p"] == "I can ___ very fast." and fq[0]["a"] == "drive" and fq[0]["w"] == ["drives"] and "You said" in fq[0]["why"],
+              f"and becomes a gap question in Review ({fq[:1]})")
+        check(T.input_value("#fxWrong") == "" and "I can drive very fast." in T.inner_text("#fxList"), "the form clears and today's corrections are listed")
+        T.fill("#fxWrong", "Yesterday I go to the cinema with my friends and we eat popcorn."); T.press("#fxWrong", "Enter")
+        T.fill("#fxRight", "Yesterday I went to the cinema with my friends and we ate popcorn."); T.click("#fxSave"); T.wait_for_timeout(600)
+        fq = [q for q in T.evaluate("LINGUA.review.list()") if q["l"] == "fixes"]
+        check(any(q["p"] == "Choose the correct sentence." and q["a"].startswith("Yesterday I went") for q in fq), "a longer correction becomes 'choose the correct sentence'")
+        T.click("#fxList [data-rm] >> nth=0"); T.wait_for_timeout(300)
+        check(len(T.evaluate("LINGUA.fixes.list()")) == 1 and len([q for q in T.evaluate("LINGUA.review.list()") if q["l"] == "fixes"]) == 1, "a correction can be removed")
+        T.fill("#fxWrong", "Yesterday I go to the cinema with my friends and we eat popcorn."); T.press("#fxWrong", "Enter")
+        T.fill("#fxRight", "Yesterday I went to the cinema with my friends and we ate popcorn."); T.click("#fxSave"); T.wait_for_timeout(600)
+        T.set_viewport_size({"width": 390, "height": 844}); T.wait_for_timeout(300); T.screenshot(path=os.path.join(OUT, "correction_phone.png"))
+        T.set_viewport_size({"width": 1366, "height": 900}); T.wait_for_timeout(200); T.screenshot(path=os.path.join(OUT, "correction.png"))
+        T.keyboard.press("Escape"); T.locator("h1").first.click(); T.keyboard.press("f"); T.wait_for_timeout(300)
+        check(T.locator("#cfix").is_visible(), "the F key opens Correction")
         T.keyboard.press("Escape"); T.locator("h1").first.click(); T.keyboard.press("d"); T.wait_for_timeout(300)
         check(T.locator("#cdict").is_visible(), "the D key opens the dictionary")
         T.set_viewport_size({"width": 390, "height": 844}); T.fill("#dxQ", "overtake"); T.press("#dxQ", "Enter"); T.wait_for_timeout(600)
@@ -151,8 +180,28 @@ def test():
         check(T.evaluate("document.querySelector('#cdict').getBoundingClientRect().width") <= 390, "the dictionary fits a phone")
         T.set_viewport_size({"width": 1366, "height": 900}); T.wait_for_timeout(200)
         check(all("api." in h for h in hits) and not any("ada" in h.lower() for h in hits), "only the searched words are sent, never the student's name")
+        T.keyboard.press("Escape"); T.set_viewport_size({"width": 390, "height": 844}); T.wait_for_timeout(300); T.screenshot(path=os.path.join(OUT, "classbar_phone.png"))
+        sw = T.evaluate("document.documentElement.scrollWidth"); check(sw <= 392, f"the class bar with four buttons fits a phone (width {sw})")
+        T.set_viewport_size({"width": 1366, "height": 900})
+        T.wait_for_timeout(2500)
         T.evaluate("LINGUA.actAs(null)"); T.wait_for_url("**/teacher.html**"); T.wait_for_timeout(800)
         del env.DB["classes"]["cnow"]
+        # the student sees them in My words and Review
+        env.fresh(S, "words.html", 2500)
+        S.wait_for_selector("#grid", timeout=10000)
+        check(S.locator("[data-f='class']").count() == 1 and "rebasar" in S.inner_text("#grid") and "from class" in S.inner_text("#grid").lower(), "My words shows the word from class first")
+        S.screenshot(path=os.path.join(OUT, "words_from_class.png"))
+        env.fresh(S, "review.html", 2000)
+        body = S.inner_text("#app")
+        check("Words from your classes" in body and "Corrections from your classes" in body and "My mistakes" in body and "I can drive very fast." in body, "Review shows class words, corrections and My mistakes")
+        S.screenshot(path=os.path.join(OUT, "review_from_class.png"), full_page=True)
+        S.click("#go"); S.wait_for_selector(".q")
+        seen = set()
+        for _ in range(12):
+            if not S.locator(".q").count(): break
+            seen.add(S.text_content(".q .eyebrow"))
+            S.click(".opt >> nth=0"); S.click("#next")
+        check({"Words from your classes", "Corrections from your classes"} <= seen, f"a review round includes them ({seen})")
 
         # new version notice
         open(os.path.join(env.site, "version.json"), "w").write('{"build": "def5678"}')
