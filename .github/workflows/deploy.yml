@@ -35,7 +35,8 @@ jobs:
       - name: Install the test browser
         run: |
           pip install -r tests/requirements.txt
-          python -m playwright install --with-deps chromium
+          # If Ubuntu's package mirror is down, the runner already has what Chromium needs
+          timeout 600 python -m playwright install --with-deps chromium || python -m playwright install chromium
       - name: Run the tests
         run: python tests/run_all.py
       - name: Keep the screenshots if something failed
