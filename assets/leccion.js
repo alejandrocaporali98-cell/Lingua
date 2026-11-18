@@ -3,7 +3,15 @@
   const C = window.CLASE, G = window.LINGUA, AB = "ABCD";
   // Five core sections, plus optional ones a lesson can bring (reading, grammar, spot the error, say it in English, talk about it)
   const QS = new URLSearchParams(location.search), EMB = !!G.embedded, ONLY = (QS.get("only") || "").split(",").filter(Boolean);
-  const ALL = [
+  // A debate lesson (C.debate) is all speaking: hot takes, a phrase toolkit, timed debate rounds, a lightning round and a verdict
+  const DB = C.debate || null;
+  const ALL = DB ? [
+    ...(DB.hot && DB.hot.length ? [{ id: "hot", t: "Hot takes", min: 10 }] : []),
+    ...(DB.kit && DB.kit.length ? [{ id: "kit", t: "Debate toolkit", min: 8 }] : []),
+    ...DB.rounds.map((r, i) => ({ id: "r" + (i + 1), t: r.t, min: r.min || 20 })),
+    ...(DB.lightning && DB.lightning.length ? [{ id: "light", t: "Lightning round", min: 12 }] : []),
+    { id: "verdict", t: "The verdict", min: 10 }
+  ] : [
     ...(C.warmup && C.warmup.questions && C.warmup.questions.length ? [{ id: "warmup", t: "Warm-up", min: 5 }] : []),
     { id: "flash", t: "Vocabulary", min: 10 },
     ...(C.read && C.read.text && C.read.text.length ? [{ id: "read", t: "Read", min: 12 }] : []),
@@ -136,7 +144,9 @@
     if (n) n.onclick = () => { markDone(st.sec); go(st.sec + 1); };
   }
   function draw() {
-    quiz = null;
+    quiz = null; clearInterval(tick);
+    const id = SECS[st.sec].id;
+    if (DB) { ({ hot: drawHot, kit: drawKit, light: drawLight, verdict: drawVerdict })[id] ? ({ hot: drawHot, kit: drawKit, light: drawLight, verdict: drawVerdict })[id]() : drawRound(+id.slice(1) - 1); wirePager(); return; }
     ({ warmup: drawWarmup, flash: drawFlash, read: drawRead, grammar: drawGrammar, frases: drawFrases, gaps: drawGaps, errors: drawErrors, translate: drawTranslate, rp: drawRP, talk: drawTalk, final: drawFinal })[SECS[st.sec].id]();
     wirePager();
   }
@@ -158,12 +168,16 @@
       grammar: () => C.grammar.title, gaps: () => C.gaps.title || "Complete the text",
       errors: () => C.errors.items.length + " sentences to fix", translate: () => C.translate.items.length + " situations to say out loud",
       rp: () => C.roleplay.title, talk: () => C.talk.questions.length + " questions to talk about",
-      final: () => (C.final || []).length + " questions from the whole lesson"
+      final: () => (C.final || []).length + " questions from the whole lesson",
+      hot: () => DB.hot.length + " opinions to defend in 30 seconds", kit: () => "Phrases to open, rebut, concede and close",
+      light: () => DB.lightning.length + " motions · 45 seconds each, no prep", verdict: () => "How it went, and what to try next time"
     };
+    if (DB) DB.rounds.forEach((r, i) => { desc["r" + (i + 1)] = () => r.motions.length > 1 ? r.motions.length + " motions to choose from · " + r.kind : r.motions[0].m; });
     const ico = { words: '<path d="M4 6h16M4 12h10M4 18h13"/>', read: '<path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6"/>', gram: '<path d="M12 5v14M5 12h14"/>',
       rp: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 11h5M16 15h4"/>', talk: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>', quiz: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 12l3 3 5-6"/>', game: '<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3"/>' };
     const svg = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${ico[k]}</svg>`;
-    const inc = [["words", fl.length + " words with audio"], C.read && C.read.text ? ["read", "1 reading with " + (C.read.questions || []).length + " questions"] : null,
+    const inc = DB ? [["talk", DB.rounds.length + " timed debates"], ["rp", (DB.rounds.reduce((a, r) => a + r.motions.length, 0) + (DB.lightning || []).length) + " motions to argue"],
+      ["read", "Debate toolkit · " + DB.kit.reduce((a, g) => a + g.p.length, 0) + " phrases"], ["quiz", "No quizzes: 100% speaking"]] : [["words", fl.length + " words with audio"], C.read && C.read.text ? ["read", "1 reading with " + (C.read.questions || []).length + " questions"] : null,
       C.grammar ? ["gram", "Grammar: " + C.grammar.title] : null, C.roleplay ? ["rp", "Role-play: " + C.roleplay.title] : null,
       C.talk ? ["talk", C.talk.questions.length + " conversation questions"] : null, ["quiz", "Final quiz · " + (C.final || []).length + " questions"], ["game", "Class games"]].filter(Boolean);
     const gr = C.grammar, ex = gr && gr.examples || [];
@@ -184,6 +198,7 @@
             <ol class="ov-list">${SECS.map((s, i) => `<li><button type="button" data-ov="${i}"><span class="ov-chk ${st.done.has(i) ? "on" : ""}" aria-hidden="true"></span><span class="ov-t"><b>${E(s.t)}</b><small>${E((desc[s.id] || (() => ""))())}</small></span><span class="ov-m ${minOf(s) === "Homework" ? "hw" : ""}">${minOf(s)}</span></button></li>`).join("")}</ol></section>
           ${gr ? `<section class="ov-gr"><h2>Grammar of the lesson</h2><p class="ov-gt">${E(gr.title)}</p>${ex[0] ? `<p class="ov-big">${bold(ex[0])}</p>` : ""}
             <ul>${ex.slice(1, 3).map(x => `<li>${bold(x)}</li>`).join("")}${gr.wrong && gr.right ? `<li class="ov-watch">Watch out: ${bold(gr.wrong)} → ${bold(gr.right)}</li>` : ""}</ul></section>` : ""}
+          ${DB ? `<section><h2>Tonight’s motions</h2><ul class="ov-q">${DB.rounds.flatMap(r => r.motions.map(m => `<li>${E(m.m)}</li>`)).join("")}</ul></section>` : ""}
           ${C.talk && C.talk.questions ? `<section><h2>Let's talk about</h2><ul class="ov-q">${C.talk.questions.slice(0, 4).map(q => `<li>${E(q)}</li>`).join("")}</ul></section>` : ""}
         </div>
         <aside class="ov-side">
@@ -477,6 +492,131 @@
         catch (e) { api.note(/relation|schema|bucket|not found/i.test(e.message || "") ? "Recording works, but saving needs a quick setup from your teacher." : "Couldn’t save it. Check your internet and try again."); }
       } });
     });
+  }
+
+  // ── Debate lesson ──
+  let tick = null;
+  const dKey = k => "debate." + C.id + "." + k, dGet = (k, d) => G.store.get(dKey(k), d), dSet = (k, v) => G.store.set(dKey(k), v);
+  const isTeacher = () => G.isTeacher || !!G.actingAs;
+  const mmss = n => Math.floor(n / 60) + ":" + String(n % 60).padStart(2, "0");
+  // A countdown with presets (prep, speech, rebuttal…). Big enough to share on screen.
+  function timer(presets) {
+    return `<div class="db-timer" data-left="${presets[0][1]}"><div class="db-clock" aria-live="off">${mmss(presets[0][1])}</div>
+      <div class="db-pre">${presets.map(([l, n], i) => `<button type="button" class="${i ? "" : "on"}" data-t="${n}">${G.esc(l)} <small>${mmss(n)}</small></button>`).join("")}</div>
+      <div class="db-ctl"><button type="button" class="btn primary sm" data-go>Start</button><button type="button" class="btn sm" data-reset>Reset</button></div></div>`;
+  }
+  function wireTimer(root) {
+    const el = root.querySelector(".db-timer"); if (!el) return;
+    const clock = el.querySelector(".db-clock"), go = el.querySelector("[data-go]");
+    let full = +el.dataset.left, left = full, run = false;
+    const paint = () => { clock.textContent = mmss(left); el.classList.toggle("low", run && left <= 10 && left > 0); el.classList.toggle("end", left === 0); };
+    const stop = () => { run = false; clearInterval(tick); go.textContent = left ? "Start" : "Start"; };
+    go.onclick = () => {
+      if (run) { stop(); go.textContent = "Resume"; return; }
+      if (!left) left = full;
+      run = true; go.textContent = "Pause"; clearInterval(tick);
+      tick = setInterval(() => { left = Math.max(0, left - 1); paint(); if (!left) { stop(); G.sfx && G.sfx("win"); } }, 1000);
+      paint();
+    };
+    el.querySelector("[data-reset]").onclick = () => { stop(); left = full; paint(); };
+    el.querySelectorAll("[data-t]").forEach(b => b.onclick = () => { stop(); full = left = +b.dataset.t; el.querySelectorAll("[data-t]").forEach(x => x.classList.toggle("on", x === b)); paint(); });
+  }
+  function recBox(box, prompt, key) {
+    G.recorder(box, { label: "Record it", max: 180, onDone: async (blob, secs, api) => {
+      api.note("Saving…");
+      try { const path = await G.voice.upload(blob, "lesson-" + C.id); await G.voice.save({ lesson_id: C.id, prompt: prompt.slice(0, 500), path, seconds: secs }); api.note("Saved for your teacher ✓"); G.game && G.game.award(3, { once: "rec." + C.id + "." + key, silent: true }); }
+      catch (e) { api.note("Couldn’t save it. Check your internet and try again."); }
+    } });
+  }
+  // Hot takes: one statement at a time, agree or disagree, 30 seconds to say why
+  function drawHot() {
+    const H = DB.hot, seen = new Set(dGet("hot", []));
+    let cur = dGet("hotCur", 0);
+    stage.innerHTML = head("Hot takes", DB.hotText || "Agree or disagree, then give one reason and one example. Thirty seconds, no hedging.") + `
+      <div class="db-hot"><div class="db-stmt" id="hotS"></div>
+        <div class="db-row"><button type="button" class="btn sm" id="hotPrev">← Previous</button><button type="button" class="btn sm" id="hotRand">Surprise me</button><button type="button" class="btn primary sm" id="hotNext">Next take →</button></div></div>
+      ${timer([["Answer", 30], ["Push back", 45]])}
+      <div class="panel" style="display:grid;gap:10px"><span class="eyebrow">All the takes · tap one</span><ol class="db-list" id="hotL"></ol></div>` + pager();
+    const show = () => {
+      cur = (cur + H.length) % H.length; seen.add(cur); dSet("hotCur", cur); dSet("hot", [...seen]);
+      stage.querySelector("#hotS").innerHTML = `<span class="eyebrow">Take ${cur + 1} of ${H.length}</span><p>${G.esc(H[cur])}</p>`;
+      stage.querySelector("#hotL").innerHTML = H.map((h, i) => `<li><button type="button" data-h="${i}" class="${i === cur ? "on" : ""} ${seen.has(i) ? "seen" : ""}">${G.esc(h)}</button></li>`).join("");
+      stage.querySelectorAll("[data-h]").forEach(b => b.onclick = () => { cur = +b.dataset.h; show(); });
+    };
+    stage.querySelector("#hotPrev").onclick = () => { cur--; show(); };
+    stage.querySelector("#hotNext").onclick = () => { cur++; show(); };
+    stage.querySelector("#hotRand").onclick = () => { const left = H.map((_, i) => i).filter(i => !seen.has(i) && i !== cur); cur = left.length ? left[Math.floor(Math.random() * left.length)] : Math.floor(Math.random() * H.length); show(); };
+    show(); wireTimer(stage);
+  }
+  function drawKit() {
+    stage.innerHTML = head("Debate toolkit", DB.kitText || "The phrases that make you sound like you've done this before. Pick two from each group and use them tonight.") + `
+      <div class="db-kit">${DB.kit.map(g => `<section class="panel"><span class="eyebrow">${G.esc(g.t)}</span><ul>${g.p.map(x => `<li><span>${G.esc(x)}</span>${G.sayBtn ? G.sayBtn(x.replace(/…/g, "")) : ""}</li>`).join("")}</ul></section>`).join("")}</div>
+      ${DB.kitTry ? `<div class="panel db-try"><span class="eyebrow">Try it now · 60 seconds</span><p>${G.esc(DB.kitTry)}</p>${timer([["Go", 60]])}</div>` : ""}` + pager();
+    wireTimer(stage);
+  }
+  // A debate round: choose a motion, get a side, prepare, speak against the clock
+  function drawRound(i) {
+    const R = DB.rounds[i], k = "r" + i, teacher = isTeacher();
+    let pick = Math.min(dGet(k + ".m", 0), R.motions.length - 1);
+    stage.innerHTML = head(R.t, R.intro) + `
+      <div class="db-format"><span class="eyebrow">Format · ${G.esc(R.kind)}</span><ol>${R.steps.map(([l, n, who]) => `<li><b>${G.esc(l)}</b><span>${mmss(n)}${who ? " · " + G.esc(who) : ""}</span></li>`).join("")}</ol></div>
+      ${R.motions.length > 1 ? `<div class="db-tabs" role="tablist" aria-label="Choose a motion">${R.motions.map((m, j) => `<button type="button" role="tab" data-m="${j}">Motion ${"ABC"[j]}</button>`).join("")}</div>` : ""}
+      <div id="mot"></div>
+      ${timer(R.steps.map(([l, n]) => [l, n]).filter((x, j, a) => a.findIndex(y => y[0] === x[0]) === j))}
+      <div class="panel" style="display:grid;gap:10px"><span class="eyebrow">Record your closing statement</span><p class="muted" style="margin:0;font-size:.92em">Say it again at home, cleaner and stronger. Your teacher will listen.</p><div class="db-rec"></div></div>` + pager();
+    const paint = () => {
+      const M = R.motions[pick], side = dGet(k + ".side." + pick, "");
+      stage.querySelectorAll("[data-m]").forEach(b => { b.classList.toggle("on", +b.dataset.m === pick); b.setAttribute("aria-selected", +b.dataset.m === pick); });
+      stage.querySelector("#mot").innerHTML = `<div class="db-motion"><span class="eyebrow">The motion</span><h3>${G.esc(M.m)}</h3>${M.ctx ? `<p>${G.esc(M.ctx)}</p>` : ""}</div>
+        <div class="db-side">${R.swap
+          ? `<p><b>First, in one sentence: what do you really think?</b> Then you argue the other side, as if you believed it.</p><div class="db-row"><button type="button" class="btn sm" data-s="against">I agree with it</button><button type="button" class="btn sm" data-s="for">I disagree with it</button></div>`
+          : `<div class="db-row"><button type="button" class="btn sm" data-coin>Toss a coin for sides</button><button type="button" class="btn sm" data-s="for">I’ll argue for</button><button type="button" class="btn sm" data-s="against">I’ll argue against</button></div>`}
+          ${side ? `<p class="db-you">You’re arguing <b>${side === "for" ? "FOR" : "AGAINST"}</b> the motion.${R.swap ? " Make it convincing." : ""}</p>` : ""}</div>
+        <details class="db-ideas"><summary>Stuck? Starter ideas for both sides</summary><div class="db-cols"><div><b>For</b><ul>${M.for.map(x => `<li>${G.esc(x)}</li>`).join("")}</ul></div><div><b>Against</b><ul>${M.against.map(x => `<li>${G.esc(x)}</li>`).join("")}</ul></div></div></details>
+        ${teacher && M.curve ? `<div class="panel tnotes" style="display:grid;gap:6px"><span class="eyebrow">Curveball · only you see this</span><p style="margin:0">${G.esc(M.curve)}</p>${(R.notes || []).length ? `<ul>${R.notes.map(n => `<li>${G.esc(n)}</li>`).join("")}</ul>` : ""}</div>` : ""}`;
+      stage.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { dSet(k + ".side." + pick, b.dataset.s); paint(); });
+      const coin = stage.querySelector("[data-coin]"); if (coin) coin.onclick = () => { dSet(k + ".side." + pick, Math.random() < .5 ? "for" : "against"); paint(); };
+    };
+    stage.querySelectorAll("[data-m]").forEach(b => b.onclick = () => { pick = +b.dataset.m; dSet(k + ".m", pick); paint(); });
+    paint(); wireTimer(stage);
+    recBox(stage.querySelector(".db-rec"), "Closing statement: " + R.motions[pick].m, k);
+  }
+  function drawLight() {
+    const Lt = DB.lightning; let cur = dGet("lightCur", 0);
+    stage.innerHTML = head("Lightning round", DB.lightText || "Forty-five seconds, no preparation. Your teacher names the side, you start talking. Say “um” and you lose the point.") + `
+      <div class="db-hot"><div class="db-stmt" id="ltS"></div>
+        <div class="db-row"><button type="button" class="btn sm" data-side>Pick my side</button><button type="button" class="btn primary sm" id="ltNext">Next motion →</button></div><p class="db-you" id="ltSide" hidden></p></div>
+      ${timer([["Speak", 45], ["Answer back", 30]])}
+      <div class="panel" style="display:grid;gap:10px"><span class="eyebrow">All the motions · tap one</span><ol class="db-list" id="ltL"></ol></div>` + pager();
+    const show = () => {
+      cur = (cur + Lt.length) % Lt.length; dSet("lightCur", cur);
+      stage.querySelector("#ltS").innerHTML = `<span class="eyebrow">Motion ${cur + 1} of ${Lt.length}</span><p>${G.esc(Lt[cur])}</p>`;
+      stage.querySelector("#ltSide").hidden = true;
+      stage.querySelector("#ltL").innerHTML = Lt.map((h, i) => `<li><button type="button" data-h="${i}" class="${i === cur ? "on" : ""}">${G.esc(h)}</button></li>`).join("");
+      stage.querySelectorAll("#ltL [data-h]").forEach(b => b.onclick = () => { cur = +b.dataset.h; show(); });
+    };
+    stage.querySelector("#ltNext").onclick = () => { cur++; show(); };
+    stage.querySelector("[data-side]").onclick = () => { const s = stage.querySelector("#ltSide"); s.hidden = false; s.innerHTML = `You’re arguing <b>${Math.random() < .5 ? "FOR" : "AGAINST"}</b>. Go!`; };
+    show(); wireTimer(stage);
+  }
+  function drawVerdict() {
+    const V = DB.verdict || {}, crit = V.criteria || ["Clarity", "Evidence", "Rebuttal", "Range of language"], sc = dGet("score", {});
+    stage.innerHTML = head("The verdict", V.text || "Be honest. Score yourself from 1 to 5, then talk it through with your teacher.") + `
+      <div class="panel db-rub">${crit.map((c, i) => `<div class="db-crit"><span><b>${G.esc(c)}</b>${V.hints && V.hints[i] ? `<small>${G.esc(V.hints[i])}</small>` : ""}</span><div class="db-sc" role="group" aria-label="${G.esc(c)}">${[1, 2, 3, 4, 5].map(n => `<button type="button" data-c="${i}" data-n="${n}" class="${sc[i] === n ? "on" : ""}" aria-pressed="${sc[i] === n}">${n}</button>`).join("")}</div></div>`).join("")}</div>
+      ${(V.questions || []).length ? `<div class="panel" style="display:grid;gap:10px"><span class="eyebrow">Talk it through</span><ol class="db-qs">${V.questions.map(q => `<li>${G.esc(q)}</li>`).join("")}</ol></div>` : ""}
+      ${C.plan && C.plan.homework ? `<div class="panel" style="display:grid;gap:6px"><span class="eyebrow">Homework</span><p style="margin:0">${G.esc(C.plan.homework)}</p></div>` : ""}
+      <div class="db-row" style="justify-content:flex-end"><span class="muted" id="vOut"></span><button type="button" class="btn primary" id="vDone">${st.done.has(st.sec) ? "Class complete ✓" : "Finish the class"}</button></div>` + pager();
+    stage.querySelectorAll("[data-c]").forEach(b => b.onclick = () => {
+      const s = dGet("score", {}); s[b.dataset.c] = +b.dataset.n; dSet("score", s);
+      stage.querySelectorAll(`[data-c="${b.dataset.c}"]`).forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b); });
+    });
+    stage.querySelector("#vDone").onclick = () => {
+      SECS.forEach((_, i) => { if (!st.done.has(i)) markDone(i); });
+      G.store.set("debate." + C.id + ".at", new Date().toISOString());
+      G.game && G.game.award(50, { once: "pass." + C.id, label: "Debate complete" });
+      G.confetti && G.confetti(); G.sfx && G.sfx("win");
+      stage.querySelector("#vDone").textContent = "Class complete ✓";
+    };
   }
 
   // ── 5 Quiz final ──
