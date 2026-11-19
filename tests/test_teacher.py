@@ -13,7 +13,9 @@ def test():
         T = env.teacher()
         ada = env.account(T, "Ada Canavati", "ada")
         env.DB["student_settings"][ada]["lessons"] = ["122", "101"]
-        env.DB["classes"]["c1"] = {"id": "c1", "student_id": ada, "starts_at": now_iso(dt.timedelta(hours=2)), "status": "scheduled", "minutes": 60}
+        # today's class: in 2 hours, or sooner late at night so it never falls on tomorrow
+        _n = dt.datetime.now(); _left = _n.replace(hour=23, minute=59, second=0, microsecond=0) - _n
+        env.DB["classes"]["c1"] = {"id": "c1", "student_id": ada, "starts_at": now_iso(min(dt.timedelta(hours=2), max(dt.timedelta(minutes=1), _left / 2))), "status": "scheduled", "minutes": 60}
 
         # every view opens without errors
         for v in ["#today", "#students", "#schedule", "#reports", "#billing", "#billing/payments/all", "#billing/bank", "#plan", "#trials", "#accounts"] + \
