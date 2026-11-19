@@ -58,6 +58,15 @@
   .dash.o::before { color: var(--amber); }
   .empty { font-size: 11.5px; color: #8a8a8a; padding: 6px 0; }
   .chart { width: 100%; height: auto; display: block; margin-top: 4px; }
+  .colp { font-size: 11.5px; color: #444; line-height: 1.6; margin: -2px 0 10px; }
+  .colg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .colg .ci { border: 1px solid var(--line); border-radius: 10px; padding: 10px 10px 9px; display: grid; gap: 3px; align-content: start; background: #fff; }
+  .colg .ca { background: linear-gradient(#f4f5f7, #e7e9ee); border-radius: 7px; padding: 8px 6px 4px; display: grid; place-items: center; min-height: 70px; color: #c3c7cf; }
+  .colg.cars .ca { background: linear-gradient(#2a2f3a, #12151c); color: #3a404d; }
+  .colg .ca svg { width: 100%; height: auto; display: block; max-height: 88px; }
+  .colg b { font-size: 11.5px; margin-top: 4px; } .colg small { font-size: 9.5px; color: var(--mute); }
+  .colg .ci.off b { color: #9a9a9a; }
+  @media (max-width: 600px) { .colg { grid-template-columns: repeat(2, 1fr); } }
   .chart .grid { stroke: var(--line); } .chart .pass { stroke: #9a9a9a; stroke-dasharray: 3 4; }
   .chart text { font-family: inherit; font-size: 10px; fill: #8a8a8a; } .chart .val { fill: var(--ink); font-weight: 700; }
   .note { font-size: 10px; color: #8a8a8a; margin-top: 4px; }
@@ -213,6 +222,8 @@
 <script src="assets/config.js"></script>
 <script src="assets/placement-data.js"></script>
 <script src="assets/informe.js"></script>
+<script src="assets/garage.js"></script>
+<script src="assets/collections.js"></script>
 <script src="assets/verify.js"></script>
 <script>
 window.linguaShared(function () {
@@ -240,6 +251,9 @@ window.linguaShared(function () {
       vHow: "Promedio de asistencia, quizzes, tareas a tiempo y constancia.", rA: "Asistencia", rQ: "Quizzes", rH: "Tareas a tiempo", rC: "Constancia",
       rAs: (a, n) => n ? `${a} de ${n} clases` : "Sin clases", rQs: n => n ? `Promedio de ${n} quiz${n === 1 ? "" : "zes"} final${n === 1 ? "" : "es"}` : "Sin quizzes en el periodo",
       rHs: (a, n) => n ? `${a} de ${n} entregadas a tiempo` : "Sin tareas con fecha", rCs: (d, g) => `${d} de ${g} días (meta: 2 por semana)`,
+      colE: "Su recompensa", colT: { racing: "Su garage", riding: "Su establo", music: "Su estudio", cinema: "Su pared de pósters" },
+      colP: (th, a, b) => ({ racing: `Cada lección aprobada con 80% o más desbloquea un auto nuevo en su perfil. Lleva <b>${a}</b> de ${b}.`, riding: `Cada lección aprobada desbloquea un caballo nuevo en su perfil. Lleva <b>${a}</b> de ${b}.`, music: `Cada lección aprobada desbloquea un instrumento nuevo en su perfil. Lleva <b>${a}</b> de ${b}.`, cinema: `Cada lección aprobada desbloquea un póster nuevo en su perfil. Lleva <b>${a}</b> de ${b}.` })[th],
+      colL: id => `Lección ${id}`, colNext: "Siguiente",
       pathT: "Nivel y avance del curso", lvN: ["Principiante", "Básico", "Intermedio", "Intermedio alto", "Avanzado", "Dominio"], lvNow: "Nivel actual", lvNone: "Hará el examen de colocación para ubicar su nivel.",
       course: "Lecciones aprobadas", courseOf: n => `de ${n}`, courseP: (a, b) => `${a} lecciones aprobadas con 80% o más${b ? ` · siguiente: ${b}` : ""}.`,
       calT: "Calendario de práctica", calL: ["L", "M", "M", "J", "V", "S", "D"], calLess: "Menos", calMore: "Más", calP: (d, xp) => `${d} día${d === 1 ? "" : "s"} con práctica · ${xp} puntos en total`,
@@ -286,6 +300,9 @@ window.linguaShared(function () {
       vHow: "Average of attendance, quizzes, homework on time and consistency.", rA: "Attendance", rQ: "Quizzes", rH: "Homework on time", rC: "Consistency",
       rAs: (a, n) => n ? `${a} of ${n} classes` : "No classes", rQs: n => n ? `Average of ${n} final quiz${n === 1 ? "" : "zes"}` : "No quizzes in this period",
       rHs: (a, n) => n ? `${a} of ${n} handed in on time` : "No homework with a due date", rCs: (d, g) => `${d} of ${g} days (goal: 2 a week)`,
+      colE: "Their reward", colT: { racing: "Their garage", riding: "Their stable", music: "Their studio", cinema: "Their poster wall" },
+      colP: (th, a, b) => `Every lesson passed with 80% or more unlocks a new ${({ racing: "car", riding: "horse", music: "instrument", cinema: "poster" })[th]} on their profile. <b>${a}</b> of ${b} so far.`,
+      colL: id => `Lesson ${id}`, colNext: "Next",
       pathT: "Level and course progress", lvN: ["Beginner", "Elementary", "Intermediate", "Upper intermediate", "Advanced", "Proficient"], lvNow: "Current level", lvNone: "The placement test will set their level.",
       course: "Lessons passed", courseOf: n => `of ${n}`, courseP: (a, b) => `${a} lessons passed with 80% or more${b ? ` · next: ${b}` : ""}.`,
       calT: "Practice calendar", calL: ["M", "T", "W", "T", "F", "S", "S"], calLess: "Less", calMore: "More", calP: (d, xp) => `${d} day${d === 1 ? "" : "s"} with practice · ${xp} points in total`,
@@ -418,6 +435,30 @@ window.linguaShared(function () {
       : r[0] === "area" ? [esc(areaName(r[1])), r[2] + "%", x.subPl] : r[0] === "habit" ? [x.sk.habit, r[1] + "/" + r[2] * 2, x.subHabit] : [x.s7, r[1], x.subHw];
     const strengths = (D.st || []).slice(0, 5).map(sRow), opps = (D.op || []).slice(0, 5).map(oRow);
     const hwSt2 = { done: "ok", late: "", pending: "", overdue: "warn" };
+    // The reward collection (cars, horses, instruments or posters) the student has unlocked by passing lessons
+    const collection = () => {
+      const Lg = window.LINGUA, th = D.th, total = k.lessons || 0;
+      if (!Lg || !th || !x.colT[th] || !total) return "";
+      if (!Lg.esc) Lg.esc = esc;
+      const won = (D.ld || []).filter(r => r[5]).sort((a, b) => String(a[5]).localeCompare(String(b[5])) || String(a[0]).localeCompare(String(b[0]), undefined, { numeric: true }));
+      let got = [], lock = [];
+      try {
+        if (th === "racing" && Lg.garage) {
+          const C = Lg.garage.CARS, ids = won.map(r => r[0]).filter(id => C[id]);
+          got = ids.map(id => ({ art: Lg.garage.svg(C[id]), name: C[id].name, sub: C[id].kind, l: id }));
+          const nxt = (D.nx || []).map(r => r[0]).filter(id => C[id] && !ids.includes(id)), any = Object.keys(C).find(id => !ids.includes(id)) || Object.keys(C)[0];
+          lock = Array.from({ length: Math.max(0, Math.min(4, total - got.length)) }, (_, i) => ({ art: Lg.garage.svg(C[nxt[i] || any], { locked: true }), l: nxt[i] || "" }));
+        } else if (Lg.collection && Lg.collection.SETS[th]) {
+          const S = Lg.collection.SETS[th];
+          got = won.slice(0, S.items.length).map((r, i) => ({ art: S.art(S.items[i], false), name: S.items[i].name || String(S.items[i].title || "").replace("|", " "), sub: "", l: r[0] }));
+          lock = S.items.slice(got.length, got.length + Math.max(0, Math.min(4, total - got.length))).map((it, i) => ({ art: S.art(it, true), l: i === 0 && (D.nx || [])[0] ? D.nx[0][0] : "" }));
+        }
+      } catch (e) { return ""; }
+      if (!got.length && !lock.length) return "";
+      return `<section class="blk keep">${hd(x.colE, x.colT[th], "var(--race)")}<p class="colp">${x.colP(th, got.length, total)}</p>
+        <div class="colg ${th === "racing" ? "cars" : th}">${got.map(c => `<div class="ci"><div class="ca">${c.art}</div><b>${esc(c.name)}</b><small>${c.sub ? esc(c.sub) + " · " : ""}${x.colL(esc(c.l))}</small></div>`).join("")}
+          ${lock.map((c, i) => `<div class="ci off"><div class="ca">${c.art}</div><b>?</b><small>${i === 0 && c.l ? x.colNext + " · " + x.colL(esc(c.l)) : "&nbsp;"}</small></div>`).join("")}</div></section>`;
+    };
     const hd = (eb, title, c) => `<div class="hd"><span class="eb" style="color:${c}">${eb}</span><h3>${title}</h3></div>`;
     // scorecard
     const ca = k.cls[0], cm = k.cls[1], attP = ca + cm ? ca / (ca + cm) * 100 : null;
@@ -502,6 +543,7 @@ window.linguaShared(function () {
             <span class="road sm">${Array.from({ length: Math.min(12, r[3] || 1) }, (_, i) => `<span class="${i < Math.round(sec / (r[3] || 1) * Math.min(12, r[3] || 1)) ? "done" : ""}"></span>`).join("")}</span>
             <small>${x.sections(sec, r[3])}${r[6] ? " · " + x.tries(r[6]) : ""}</small></div>
             <div class="lr"><b>${result(r)}</b>${r[5] ? `<span class="chip ok">${x.passed(fds(r[5]))}</span>` : `<span class="chip">${x.progress}</span>`}</div></div>`; }).join("")}</div></section>` : ""}
+        ${collection()}
         ${(D.cl || []).length || (D.nt || []).length ? `<section class="blk">${hd(x.eC, x.tC2, "var(--jeo)")}<div class="tl">
           ${((D.cl || []).length ? D.cl : D.nt.map(c => [c[0], 1, "", "", c[1], c[2]])).map(c => { const d = new Date(c[0] + "T12:00");
             return `<div class="tli ${c[1] ? "" : "miss"}"><span class="dd"><b>${d.getDate()}</b><small>${d.toLocaleDateString(x.locale, { month: "short" }).replace(".", "")}</small></span>

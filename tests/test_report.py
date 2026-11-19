@@ -42,6 +42,9 @@ def test():
                      "Lecciones", "65% → 85%", "Lo que vimos en cada clase", "Described his dream car", "wheel", "Faltó", "Tareas", "Entregada", "Pendiente", "90",
                      "Para repasar", "My uncle has an Xbox.", "has", "Próximos pasos", "Continuar con la lección", "Comentario del instructor", "Ya se presenta solo", "Clases de inglés"]:
             check(part.lower() in txt.lower(), f"report shows “{part}”")
+        check("Su garage" in txt and "2 de 6" in txt and "Street Hatch" in txt and F.locator(".colg .ci").count() == 6 and F.locator(".colg .ci.off").count() == 4,
+              "the report shows the cars unlocked in his garage, and the next ones locked")
+        F.locator(".colg").screenshot(path=os.path.join(OUT, "report_garage.png"))
         F.screenshot(path=os.path.join(OUT, "report_es.png"), full_page=True)
         F.click('[data-l="en"]'); F.wait_for_timeout(300)
         txt = F.inner_text("#doc")
