@@ -100,7 +100,8 @@ window.LINGUA = {
       {"id": "311", "archivo": "clases/leccion-311.html", "titulo": "Talking Shop: Sound, Gear & Playing", "tema": "Musicians don't say a song is \"nice\" — they talk about tone, groove and what makes it hit.", "nivel": "C1", "min": 90, "icono": "guitar", "color": "#0f766e", "estado": "lista", "secs": 10},
       {"id": "312", "archivo": "clases/leccion-312.html", "titulo": "Breaking Down a Song", "tema": "Saying a song is \"fire\" is easy. Explaining why it works — the writing, the production, the feel — is the C1 skill.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 10},
       {"id": "313", "archivo": "clases/leccion-313.html", "titulo": "Inside the Music Industry", "tema": "Everyone wants to blow up. Not everyone wants to sign a record deal.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 11},
-      {"id": "314", "archivo": "clases/leccion-314.html", "titulo": "Live and Loud", "tema": "A great gig is never just about the music.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 11}
+      {"id": "314", "archivo": "clases/leccion-314.html", "titulo": "Live and Loud", "tema": "A great gig is never just about the music.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 11},
+      {"id": "315", "archivo": "clases/leccion-315.html", "titulo": "Debate Night", "tema": "Two hours, no worksheets. Technology, work, money, music and the way we live: pick a side and defend it.", "nivel": "C1", "min": 120, "icono": "mic", "color": "#0f766e", "estado": "lista", "secs": 7}
     ]}
   ],
 
