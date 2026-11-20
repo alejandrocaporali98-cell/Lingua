@@ -106,6 +106,13 @@ def test():
         check(env.DB["profiles"][ada].get("privacy_at") and S.locator("#pvNote").count() == 0, "accepting saves it and the note goes away")
         env.fresh(T, f"teacher.html#s/{ada}", 1500)
         check("Privacy notice: accepted" in T.inner_text("body"), "the teacher sees that the notice was accepted")
+        # a missed class can be marked as excused (rescheduled): it no longer counts as an absence
+        env.DB["classes"]["cmiss"] = {"id": "cmiss", "student_id": ada, "starts_at": now_iso(dt.timedelta(days=-3)), "status": "missed", "minutes": 60}
+        env.fresh(T, f"teacher.html#s/{ada}/classes", 1500)
+        check(T.locator("[data-st='cancelled'][data-c='cmiss']").inner_text().strip() == "Excused", "a missed class offers Excused")
+        T.click("[data-st='cancelled'][data-c='cmiss']"); T.wait_for_timeout(800)
+        check(env.DB["classes"]["cmiss"]["status"] == "cancelled", "a missed class can be marked as excused")
+        del env.DB["classes"]["cmiss"]
 
         # class dictionary: next to Notes in class mode; look up, translate, add to today's notes
         env.DB["classes"]["cnow"] = {"id": "cnow", "student_id": ada, "starts_at": now_iso(), "status": "scheduled", "minutes": 60, "notes": "Good warm-up"}
