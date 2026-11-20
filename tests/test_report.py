@@ -39,15 +39,17 @@ def test():
         F = env.device("F", 1100, 1000); F.goto(url); F.wait_for_timeout(900)
         txt = F.inner_text("#doc")
         for part in ["CLASES DE INGLÉS", "Reporte de avance", "EMILIANO SÁNCHEZ", "Evaluación del periodo", "Asistencia", "3 de 4 clases", "Tareas a tiempo", "Constancia", "Nivel actual", "Lecciones aprobadas", "Calendario de práctica", "Mejor logro", "Meta para el siguiente periodo", "Folio ES-", "Preparado por", "Emiliano tomó 3 clases (faltó a 1)", "Lo que practicó entre clases", "Frases dichas bien con el micrófono",
-                     "Lecciones", "65% → 85%", "Lo que vimos en cada clase", "Described his dream car", "wheel", "Faltó", "Tareas", "Entregada", "Pendiente", "90",
+                     "Lecciones", "65% → 85%", "Lo que vimos en cada clase", "wheel", "Lo que ya puede hacer en inglés", "Presentarse solo", "Describir un auto", "Ahora está aprendiendo a", "Antes y ahora", "Nivel inicial A2", "Trabaja con lecciones de nivel", "Cómo apoyarlo en casa", "carrera de F1", "un auto nuevo en su perfil", "Faltó", "Tareas", "Entregada", "Pendiente", "90",
                      "Para repasar", "My uncle has an Xbox.", "has", "Próximos pasos", "Continuar con la lección", "Comentario del instructor", "Ya se presenta solo", "Clases de inglés"]:
             check(part.lower() in txt.lower(), f"report shows “{part}”")
+        check("Described his dream car" not in txt, "the Spanish report leaves out the teacher's notes written in English")
         check("Su garage" in txt and "2 de 6" in txt and "Street Hatch" in txt and F.locator(".colg .ci").count() == 6 and F.locator(".colg .ci.off").count() == 4,
               "the report shows the cars unlocked in his garage, and the next ones locked")
         F.locator(".colg").screenshot(path=os.path.join(OUT, "report_garage.png"))
         F.screenshot(path=os.path.join(OUT, "report_es.png"), full_page=True)
         F.click('[data-l="en"]'); F.wait_for_timeout(300)
         txt = F.inner_text("#doc")
+        check("Described his dream car" in txt and "what they can already do in english" in txt.lower(), "the English report keeps the class notes and the can-do list")
         txt = txt.lower(); check("english classes" in txt and "class log" in txt and "next steps" in txt and "a note from the teacher" in txt, "EN button switches the whole report to English")
         F.set_viewport_size({"width": 390, "height": 844}); F.click('[data-l="es"]'); F.wait_for_timeout(300)
         sw = F.evaluate("document.documentElement.scrollWidth"); check(sw <= 392, f"report fits a phone (width {sw})")

@@ -86,11 +86,15 @@
     const rx = s.review.slice(-40).reverse().filter(q => q.p && q.a).slice(0, 6).map(q => [cut(String(q.p).replace(/___/, "___"), 100), cut(q.a, 50), String(q.l || "").split(".")[0]]);
     // next lessons: the first ones in their list that aren't passed yet
     const nx = s.rows.filter(r => !(r.best && pct(r.best) >= 80)).slice(0, 3).map(r => [r.l.id, r.l.titulo, r.best ? pct(r.best) : null]);
+    // before and now: first class, placement level, and the level of the lessons they're working on now
+    const firstCl = (ctx.classes || []).filter(c => c.student_id === s.p.id && c.status === "attended").map(c => c.starts_at).sort()[0];
+    const curL = (nx[0] && allLessons.find(l => l.id === nx[0][0])) || (s.rows.length ? s.rows[s.rows.length - 1].l : null);
+    const bg = [firstCl ? dkey(firstCl) : null, pl ? pl.nivel || null : null, pl && pl.fecha ? String(pl.fecha).slice(0, 10) : null, curL ? curL.nivel || null : null];
     const hb = { words: (get("words", []) || []).length, learned: get("reviewLearned", 0) || 0, streak: (g && g.best) || 0 };
     // practice calendar: points per day in the period (last 13 weeks at most)
     const dy = Object.keys(days).filter(k => days[k] > 0 && inP(k + "T12:00")).sort().slice(-91).map(k => [k, days[k]]);
     return {
-      v: 2, th: s.theme || null, cl, hl, ld, rx, nx, hb, dy, n: s.p.display_name || "Student", g: new Date().toISOString(), p: period, f: dkey(from), t: dkey(to), lv: pl ? pl.nivel : null,
+      v: 2, th: s.theme || null, bg, cl, hl, ld, rx, nx, hb, dy, n: s.p.display_name || "Student", g: new Date().toISOString(), p: period, f: dkey(from), t: dkey(to), lv: pl ? pl.nivel : null,
       k: { cls: [cls.filter(c => c.status === "attended").length, cls.filter(c => c.status === "missed").length], days: practice.length, pdays: prevPractice.length,
         passed: passedIn.length, lessons: s.rows.length, done: s.rows.filter(r => r.best && pct(r.best) >= 80).length, avg: avg(inAtt), xp,
         hw: [hw.filter(h => h.done_at).length, hw.length], words, spoken: counters.spoken || 0, dict: counters.dictation || 0, rv: s.review.length },
