@@ -76,7 +76,7 @@ def test():
         check("Life at the Stables" in F.inner_text("#doc"), "reports sent before this change still open")
         # each student's style gives the report its own palette
         F.goto(url); F.wait_for_timeout(500)
-        check(F.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--jeo').trim()") == "#c8102e", "Racing student gets the racing palette")
+        check(F.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--acc').trim()") == "#8f1d14", "Racing student gets the racing accent colour")
         check(not env.errs, "no page errors: " + "; ".join(env.errs[:3]))
 
 
