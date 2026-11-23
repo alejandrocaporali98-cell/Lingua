@@ -86,7 +86,13 @@
       learned: "Comparing: faster, the fastest" },
     "07": { name: "GT Racer", kind: "GT race car", shape: "coupe", body: "#c2410c", accent: "#f5f5f2", num: "07",
       hp: 550, top: 290, zero: 3.2, about: "It can go 290 km/h, and its crew can change four tyres in seconds. But it can't go fast in the pit lane!",
-      learned: "can / can't" }
+      learned: "can / can't" },
+    "08": { name: "Street Tuner", kind: "Tuned street car", shape: "drift", body: "#1e2a44", accent: "#7dd3fc", num: "08",
+      hp: 450, top: 260, zero: 4.2, about: "It's Saturday night and everyone is looking at this car. The engine is running, the neon lights are glowing and people are filming it!",
+      learned: "Present continuous" },
+    "09": { name: "Road Tripper", kind: "Touring car", shape: "hatch", body: "#0f766e", accent: "#f5f5f2", num: "09",
+      hp: 200, top: 220, zero: 7.8, about: "We're going to drive to the beach in this car. It's going to be a long trip, so I'm going to make a great playlist.",
+      learned: "be going to" }
   };
   const MAX = { hp: 1000, top: 350 };
 

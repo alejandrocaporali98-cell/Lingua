@@ -20,7 +20,9 @@ window.LINGUA = {
       { id: "06", archivo: "clases/leccion-06.html", titulo: "Level Up", tema: "Compare games and cars: faster, better, the best.", nivel: "A2–B1", min: 60, icono: "pad", color: "#be123c", estado: "lista", secs: 7 }
     ]},
     { titulo: "Module 3 · Race weekend", owner: "Emiliano", lecciones: [
-      { id: "07", archivo: "clases/leccion-07.html", titulo: "Pit Stop", tema: "Say what you can and can't do: pit crews, race radio and the safety car.", nivel: "A2", min: 60, icono: "helmet", color: "#c2410c", estado: "lista", secs: 9 }
+      { id: "07", archivo: "clases/leccion-07.html", titulo: "Pit Stop", tema: "Say what you can and can't do: pit crews, race radio and the safety car.", nivel: "A2", min: 60, icono: "helmet", color: "#c2410c", estado: "lista", secs: 9 },
+      { id: "08", archivo: "clases/leccion-08.html", titulo: "Night Meet", tema: "Say what's happening right now: tuned cars, body kits and the crowd at a car meet.", nivel: "A2", min: 60, icono: "car", color: "#1e40af", estado: "lista", secs: 9 },
+      { id: "09", archivo: "clases/leccion-09.html", titulo: "Road Trip", tema: "Make plans with going to: the highway, snacks, a playlist and a full tank.", nivel: "A2", min: 60, icono: "plane", color: "#0f766e", estado: "lista", secs: 9 }
     ]},
     // ── Ada (in lesson order; new lessons go at the end of the last module) ──
     { titulo: "Module 1 · Getting started", owner: "Ada", lecciones: [

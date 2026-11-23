@@ -8,6 +8,8 @@ window.LINGUA_CANDO = {
   "05": ["Contar algo que ya pasó, como un partido, usando el pasado.", "Tell the story of something that happened, like a match, in the past tense."],
   "06": ["Comparar dos cosas y decir cuál es la mejor, la más rápida o la peor.", "Compare two things and say which is the best, the fastest or the worst."],
   "07": ["Decir lo que puede y no puede hacer, y preguntarlo a otros.", "Say what he can and can’t do, and ask others."],
+  "08": ["Describir lo que está pasando en este momento, por ejemplo en una exhibición de autos.", "Describe what’s happening right now, like at a car meet."],
+  "09": ["Hablar de sus planes: a dónde va a ir, qué va a llevar y qué va a hacer.", "Talk about his plans: where he’s going to go, what he’s going to bring and do."],
   "101": ["Hablar de la música que le gusta y recomendarla.", "Talk about the music she loves and recommend it."],
   "102": ["Contar de qué trata una serie y recomendarla.", "Explain what a series is about and recommend it."],
   "103": ["Usar los tiempos verbales más comunes juntos y sin confundirlos.", "Use the most common tenses together without mixing them up."],
