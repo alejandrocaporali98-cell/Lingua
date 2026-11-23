@@ -5,7 +5,9 @@
   const QS = new URLSearchParams(location.search), EMB = !!G.embedded, ONLY = (QS.get("only") || "").split(",").filter(Boolean);
   // A debate lesson (C.debate) is all speaking: hot takes, a phrase toolkit, timed debate rounds, a lightning round and a verdict
   const DB = C.debate || null;
-  const ALL = DB ? [
+  // A studio lesson (C.studio) is a game: build a film with a budget, stage by stage, and defend every choice out loud
+  const ST = C.studio || null;
+  const ALL = ST ? ST.stages.map(x => ({ id: x.id, t: x.t, min: x.min || 10 })) : DB ? [
     ...(DB.hot && DB.hot.length ? [{ id: "hot", t: "Hot takes", min: 10 }] : []),
     ...(DB.kit && DB.kit.length ? [{ id: "kit", t: "Debate toolkit", min: 8 }] : []),
     ...DB.rounds.map((r, i) => ({ id: "r" + (i + 1), t: r.t, min: r.min || 20 })),
@@ -146,6 +148,7 @@
   function draw() {
     quiz = null; clearInterval(tick);
     const id = SECS[st.sec].id;
+    if (ST) { drawStage(ST.stages.find(x => x.id === id)); wirePager(); return; }
     if (DB) { ({ hot: drawHot, kit: drawKit, light: drawLight, verdict: drawVerdict })[id] ? ({ hot: drawHot, kit: drawKit, light: drawLight, verdict: drawVerdict })[id]() : drawRound(+id.slice(1) - 1); wirePager(); return; }
     ({ warmup: drawWarmup, flash: drawFlash, read: drawRead, grammar: drawGrammar, frases: drawFrases, gaps: drawGaps, errors: drawErrors, translate: drawTranslate, rp: drawRP, talk: drawTalk, final: drawFinal })[SECS[st.sec].id]();
     wirePager();
@@ -172,11 +175,13 @@
       hot: () => DB.hot.length + " opinions to defend in 30 seconds", kit: () => "Phrases to open, rebut, concede and close",
       light: () => DB.lightning.length + " motions · 45 seconds each, no prep", verdict: () => "How it went, and what to try next time"
     };
+    if (ST) ST.stages.forEach(x => { desc[x.id] = () => x.blurb || ""; });
     if (DB) DB.rounds.forEach((r, i) => { desc["r" + (i + 1)] = () => r.motions.length > 1 ? r.motions.length + " motions to choose from · " + r.kind : r.motions[0].m; });
     const ico = { words: '<path d="M4 6h16M4 12h10M4 18h13"/>', read: '<path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6"/>', gram: '<path d="M12 5v14M5 12h14"/>',
       rp: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 11h5M16 15h4"/>', talk: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>', quiz: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 12l3 3 5-6"/>', game: '<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3"/>' };
     const svg = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${ico[k]}</svg>`;
-    const inc = DB ? [["talk", DB.rounds.length + " timed debates"], ["rp", (DB.rounds.reduce((a, r) => a + r.motions.length, 0) + (DB.lightning || []).length) + " motions to argue"],
+    const inc = ST ? [["game", "A film production game · $" + ST.budget + "M budget"], ["talk", ST.stages.reduce((a, x) => a + (x.talk || []).length, 0) + " speaking tasks with timers"],
+      ["rp", "Hire writers, cast, crew and cameras · " + ST.stages.reduce((a, x) => a + (x.slots || []).reduce((b, sl) => b + sl.options.length, 0), 0) + " cards"], ["quiz", "No quizzes: decisions and speaking"]] : DB ? [["talk", DB.rounds.length + " timed debates"], ["rp", (DB.rounds.reduce((a, r) => a + r.motions.length, 0) + (DB.lightning || []).length) + " motions to argue"],
       ["read", "Debate toolkit · " + DB.kit.reduce((a, g) => a + g.p.length, 0) + " phrases"], ["quiz", "No quizzes: 100% speaking"]] : [["words", fl.length + " words with audio"], C.read && C.read.text ? ["read", "1 reading with " + (C.read.questions || []).length + " questions"] : null,
       C.grammar ? ["gram", "Grammar: " + C.grammar.title] : null, C.roleplay ? ["rp", "Role-play: " + C.roleplay.title] : null,
       C.talk ? ["talk", C.talk.questions.length + " conversation questions"] : null, ["quiz", "Final quiz · " + (C.final || []).length + " questions"], ["game", "Class games"]].filter(Boolean);
@@ -198,6 +203,7 @@
             <ol class="ov-list">${SECS.map((s, i) => `<li><button type="button" data-ov="${i}"><span class="ov-chk ${st.done.has(i) ? "on" : ""}" aria-hidden="true"></span><span class="ov-t"><b>${E(s.t)}</b><small>${E((desc[s.id] || (() => ""))())}</small></span><span class="ov-m ${minOf(s) === "Homework" ? "hw" : ""}">${minOf(s)}</span></button></li>`).join("")}</ol></section>
           ${gr ? `<section class="ov-gr"><h2>Grammar of the lesson</h2><p class="ov-gt">${E(gr.title)}</p>${ex[0] ? `<p class="ov-big">${bold(ex[0])}</p>` : ""}
             <ul>${ex.slice(1, 3).map(x => `<li>${bold(x)}</li>`).join("")}${gr.wrong && gr.right ? `<li class="ov-watch">Watch out: ${bold(gr.wrong)} → ${bold(gr.right)}</li>` : ""}</ul></section>` : ""}
+          ${ST && ST.how ? `<section><h2>How the game works</h2><ul class="ov-q">${ST.how.map(h => `<li>${E(h)}</li>`).join("")}</ul></section>` : ""}
           ${DB ? `<section><h2>Tonight’s motions</h2><ul class="ov-q">${DB.rounds.flatMap(r => r.motions.map(m => `<li>${E(m.m)}</li>`)).join("")}</ul></section>` : ""}
           ${C.talk && C.talk.questions ? `<section><h2>Let's talk about</h2><ul class="ov-q">${C.talk.questions.slice(0, 4).map(q => `<li>${E(q)}</li>`).join("")}</ul></section>` : ""}
         </div>
@@ -617,6 +623,120 @@
       G.confetti && G.confetti(); G.sfx && G.sfx("win");
       stage.querySelector("#vDone").textContent = "Class complete ✓";
     };
+  }
+
+  // ── Studio lesson: make a film with a budget ──
+  const sKey = "studio." + C.id, M = n => "$" + (Math.round(n * 10) / 10).toLocaleString("en-US") + "M";
+  const sState = () => Object.assign({ picks: {}, ev: {}, title: "", logline: "", tagline: "" }, G.store.get(sKey, {}) || {});
+  const sSave = v => G.store.set(sKey, v);
+  const sAll = () => { const m = {}; ST.stages.forEach(x => (x.slots || []).forEach(sl => sl.options.forEach(o => { m[sl.key + ":" + o.id] = Object.assign({ slot: sl.key }, o); }))); return m; };
+  const sEvents = () => (ST.stages.find(x => x.kind === "events") || { events: [] }).events;
+  const pick = (v, key) => sAll()[key + ":" + v.picks[key]] || null;
+  function sCalc(v) {
+    v = v || sState(); const all = sAll(), genre = v.picks.genre;
+    let cost = 0, craft = 0, hype = 0, risk = 0, fit = 0;
+    for (const k in v.picks) {
+      const o = all[k + ":" + v.picks[k]]; if (!o) continue;
+      cost += o.cost || 0; craft += o.craft || 0; hype += o.hype || 0; risk += o.risk || 0;
+      if (genre && (o.fit || []).includes(genre)) { craft += 1; fit++; }
+    }
+    sEvents().forEach(e => { const c = e.choices[v.ev[e.id]]; if (!c) return; cost += c.cost || 0; craft += c.craft || 0; hype += c.hype || 0; risk += c.risk || 0; });
+    const B = ST.budget, over = Math.max(0, cost - B);
+    const critics = Math.max(5, Math.min(98, Math.round(30 + craft * 2.2 - risk * 3 - over * 4)));
+    const audience = Math.max(5, Math.min(98, Math.round(30 + hype * 4.5 + craft - risk * 1.5 - over * 2)));
+    const box = Math.round(Math.max(1, cost) * (0.5 + audience / 38) * 10) / 10;
+    return { cost: Math.round(cost * 10) / 10, left: Math.round((B - cost) * 10) / 10, craft, hype, risk, fit, over, critics, audience, box };
+  }
+  function budgetBar(r) {
+    const pct = Math.min(100, r.cost / ST.budget * 100);
+    return `<div class="gl-budget ${r.left < 0 ? "over" : ""}"><div class="gl-money"><span class="eyebrow">Budget left</span><b>${M(r.left)}</b><small>of ${M(ST.budget)} · spent ${M(r.cost)}</small></div>
+      <i class="gl-bar" aria-hidden="true"><s style="width:${pct}%"></s></i>
+      <div class="gl-stats"><span><b>${r.craft}</b>Craft</span><span><b>${r.hype}</b>Star power</span><span><b>${r.risk}</b>Risk</span></div></div>`;
+  }
+  const tagsOf = (o, genre) => [o.craft ? `<i class="t-c">Craft +${o.craft}</i>` : "", o.hype ? `<i class="t-h">Star power ${o.hype > 0 ? "+" : ""}${o.hype}</i>` : "", o.risk ? `<i class="t-r">Risk +${o.risk}</i>` : "",
+    genre && (o.fit || []).includes(genre) ? `<i class="t-f">Fits your genre ✓</i>` : ""].join("");
+  function gCard(sl, o, v, r) {
+    const on = v.picks[sl.key] === o.id, cur = sl.options.find(x => x.id === v.picks[sl.key]);
+    const delta = (o.cost || 0) - (cur ? cur.cost || 0 : 0), ok = on || r.left - delta >= -0.001;
+    return `<button type="button" class="gl-card${on ? " on" : ""}" data-slot="${sl.key}" data-opt="${o.id}" aria-pressed="${on}" ${ok ? "" : "disabled"}>
+      <span class="gl-top"><b>${G.esc(o.name)}</b><span class="gl-cost">${o.cost ? M(o.cost) : "Free"}</span></span>
+      ${o.role ? `<small class="gl-role">${G.esc(o.role)}</small>` : ""}<span class="gl-desc">${G.esc(o.desc)}</span>
+      <span class="gl-tags">${tagsOf(o, sl.key === "genre" ? "" : v.picks.genre)}</span>${ok ? "" : `<span class="gl-no">Not enough budget: free up ${M(delta - r.left)}</span>`}${on ? `<span class="gl-on">Chosen ✓</span>` : ""}</button>`;
+  }
+  function gTalk(x) {
+    const t = isTeacher();
+    return `<div class="panel gl-talk"><span class="eyebrow">Talk it through · ${G.esc(x.task || "Defend your choices to the producer")}</span><ol>${(x.talk || []).map(q => `<li>${G.esc(q)}</li>`).join("")}</ol>
+      ${timer([["Pitch", 60], ["Defend", 90]])}
+      ${t && (x.push || []).length ? `<div class="tnotes" style="display:grid;gap:6px"><span class="eyebrow">Producer’s pushback · only you see this</span><ul>${x.push.map(n => `<li>${G.esc(n)}</li>`).join("")}</ul></div>` : ""}</div>`;
+  }
+  function drawStage(x) {
+    if (!x) return;
+    const v = sState(), r = sCalc(v), y = window.scrollY;
+    if (x.kind === "brief") return drawBrief(x, v, r);
+    if (x.kind === "premiere") return drawPremiere(x, v, r);
+    stage.innerHTML = head(x.t, x.intro) + budgetBar(r) +
+      (x.inputs ? `<div class="panel gl-in">${x.inputs.map(i => `<label><span class="eyebrow">${G.esc(i.label)}</span>${i.long ? `<textarea data-in="${i.key}" maxlength="240" rows="2" placeholder="${G.esc(i.ph || "")}">${G.esc(v[i.key] || "")}</textarea>` : `<input data-in="${i.key}" maxlength="60" placeholder="${G.esc(i.ph || "")}" value="${G.esc(v[i.key] || "")}">`}</label>`).join("")}</div>` : "") +
+      (x.slots || []).map(sl => `<section class="gl-slot"><div class="gl-sh"><h3>${G.esc(sl.label)}</h3>${sl.hint ? `<small>${G.esc(sl.hint)}</small>` : ""}</div><div class="gl-grid">${sl.options.map(o => gCard(sl, o, v, r)).join("")}</div></section>`).join("") +
+      (x.events || []).map(e => `<section class="gl-ev"><span class="eyebrow">${G.esc(e.when)}</span><h3>${G.esc(e.t)}</h3><p>${G.esc(e.text)}</p>
+        <div class="gl-ch">${e.choices.map((c, i) => `<button type="button" class="gl-choice${v.ev[e.id] === i ? " on" : ""}" data-ev="${e.id}" data-i="${i}" aria-pressed="${v.ev[e.id] === i}"><b>${G.esc(c.t)}</b><span class="gl-tags">${c.cost ? `<i class="t-r">Costs ${M(c.cost)}</i>` : ""}${tagsOf(c, "")}</span></button>`).join("")}</div></section>`).join("") +
+      gTalk(x) + pager();
+    stage.querySelectorAll("[data-opt]").forEach(b => b.onclick = () => {
+      const w = sState(); w.picks[b.dataset.slot] = w.picks[b.dataset.slot] === b.dataset.opt ? undefined : b.dataset.opt;
+      if (!w.picks[b.dataset.slot]) delete w.picks[b.dataset.slot];
+      sSave(w); G.sfx && G.sfx("pop"); drawStage(x); wirePager();
+    });
+    stage.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => { const w = sState(); w.ev[b.dataset.ev] = +b.dataset.i; sSave(w); G.sfx && G.sfx("pop"); drawStage(x); wirePager(); });
+    stage.querySelectorAll("[data-in]").forEach(i => i.oninput = () => { const w = sState(); w[i.dataset.in] = i.value.slice(0, 240); sSave(w); });
+    wireTimer(stage); window.scrollTo(0, y);
+  }
+  function drawBrief(x, v, r) {
+    stage.innerHTML = head(x.t, x.intro) + budgetBar(r) + `
+      <div class="panel gl-how"><span class="eyebrow">How it works</span><ol>${(ST.how || []).map(h => `<li>${G.esc(h)}</li>`).join("")}</ol></div>
+      <div class="db-kit">${(ST.kit || []).map(g => `<section class="panel"><span class="eyebrow">${G.esc(g.t)}</span><ul>${g.p.map(p => `<li><span>${G.esc(p)}</span>${G.sayBtn ? G.sayBtn(p.replace(/…/g, "")) : ""}</li>`).join("")}</ul></section>`).join("")}</div>
+      ${gTalk(x)}
+      <div class="db-row" style="justify-content:flex-end"><button type="button" class="btn sm" id="glReset">Start a new film</button></div>` + pager();
+    const rb = stage.querySelector("#glReset");
+    rb.onclick = () => { if (!rb.dataset.sure) { rb.dataset.sure = "1"; rb.textContent = "Tap again to clear every choice"; return; } sSave({ picks: {}, ev: {}, title: "", logline: "", tagline: "" }); drawStage(x); wirePager(); };
+    wireTimer(stage);
+  }
+  function drawPremiere(x, v, r) {
+    const nm = String((G.actingAs && G.actingAs.name) || (G.profile && (G.profile.name || G.profile.nombre || G.profile.full_name)) || "").split(/\s+/)[0] || "";
+    const g = pick(v, "genre"), set = pick(v, "setting"), lead = pick(v, "lead"), sup = pick(v, "support");
+    const missing = ST.stages.flatMap(s => (s.slots || []).filter(sl => !v.picks[sl.key]).map(sl => sl.label)).concat(sEvents().filter(e => v.ev[e.id] == null).map(e => e.t));
+    const profit = Math.round((r.box - r.cost) * 10) / 10, stars = Math.max(1, Math.round(r.critics / 20 * 2) / 2);
+    const verdict = r.critics >= 80 && r.box >= r.cost * 2 ? "An instant classic" : r.critics >= 80 ? "The critics’ darling" : r.box >= r.cost * 2.5 ? "A box-office smash" : r.critics < 50 && r.box < r.cost ? "A flop" : r.critics >= 65 && r.box < r.cost ? "A cult classic in the making" : "A solid hit";
+    // Reviews react to what was actually chosen
+    const Q = [];
+    (ST.reviews || []).forEach(q => { const k = q.if; let hit = false;
+      if (k === "low") hit = r.critics < 50; else if (k === "high") hit = r.critics >= 80; else if (k === "risky") hit = r.risk >= 7; else if (k === "over") hit = r.left < 0; else if (k === "fit") hit = r.fit >= 5;
+      else if (k.includes("=")) { const [a, b] = k.split("="); hit = a.startsWith("ev:") ? v.ev[a.slice(3)] === +b : v.picks[a] === b; }
+      if (hit) Q.push(q.t.replace("{lead}", lead ? lead.name : "The lead").replace("{support}", sup ? sup.name : "the supporting cast")); });
+    if (Q.length < 3) Q.push(r.critics >= 65 ? "A confident, grown-up film from a director to watch." : "There’s a good film in here somewhere. It just isn’t this cut.", "You won’t forget the last ten minutes.");
+    const outlets = ["The Projector", "Frame by Frame", "The Lingua Review"];
+    stage.innerHTML = head(x.t, x.intro) + (missing.length ? `<p class="gl-miss">Still to decide: ${missing.map(G.esc).join(", ")}. Go back and finish, or premiere it as it is.</p>` : "") + `
+      <div class="gl-prem">
+        <div class="gl-poster g-${g ? g.id : "none"}"><span class="gp-k">${nm ? G.esc(nm) + " Pictures presents" : "A Lingua Pictures film"}</span><h2>${G.esc(v.title || "Untitled")}</h2>
+          <p class="gp-tag">${G.esc(v.tagline || v.logline || "")}</p><p class="gp-cast">${lead || sup ? "Starring " + [lead, sup].filter(Boolean).map(o => G.esc(o.name)).join(" · ") : ""}</p>
+          <p class="gp-by">${nm ? "Directed by " + G.esc(nm) : "A film by you"}</p><span class="gp-g">${g ? G.esc(g.name) : ""}${set ? " · " + G.esc(set.name) : ""}</span></div>
+        <div class="gl-score">
+          <div class="gl-verd"><span class="eyebrow">The verdict</span><b>${verdict}</b></div>
+          <div class="gl-nums"><div><b>${r.critics}%</b><span>Critics</span></div><div><b>${r.audience}%</b><span>Audiences</span></div><div><b>${M(r.box)}</b><span>Box office</span></div><div><b class="${profit < 0 ? "neg" : ""}">${profit < 0 ? "−" : "+"}${M(Math.abs(profit))}</b><span>${profit < 0 ? "Loss" : "Profit"}</span></div></div>
+          <dl class="gl-credits">${[["writer", "Written by"], ["dp", "Cinematography"], ["editor", "Edited by"], ["music", "Music"], ["camera", "Shot on"], ["lens", "Lenses"], ["light", "Lighting"]].map(([k, l]) => { const o = pick(v, k); return o ? `<div><dt>${l}</dt><dd>${G.esc(o.name)}</dd></div>` : ""; }).join("")}</dl>
+          <div class="gl-revs">${Q.slice(0, 3).map((q, i) => `<blockquote><span class="gl-stars" aria-label="${stars} stars">${"★".repeat(Math.floor(stars))}${stars % 1 ? "½" : ""}</span><p>“${G.esc(q)}”</p><cite>${outlets[i]}</cite></blockquote>`).join("")}</div>
+        </div>
+      </div>
+      <div class="panel gl-in"><label><span class="eyebrow">Tagline for the poster</span><input data-in="tagline" maxlength="80" placeholder="One line that sells the film" value="${G.esc(v.tagline || "")}"></label></div>
+      ${gTalk(x)}
+      <div class="db-row" style="justify-content:flex-end"><button type="button" class="btn primary" id="glDone">${st.done.has(st.sec) ? "Film finished ✓" : "That’s a wrap: finish the class"}</button></div>` + pager();
+    const ti = stage.querySelector("[data-in='tagline']");
+    ti.oninput = () => { const w = sState(); w.tagline = ti.value.slice(0, 80); sSave(w); stage.querySelector(".gp-tag").textContent = w.tagline || w.logline || ""; };
+    stage.querySelector("#glDone").onclick = () => {
+      SECS.forEach((_, i) => { if (!st.done.has(i)) markDone(i); });
+      G.game && G.game.award(50, { once: "pass." + C.id, label: "Film wrapped" });
+      G.confetti && G.confetti(); G.sfx && G.sfx("win");
+      stage.querySelector("#glDone").textContent = "Film finished ✓";
+    };
+    wireTimer(stage);
   }
 
   // ── 5 Quiz final ──

@@ -38,6 +38,7 @@ window.LINGUA_CANDO = {
   "303": ["Explicar cómo se produce una película, de la idea al corte final.", "Explain how a film is made, from the idea to the final cut."],
   "304": ["Describir lo que pasa en un set y criticar decisiones de una película.", "Describe what’s happening on set and judge the choices in a film."],
   "305": ["Debatir en inglés: defender una postura, refutar y argumentar incluso lo contrario de lo que piensa.", "Debate in English: defend a position, rebut, and argue even the side he disagrees with."],
+  "306": ["Tomar decisiones de producción en inglés y defenderlas: presupuesto, reparto, equipo técnico y cámaras.", "Make and defend production decisions in English: budget, cast, crew and cameras."],
   "311": ["Hablar de instrumentos, sonido y equipo como un músico.", "Talk about instruments, sound and gear like a musician."],
   "312": ["Explicar por qué una canción funciona, no solo si le gusta.", "Explain why a song works, not just whether he likes it."],
   "313": ["Explicar cómo funciona la industria musical y dar opiniones con fuerza.", "Explain how the music industry works and give strong opinions."],
