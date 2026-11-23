@@ -65,17 +65,11 @@ jobs:
           sed -i "s/window.LINGUA.build = \"dev\";/window.LINGUA.build = \"${GITHUB_SHA}\";/" _site/assets/config.js
           grep -q "window.LINGUA.build = \"${GITHUB_SHA}\";" _site/assets/config.js
           echo "{\"build\": \"${GITHUB_SHA}\", \"at\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > _site/version.json
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-      - id: deployment
-        uses: actions/deploy-pages@v4
       - name: Check the Cloudflare secrets
         run: |
           if [ -n "$CF_TOKEN" ]; then echo "token set"; else echo "token missing"; fi
           if [ -n "$CF_ACCOUNT" ]; then echo "account set"; else echo "account missing"; fi
-      - name: Also publish to Cloudflare Pages (backup address, lingua-clases.pages.dev)
+      - name: Publish to Cloudflare Pages first (main address, lingua-clases.pages.dev), so a GitHub Pages outage doesn't stop it
         if: env.CF_TOKEN != '' && env.CF_ACCOUNT != ''
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -83,3 +77,10 @@ jobs:
         run: |
           npx --yes wrangler@4 pages project list | grep -q "lingua-clases" || npx --yes wrangler@4 pages project create lingua-clases --production-branch=main
           npx --yes wrangler@4 pages deploy _site --project-name=lingua-clases --branch=main --commit-dirty=true
+      # Then GitHub Pages (second address)
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
