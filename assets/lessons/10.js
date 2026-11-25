@@ -80,8 +80,8 @@ window.CLASE = {
     "kind": "pick",
     "t": "Your team",
     "min": 7,
-    "blurb": "Name, slogan, colours and team style",
-    "intro": "Every team needs a name, a slogan and colours. And a style: how do you want to race?",
+    "blurb": "Name, slogan, team style and your car design",
+    "intro": "Every team needs a name, a slogan, a style and a cool car. Design your car: choose the shape, the colours and the number.",
     "inputs": [
      {
       "key": "title",
@@ -134,88 +134,18 @@ window.CLASE = {
         "fit": []
        }
       ]
-     },
-     {
-      "key": "livery",
-      "label": "Team colours",
-      "options": [
-       {
-        "id": "red",
-        "name": "Red and white",
-        "role": "Classic",
-        "cost": 0,
-        "desc": "Fast and famous colours.",
-        "craft": 0,
-        "hype": 0,
-        "risk": 0,
-        "fit": [],
-        "body": "#c8102e",
-        "accent": "#f5f5f5"
-       },
-       {
-        "id": "blue",
-        "name": "Blue and yellow",
-        "role": "Bright",
-        "cost": 0,
-        "desc": "You can see this car from far away.",
-        "craft": 0,
-        "hype": 0,
-        "risk": 0,
-        "fit": [],
-        "body": "#1d3f8f",
-        "accent": "#f5c518"
-       },
-       {
-        "id": "black",
-        "name": "Black and gold",
-        "role": "Elegant",
-        "cost": 0,
-        "desc": "Dark, serious and very cool.",
-        "craft": 0,
-        "hype": 0,
-        "risk": 0,
-        "fit": [],
-        "body": "#151515",
-        "accent": "#c9a227"
-       },
-       {
-        "id": "green",
-        "name": "Green and silver",
-        "role": "Fresh",
-        "cost": 0,
-        "desc": "Different from all the other teams.",
-        "craft": 0,
-        "hype": 0,
-        "risk": 0,
-        "fit": [],
-        "body": "#0b5d3b",
-        "accent": "#c0c6cc"
-       },
-       {
-        "id": "orange",
-        "name": "Orange and blue",
-        "role": "Loud",
-        "cost": 0,
-        "desc": "Nobody can miss this car on TV.",
-        "craft": 0,
-        "hype": 0,
-        "risk": 0,
-        "fit": [],
-        "body": "#ea580c",
-        "accent": "#1e3a8a"
-       }
-      ]
      }
     ],
     "task": "Present your team",
     "talk": [
      "Say your team name and your slogan.",
-     "Why did you choose these colours?",
+     "Describe your car: the shape, the colours and the number. Why did you choose them?",
      "What is your team style? Describe your team in three sentences."
     ],
     "push": [
      "Ask: “Where is your team from?” and “Is your team faster than the other teams?”"
-    ]
+    ],
+    "designer": true
    },
    {
     "id": "sponsors",
@@ -931,7 +861,7 @@ window.CLASE = {
    {
     "sec": "team",
     "min": 7,
-    "tip": "He types the team name and slogan. Then he presents his team."
+    "tip": "He types the team name and slogan, designs the car and presents his team."
    },
    {
     "sec": "sponsors",

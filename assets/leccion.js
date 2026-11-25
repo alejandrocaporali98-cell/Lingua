@@ -617,14 +617,22 @@
       stage.querySelectorAll(`[data-c="${b.dataset.c}"]`).forEach(x => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", x === b); });
     });
     stage.querySelector("#vDone").onclick = () => {
-      SECS.forEach((_, i) => { if (!st.done.has(i)) markDone(i); });
       G.store.set("debate." + C.id + ".at", new Date().toISOString());
-      G.game && G.game.award(50, { once: "pass." + C.id, label: "Debate complete" });
-      G.confetti && G.confetti(); G.sfx && G.sfx("win");
+      passLesson("Debate complete");
       stage.querySelector("#vDone").textContent = "Class complete ✓";
     };
   }
 
+  // Finishing a game or a debate counts as passing the lesson: diploma, and the next car / horse / poster unlocks
+  function passLesson(label) {
+    SECS.forEach((_, i) => { if (!st.done.has(i)) markDone(i); });
+    G.game && G.game.award(50, { once: "pass." + C.id, label });
+    G.confetti && G.confetti(); G.sfx && G.sfx("win");
+    if (G.store.get("diploma." + C.id, null)) return;
+    G.store.set("diploma." + C.id, { ok: 1, n: 1, at: new Date().toISOString(), game: true });
+    const CX = G.collection && G.style && G.style.reward === "garage" && G.collection.current(), got = CX && CX.byLesson(C.id);
+    if (got) setTimeout(() => G.toast(`<b>New ${G.esc(CX.noun)} in your ${G.esc(CX.title.replace("Your ", ""))}: ${G.esc(got.name)}!</b><span><a href="${G.root || "../"}perfil.html#garage">Go to ${G.esc(CX.title.toLowerCase())}</a></span>`, "big"), 1600);
+  }
   // ── Studio lesson: make a film with a budget ──
   const sKey = "studio." + C.id, M = n => "$" + (Math.round(n * 10) / 10).toLocaleString("en-US") + "M";
   const sState = () => Object.assign({ picks: {}, ev: {}, title: "", logline: "", tagline: "" }, G.store.get(sKey, {}) || {});
@@ -633,7 +641,7 @@
   // Each game names its own stats and the card that gives the "fits" bonus (genre, team style…)
   const LB = () => Object.assign({ craft: "Craft", hype: "Star power", risk: "Risk", fit: "Fits your genre ✓", fitKey: "genre" }, ST.labels || {});
   const sEvents = () => (ST.stages.find(x => x.kind === "events") || { events: [] }).events;
-  const pick = (v, key) => sAll()[key + ":" + v.picks[key]] || null;
+  const pick = (v, key) => { const o = sAll()[key + ":" + v.picks[key]] || null; return o && o.ask ? Object.assign({}, o, { name: (v[o.ask] || "").trim() || o.name }) : o; };
   function sCalc(v) {
     v = v || sState(); const all = sAll(), genre = v.picks[LB().fitKey];
     let cost = 0, craft = 0, hype = 0, risk = 0, fit = 0;
@@ -665,6 +673,30 @@
       ${o.role ? `<small class="gl-role">${G.esc(o.role)}</small>` : ""}<span class="gl-desc">${G.esc(o.desc)}</span>
       <span class="gl-tags">${tagsOf(o, sl.key === LB().fitKey ? "" : v.picks[LB().fitKey])}</span>${ok ? "" : `<span class="gl-no">Not enough budget: free up ${M(delta - r.left)}</span>`}${on ? `<span class="gl-on">Chosen ✓</span>` : ""}</button>`;
   }
+  // Car designer (racing game): shape, two colours and the number, drawn live with the garage's cars
+  const CAR0 = { shape: "hyper", body: "#c8102e", accent: "#f5f5f5", num: "10" };
+  const SW = ["#c8102e", "#ea580c", "#f5c518", "#0b5d3b", "#15803d", "#1d3f8f", "#0ea5e9", "#151515", "#f5f5f5", "#c0c6cc", "#c9a227", "#7c2d12"];
+  const carOf = v => Object.assign({}, CAR0, v.design || {});
+  function designer(v) {
+    const d = carOf(v), shapes = G.garage ? Object.keys(G.garage.SHAPES) : [];
+    const sw = k => `<div class="gd-sw" role="group" aria-label="${k === "body" ? "Main colour" : "Second colour"}">${SW.map(c => `<button type="button" data-c="${k}" data-v="${c}" class="${d[k] === c ? "on" : ""}" style="background:${c}" aria-label="${c}"></button>`).join("")}
+      <label class="gd-pick" title="Any colour"><input type="color" data-cc="${k}" value="${d[k]}"><span>Any colour</span></label></div>`;
+    return `<div class="panel gl-design"><span class="eyebrow">Design your car</span>
+      <div class="gd-wrap"><div class="gd-prev" id="gdPrev">${G.garage ? G.garage.svg(d) : ""}</div>
+        <div class="gd-ctl">
+          <div><b>Shape</b><div class="gd-shapes">${shapes.map(k => `<button type="button" data-shape="${k}" class="${d.shape === k ? "on" : ""}">${k[0].toUpperCase() + k.slice(1)}</button>`).join("")}</div></div>
+          <div><b>Main colour</b>${sw("body")}</div>
+          <div><b>Second colour</b>${sw("accent")}</div>
+          <label class="gd-num"><b>Number</b><input data-num inputmode="numeric" maxlength="2" value="${G.esc(d.num)}"></label>
+        </div></div></div>`;
+  }
+  function wireDesigner() {
+    const save = ch => { const w = sState(); w.design = Object.assign(carOf(w), ch); sSave(w); const pv = stage.querySelector("#gdPrev"); if (pv && G.garage) pv.innerHTML = G.garage.svg(w.design); return w.design; };
+    stage.querySelectorAll("[data-shape]").forEach(b => b.onclick = () => { save({ shape: b.dataset.shape }); stage.querySelectorAll("[data-shape]").forEach(x => x.classList.toggle("on", x === b)); G.sfx && G.sfx("pop"); });
+    stage.querySelectorAll("[data-c]").forEach(b => b.onclick = () => { save({ [b.dataset.c]: b.dataset.v }); stage.querySelectorAll(`[data-c="${b.dataset.c}"]`).forEach(x => x.classList.toggle("on", x === b)); const cc = stage.querySelector(`[data-cc="${b.dataset.c}"]`); if (cc) cc.value = b.dataset.v; });
+    stage.querySelectorAll("[data-cc]").forEach(i => i.oninput = () => { save({ [i.dataset.cc]: i.value }); stage.querySelectorAll(`[data-c="${i.dataset.cc}"]`).forEach(x => x.classList.remove("on")); });
+    const n = stage.querySelector("[data-num]"); if (n) n.oninput = () => { n.value = n.value.replace(/\D/g, "").slice(0, 2); save({ num: n.value || "0" }); };
+  }
   function gTalk(x) {
     const t = isTeacher();
     return `<div class="panel gl-talk"><span class="eyebrow">Talk it through · ${G.esc(x.task || "Defend your choices to the producer")}</span><ol>${(x.talk || []).map(q => `<li>${G.esc(q)}</li>`).join("")}</ol>
@@ -677,7 +709,8 @@
     if (x.kind === "brief") return drawBrief(x, v, r);
     if (x.kind === "premiere") return ST.finale === "race" ? drawRace(x, v, r) : drawPremiere(x, v, r);
     stage.innerHTML = head(x.t, x.intro) + budgetBar(r) +
-      (x.inputs ? `<div class="panel gl-in">${x.inputs.map(i => `<label><span class="eyebrow">${G.esc(i.label)}</span>${i.long ? `<textarea data-in="${i.key}" maxlength="240" rows="2" placeholder="${G.esc(i.ph || "")}">${G.esc(v[i.key] || "")}</textarea>` : `<input data-in="${i.key}" maxlength="60" placeholder="${G.esc(i.ph || "")}" value="${G.esc(v[i.key] || "")}">`}</label>`).join("")}</div>` : "") +
+      (x.designer ? designer(v) : "") +
+      ((x.inputs || []).filter(i => !i.showIf || v.picks[i.showIf.split("=")[0]] === i.showIf.split("=")[1]).length ? `<div class="panel gl-in">${x.inputs.filter(i => !i.showIf || v.picks[i.showIf.split("=")[0]] === i.showIf.split("=")[1]).map(i => `<label><span class="eyebrow">${G.esc(i.label)}</span>${i.long ? `<textarea data-in="${i.key}" maxlength="240" rows="2" placeholder="${G.esc(i.ph || "")}">${G.esc(v[i.key] || "")}</textarea>` : `<input data-in="${i.key}" maxlength="60" placeholder="${G.esc(i.ph || "")}" value="${G.esc(v[i.key] || "")}">`}</label>`).join("")}</div>` : "") +
       (x.slots || []).map(sl => `<section class="gl-slot"><div class="gl-sh"><h3>${G.esc(sl.label)}</h3>${sl.hint ? `<small>${G.esc(sl.hint)}</small>` : ""}</div><div class="gl-grid">${sl.options.map(o => gCard(sl, o, v, r)).join("")}</div></section>`).join("") +
       (x.events || []).map(e => `<section class="gl-ev"><span class="eyebrow">${G.esc(e.when)}</span><h3>${G.esc(e.t)}</h3><p>${G.esc(e.text)}</p>
         <div class="gl-ch">${e.choices.map((c, i) => `<button type="button" class="gl-choice${v.ev[e.id] === i ? " on" : ""}" data-ev="${e.id}" data-i="${i}" aria-pressed="${v.ev[e.id] === i}"><b>${G.esc(c.t)}</b><span class="gl-tags">${c.cost ? `<i class="t-r">Costs ${M(c.cost)}</i>` : ""}${tagsOf(c, "")}</span></button>`).join("")}</div></section>`).join("") +
@@ -689,6 +722,7 @@
     });
     stage.querySelectorAll("[data-ev]").forEach(b => b.onclick = () => { const w = sState(); w.ev[b.dataset.ev] = +b.dataset.i; sSave(w); G.sfx && G.sfx("pop"); drawStage(x); wirePager(); });
     stage.querySelectorAll("[data-in]").forEach(i => i.oninput = () => { const w = sState(); w[i.dataset.in] = i.value.slice(0, 240); sSave(w); });
+    if (x.designer) wireDesigner();
     wireTimer(stage); window.scrollTo(0, y);
   }
   function drawBrief(x, v, r) {
@@ -711,7 +745,7 @@
     done: ["Film finished ✓", "That’s a wrap: finish the class", "Film wrapped"], miss: "Go back and finish, or premiere it as it is." }, ST.show || {});
   function drawPremiere(x, v, r) {
     const nm = firstName(), S = SH(), prod = pick(v, "producer"), fill = t => t.replace("{name}", G.esc(nm)).replace("{producer}", prod ? G.esc(prod.name) : "you");
-    const g = pick(v, LB().fitKey), cast = S.cast.map(k => pick(v, k)).filter(o => o && o.id !== "none"), lead = pick(v, S.cast[0]), sup = pick(v, S.cast[1] || "");
+    const g = pick(v, LB().fitKey), cast = S.cast.map(k => pick(v, k)).filter(o => o && !String(o.id).startsWith("none")), lead = pick(v, S.cast[0]), sup = pick(v, S.cast[1] || "");
     const missing = ST.stages.flatMap(s => (s.slots || []).filter(sl => !v.picks[sl.key]).map(sl => sl.label)).concat(sEvents().filter(e => v.ev[e.id] == null).map(e => e.t));
     const profit = Math.round((r.box - r.cost) * 10) / 10, stars = Math.max(1, Math.round(r.critics / 20 * 2) / 2);
     const vd = S.verdicts, verdict = r.critics >= 80 && r.box >= r.cost * 2 ? vd[0] : r.critics >= 80 ? vd[1] : r.box >= r.cost * 2.5 ? vd[2] : r.critics < 50 && r.box < r.cost ? vd[3] : r.critics >= 65 && r.box < r.cost ? vd[4] : vd[5];
@@ -720,7 +754,7 @@
     (ST.reviews || []).forEach(q => { const k = q.if; let hit = false;
       if (k === "low") hit = r.critics < 50; else if (k === "high") hit = r.critics >= 80; else if (k === "risky") hit = r.risk >= 7; else if (k === "over") hit = r.left < 0; else if (k === "fit") hit = r.fit >= 5;
       else if (k.includes("=")) { const [a, b] = k.split("="); hit = a.startsWith("ev:") ? v.ev[a.slice(3)] === +b : v.picks[a] === b; }
-      if (hit) Q.push(q.t.replace("{lead}", lead ? lead.name : "The lead").replace("{support}", sup ? sup.name : "the supporting cast").replace("{title}", v.title || "this record")); });
+      if (hit) Q.push(q.t.replace("{lead}", lead ? lead.name : "The lead").replace("{support}", sup ? sup.name : "the supporting cast").replace("{title}", v.title || "this record").replace("{feature}", (pick(v, "feature") || {}).name || "the guest").replace("{feature2}", (pick(v, "feature2") || {}).name || "the second guest")); });
     if (Q.length < 3) Q.push(r.critics >= 65 ? S.extra[0] : S.extra[1], S.extra[2]);
     const outlets = S.outlets;
     stage.innerHTML = head(x.t, x.intro) + (missing.length ? `<p class="gl-miss">Still to decide: ${missing.map(G.esc).join(", ")}. ${S.miss}</p>` : "") + `
@@ -741,9 +775,7 @@
     const ti = stage.querySelector("[data-in='tagline']");
     ti.oninput = () => { const w = sState(); w.tagline = ti.value.slice(0, 80); sSave(w); stage.querySelector(".gp-tag").textContent = w.tagline || w.logline || ""; };
     stage.querySelector("#glDone").onclick = () => {
-      SECS.forEach((_, i) => { if (!st.done.has(i)) markDone(i); });
-      G.game && G.game.award(50, { once: "pass." + C.id, label: S.done[2] });
-      G.confetti && G.confetti(); G.sfx && G.sfx("win");
+      passLesson(S.done[2]);
       stage.querySelector("#glDone").textContent = S.done[0];
     };
     wireTimer(stage);
@@ -751,7 +783,7 @@
 
   // Race day: where your two drivers finish, points, fans and headlines
   function drawRace(x, v, r) {
-    const F = ST.race, d1 = pick(v, "driver1"), d2 = pick(v, "driver2"), liv = pick(v, "livery"), team = v.title || "Your team";
+    const F = ST.race, d1 = pick(v, "driver1"), d2 = pick(v, "driver2"), car0 = carOf(v), team = v.title || "Your team";
     const missing = ST.stages.flatMap(s => (s.slots || []).filter(sl => !v.picks[sl.key]).map(sl => sl.label)).concat(sEvents().filter(e => v.ev[e.id] == null).map(e => e.t));
     const p1 = Math.max(1, Math.min(18, Math.round(15 - r.craft * 0.85 + r.risk * 0.5 + Math.max(0, -r.left) * 1.5)));
     const dnf = r.risk >= 8;
@@ -770,10 +802,10 @@
       else if (k.includes("=")) { const [a, b] = k.split("="); hit = a.startsWith("ev:") ? v.ev[a.slice(3)] === +b : v.picks[a] === b; }
       if (hit) H.push(q.t.replace("{d1}", d1 ? d1.name : "Your driver").replace("{d2}", d2 ? d2.name : "Your second driver").replace("{team}", team)); });
     if (H.length < 3) H.push(F.extra[0], F.extra[1]);
-    const car = G.garage && liv ? G.garage.svg({ shape: "hyper", body: liv.body, accent: liv.accent, num: (d1 && d1.num) || "1" }) : "";
+    const car = G.garage ? G.garage.svg(car0) : "";
     stage.innerHTML = head(x.t, x.intro) + (missing.length ? `<p class="gl-miss">Still to choose: ${missing.map(G.esc).join(", ")}. You can still race!</p>` : "") + `
       <div class="gl-prem">
-        <div class="gl-team" style="--tb:${liv ? liv.body : "#1c1d1f"};--ta:${liv ? liv.accent : "#fff"}"><span class="gp-k">${G.esc(F.series)}</span><h2>${G.esc(team)}</h2><div class="gl-car">${car}</div>
+        <div class="gl-team" style="--tb:${car0.body};--ta:${car0.accent}"><span class="gp-k">${G.esc(F.series)}</span><h2>${G.esc(team)}</h2><div class="gl-car">${car}</div>
           <p class="gp-cast">${[d1, d2].filter(Boolean).map(o => G.esc(o.name)).join(" · ")}</p><span class="gp-g">${G.esc(v.tagline || "")}</span></div>
         <div class="gl-score">
           <div class="gl-verd"><span class="eyebrow">${G.esc(F.track)}</span><b>${verdict}</b></div>
@@ -785,9 +817,7 @@
       ${gTalk(x)}
       <div class="db-row" style="justify-content:flex-end"><button type="button" class="btn primary" id="glDone">${st.done.has(st.sec) ? "Race finished ✓" : "Finish the race and the class"}</button></div>` + pager();
     stage.querySelector("#glDone").onclick = () => {
-      SECS.forEach((_, i) => { if (!st.done.has(i)) markDone(i); });
-      G.game && G.game.award(50, { once: "pass." + C.id, label: "Race finished" });
-      G.confetti && G.confetti(); G.sfx && G.sfx("win");
+      passLesson("Race finished");
       stage.querySelector("#glDone").textContent = "Race finished ✓";
     };
     wireTimer(stage);

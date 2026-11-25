@@ -455,3 +455,21 @@ body.present .ov-side { position: static; }
 .gl-res li.me { background: #fff7d6; font-weight: 800; } .gl-res li.me b { color: var(--ink); }
 .gl-res li.out { background: #fde8e6; }
 @media (max-width: 760px) { .gl-prem.sq { grid-template-columns: 1fr; } .gl-cover { max-width: 360px; } }
+
+/* Car designer */
+.gl-design { display: grid; gap: 12px; }
+.gd-wrap { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(0, 1.2fr); gap: 18px; align-items: center; }
+@media (max-width: 700px) { .gd-wrap { grid-template-columns: 1fr; } }
+.gd-prev { background: linear-gradient(#2a2f3a, #12151c); border-radius: 12px; padding: 18px 12px 8px; }
+.gd-prev svg { width: 100%; height: auto; display: block; }
+.gd-ctl { display: grid; gap: 12px; }
+.gd-ctl b { display: block; font-size: .8em; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); margin-bottom: 6px; }
+.gd-shapes { display: flex; flex-wrap: wrap; gap: 6px; }
+.gd-shapes button { font: inherit; font-weight: 700; font-size: .88em; padding: 6px 12px; border-radius: 99px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.gd-shapes button.on { border-color: var(--ink); background: var(--ink); color: var(--surface); }
+.gd-sw { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.gd-sw button { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 0 0 1.5px var(--line); cursor: pointer; padding: 0; }
+.gd-sw button.on { box-shadow: 0 0 0 2.5px var(--ink); }
+.gd-pick { display: inline-flex; align-items: center; gap: 6px; font-size: .82em; font-weight: 700; color: var(--ink-2, var(--ink)); cursor: pointer; margin-left: 4px; }
+.gd-pick input { width: 34px; height: 30px; border: 0; padding: 0; background: none; cursor: pointer; }
+.gd-num input { font: inherit; font-weight: 800; font-size: 1.1em; width: 70px; padding: 6px 10px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); text-align: center; }

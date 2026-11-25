@@ -429,13 +429,30 @@ window.CLASE = {
     "kind": "pick",
     "t": "The feature",
     "min": 10,
-    "blurb": "A guest artist, or nobody",
-    "intro": "One guest verse can change an album’s life, or make it feel like a playlist. Who do you call?",
+    "blurb": "Guest artists, including your dream R&B feature",
+    "intro": "One guest verse can change an album’s life, or make it feel like a playlist. Choose a main feature, and a second one if you want. Your dream feature can be any R&B artist you like: just type the name.",
     "slots": [
      {
       "key": "feature",
-      "label": "Featured artist",
+      "label": "Main feature",
       "options": [
+       {
+        "id": "dream",
+        "name": "Your dream R&B feature",
+        "role": "You choose the artist",
+        "cost": 1.4,
+        "ask": "dreamFeature",
+        "desc": "Write the name of any R&B artist you’d love on your album. Their verse could change everything, but big names are expensive and their team will want a say.",
+        "craft": 1,
+        "hype": 4,
+        "risk": 1,
+        "fit": [
+         "rnb",
+         "neosoul",
+         "altpop",
+         "hiphop"
+        ]
+       },
        {
         "id": "star",
         "name": "A global superstar",
@@ -491,15 +508,92 @@ window.CLASE = {
         "fit": []
        }
       ]
+     },
+     {
+      "key": "feature2",
+      "label": "Second feature (optional)",
+      "options": [
+       {
+        "id": "dream2",
+        "name": "A second dream feature",
+        "role": "You choose the artist",
+        "cost": 1.0,
+        "ask": "dreamFeature2",
+        "desc": "Another artist you’d love on the album. Two big names on one record: huge buzz, and a huge bill.",
+        "craft": 1,
+        "hype": 2,
+        "risk": 1,
+        "fit": [
+         "rnb",
+         "neosoul",
+         "hiphop"
+        ]
+       },
+       {
+        "id": "rising",
+        "name": "A rising R&B singer",
+        "role": "Next big thing",
+        "cost": 0.15,
+        "desc": "Six months ago nobody knew her name. Now she’s on every playlist, and she still answers her own messages.",
+        "craft": 1,
+        "hype": 1,
+        "risk": 0,
+        "fit": [
+         "rnb",
+         "altpop"
+        ]
+       },
+       {
+        "id": "choir",
+        "name": "A gospel choir",
+        "role": "Twenty voices",
+        "cost": 0.2,
+        "desc": "One closing track, twenty voices, goosebumps guaranteed.",
+        "craft": 2,
+        "hype": 0,
+        "risk": 0,
+        "fit": [
+         "neosoul",
+         "rnb",
+         "folk"
+        ]
+       },
+       {
+        "id": "none2",
+        "name": "No second feature",
+        "role": "Keep it focused",
+        "cost": 0,
+        "desc": "One guest is enough. The album stays yours.",
+        "craft": 0,
+        "hype": 0,
+        "risk": 0,
+        "fit": []
+       }
+      ]
      }
     ],
     "talk": [
-     "Why this feature, or why none at all?",
-     "The superstar’s team wants approval on your single. Do you accept? Negotiate.",
+     "Who is your dream feature, and why them? What would their verse be about?",
+     "Their team wants approval on your single. Do you accept? Negotiate.",
      "Which real collaboration do you think worked perfectly, and why?"
     ],
     "push": [
      "Be the superstar’s manager: “We want the single, the cover and the title.” Make him negotiate."
+    ],
+    "label": "Featured artists",
+    "inputs": [
+     {
+      "key": "dreamFeature",
+      "label": "Your dream feature: who is it?",
+      "ph": "Type the artist’s name",
+      "showIf": "feature=dream"
+     },
+     {
+      "key": "dreamFeature2",
+      "label": "Your second dream feature: who is it?",
+      "ph": "Type the artist’s name",
+      "showIf": "feature2=dream2"
+     }
     ]
    },
    {
@@ -907,7 +1001,8 @@ window.CLASE = {
    "by": "Produced by {producer}",
    "byAnon": "",
    "cast": [
-    "feature"
+    "feature",
+    "feature2"
    ],
    "castLabel": "featuring",
    "sub": [
@@ -927,6 +1022,14 @@ window.CLASE = {
     [
      "producer",
      "Produced by"
+    ],
+    [
+     "feature",
+     "Featuring"
+    ],
+    [
+     "feature2",
+     "Also featuring"
     ],
     [
      "musicians",
@@ -977,6 +1080,18 @@ window.CLASE = {
    "miss": "Go back and finish, or release it as it is."
   },
   "reviews": [
+   {
+    "if": "feature=dream",
+    "t": "The verse from {feature} is the moment everyone is talking about."
+   },
+   {
+    "if": "feature2=dream2",
+    "t": "Two dream features on one album? {feature2} delivers too."
+   },
+   {
+    "if": "feature2=choir",
+    "t": "The gospel choir on the closing track gave me goosebumps."
+   },
    {
     "if": "producer=brooks",
     "t": "Darnell Brooks’s production is warm enough to live in."

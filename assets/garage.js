@@ -137,7 +137,7 @@
   // Lessons this student can see that have a car, in order
   function list() {
     const ls = L.modulos.flatMap(m => m.lecciones).filter(l => CARS[l.id] && l.estado === "lista");
-    return ls.map(l => ({ ...CARS[l.id], lesson: l, unlocked: !!L.store.get("diploma." + l.id, null), at: (L.store.get("diploma." + l.id, null) || {}).at }));
+    return ls.map(l => ({ ...CARS[l.id], ...(((L.store.get("studio." + l.id, null) || {}).design) || {}), lesson: l, unlocked: !!L.store.get("diploma." + l.id, null), at: (L.store.get("diploma." + l.id, null) || {}).at }));
   }
   const seen = () => L.store.get("garage.seen", []) || [];
   const markSeen = id => { const s = seen(); if (!s.includes(id)) { s.push(id); L.store.set("garage.seen", s); } };
