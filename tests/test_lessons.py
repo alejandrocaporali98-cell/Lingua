@@ -123,8 +123,8 @@ def test():
         # Garage (racing style): one car per Emiliano lesson, unlocked by passing it
         env.fresh(pg, "perfil.html", 300)
         gx = pg.evaluate("window.LINGUA.garage ? Object.keys(LINGUA.garage.CARS) : []")
-        racing = [l for l in ["01", "02", "03", "04", "05", "06", "07", "08", "09"] if l in gx and '"../assets/garage.js"' in open(os.path.join(ROOT, "clases", f"leccion-{l}.html")).read()]
-        check(len(racing) == 9, f"each racing lesson has a car and loads the garage ({len(racing)}/9)")
+        racing = [l for l in ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10"] if l in gx and '"../assets/garage.js"' in open(os.path.join(ROOT, "clases", f"leccion-{l}.html")).read()]
+        check(len(racing) == 10, f"each racing lesson has a car and loads the garage ({len(racing)}/10)")
         pg.evaluate("""() => { const s = (k, v) => localStorage.setItem('lingua.' + k, JSON.stringify(v));
           s('__settings', { lessons: ['01','02','03','04','05','06'], theme: 'racing' });
           ['01','02'].forEach(id => s('diploma.' + id, { ok: 15, n: 15, at: '2026-11-01T12:00:00Z' })); }""")

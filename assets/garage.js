@@ -92,7 +92,10 @@
       learned: "Present continuous" },
     "09": { name: "Road Tripper", kind: "Touring car", shape: "hatch", body: "#0f766e", accent: "#f5f5f2", num: "09",
       hp: 200, top: 220, zero: 7.8, about: "We're going to drive to the beach in this car. It's going to be a long trip, so I'm going to make a great playlist.",
-      learned: "be going to" }
+      learned: "be going to" },
+    "10": { name: "Team Racer", kind: "My team's race car", shape: "hyper", body: "#c2410c", accent: "#1c1d1f", num: "10",
+      hp: 1000, top: 350, zero: 2.6, about: "This is my team's car. It's faster than all my other cars, and we're going to win the next race!",
+      learned: "Comparatives, can and going to" }
   };
   const MAX = { hp: 1000, top: 350 };
 

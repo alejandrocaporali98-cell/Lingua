@@ -180,8 +180,8 @@
     const ico = { words: '<path d="M4 6h16M4 12h10M4 18h13"/>', read: '<path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M8 7h6"/>', gram: '<path d="M12 5v14M5 12h14"/>',
       rp: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 11h5M16 15h4"/>', talk: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>', quiz: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 12l3 3 5-6"/>', game: '<rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 11v3M5.5 12.5h3"/>' };
     const svg = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${ico[k]}</svg>`;
-    const inc = ST ? [["game", "A film production game · $" + ST.budget + "M budget"], ["talk", ST.stages.reduce((a, x) => a + (x.talk || []).length, 0) + " speaking tasks with timers"],
-      ["rp", "Hire writers, cast, crew and cameras · " + ST.stages.reduce((a, x) => a + (x.slots || []).reduce((b, sl) => b + sl.options.length, 0), 0) + " cards"], ["quiz", "No quizzes: decisions and speaking"]] : DB ? [["talk", DB.rounds.length + " timed debates"], ["rp", (DB.rounds.reduce((a, r) => a + r.motions.length, 0) + (DB.lightning || []).length) + " motions to argue"],
+    const inc = ST ? [["game", (ST.name || "A film production game") + " · $" + ST.budget + "M budget"], ["talk", ST.stages.reduce((a, x) => a + (x.talk || []).length, 0) + " speaking tasks with timers"],
+      ["rp", (ST.cardsText || "Hire writers, cast, crew and cameras") + " · " + ST.stages.reduce((a, x) => a + (x.slots || []).reduce((b, sl) => b + sl.options.length, 0), 0) + " cards"], ["quiz", "No quizzes: decisions and speaking"]] : DB ? [["talk", DB.rounds.length + " timed debates"], ["rp", (DB.rounds.reduce((a, r) => a + r.motions.length, 0) + (DB.lightning || []).length) + " motions to argue"],
       ["read", "Debate toolkit · " + DB.kit.reduce((a, g) => a + g.p.length, 0) + " phrases"], ["quiz", "No quizzes: 100% speaking"]] : [["words", fl.length + " words with audio"], C.read && C.read.text ? ["read", "1 reading with " + (C.read.questions || []).length + " questions"] : null,
       C.grammar ? ["gram", "Grammar: " + C.grammar.title] : null, C.roleplay ? ["rp", "Role-play: " + C.roleplay.title] : null,
       C.talk ? ["talk", C.talk.questions.length + " conversation questions"] : null, ["quiz", "Final quiz · " + (C.final || []).length + " questions"], ["game", "Class games"]].filter(Boolean);
@@ -630,10 +630,12 @@
   const sState = () => Object.assign({ picks: {}, ev: {}, title: "", logline: "", tagline: "" }, G.store.get(sKey, {}) || {});
   const sSave = v => G.store.set(sKey, v);
   const sAll = () => { const m = {}; ST.stages.forEach(x => (x.slots || []).forEach(sl => sl.options.forEach(o => { m[sl.key + ":" + o.id] = Object.assign({ slot: sl.key }, o); }))); return m; };
+  // Each game names its own stats and the card that gives the "fits" bonus (genre, team style…)
+  const LB = () => Object.assign({ craft: "Craft", hype: "Star power", risk: "Risk", fit: "Fits your genre ✓", fitKey: "genre" }, ST.labels || {});
   const sEvents = () => (ST.stages.find(x => x.kind === "events") || { events: [] }).events;
   const pick = (v, key) => sAll()[key + ":" + v.picks[key]] || null;
   function sCalc(v) {
-    v = v || sState(); const all = sAll(), genre = v.picks.genre;
+    v = v || sState(); const all = sAll(), genre = v.picks[LB().fitKey];
     let cost = 0, craft = 0, hype = 0, risk = 0, fit = 0;
     for (const k in v.picks) {
       const o = all[k + ":" + v.picks[k]]; if (!o) continue;
@@ -651,17 +653,17 @@
     const pct = Math.min(100, r.cost / ST.budget * 100);
     return `<div class="gl-budget ${r.left < 0 ? "over" : ""}"><div class="gl-money"><span class="eyebrow">Budget left</span><b>${M(r.left)}</b><small>of ${M(ST.budget)} · spent ${M(r.cost)}</small></div>
       <i class="gl-bar" aria-hidden="true"><s style="width:${pct}%"></s></i>
-      <div class="gl-stats"><span><b>${r.craft}</b>Craft</span><span><b>${r.hype}</b>Star power</span><span><b>${r.risk}</b>Risk</span></div></div>`;
+      <div class="gl-stats"><span><b>${r.craft}</b>${LB().craft}</span><span><b>${r.hype}</b>${LB().hype}</span><span><b>${r.risk}</b>${LB().risk}</span></div></div>`;
   }
-  const tagsOf = (o, genre) => [o.craft ? `<i class="t-c">Craft +${o.craft}</i>` : "", o.hype ? `<i class="t-h">Star power ${o.hype > 0 ? "+" : ""}${o.hype}</i>` : "", o.risk ? `<i class="t-r">Risk +${o.risk}</i>` : "",
-    genre && (o.fit || []).includes(genre) ? `<i class="t-f">Fits your genre ✓</i>` : ""].join("");
+  const tagsOf = (o, genre) => { const l = LB(); return [o.craft ? `<i class="t-c">${l.craft} ${o.craft > 0 ? "+" : ""}${o.craft}</i>` : "", o.hype ? `<i class="t-h">${l.hype} ${o.hype > 0 ? "+" : ""}${o.hype}</i>` : "", o.risk ? `<i class="t-r">${l.risk} +${o.risk}</i>` : "",
+    genre && (o.fit || []).includes(genre) ? `<i class="t-f">${l.fit}</i>` : ""].join(""); };
   function gCard(sl, o, v, r) {
     const on = v.picks[sl.key] === o.id, cur = sl.options.find(x => x.id === v.picks[sl.key]);
     const delta = (o.cost || 0) - (cur ? cur.cost || 0 : 0), ok = on || r.left - delta >= -0.001;
     return `<button type="button" class="gl-card${on ? " on" : ""}" data-slot="${sl.key}" data-opt="${o.id}" aria-pressed="${on}" ${ok ? "" : "disabled"}>
-      <span class="gl-top"><b>${G.esc(o.name)}</b><span class="gl-cost">${o.cost ? M(o.cost) : "Free"}</span></span>
+      <span class="gl-top"><b>${G.esc(o.name)}</b><span class="gl-cost${o.cost < 0 ? " pay" : ""}">${o.cost < 0 ? "+" + M(-o.cost) : o.cost ? M(o.cost) : "Free"}</span></span>
       ${o.role ? `<small class="gl-role">${G.esc(o.role)}</small>` : ""}<span class="gl-desc">${G.esc(o.desc)}</span>
-      <span class="gl-tags">${tagsOf(o, sl.key === "genre" ? "" : v.picks.genre)}</span>${ok ? "" : `<span class="gl-no">Not enough budget: free up ${M(delta - r.left)}</span>`}${on ? `<span class="gl-on">Chosen ✓</span>` : ""}</button>`;
+      <span class="gl-tags">${tagsOf(o, sl.key === LB().fitKey ? "" : v.picks[LB().fitKey])}</span>${ok ? "" : `<span class="gl-no">Not enough budget: free up ${M(delta - r.left)}</span>`}${on ? `<span class="gl-on">Chosen ✓</span>` : ""}</button>`;
   }
   function gTalk(x) {
     const t = isTeacher();
@@ -673,7 +675,7 @@
     if (!x) return;
     const v = sState(), r = sCalc(v), y = window.scrollY;
     if (x.kind === "brief") return drawBrief(x, v, r);
-    if (x.kind === "premiere") return drawPremiere(x, v, r);
+    if (x.kind === "premiere") return ST.finale === "race" ? drawRace(x, v, r) : drawPremiere(x, v, r);
     stage.innerHTML = head(x.t, x.intro) + budgetBar(r) +
       (x.inputs ? `<div class="panel gl-in">${x.inputs.map(i => `<label><span class="eyebrow">${G.esc(i.label)}</span>${i.long ? `<textarea data-in="${i.key}" maxlength="240" rows="2" placeholder="${G.esc(i.ph || "")}">${G.esc(v[i.key] || "")}</textarea>` : `<input data-in="${i.key}" maxlength="60" placeholder="${G.esc(i.ph || "")}" value="${G.esc(v[i.key] || "")}">`}</label>`).join("")}</div>` : "") +
       (x.slots || []).map(sl => `<section class="gl-slot"><div class="gl-sh"><h3>${G.esc(sl.label)}</h3>${sl.hint ? `<small>${G.esc(sl.hint)}</small>` : ""}</div><div class="gl-grid">${sl.options.map(o => gCard(sl, o, v, r)).join("")}</div></section>`).join("") +
@@ -699,42 +701,94 @@
     rb.onclick = () => { if (!rb.dataset.sure) { rb.dataset.sure = "1"; rb.textContent = "Tap again to clear every choice"; return; } sSave({ picks: {}, ev: {}, title: "", logline: "", tagline: "" }); drawStage(x); wirePager(); };
     wireTimer(stage);
   }
+  const firstName = () => String((G.actingAs && G.actingAs.name) || (G.profile && (G.profile.name || G.profile.nombre || G.profile.full_name)) || "").split(/\s+/)[0] || "";
+  const SH = () => Object.assign({ cover: "poster", top: "{name} Pictures presents", topAnon: "A Lingua Pictures film", by: "Directed by {name}", byAnon: "A film by you",
+    cast: ["lead", "support"], castLabel: "Starring", sub: ["genre", "setting"], nums: ["Critics", "Audiences", "Box office"],
+    credits: [["writer", "Written by"], ["dp", "Cinematography"], ["editor", "Edited by"], ["music", "Music"], ["camera", "Shot on"], ["lens", "Lenses"], ["light", "Lighting"]],
+    outlets: ["The Projector", "Frame by Frame", "The Lingua Review"], tagline: "Tagline for the poster", taglinePh: "One line that sells the film",
+    verdicts: ["An instant classic", "The critics’ darling", "A box-office smash", "A flop", "A cult classic in the making", "A solid hit"],
+    extra: ["A confident, grown-up film from a director to watch.", "There’s a good film in here somewhere. It just isn’t this cut.", "You won’t forget the last ten minutes."],
+    done: ["Film finished ✓", "That’s a wrap: finish the class", "Film wrapped"], miss: "Go back and finish, or premiere it as it is." }, ST.show || {});
   function drawPremiere(x, v, r) {
-    const nm = String((G.actingAs && G.actingAs.name) || (G.profile && (G.profile.name || G.profile.nombre || G.profile.full_name)) || "").split(/\s+/)[0] || "";
-    const g = pick(v, "genre"), set = pick(v, "setting"), lead = pick(v, "lead"), sup = pick(v, "support");
+    const nm = firstName(), S = SH(), prod = pick(v, "producer"), fill = t => t.replace("{name}", G.esc(nm)).replace("{producer}", prod ? G.esc(prod.name) : "you");
+    const g = pick(v, LB().fitKey), cast = S.cast.map(k => pick(v, k)).filter(o => o && o.id !== "none"), lead = pick(v, S.cast[0]), sup = pick(v, S.cast[1] || "");
     const missing = ST.stages.flatMap(s => (s.slots || []).filter(sl => !v.picks[sl.key]).map(sl => sl.label)).concat(sEvents().filter(e => v.ev[e.id] == null).map(e => e.t));
     const profit = Math.round((r.box - r.cost) * 10) / 10, stars = Math.max(1, Math.round(r.critics / 20 * 2) / 2);
-    const verdict = r.critics >= 80 && r.box >= r.cost * 2 ? "An instant classic" : r.critics >= 80 ? "The critics’ darling" : r.box >= r.cost * 2.5 ? "A box-office smash" : r.critics < 50 && r.box < r.cost ? "A flop" : r.critics >= 65 && r.box < r.cost ? "A cult classic in the making" : "A solid hit";
+    const vd = S.verdicts, verdict = r.critics >= 80 && r.box >= r.cost * 2 ? vd[0] : r.critics >= 80 ? vd[1] : r.box >= r.cost * 2.5 ? vd[2] : r.critics < 50 && r.box < r.cost ? vd[3] : r.critics >= 65 && r.box < r.cost ? vd[4] : vd[5];
     // Reviews react to what was actually chosen
     const Q = [];
     (ST.reviews || []).forEach(q => { const k = q.if; let hit = false;
       if (k === "low") hit = r.critics < 50; else if (k === "high") hit = r.critics >= 80; else if (k === "risky") hit = r.risk >= 7; else if (k === "over") hit = r.left < 0; else if (k === "fit") hit = r.fit >= 5;
       else if (k.includes("=")) { const [a, b] = k.split("="); hit = a.startsWith("ev:") ? v.ev[a.slice(3)] === +b : v.picks[a] === b; }
-      if (hit) Q.push(q.t.replace("{lead}", lead ? lead.name : "The lead").replace("{support}", sup ? sup.name : "the supporting cast")); });
-    if (Q.length < 3) Q.push(r.critics >= 65 ? "A confident, grown-up film from a director to watch." : "There’s a good film in here somewhere. It just isn’t this cut.", "You won’t forget the last ten minutes.");
-    const outlets = ["The Projector", "Frame by Frame", "The Lingua Review"];
-    stage.innerHTML = head(x.t, x.intro) + (missing.length ? `<p class="gl-miss">Still to decide: ${missing.map(G.esc).join(", ")}. Go back and finish, or premiere it as it is.</p>` : "") + `
-      <div class="gl-prem">
-        <div class="gl-poster g-${g ? g.id : "none"}"><span class="gp-k">${nm ? G.esc(nm) + " Pictures presents" : "A Lingua Pictures film"}</span><h2>${G.esc(v.title || "Untitled")}</h2>
-          <p class="gp-tag">${G.esc(v.tagline || v.logline || "")}</p><p class="gp-cast">${lead || sup ? "Starring " + [lead, sup].filter(Boolean).map(o => G.esc(o.name)).join(" · ") : ""}</p>
-          <p class="gp-by">${nm ? "Directed by " + G.esc(nm) : "A film by you"}</p><span class="gp-g">${g ? G.esc(g.name) : ""}${set ? " · " + G.esc(set.name) : ""}</span></div>
+      if (hit) Q.push(q.t.replace("{lead}", lead ? lead.name : "The lead").replace("{support}", sup ? sup.name : "the supporting cast").replace("{title}", v.title || "this record")); });
+    if (Q.length < 3) Q.push(r.critics >= 65 ? S.extra[0] : S.extra[1], S.extra[2]);
+    const outlets = S.outlets;
+    stage.innerHTML = head(x.t, x.intro) + (missing.length ? `<p class="gl-miss">Still to decide: ${missing.map(G.esc).join(", ")}. ${S.miss}</p>` : "") + `
+      <div class="gl-prem${S.cover === "album" ? " sq" : ""}">
+        <div class="${S.cover === "album" ? "gl-cover" : "gl-poster"} g-${g ? g.id : "none"}"><span class="gp-k">${nm ? fill(S.top) : S.topAnon}</span><h2>${G.esc(v.title || "Untitled")}</h2>
+          <p class="gp-tag">${G.esc(v.tagline || v.logline || "")}</p><p class="gp-cast">${cast.length ? S.castLabel + " " + cast.map(o => G.esc(o.name)).join(" · ") : ""}</p>
+          <p class="gp-by">${nm || S.by.includes("{producer}") ? fill(S.by) : S.byAnon}</p><span class="gp-g">${S.sub.map(k => pick(v, k)).filter(Boolean).map(o => G.esc(o.name)).join(" · ")}</span></div>
         <div class="gl-score">
           <div class="gl-verd"><span class="eyebrow">The verdict</span><b>${verdict}</b></div>
-          <div class="gl-nums"><div><b>${r.critics}%</b><span>Critics</span></div><div><b>${r.audience}%</b><span>Audiences</span></div><div><b>${M(r.box)}</b><span>Box office</span></div><div><b class="${profit < 0 ? "neg" : ""}">${profit < 0 ? "−" : "+"}${M(Math.abs(profit))}</b><span>${profit < 0 ? "Loss" : "Profit"}</span></div></div>
-          <dl class="gl-credits">${[["writer", "Written by"], ["dp", "Cinematography"], ["editor", "Edited by"], ["music", "Music"], ["camera", "Shot on"], ["lens", "Lenses"], ["light", "Lighting"]].map(([k, l]) => { const o = pick(v, k); return o ? `<div><dt>${l}</dt><dd>${G.esc(o.name)}</dd></div>` : ""; }).join("")}</dl>
+          <div class="gl-nums"><div><b>${r.critics}%</b><span>${S.nums[0]}</span></div><div><b>${r.audience}%</b><span>${S.nums[1]}</span></div><div><b>${M(r.box)}</b><span>${S.nums[2]}</span></div><div><b class="${profit < 0 ? "neg" : ""}">${profit < 0 ? "−" : "+"}${M(Math.abs(profit))}</b><span>${profit < 0 ? "Loss" : "Profit"}</span></div></div>
+          <dl class="gl-credits">${S.credits.map(([k, l]) => { const o = pick(v, k); return o ? `<div><dt>${l}</dt><dd>${G.esc(o.name)}</dd></div>` : ""; }).join("")}</dl>
           <div class="gl-revs">${Q.slice(0, 3).map((q, i) => `<blockquote><span class="gl-stars" aria-label="${stars} stars">${"★".repeat(Math.floor(stars))}${stars % 1 ? "½" : ""}</span><p>“${G.esc(q)}”</p><cite>${outlets[i]}</cite></blockquote>`).join("")}</div>
         </div>
       </div>
-      <div class="panel gl-in"><label><span class="eyebrow">Tagline for the poster</span><input data-in="tagline" maxlength="80" placeholder="One line that sells the film" value="${G.esc(v.tagline || "")}"></label></div>
+      <div class="panel gl-in"><label><span class="eyebrow">${S.tagline}</span><input data-in="tagline" maxlength="80" placeholder="${S.taglinePh}" value="${G.esc(v.tagline || "")}"></label></div>
       ${gTalk(x)}
-      <div class="db-row" style="justify-content:flex-end"><button type="button" class="btn primary" id="glDone">${st.done.has(st.sec) ? "Film finished ✓" : "That’s a wrap: finish the class"}</button></div>` + pager();
+      <div class="db-row" style="justify-content:flex-end"><button type="button" class="btn primary" id="glDone">${st.done.has(st.sec) ? S.done[0] : S.done[1]}</button></div>` + pager();
     const ti = stage.querySelector("[data-in='tagline']");
     ti.oninput = () => { const w = sState(); w.tagline = ti.value.slice(0, 80); sSave(w); stage.querySelector(".gp-tag").textContent = w.tagline || w.logline || ""; };
     stage.querySelector("#glDone").onclick = () => {
       SECS.forEach((_, i) => { if (!st.done.has(i)) markDone(i); });
-      G.game && G.game.award(50, { once: "pass." + C.id, label: "Film wrapped" });
+      G.game && G.game.award(50, { once: "pass." + C.id, label: S.done[2] });
       G.confetti && G.confetti(); G.sfx && G.sfx("win");
-      stage.querySelector("#glDone").textContent = "Film finished ✓";
+      stage.querySelector("#glDone").textContent = S.done[0];
+    };
+    wireTimer(stage);
+  }
+
+  // Race day: where your two drivers finish, points, fans and headlines
+  function drawRace(x, v, r) {
+    const F = ST.race, d1 = pick(v, "driver1"), d2 = pick(v, "driver2"), liv = pick(v, "livery"), team = v.title || "Your team";
+    const missing = ST.stages.flatMap(s => (s.slots || []).filter(sl => !v.picks[sl.key]).map(sl => sl.label)).concat(sEvents().filter(e => v.ev[e.id] == null).map(e => e.t));
+    const p1 = Math.max(1, Math.min(18, Math.round(15 - r.craft * 0.85 + r.risk * 0.5 + Math.max(0, -r.left) * 1.5)));
+    const dnf = r.risk >= 8;
+    let p2 = Math.max(1, Math.min(19, p1 + 3 - ((d2 && d2.craft) || 0))); if (p2 === p1) p2++;
+    const PTS = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1], pts = (PTS[p1 - 1] || 0) + (dnf ? 0 : PTS[p2 - 1] || 0);
+    const verdict = p1 === 1 ? F.verdicts[0] : p1 <= 3 ? F.verdicts[1] : p1 <= 10 ? F.verdicts[2] : F.verdicts[3];
+    const others = F.rivals.slice(), rows = [];
+    for (let pos = 1; pos <= 12; pos++) {
+      if (pos === p1) rows.push([pos, d1 ? d1.name : "Driver 1", team, true]);
+      else if (pos === p2 && !dnf) rows.push([pos, d2 ? d2.name : "Driver 2", team, true]);
+      else { const o = others.shift(); if (o) rows.push([pos, o[0], o[1], false]); }
+    }
+    const H = [];
+    (ST.reviews || []).forEach(q => { const k = q.if; let hit = false;
+      if (k === "win") hit = p1 === 1; else if (k === "podium") hit = p1 > 1 && p1 <= 3; else if (k === "low") hit = p1 > 10; else if (k === "dnf") hit = dnf; else if (k === "fans") hit = r.audience >= 75; else if (k === "over") hit = r.left < 0;
+      else if (k.includes("=")) { const [a, b] = k.split("="); hit = a.startsWith("ev:") ? v.ev[a.slice(3)] === +b : v.picks[a] === b; }
+      if (hit) H.push(q.t.replace("{d1}", d1 ? d1.name : "Your driver").replace("{d2}", d2 ? d2.name : "Your second driver").replace("{team}", team)); });
+    if (H.length < 3) H.push(F.extra[0], F.extra[1]);
+    const car = G.garage && liv ? G.garage.svg({ shape: "hyper", body: liv.body, accent: liv.accent, num: (d1 && d1.num) || "1" }) : "";
+    stage.innerHTML = head(x.t, x.intro) + (missing.length ? `<p class="gl-miss">Still to choose: ${missing.map(G.esc).join(", ")}. You can still race!</p>` : "") + `
+      <div class="gl-prem">
+        <div class="gl-team" style="--tb:${liv ? liv.body : "#1c1d1f"};--ta:${liv ? liv.accent : "#fff"}"><span class="gp-k">${G.esc(F.series)}</span><h2>${G.esc(team)}</h2><div class="gl-car">${car}</div>
+          <p class="gp-cast">${[d1, d2].filter(Boolean).map(o => G.esc(o.name)).join(" · ")}</p><span class="gp-g">${G.esc(v.tagline || "")}</span></div>
+        <div class="gl-score">
+          <div class="gl-verd"><span class="eyebrow">${G.esc(F.track)}</span><b>${verdict}</b></div>
+          <div class="gl-nums"><div><b>P${p1}</b><span>${G.esc(d1 ? d1.name.split(" ")[0] : "Driver 1")}</span></div><div><b>${dnf ? "Out" : "P" + p2}</b><span>${G.esc(d2 ? d2.name.split(" ")[0] : "Driver 2")}</span></div><div><b>${pts}</b><span>Points</span></div><div><b>${r.audience}%</b><span>Fans</span></div></div>
+          <ol class="gl-res">${rows.map(([pos, n, t, me]) => `<li class="${me ? "me" : ""}"><b>${pos}</b><span>${G.esc(n)}</span><small>${G.esc(t)}</small></li>`).join("")}${dnf ? `<li class="me out"><b>–</b><span>${G.esc(d2 ? d2.name : "Driver 2")}</span><small>Out of the race</small></li>` : ""}</ol>
+          <div class="gl-revs">${H.slice(0, 3).map((q, i) => `<blockquote><p>“${G.esc(q)}”</p><cite>${G.esc(F.outlets[i])}</cite></blockquote>`).join("")}</div>
+        </div>
+      </div>
+      ${gTalk(x)}
+      <div class="db-row" style="justify-content:flex-end"><button type="button" class="btn primary" id="glDone">${st.done.has(st.sec) ? "Race finished ✓" : "Finish the race and the class"}</button></div>` + pager();
+    stage.querySelector("#glDone").onclick = () => {
+      SECS.forEach((_, i) => { if (!st.done.has(i)) markDone(i); });
+      G.game && G.game.award(50, { once: "pass." + C.id, label: "Race finished" });
+      G.confetti && G.confetti(); G.sfx && G.sfx("win");
+      stage.querySelector("#glDone").textContent = "Race finished ✓";
     };
     wireTimer(stage);
   }

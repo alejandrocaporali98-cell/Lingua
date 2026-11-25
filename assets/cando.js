@@ -10,6 +10,7 @@ window.LINGUA_CANDO = {
   "07": ["Decir lo que puede y no puede hacer, y preguntarlo a otros.", "Say what he can and can’t do, and ask others."],
   "08": ["Describir lo que está pasando en este momento, por ejemplo en una exhibición de autos.", "Describe what’s happening right now, like at a car meet."],
   "09": ["Hablar de sus planes: a dónde va a ir, qué va a llevar y qué va a hacer.", "Talk about his plans: where he’s going to go, what he’s going to bring and do."],
+  "10": ["Tomar decisiones sencillas en inglés y explicar por qué, usando comparativos, can y going to.", "Make simple decisions in English and say why, using comparatives, can and going to."],
   "101": ["Hablar de la música que le gusta y recomendarla.", "Talk about the music she loves and recommend it."],
   "102": ["Contar de qué trata una serie y recomendarla.", "Explain what a series is about and recommend it."],
   "103": ["Usar los tiempos verbales más comunes juntos y sin confundirlos.", "Use the most common tenses together without mixing them up."],
@@ -44,4 +45,5 @@ window.LINGUA_CANDO = {
   "313": ["Explicar cómo funciona la industria musical y dar opiniones con fuerza.", "Explain how the music industry works and give strong opinions."],
   "314": ["Narrar un concierto con detalle: el sonido, el público y el ambiente.", "Describe a live show in vivid detail: the sound, the crowd and the atmosphere."],
   "315": ["Debatir en inglés sobre temas generales y responder al momento.", "Debate general topics in English and answer back on the spot."]
+  "316": ["Tomar decisiones de producción musical en inglés y defenderlas: sonido, productor, colaboraciones y lanzamiento.", "Make and defend music production decisions in English: sound, producer, features and release."],
 };

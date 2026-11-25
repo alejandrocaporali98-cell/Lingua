@@ -429,3 +429,29 @@ body.present .ov-side { position: static; }
 .gl-stars { color: #b45309; letter-spacing: 2px; font-size: .9em; }
 .gl-credits { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px 16px; margin: 0; }
 .gl-credits div { display: grid; gap: 1px; } .gl-credits dt { font-size: .7em; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); } .gl-credits dd { margin: 0; font-weight: 700; font-size: .92em; }
+.gl-cost.pay { color: #15803d; }
+/* Album cover */
+.gl-prem.sq { grid-template-columns: minmax(220px, 320px) minmax(0, 1fr); }
+.gl-cover { aspect-ratio: 1 / 1; border-radius: 4px; padding: 20px; display: grid; grid-template-rows: auto 1fr auto auto auto; gap: 6px; color: #f6f2ea; background: #1c1d1f; box-shadow: 0 14px 34px rgba(0,0,0,.25); position: relative; overflow: hidden; text-align: left; }
+.gl-cover::after { content: ""; position: absolute; right: -28%; bottom: -28%; width: 80%; aspect-ratio: 1; border-radius: 50%; background: repeating-radial-gradient(circle, rgba(255,255,255,.09) 0 1px, transparent 1px 6px); pointer-events: none; }
+.gl-cover h2 { margin: 0; align-self: end; font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: clamp(1.6em, 4vw, 2.2em); line-height: 1.02; overflow-wrap: anywhere; position: relative; z-index: 1; }
+.gl-cover .gp-k, .gl-cover .gp-tag, .gl-cover .gp-cast, .gl-cover .gp-by, .gl-cover .gp-g { position: relative; z-index: 1; margin: 0; }
+.gl-cover.g-rnb { background: linear-gradient(160deg, #3b0d24, #120610 70%); color: #f9d9e6; }
+.gl-cover.g-neosoul { background: linear-gradient(160deg, #6b3f1d, #2a170b 70%); color: #fbe7c8; }
+.gl-cover.g-altpop { background: linear-gradient(160deg, #f2c94c, #e76f51 60%, #7a2e1f); color: #1d120c; }
+.gl-cover.g-indie { background: linear-gradient(160deg, #cfd6cf, #6f7f73 70%); color: #141914; }
+.gl-cover.g-hiphop { background: linear-gradient(160deg, #1a1a1a, #3a3a3a 60%, #0d0d0d); color: #f2f2f2; }
+.gl-cover.g-folk { background: linear-gradient(160deg, #e9dcc3, #a98c62 70%); color: #2a2116; }
+/* Racing team finale */
+.gl-team { border-radius: 10px; padding: 22px 18px; display: grid; gap: 8px; text-align: center; color: #fff; background: linear-gradient(160deg, var(--tb), #0d0f14 85%); box-shadow: 0 14px 34px rgba(0,0,0,.25); position: relative; overflow: hidden; }
+.gl-team::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: var(--ta); }
+.gl-team h2 { margin: 0; font-size: clamp(1.5em, 4vw, 2em); font-weight: 800; letter-spacing: -.01em; line-height: 1.1; }
+.gl-car { background: rgba(255,255,255,.06); border-radius: 8px; padding: 12px 8px 6px; }
+.gl-car svg { width: 100%; height: auto; display: block; }
+.gl-res { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--line); }
+.gl-res li { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 7px 8px; border-bottom: 1px solid var(--line); font-size: .92em; }
+.gl-res li b { font-variant-numeric: tabular-nums; color: var(--mute); }
+.gl-res li small { color: var(--mute); }
+.gl-res li.me { background: #fff7d6; font-weight: 800; } .gl-res li.me b { color: var(--ink); }
+.gl-res li.out { background: #fde8e6; }
+@media (max-width: 760px) { .gl-prem.sq { grid-template-columns: 1fr; } .gl-cover { max-width: 360px; } }

@@ -22,7 +22,8 @@ window.LINGUA = {
     { titulo: "Module 3 · Race weekend", owner: "Emiliano", lecciones: [
       { id: "07", archivo: "clases/leccion-07.html", titulo: "Pit Stop", tema: "Say what you can and can't do: pit crews, race radio and the safety car.", nivel: "A2", min: 60, icono: "helmet", color: "#c2410c", estado: "lista", secs: 9 },
       { id: "08", archivo: "clases/leccion-08.html", titulo: "Night Meet", tema: "Say what's happening right now: tuned cars, body kits and the crowd at a car meet.", nivel: "A2", min: 60, icono: "car", color: "#1e40af", estado: "lista", secs: 9 },
-      { id: "09", archivo: "clases/leccion-09.html", titulo: "Road Trip", tema: "Make plans with going to: the highway, snacks, a playlist and a full tank.", nivel: "A2", min: 60, icono: "plane", color: "#0f766e", estado: "lista", secs: 9 }
+      { id: "09", archivo: "clases/leccion-09.html", titulo: "Road Trip", tema: "Make plans with going to: the highway, snacks, a playlist and a full tank.", nivel: "A2", min: 60, icono: "plane", color: "#0f766e", estado: "lista", secs: 9 },
+      { id: "10", archivo: "clases/leccion-10.html", titulo: "Team Boss", tema: "Build your own racing team with twenty million dollars, and race in Mexico City.", nivel: "A2", min: 60, icono: "flag", color: "#c2410c", estado: "lista", secs: 8 }
     ]},
     // ── Ada (in lesson order; new lessons go at the end of the last module) ──
     { titulo: "Module 1 · Getting started", owner: "Ada", lecciones: [
@@ -104,7 +105,8 @@ window.LINGUA = {
       {"id": "312", "archivo": "clases/leccion-312.html", "titulo": "Breaking Down a Song", "tema": "Saying a song is \"fire\" is easy. Explaining why it works — the writing, the production, the feel — is the C1 skill.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 10},
       {"id": "313", "archivo": "clases/leccion-313.html", "titulo": "Inside the Music Industry", "tema": "Everyone wants to blow up. Not everyone wants to sign a record deal.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 11},
       {"id": "314", "archivo": "clases/leccion-314.html", "titulo": "Live and Loud", "tema": "A great gig is never just about the music.", "nivel": "C1", "min": 120, "icono": "music", "color": "#6d28d9", "estado": "lista", "secs": 11},
-      {"id": "315", "archivo": "clases/leccion-315.html", "titulo": "Debate Night", "tema": "Two hours, no worksheets. Technology, work, money, music and the way we live: pick a side and defend it.", "nivel": "C1", "min": 120, "icono": "mic", "color": "#0f766e", "estado": "lista", "secs": 7}
+      {"id": "315", "archivo": "clases/leccion-315.html", "titulo": "Debate Night", "tema": "Two hours, no worksheets. Technology, work, money, music and the way we live: pick a side and defend it.", "nivel": "C1", "min": 120, "icono": "mic", "color": "#0f766e", "estado": "lista", "secs": 7},
+      {"id": "316", "archivo": "clases/leccion-316.html", "titulo": "Platinum", "tema": "Three million dollars and a blank tracklist. Choose the sound, the producer, the features and the studio, survive the label and release your album.", "nivel": "C1", "min": 120, "icono": "music", "color": "#0f766e", "estado": "lista", "secs": 9}
     ]}
   ],
 
