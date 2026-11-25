@@ -44,6 +44,6 @@ window.LINGUA_CANDO = {
   "312": ["Explicar por qué una canción funciona, no solo si le gusta.", "Explain why a song works, not just whether he likes it."],
   "313": ["Explicar cómo funciona la industria musical y dar opiniones con fuerza.", "Explain how the music industry works and give strong opinions."],
   "314": ["Narrar un concierto con detalle: el sonido, el público y el ambiente.", "Describe a live show in vivid detail: the sound, the crowd and the atmosphere."],
-  "315": ["Debatir en inglés sobre temas generales y responder al momento.", "Debate general topics in English and answer back on the spot."]
-  "316": ["Tomar decisiones de producción musical en inglés y defenderlas: sonido, productor, colaboraciones y lanzamiento.", "Make and defend music production decisions in English: sound, producer, features and release."],
+  "315": ["Debatir en inglés sobre temas generales y responder al momento.", "Debate general topics in English and answer back on the spot."],
+  "316": ["Tomar decisiones de producción musical en inglés y defenderlas: sonido, productor, colaboraciones y lanzamiento.", "Make and defend music production decisions in English: sound, producer, features and release."]
 };
