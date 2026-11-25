@@ -61,6 +61,19 @@
       lines: "M200 42 L254 55", vent: "M190 64 Q210 60 222 70 L196 72 Z",
       head: "M25 75 L54 70 L54 73 L26 78 Z", tail: "M288 62 L298 64 L298 68 L289 68 Z",
       extra: "M262 50 L300 46 L300 52 L264 55 Z M272 53 L272 60 M290 51 L290 61"
+    },
+    // Formula car: open wheels, halo, airbox, front and rear wings
+    f1: {
+      wheels: [[70, 84, 19], [252, 83, 21]],
+      body: "M26 84 Q28 79 42 78 L112 67 Q124 63 134 63 L150 62 L157 46 Q161 39 172 39 L183 40 Q190 42 194 51 L262 64 Q284 66 292 70 L294 84 Q294 90 288 90 L36 90 Q26 90 26 86 Z",
+      glass: ["M136 62 L152 61 L157 52 Q146 51 138 57 Z"],
+      stripe: "M26 82 L140 70 L300 71 L300 79 L26 90 Z",
+      lines: "M160 47 L188 49 M194 52 L262 66",
+      vent: "M196 70 Q216 64 238 70 L238 78 L198 80 Z",
+      tail: "M289 74 L296 74 L296 78 L289 78 Z",
+      pod: "M133 61 Q144 47 160 49",
+      roundel: [176, 74, 8.5],
+      extra: "M6 93 L48 93 L48 88 L9 87 Z M276 34 L314 32 L314 40 L278 42 Z M308 32 L314 32 L314 68 L308 68 Z M296 42 L296 70"
     }
   };
 
@@ -93,7 +106,7 @@
     "09": { name: "Road Tripper", kind: "Touring car", shape: "hatch", body: "#0f766e", accent: "#f5f5f2", num: "09",
       hp: 200, top: 220, zero: 7.8, about: "We're going to drive to the beach in this car. It's going to be a long trip, so I'm going to make a great playlist.",
       learned: "be going to" },
-    "10": { name: "Team Racer", kind: "My team's race car", shape: "hyper", body: "#c2410c", accent: "#1c1d1f", num: "10",
+    "10": { name: "Team Racer", kind: "My team's race car", shape: "f1", body: "#c2410c", accent: "#1c1d1f", num: "10",
       hp: 1000, top: 350, zero: 2.6, about: "This is my team's car. It's faster than all my other cars, and we're going to win the next race!",
       learned: "Comparatives, can and going to" }
   };
@@ -107,6 +120,8 @@
       `<circle cx="${x}" cy="${y}" r="${r * .18}" fill="#4a4f57"/>`;
   }
 
+  // Dark colour? Then the number on it is white
+  const dark = c => { const m = /^#?([0-9a-f]{6})$/i.exec(String(c || "")); if (!m) return false; const n = parseInt(m[1], 16); return (0.299 * (n >> 16) + 0.587 * (n >> 8 & 255) + 0.114 * (n & 255)) < 110; };
   // opts.locked draws a silhouette in currentColor
   function svg(car, opts) {
     opts = opts || {};
@@ -128,7 +143,7 @@
       ${s.headlamp ? `<circle cx="${s.headlamp[0]}" cy="${s.headlamp[1]}" r="${s.headlamp[2]}" fill="#fff7d6" stroke="#000" stroke-opacity=".3"/>` : ""}
       ${s.pod ? `<path d="${s.pod}" stroke="#1b1d22" stroke-width="3"/>` : ""}
       ${s.lamps ? s.lamps.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff7d6" stroke="#1b1d22" stroke-width="1.6"/>`).join("") : ""}
-      ${s.roundel ? `<circle cx="${s.roundel[0]}" cy="${s.roundel[1]}" r="${s.roundel[2]}" fill="${car.accent}"/><text x="${s.roundel[0]}" y="${s.roundel[1] + 4.5}" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="13" fill="#1b1d22">${car.num}</text>` : ""}
+      ${s.roundel ? `<circle cx="${s.roundel[0]}" cy="${s.roundel[1]}" r="${s.roundel[2]}" fill="${car.accent}"/><text x="${s.roundel[0]}" y="${s.roundel[1] + 4.5}" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="13" fill="${dark(car.accent) ? "#fff" : "#1b1d22"}">${car.num}</text>` : ""}
       ${car.shape === "rally" || car.shape === "drift" ? `<rect x="138" y="${car.shape === "rally" ? 70 : 72}" width="30" height="14" rx="3" fill="#fff"/><text x="153" y="${car.shape === "rally" ? 81 : 83}" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="11" fill="#1b1d22">${car.num}</text>` : ""}
       ${s.wheels.map(w => wheel(w)).join("")}
     </svg>`;

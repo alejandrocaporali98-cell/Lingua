@@ -674,7 +674,7 @@
       <span class="gl-tags">${tagsOf(o, sl.key === LB().fitKey ? "" : v.picks[LB().fitKey])}</span>${ok ? "" : `<span class="gl-no">Not enough budget: free up ${M(delta - r.left)}</span>`}${on ? `<span class="gl-on">Chosen ✓</span>` : ""}</button>`;
   }
   // Car designer (racing game): shape, two colours and the number, drawn live with the garage's cars
-  const CAR0 = { shape: "hyper", body: "#c8102e", accent: "#f5f5f5", num: "10" };
+  const CAR0 = { shape: "f1", body: "#c8102e", accent: "#f5f5f5", num: "10" };
   const SW = ["#c8102e", "#ea580c", "#f5c518", "#0b5d3b", "#15803d", "#1d3f8f", "#0ea5e9", "#151515", "#f5f5f5", "#c0c6cc", "#c9a227", "#7c2d12"];
   const carOf = v => Object.assign({}, CAR0, v.design || {});
   function designer(v) {
