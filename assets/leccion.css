@@ -473,3 +473,5 @@ body.present .ov-side { position: static; }
 .gd-pick { display: inline-flex; align-items: center; gap: 6px; font-size: .82em; font-weight: 700; color: var(--ink-2, var(--ink)); cursor: pointer; margin-left: 4px; }
 .gd-pick input { width: 34px; height: 30px; border: 0; padding: 0; background: none; cursor: pointer; }
 .gd-num input { font: inherit; font-weight: 800; font-size: 1.1em; width: 70px; padding: 6px 10px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); text-align: center; }
+.gl-prev { display: grid; gap: 6px; border-left: 4px solid var(--ink); }
+.gl-prev p { margin: 0; font-size: 1.05em; line-height: 1.5; }

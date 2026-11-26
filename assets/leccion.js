@@ -641,7 +641,11 @@
   // Each game names its own stats and the card that gives the "fits" bonus (genre, team style…)
   const LB = () => Object.assign({ craft: "Craft", hype: "Star power", risk: "Risk", fit: "Fits your genre ✓", fitKey: "genre" }, ST.labels || {});
   const sEvents = () => (ST.stages.find(x => x.kind === "events") || { events: [] }).events;
-  const pick = (v, key) => { const o = sAll()[key + ":" + v.picks[key]] || null; return o && o.ask ? Object.assign({}, o, { name: (v[o.ask] || "").trim() || o.name }) : o; };
+  // A sequel remembers the first game: its title and its lead
+  const prevOf = () => { if (!ST.prev) return null; const p = G.store.get("studio." + ST.prev.id, null); if (!p || !p.picks) return null;
+    return { genreId: p.picks.genre || "", title: p.title || "", lead: (ST.prev.leads || {})[p.picks.lead] || "", genre: (ST.prev.genres || {})[p.picks.genre] || "" }; };
+  const pick = (v, key) => { const o = sAll()[key + ":" + v.picks[key]] || null; if (!o || !o.ask) return o;
+    const pv = o.ask === "leadName" ? (prevOf() || {}).lead : ""; return Object.assign({}, o, { name: (v[o.ask] || "").trim() || pv || o.name }); };
   function sCalc(v) {
     v = v || sState(); const all = sAll(), genre = v.picks[LB().fitKey];
     let cost = 0, craft = 0, hype = 0, risk = 0, fit = 0;
@@ -703,6 +707,7 @@
       ${timer([["Pitch", 60], ["Defend", 90]])}
       ${t && (x.push || []).length ? `<div class="tnotes" style="display:grid;gap:6px"><span class="eyebrow">Producer’s pushback · only you see this</span><ul>${x.push.map(n => `<li>${G.esc(n)}</li>`).join("")}</ul></div>` : ""}</div>`;
   }
+  const showIn = (i, v) => { if (!i.showIf) return true; const [k, val] = i.showIf.split("="); return !!v.picks[k] && (val === "*" || v.picks[k] === val); };
   function drawStage(x) {
     if (!x) return;
     const v = sState(), r = sCalc(v), y = window.scrollY;
@@ -710,7 +715,7 @@
     if (x.kind === "premiere") return ST.finale === "race" ? drawRace(x, v, r) : drawPremiere(x, v, r);
     stage.innerHTML = head(x.t, x.intro) + budgetBar(r) +
       (x.designer ? designer(v) : "") +
-      ((x.inputs || []).filter(i => !i.showIf || v.picks[i.showIf.split("=")[0]] === i.showIf.split("=")[1]).length ? `<div class="panel gl-in">${x.inputs.filter(i => !i.showIf || v.picks[i.showIf.split("=")[0]] === i.showIf.split("=")[1]).map(i => `<label><span class="eyebrow">${G.esc(i.label)}</span>${i.long ? `<textarea data-in="${i.key}" maxlength="240" rows="2" placeholder="${G.esc(i.ph || "")}">${G.esc(v[i.key] || "")}</textarea>` : `<input data-in="${i.key}" maxlength="60" placeholder="${G.esc(i.ph || "")}" value="${G.esc(v[i.key] || "")}">`}</label>`).join("")}</div>` : "") +
+      ((x.inputs || []).filter(i => showIn(i, v)).length ? `<div class="panel gl-in">${x.inputs.filter(i => showIn(i, v)).map(i => `<label><span class="eyebrow">${G.esc(i.label)}</span>${i.long ? `<textarea data-in="${i.key}" maxlength="240" rows="2" placeholder="${G.esc(i.ph || "")}">${G.esc(v[i.key] || "")}</textarea>` : `<input data-in="${i.key}" maxlength="60" placeholder="${G.esc(i.ph || "")}" value="${G.esc(v[i.key] || (i.key === "leadName" && (prevOf() || {}).lead) || "")}">`}</label>`).join("")}</div>` : "") +
       (x.slots || []).map(sl => `<section class="gl-slot"><div class="gl-sh"><h3>${G.esc(sl.label)}</h3>${sl.hint ? `<small>${G.esc(sl.hint)}</small>` : ""}</div><div class="gl-grid">${sl.options.map(o => gCard(sl, o, v, r)).join("")}</div></section>`).join("") +
       (x.events || []).map(e => `<section class="gl-ev"><span class="eyebrow">${G.esc(e.when)}</span><h3>${G.esc(e.t)}</h3><p>${G.esc(e.text)}</p>
         <div class="gl-ch">${e.choices.map((c, i) => `<button type="button" class="gl-choice${v.ev[e.id] === i ? " on" : ""}" data-ev="${e.id}" data-i="${i}" aria-pressed="${v.ev[e.id] === i}"><b>${G.esc(c.t)}</b><span class="gl-tags">${c.cost ? `<i class="t-r">Costs ${M(c.cost)}</i>` : ""}${tagsOf(c, "")}</span></button>`).join("")}</div></section>`).join("") +
@@ -727,6 +732,7 @@
   }
   function drawBrief(x, v, r) {
     stage.innerHTML = head(x.t, x.intro) + budgetBar(r) + `
+      ${ST.prev ? (p => `<div class="panel gl-prev"><span class="eyebrow">Last time</span>${p && p.title ? `<p>You made <b>${G.esc(p.title)}</b>${p.genre ? ", a " + G.esc(p.genre.toLowerCase()) : ""}${p.lead ? `, starring <b>${G.esc(p.lead)}</b>` : ""}. It made money, and now the studio wants more.</p>` : `<p>${G.esc(ST.prev.none || "")}</p>`}</div>`)(prevOf()) : ""}
       <div class="panel gl-how"><span class="eyebrow">How it works</span><ol>${(ST.how || []).map(h => `<li>${G.esc(h)}</li>`).join("")}</ol></div>
       <div class="db-kit">${(ST.kit || []).map(g => `<section class="panel"><span class="eyebrow">${G.esc(g.t)}</span><ul>${g.p.map(p => `<li><span>${G.esc(p)}</span>${G.sayBtn ? G.sayBtn(p.replace(/…/g, "")) : ""}</li>`).join("")}</ul></section>`).join("")}</div>
       ${gTalk(x)}
@@ -759,7 +765,7 @@
     const outlets = S.outlets;
     stage.innerHTML = head(x.t, x.intro) + (missing.length ? `<p class="gl-miss">Still to decide: ${missing.map(G.esc).join(", ")}. ${S.miss}</p>` : "") + `
       <div class="gl-prem${S.cover === "album" ? " sq" : ""}">
-        <div class="${S.cover === "album" ? "gl-cover" : "gl-poster"} g-${g ? g.id : "none"}"><span class="gp-k">${nm ? fill(S.top) : S.topAnon}</span><h2>${G.esc(v.title || "Untitled")}</h2>
+        <div class="${S.cover === "album" ? "gl-cover" : "gl-poster"} g-${(prevOf() || {}).genreId || (g ? g.id : "none")}"><span class="gp-k">${nm ? fill(S.top) : S.topAnon}</span><h2>${G.esc(v.title || "Untitled")}</h2>
           <p class="gp-tag">${G.esc(v.tagline || v.logline || "")}</p><p class="gp-cast">${cast.length ? S.castLabel + " " + cast.map(o => G.esc(o.name)).join(" · ") : ""}</p>
           <p class="gp-by">${nm || S.by.includes("{producer}") ? fill(S.by) : S.byAnon}</p><span class="gp-g">${S.sub.map(k => pick(v, k)).filter(Boolean).map(o => G.esc(o.name)).join(" · ")}</span></div>
         <div class="gl-score">
